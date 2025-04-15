@@ -1,0 +1,59 @@
+<div class="row col-md-12">
+<div class="col-md-3" *ngIf="isSubCompany">
+    <mat-form-field>
+        <mat-icon matPrefix>table_view</mat-icon>
+        <mat-label>Sub Company Name</mat-label>
+        <mat-select >
+            <mat-option  *ngFor="let field of subCompanies" [value]="field.id">
+                {{field.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div class="col-md-4" *ngIf="isProjects" >
+    <app-select-search *ngIf="isProjectLoaded" 
+        searchPlaceholder="Search Project" emptySearchMessage="No Project Found" label="Select Project"
+        (onValueChange)="projectChange($event)" [valueArrays]="projects">
+    </app-select-search>
+</div>
+<div class="col-md-4" *ngIf="isAny">
+    <mat-form-field>
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-label>Search By {{searchByAnyPlaceholder}}</mat-label>
+        <input matInput (keyup)="applyFilter($event)"  #input>
+      </mat-form-field>
+</div>
+<div class="col-md-3" *ngIf="isProfessional">
+    <mat-form-field>
+        <mat-icon matPrefix>table_view</mat-icon>
+        <mat-label>Professional</mat-label>
+        <mat-select >
+            <mat-option  *ngFor="let field of professionals" [value]="field.id">
+                {{field.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div class="col-md-3" *ngIf="isDesignation">
+    <mat-form-field>
+        <mat-icon matPrefix>table_view</mat-icon>
+        <mat-label>Designation</mat-label>
+        <mat-select >
+            <mat-option  *ngFor="let field of designations" [value]="field.id">
+                {{field.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div class="col-md-3" *ngIf="isStatus">
+    <mat-form-field>
+        <mat-icon matPrefix>table_view</mat-icon>
+        <mat-label>Status</mat-label>
+        <mat-select >
+            <mat-option  *ngFor="let field of statuses" [value]="field.id">
+                {{field.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+</div>

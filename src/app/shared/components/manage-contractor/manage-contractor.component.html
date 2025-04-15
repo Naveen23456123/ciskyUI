@@ -1,0 +1,174 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteContractor">
+        <h3 mat-dialog-title class="justify-content-center"> {{title}} Details </h3>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <!-- <form [formGroup]="organizationForm" > -->
+                <form [formGroup]="contractorForm" (submit)="submit()">
+                    <div class="row control-div">
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Contractor Name</mat-label>
+                                <input matInput formControlName="contractorname">
+                                <mat-error>Please enter First Name.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Contractor Address</mat-label>
+                                <input matInput formControlName="contractoraddress">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Project Cost</mat-label>
+                                <input matInput formControlName="projectcost">                                
+                                <mat-error *ngIf="contractorForm.hasError('Email', 'email')">Please enter Valid Email Id.
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Project Length( In Kms.)</mat-label>
+                                <input matInput formControlName="projectlength">
+                                <mat-error>Please enter First Name.</mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row control-div">
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Project Duration ( In Months)</mat-label>
+                                <input matInput formControlName="projectduration">
+                                <mat-error>Please enter First Name.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">                          
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Bid Due Date</mat-label>
+                                <input matInput  formControlName="bidduedate" [matDatepicker]="bidduedate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="bidduedate"></mat-datepicker-toggle>
+                                <mat-datepicker #bidduedate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>LOA Date</mat-label>
+                                <input matInput  formControlName="loadate" [matDatepicker]="loadate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="loadate"></mat-datepicker-toggle>
+                                <mat-datepicker #loadate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Agreement Date</mat-label>
+                                <input matInput  formControlName="agreementdate" [matDatepicker]="agreementdate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="agreementdate"></mat-datepicker-toggle>
+                                <mat-datepicker #agreementdate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row control-div">
+                        <div class="col-md-3">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Commencement Date</mat-label>
+                                <input matInput  formControlName="commencementdate" [matDatepicker]="commencementdate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="commencementdate"></mat-datepicker-toggle>
+                                <mat-datepicker #commencementdate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Schedule Const. Complete Date</mat-label>
+                                <input matInput  formControlName="scheduleconstructioncompletedate" [matDatepicker]="scheduleconstructioncompletedate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="scheduleconstructioncompletedate"></mat-datepicker-toggle>
+                                <mat-datepicker #scheduleconstructioncompletedate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Schedule Complete Date</mat-label>
+                                <input matInput  formControlName="schedulecompletedate" [matDatepicker]="schedulecompletedate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="schedulecompletedate"></mat-datepicker-toggle>
+                                <mat-datepicker #schedulecompletedate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Actual Complete Date</mat-label>
+                                <input matInput  formControlName="actualcompletedate" [matDatepicker]="actualcompletedate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="actualcompletedate"></mat-datepicker-toggle>
+                                <mat-datepicker #actualcompletedate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row control-div">
+                        <div class="col-md-3">
+                            
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Actual Const. Complete Date</mat-label>
+                                <input matInput  formControlName="actualconstructioncompletedate" [matDatepicker]="actualconstructioncompletedate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="actualconstructioncompletedate"></mat-datepicker-toggle>
+                                <mat-datepicker #actualconstructioncompletedate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        <!-- <div class="col-md-9 button-row" align="right">
+                            <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                            <button class="submit-btn" mat-flat-button  color="primary">
+                                {{isEdit?'Update':'Submit'}}</button>
+                        </div> -->
+                    </div>
+                    
+                </form>
+            </div>
+        </mat-card-content>
+        <mat-dialog-actions align="end">
+            <div class="row control-div">
+                <div class=" button-row" align="right">
+                      <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                      <button class="submit-btn" (click)="submit()" mat-flat-button  color="primary">
+                          {{isEdit?'Update':'Submit'}}</button>
+              </div>
+              </div>
+          </mat-dialog-actions>
+    </mat-card>
+    <mat-card *ngIf="deleteContractor">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl">{{contractorForm.controls['contractorname'].value}}</span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,0 +1,120 @@
+<div class="container">
+    <mat-card>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper" *ngIf="!isLoading">                
+
+                <div class="mat-elevation-z8">                    
+                    <div class="table-title-row">
+                        <mat-form-field>
+                          <mat-label>Filter</mat-label>
+                          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+                        </mat-form-field>
+                        <div class="button-row">              
+                          <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
+                            <mat-icon>add box</mat-icon> Vehicle Log
+                        </button> 
+                      </div>
+                    </div> 
+                      <div class="mat-elevation-z8">
+                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>                     
+                        
+                          <ng-container matColumnDef="serial">
+                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                          </ng-container>                 
+                          <!-- contractName Column -->
+                          <ng-container matColumnDef="vehiclename">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Vehicle Name </th>
+                            <td mat-cell *matCellDef="let row"> {{row.vehiclename}} </td>
+                          </ng-container>
+                      
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="vehicleno">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Vehicle Number </th>
+                            <td mat-cell *matCellDef="let row"> {{row.vehiclenumber}} </td>
+                          </ng-container>    
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="date">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header> Used Date </th>
+                                <td mat-cell *matCellDef="let row"> 
+                                  {{row.useddate | formatDate}}
+                                </td>
+                              </ng-container>  
+                          <ng-container matColumnDef="starttime">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Start </th>
+                            <td mat-cell *matCellDef="let row">
+                              <table class="child-table">
+                                <tr>
+                                  <td>Time</td>
+                                  <td class="pad-right-1 pad-left-1">:</td>
+                                  <td>{{row.fromtime}}</td>
+                                </tr>
+                                <tr>
+                                  <td>Reading</td>
+                                  <td class="pad-right-1 pad-left-1">:</td>
+                                  <td>{{row.initialreading}}</td>
+                                </tr>
+                              </table>
+                            </td>
+                          </ng-container>
+                          <ng-container matColumnDef="endtime">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> End </th>
+                            <td mat-cell *matCellDef="let row"> 
+                              <table class="child-table">
+                                <tr>
+                                  <td>Time</td>
+                                  <td class="pad-right-1 pad-left-1">:</td>
+                                  <td>{{row.totime}}</td>
+                                </tr>
+                                <tr>
+                                  <td>Reading</td>
+                                  <td class="pad-right-1 pad-left-1">:</td>
+                                  <td>{{row.endreading}}</td>
+                                </tr>
+                              </table>                             
+                            </td>
+                          </ng-container>                                      
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="commencementoftrip">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Conclusion</th>
+                            <td mat-cell *matCellDef="let row">                              
+                              {{row.endreading-row.initialreading}} km
+                            </td>
+                          </ng-container>    
+                        
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="purposeandplace">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Purpose and Place </th>
+                            <td mat-cell *matCellDef="let row"> {{row.purposeandplace}} </td>
+                          </ng-container> 
+                        
+                          <!-- con_personName Column -->
+                          <ng-container  matColumnDef="action">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                            <td mat-cell class="action-col" *matCellDef="let row"> 
+                              <div class="button-row">                              
+                                <app-edit-btn [routerLink]="['/vehicle-log/edit',row.id]" [state]="row" ></app-edit-btn>                              
+                                <app-delete-btn [state]="row" [routerLink]="['/vehicle-log/delete',row.id]" ></app-delete-btn>
+                          </div>
+                           </td>
+                          </ng-container>
+                        
+                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+                          <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+                          </tr>
+                        </table>
+                        <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+                        </mat-paginator>
+                      </div>                    
+                      
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+<router-outlet></router-outlet>

@@ -1,0 +1,146 @@
+<div class="container">
+    
+    <mat-card>
+        <mat-card-title>
+            <div class="card-title-row">
+                <span class="sub-heading">Milestone(s)</span>                
+              </div>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper" *ngIf="!isLoading">
+                
+                <div class="mat-elevation-z8">
+                    
+                      <div class="table-title-row">
+                        <mat-form-field>
+                          <mat-label>Filter</mat-label>
+                          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+                        </mat-form-field>
+                        <div class="button-row">              
+                          <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
+                          <button class="title-btn" type="button" (click)="milestone()"  mat-mini-fab color="primary">
+                              <mat-icon>add box</mat-icon> Milestone
+                          </button>        
+                          <app-download-csv (clickEvent)="export()" ></app-download-csv>
+                      </div>
+                    </div> 
+                      <div class="mat-elevation-z8">
+                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+                      
+                          <ng-container matColumnDef="serial">
+                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                          </ng-container>
+                      
+                          <!-- contractName Column -->
+                          <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+                            <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                          </ng-container>
+                      
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="milestonedate">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> MileStone Date </th>
+                            <td mat-cell *matCellDef="let row"> {{row.milestonedate | formatDate}} </td>
+                          </ng-container>
+                      
+                          <!-- con_personName Column -->
+                          <ng-container matColumnDef="day">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> No. Of Days </th>
+                            <td mat-cell *matCellDef="let row"> {{row.days}} </td>
+                          </ng-container>
+                          <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+                            <td mat-cell *matCellDef="let row"> {{row.status}} </td>
+                          </ng-container> 
+                          <ng-container matColumnDef="actual">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Actual </th>
+                            <td mat-cell class="actual" *matCellDef="let row"> 
+                              <table class="child-table">
+                                <tr>
+                                  <td class="vw-4rem">Date</td>
+                                  <td class="pad-right-1 pad-left-1">:</td>
+                                  <td>{{row.actualdate | formatDate}} </td>
+                                </tr>
+                                <tr>
+                                  <td class="vw-4rem">Gap Days</td>
+                                  <td class="pad-right-1 pad-left-1">:</td>
+                                  <td>{{getDays(row.actualdate,row.milestonedate)}} </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </ng-container>
+                          <ng-container matColumnDef="reschd">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Reschedule </th>
+                            <td mat-cell class="resc" *matCellDef="let row">
+                              <table class="child-table">
+                                <tr>
+                                  <td class="vw-4rem">Date</td>
+                                  <td class="pad-right-1 pad-left-1">:</td>
+                                  <td>{{row.rescheduledate | formatDate}} </td>
+                                </tr>
+                                <tr>                                 
+                                  <td class="vw-4rem">Gap Days</td>
+                                  <td class="pad-right-1 pad-left-1">:</td>
+                                  <td>{{getDays(row.rescheduledate,row.milestonedate)}} </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </ng-container>
+                          <ng-container matColumnDef="letters">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Letters </th>
+                            <td mat-cell *matCellDef="let row">
+                              <table class="child-table">                                
+                                <tr *ngIf="row.actualletterid">
+                                  <td>Actual</td>   
+                                  <td class="pad-right-1 pad-left-1">:</td>                              
+                                  <td>
+                                    <app-view-btn (clickEvent)="viewletter(row.actualletterid)"></app-view-btn>
+                                  </td>
+                                </tr>
+                                <tr *ngIf="row.rescheduleletterid">
+                                  <td>Reschedule</td>
+                                  <td class="pad-right-1 pad-left-1">:</td>
+                                  <td>
+                                    <app-view-btn  (clickEvent)="viewletter(row.rescheduleletterid)"></app-view-btn>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </ng-container>
+                         
+                          <!-- con_personName Column -->
+                          <ng-container matColumnDef="action">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                            <td mat-cell class="action-col" *matCellDef="let row"> 
+                              <div class="button-row">                             
+                                <app-edit-btn (clickEvent)="editms(row)" ></app-edit-btn>                              
+                                <app-delete-btn (clickEvent)="deletems(row)"></app-delete-btn>
+                              </div>
+                            </td>
+                          </ng-container>
+                                            
+                         
+                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                          
+                          <!-- Row shown when there is no matching data. -->
+                          <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                              No Milestone Details found at this moment.</td>
+                          </tr>
+                        </table>
+                        <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+                        </mat-paginator>
+                        <!-- <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
+                      </div>
+                      
+                      
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

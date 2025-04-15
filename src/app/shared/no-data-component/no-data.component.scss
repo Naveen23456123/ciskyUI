@@ -1,0 +1,24 @@
+.nd-icon{
+ font-size: 3em;
+ height: 1em;
+ width: 1em;
+ background-image: linear-gradient(#1c086c, #00129f); 
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+}
+.nd-msg{
+    color: var(--mdc-fab-small-container-color);
+    font-size: 1.3em;
+    font-weight: 600;
+    letter-spacing: -0.9px;
+}
+.col-dir{
+    flex-direction: column; 
+}
+.nd-bg{
+    background-color: #f4f8ff;
+    border-radius: 15px;
+   height: 100%;
+   width: 100%;
+   padding: 14px 0px 14px 0px;
+}

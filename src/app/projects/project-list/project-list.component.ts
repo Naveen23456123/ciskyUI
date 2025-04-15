@@ -1,0 +1,206 @@
+import {AfterViewInit, Component,inject, ViewChild} from '@angular/core';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatSort, MatSortModule} from '@angular/material/sort';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import { ProjectService } from '../project.service';
+import { finalize } from 'rxjs';
+import { SessionService } from '@app/shared/services/session.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TemplateType } from '@app/shared/models/CSVTemplate';
+import { UploadFileComponent } from '@app/shared/components/upload-file/upload-file.component';
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { ManageProjectComponent } from '@app/shared/components/manage-project/manage-project.component';
+import { StateDataService } from '@app/shared/services/state-data.service';
+import { NotifyBarService } from '@app/shared/services/notify-bar.service';
+import { stubFalse } from 'lodash';
+
+@Component({
+  selector: 'app-project-list',
+  standalone: false,
+  templateUrl: './project-list.component.html',
+  styleUrl: './project-list.component.scss',
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed,void', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
+})
+export class ProjectListComponent {  
+  single1:any = [
+    {
+      "name": "Physical ",
+      "value": 55
+    },
+    {
+      "name": "Financial ",
+      "value": 50
+    }
+  ];
+  xScaleMax:number=100;
+  xScaleMin:number=0;
+  legend: boolean = false; 
+  viewGraph: [number,number] = [380, 150];
+  currentDate: Date = new Date();
+  isContLoading=false;
+// options
+showXAxis: boolean = true;
+showYAxis: boolean = true;
+gradient: boolean = false;
+showLegend: boolean = false;
+showXAxisLabel: boolean = true;
+showYAxisLabel: boolean = true;
+
+  projects:any[]= [];
+  isLoading = true;
+  displayedColumns: string[] = ['serial','code', 'shortname', 'location','clientname', 'concernpersonname'];
+  dataSource: MatTableDataSource<any[]>;
+  columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
+  expandedElement: any | null;
+  activeOrgId='123';
+  readonly dialog = inject(MatDialog);
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+   private defaultdialogoptions:  MatDialogConfig = {
+        minWidth: '900px', 
+        disableClose: false,
+        data: {},
+      };
+
+  constructor(private projectService: ProjectService, private sessionService : SessionService,
+    private router: Router,private route: ActivatedRoute,private stateDataService: StateDataService,
+    private notifyBarService:NotifyBarService
+  )
+  {
+    //Object.assign(this, { single : this.single1 });
+     this.dataSource = new MatTableDataSource(this.projects);
+  }
+
+
+  dataLabelFormat = (value: any): string => {    
+    return `${value}%`; // Example: add currency symbol
+  };
+  ngOnInit()  {
+    this.stateDataService.stateDataSubject.subscribe((data) => {   
+      if (data.event == 'projectadd' && data.valid && data.value) {
+        this.addRowData(data.value);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      } 
+    });
+
+    this.isLoading=true;
+    this.projectService.getAllProjectDetailsByOrdIg({ organizationId: this.activeOrgId }, '')
+          .pipe(finalize(() => this.isLoading = false))
+          .subscribe((response: any) => {
+            if (response && response.success) {
+             //this.projects = response.data;                 
+             this.projects = response.data.map((item:any) => ({
+              ...item,
+              selectedContractor:item.contractor!=null ? item.contractor.id : null
+            }));      
+             console.log(this.projects);
+             this.dataSource = new MatTableDataSource(this.projects);
+             this.isLoading=true;
+            }
+          });
+  }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  view(element: any){   
+    this.sessionService.setCurrentProject(element);
+    this.router.navigate(['project-view'], { relativeTo: this.route });
+  }
+
+
+  import() {
+    const config = this.defaultdialogoptions;
+                  config.minWidth='1200px';
+                    config.data = {
+                      pageGuid: this.route.snapshot.data['pageGuid'],
+                      type: this.route.snapshot.data['type'], 
+                      template_type: TemplateType.PROJECT   
+                    };
+          this.dialog.open(UploadFileComponent,config);
+  }
+  export() {
+    
+  }
+
+  addRowData(data: any) { 
+    const data1:any = {
+      id:data.id,
+      tenderid:data.tenderId,
+      projectcode:data.projectCode,
+      projectshortname:data.projectShortName,
+      projectlocation:data.projectLocation,
+      projectname:data.projectName,
+      keypoints:data.keyPoints,
+      companyid: data.companyId,
+      worktypeid:data.workTypeId,
+      ourroleid:data.ourRoleId,
+      projectlength:data.projectLength,
+      bidduedate:data.bidDueDate,
+      loadate:data.loaDate, 
+      agreementdate:data.aggrementDate,     
+      commencementdate:data.commencementDate,
+      projectduration:data.projectDuration,
+      oandmduration:data.oandmDuration,
+      constructionduration:data.constructionDuration,
+      jvshare:data.jvShare,
+      scheduleconstructioncompletedate: data.scheduleConstructionCompleteDate,
+      authengineerid:data.authEngineerId,
+      remark:data.remark,
+      cordinatorid:data.cordinatorId,
+      consultancyfees:data.consultancyFees,
+      contractmodeid:data.contractModeId, 
+      lead:data.lead,     
+      jv:data.jv,
+      ourshare:data.ourShare,
+      association:data.association,
+      client:data.client,
+      regionalofficename:data.regionalOfficeName, 
+      regionalofficeaddress:data.regionalOfficeAddress,     
+      piuaddress:data.piuAddress,
+      siteaddress:data.siteAddress
+    }      
+    this.dataSource.data.unshift(data1);  
+    this.dataSource._updateChangeSubscription(); 
+  }
+
+  contractorChange(element:any, event:any){ 
+    this.isContLoading=true;   
+    this.projectService.getAllContractorDetailsListViewById({id:event.value},'')
+    .pipe((finalize(()=> this.isContLoading=false))).subscribe((response:any)=>{
+      if(response && response.success){
+        const elementData:any = this.dataSource.data.find((x:any) => x.id == element.id);
+        elementData.selectedContractor=event.value;
+        elementData.submittedbill= response.data.submittedbill;
+        elementData.recommendedbill= response.data.recommendedbill;
+        elementData.authoritybill= response.data.authoritybill;
+        elementData.contractor= response.data.contractor;
+        elementData.progress=response.data.progress;
+        elementData.cos=response.data.cos;
+        elementData.eot=response.data.eot;
+        this.dataSource._updateChangeSubscription();
+      }
+    })
+  }
+}

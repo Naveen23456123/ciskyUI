@@ -1,0 +1,8 @@
+.mat-progress-spinner
+{
+    display: inline-block;
+    vertical-align: middle;
+}
+.message{
+    margin-left: .5em;
+}

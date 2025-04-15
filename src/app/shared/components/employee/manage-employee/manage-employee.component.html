@@ -1,0 +1,295 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteEmployee">
+        <h3 mat-dialog-title class="justify-content-center">{{title}}</h3>
+        <mat-dialog-content class="mat-typography">
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <form [formGroup]="employeeForm" (submit)="submit()">
+                    <div class="row control-div">                       
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Sub Company Name</mat-label>
+                                <mat-select formControlName="CompanyId">
+                                    <mat-option  *ngFor="let field of subCompanyList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Employee Code</mat-label>
+                                <input matInput formControlName="Code">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Name</mat-label>
+                                <input matInput formControlName="name">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Employee Role</mat-label>
+                                <mat-select formControlName="RoleId">
+                                    <mat-option  *ngFor="let field of empRoleList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>  
+                       
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Employee Type</mat-label>
+                                <mat-select formControlName="TypeId">
+                                    <mat-option  *ngFor="let field of empTypeList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Designation</mat-label>
+                                <mat-select formControlName="designationId">
+                                    <mat-option  *ngFor="let field of empdesignationList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Status</mat-label>
+                                <mat-select formControlName="statusId">
+                                    <mat-option  *ngFor="let field of empstatusList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">                          
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Joining Date</mat-label>
+                                <input matInput  formControlName="joiningDate" [matDatepicker]="joiningdate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="joiningdate"></mat-datepicker-toggle>
+                                <mat-datepicker #joiningdate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        
+                       
+                        <div class="col-md-3">                          
+                            <mat-form-field class="example-full-width">
+                                <mat-label> Date Of Birth</mat-label>
+                                <input matInput  formControlName="dateOfBirth" [matDatepicker]="dateOfBirth">
+                              
+                                <mat-datepicker-toggle matIconSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
+                                <mat-datepicker #dateOfBirth></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Gender</mat-label>
+                                <mat-select formControlName="genderId">
+                                    <mat-option  *ngFor="let field of genderList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Qualification</mat-label>
+                                <input matInput formControlName="qualification">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Maritial Status</mat-label>
+                                <mat-select formControlName="maritalStatusId">
+                                    <mat-option  *ngFor="let field of maritalList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Email Id</mat-label>
+                                <input matInput formControlName="emailId">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Phone Number</mat-label>
+                                <input matInput formControlName="PhoneNumber">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>Current Address</mat-label>
+                                <textarea rows="1" matInput formControlName="currentAddress"></textarea>
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Emergency Person Name</mat-label>
+                                <input matInput formControlName="emergencyPersonName">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Emergency Contact Number</mat-label>
+                                <input matInput formControlName="EmergencyContactNumber">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Relation</mat-label>
+                                <input matInput formControlName="relation">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Emergency Address</mat-label>
+                                <textarea rows="1" matInput formControlName="emergencyAddress"></textarea>
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                    </div>
+                    <div class="row control-div">
+                        
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Account Number</mat-label>
+                                <input matInput formControlName="AccountNumber">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>IFSC Code</mat-label>
+                                <input matInput formControlName="ifscCode">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Bank Name</mat-label>
+                                <input matInput formControlName="bankName">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Bank Address</mat-label>
+                                <textarea rows="1" matInput formControlName="bankAddress"></textarea>
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Aadhaar Card Number</mat-label>
+                                <input matInput formControlName="AadharNumber">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>UAN Number</mat-label>
+                                <input matInput formControlName="UanNumber">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>PAN Card Number</mat-label>
+                                <input matInput formControlName="PanNumber">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                     
+                        <div class="row col-md-12" *ngIf="!isEdit">
+                            <div class="col-md-10 ">  
+                                <span class="sub-heading control-div ">Employee Document(s)</span>
+                            </div>
+                            <div class="col-md-2">
+                                <div  class="table-title-row float-end">                               
+                                    <div class="button-row">                                  
+                                    <button mat-icon-button type="button" matTooltip="New Document" (click)="addDocControls()">
+                                        <mat-icon>add_circle</mat-icon>
+                                    </button>     
+                                </div>
+                                </div>
+                            </div>  
+                            <hr>
+                            <div class="wrapper" formArrayName="files">
+                                <div *ngFor="let item of files.controls; let i = index" [formGroupName]="i">
+                                    <div class="col-md-12 row control-div">
+                                    <div class="col-md-12">                       
+                                    <app-attach-file  (onfileUpload)="fileUploded($event,i)" [showRemove]="i !== 0" (clickEvent)="removeDocControl(i)" (textChanged)="onDocNameUpdate($event,i)" Uploadtitle="Document" ></app-attach-file>
+                                    </div>                            
+                                </div>
+                            </div>
+                       </div>
+                        </div>
+                    </div>                                  
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">       
+        <div class="row control-div">
+            <div class=" button-row" align="right">
+                  <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                  <button [ngClass]="employeeForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!employeeForm.valid || isBtnClicked" (click)="submit()" color="primary">
+                    <span [hidden]="isBtnClicked">{{isEdit?'Update':'Submit'}}</span> 
+                    <app-btn-loader [IsLoading]="isBtnClicked"></app-btn-loader>
+                    </button>
+          </div>
+          </div>
+      </mat-dialog-actions>
+    </mat-card>
+    <mat-card *ngIf="deleteEmployee">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl">{{employeeForm.controls['name'].value}}</span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

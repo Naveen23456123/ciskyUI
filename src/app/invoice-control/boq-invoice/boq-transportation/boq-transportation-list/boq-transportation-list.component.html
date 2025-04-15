@@ -1,0 +1,103 @@
+<div class="container">
+<mat-card>
+    <mat-card-title>
+        <h6>III - Transportation (Fixed rate on rental basis)
+          <button  class="title-btn float-end no-print" type="button" routerLink="tp-create"  mat-mini-fab color="primary">
+            <mat-icon>add box</mat-icon> Transportation
+        </button>
+        </h6>
+    </mat-card-title>
+    <mat-card-content>
+      <div class="load-wrap" *ngIf="isLoading">
+        <app-loader [IsLoading]="isLoading"></app-loader>
+    </div>
+    <div class="wrapper" *ngIf="!isLoading">     
+        <table mat-table [dataSource]="dataSource" >
+        
+          <ng-container matColumnDef="serial">
+            <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}">Sr. No</th>
+            <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
+            <td mat-footer-cell *matFooterCellDef colspan="6"> Total </td>
+          </ng-container>
+          <ng-container matColumnDef="no">
+            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">No</th>
+          </ng-container>       
+       
+          <ng-container matColumnDef="desc">
+            <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Description </th>
+            <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+          </ng-container>
+          <ng-container matColumnDef="descth">
+          <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Description</th>
+          </ng-container>
+
+             
+              <ng-container matColumnDef="constperiod">
+                <th mat-header-cell *matHeaderCellDef > During Construction Period </th>
+                <td mat-cell *matCellDef="let row"> {{row.constructionperiod}} </td>
+              </ng-container>       
+              <ng-container matColumnDef="dlpomperiod">
+                <th mat-header-cell *matHeaderCellDef > During DLP and O&M Period </th>
+                <td mat-cell *matCellDef="let row"> {{row.dlpoandmperiod}} </td>
+              </ng-container> 
+
+              <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Total </th>
+                <td mat-cell *matCellDef="let row"> {{row.constructionperiod+row.dlpoandmperiod}} </td>
+              </ng-container> 
+              <ng-container matColumnDef="totalth">
+                <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Total</th>
+              </ng-container>
+
+              <ng-container matColumnDef="vehpermonthrate">
+                <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Rate / Vehicle - Month (Rs.) </th>
+                <td mat-cell *matCellDef="let row"> {{row.rate}} </td>
+              </ng-container>
+              <ng-container matColumnDef="vehpermonthth">
+                <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Rate / Vehicle - Month (Rs.)</th>
+              </ng-container>
+
+              <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Amount (Rs.) </th>
+                <td mat-cell *matCellDef="let row"> {{row.totalamount}} </td>
+                <td mat-footer-cell *matFooterCellDef> {{getTotalAmount()}} </td>
+              </ng-container>
+              <ng-container matColumnDef="amountth">
+                <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Amount (Rs.)</th>
+              </ng-container>
+
+              <ng-container matColumnDef="action" >
+                <th mat-header-cell class="no-print" *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Action </th>
+                <td mat-cell class="no-print" *matCellDef="let row">
+                  <div class="button-row">
+                    <button class="edit-table-btn" [state]="row"
+                    [routerLink]="['tp-edit',row.id]" matTooltip="Edit" mat-mini-fab>
+                   <mat-icon>edit</mat-icon> 
+                 </button>
+                 <button class="delete-table-btn" [state]="row"
+                 [routerLink]="['tp-delete',row.id]" matTooltip="Delete" mat-mini-fab >
+                   <mat-icon>delete_forever</mat-icon> 
+                 </button>
+               </div>               
+                </td>
+                <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
+              </ng-container>
+              <ng-container matColumnDef="actionth">
+                <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
+              </ng-container>
+
+
+
+              <ng-container matColumnDef="qty">
+                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Qty. (No. of vehicle month) </th>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="['no','descth','qty','totalth','vehpermonthth','amountth','actionth']"></tr>
+            <tr mat-header-row *matHeaderRowDef="tpdataColumn"></tr>
+            <tr mat-row *matRowDef="let row; columns: tpdataColumn;"></tr> 
+            <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>                    
+          </table>
+    </div>
+    </mat-card-content>
+</mat-card> 
+</div>

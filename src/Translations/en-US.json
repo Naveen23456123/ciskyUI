@@ -1,0 +1,148 @@
+{
+  "APP_NAME": "VIZO",
+  "APP_TITLE": "Visitor Management System",
+  "HOSTS": "Hosts",
+  "GLOBAL": "Global",
+  "Organization": "Organization",
+  "SAVE_BUTTON": "Save",
+  "DELETE_BUTTON": "Delete",
+  "BRANDING": {
+    "VALUE": "Branding",
+    "ORGANIZATION_LOGO": "Web Application Logo",
+    "MOBILE_APPLICATION_LOGO": "Mobile Application logo",
+    "TABLET_APPLICATION_LOGO": "Tablet Application Logo",
+    "ORGANIZATION_LOGO_DESC": "Logo will be used for printing badges,passes and sending emails.",
+    "MOBILE_LOGO_DESC": "Logo uploaded here will be used in the VIZTRO mobile application replacing web logo.",
+    "TABLET_LOGO_DESC": "Logo uploaded here will be used in the VIZTRO tablet application replacing web logo."
+
+  },
+  "ENABLE_HOSTS_SELECTION": {
+    "VALUE": "Enable Hosts selection",
+    "ON": "If turned \"ON\" then visitor will be able to see a list of hosts to select who they are here to see.",
+    "OFF": "If turned \"OFF\" no hosts list appears to the visitors while creating check-in request."
+  },
+  "HOST_REQUIRED_FOR_VISITOR_TYPE": {
+    "VALUE": "Host Required for Visitor Type",
+    "ENABLE": "Enable Visitor type from below list for which visitor select host to check-in into the organization location."
+  },
+  "VISITOR_CHECKIN_APPROVAL": {
+    "VALUE": "Visitor Check-In Approval",
+    "ON": "If turned \"ON\" then Host will be approving the request for the vistor to check-in.",
+    "OFF": "If turned \"OFF\" no hosts approval is required to check-in into the organization location."
+  },
+  "VISITOR_CHECKIN_APPROVAL_REQUIRED": {
+    "VALUE": "Visitor Check-In Approval Required",
+    "ENABLE": "Enable Visitor type from below list for which visitor check-in approval will be required for the organization location."
+  },
+  "ORGANIZATION_BANNER": {
+
+    "VALUE": "Organization Banner",
+    "DESCRIPTION": "Print a organization banner with QR Code. Visitor can check-in by using this QR code using the VIZTRO mobile or tablet app."
+  },
+  "NOTIFICATION": {
+    "VALUE": "Communication",
+    "PUSH": {
+      "HEADING": "Push Notification",
+      "ON": "If turned \"ON\"then push notification for devices will be enabled for your organization.",
+      "OFF": "If turned \"OFF\" then push notification for devices will be disabled for your organization."
+    },
+    "EMAIL": {
+      "HEADING": "Email(s)",
+      "EMAIL_ON_VISITOR_CHECKIN": {
+        "VALUE": "Email on Visitor Checkin",
+        "ON": "If turned \"ON\" Email notification will be sent to visitor's EmailId with their checkin details.",
+        "OFF": "If turned \"OFF\" no Email notification will be sent to visitor with their checkin. details."
+      },
+      "EMAIL_ON_VISITOR_CHECKOUT": {
+        "VALUE": "Email on Visitor CheckOut",
+        "ON": "If turned \"ON\" Email notification will be sent to visitor's EmailId with their checkout details.",
+        "OFF": "If turned \"OFF\" no Email notification will be sent to visitor with their checkout."
+      },
+      "EMAIL_NOTIFICATION_FOR_HOST": {
+        "VALUE": "Email Notification for Host(s)",
+        "ON": "If turned \"ON\" then host will be notified about visitor activity. Host must have email enabled in their preference.",
+        "OFF": "If turned \"OFF\" host will not be notify on any visitors activity."
+      },
+      "SEND_INVITE_REMIND_EMAIL": {
+        "VALUE": "Send Invite reminder email",
+        "ON": "If turned \"ON\" then remind visitors with an email 20 minutes before their invitation begins.",
+        "OFF": "If turned \"OFF\" no reminder will be send to visitors."
+      },
+      "VISITOR_CHECKOUT_NOTIFICATION_HOST": {
+        "VALUE": "Visitor Check-Out Notification for Host(s)",
+        "ON": "If turned \"ON\" then host will be notified when visitor check-out. Host must have email enabled in their preference.",
+        "OFF": "If turned \"OFF\" no host will be notify on check-out of their respective visitors."
+      }
+    },
+    "SMS": {
+      "HEADING": "Sms",
+      "NOTIFICATION_FOR_HOST": {
+        "VALUE": "Notification for Host(s)",
+        "ON": "If turned \"ON\" then notify Hosts of visitors via SMS. Hosts must have a mobile number lilsted and must have SMS enabled in their preference.",
+        "OFF": "If turned \"OFF\" no SMS notification will be sent to Hosts of their respective visitors."
+      },
+      "VISITOR_NOTIFICATION_HOST_RESPONSE": {
+        "VALUE": "Visitors Notification for Host Response",
+        "ON": "If turned \"ON\" then notify visitor via SMS of their check-in request whether accepted or rejected. This requires Check-in approvals to be on.",
+        "OFF": "If turned \"OFF\" no SMS notification will be sent to Hosts of their respective visitors."
+      }
+    }
+  },
+  "CHECKIN": "Check In",
+  "CAPTURE_ID": {
+    "VALUE": "Capture Id",
+    "ON": "If turned \"ON\" then visitor Id will be required at the time of check-in through mobile or tablet.",
+    "OFF": "If turned \"OFF\" visitor Id will not be captured at the time of check-in."
+  },
+  "CAPTURE_VISITOR_PHOTO": {
+    "VALUE": "Capture Visitor Photo",
+    "ON": "If turned \"ON\" then visitor will be ask to capture own photo when doing check-in through mobile or tablet.",
+    "OFF": "If turned \"OFF\" visitor photo will not be captured at the time of check-in."
+  },
+  "INVITATION_REQUIRED": {
+    "HEADING": "Invitation Required",
+    "VALUE": "Visitor can only do checkin by using required invitation sent by notification. Enable the visitor type you want to apply this setting."
+  },
+  "RESTRICT_INVITATION_REQUIRED_TIME": {
+    "VALUE": "Restrict \"Invitation Required\" Start Time",
+    "ON": "If turned \"ON\" \"Invitation Required\" Visitor type will not be able to check-in into the organization until their invite start. Enable the visitor type you want to apply this setting.",
+    "OFF": "If turned \"OFF\" \"Invitation Required\" Visitor type can do check-in even before the invite start."
+  },
+  "REMEMBER_VISITOR": {
+    "VALUE": "Remembering Visitor",
+    "ON": "If turned \"ON\" then allow returning visitor to facilitate the check-in process using their email or mobile number.",
+    "OFF": "If turned \"OFF\" no visitor will be facilitated for check-in."
+  },
+  "GENERAL": "General",
+  "EMAIL_REQUIRED": {
+    "VALUE": "Email Required",
+    "ON": "If turned \"ON\" then visitor email address is required during check-in.",
+    "OFF": "If turned \"OFF\" visitor email address will be optional. request."
+  },
+  "CONFIRM_EMAIL_REQUIRED": {
+    "VALUE": "Confirm Email Required ( Mobile app only)",
+    "ON": "If turned \"ON\" then visitor email address to be verified.",
+    "OFF": "If turned \"OFF\" email address field will not be visible to visitor. request."
+  },
+  "MOBILE_NO_REQUIRED": {
+    "VALUE": "Mobile Number Required",
+    "ON": "If turned \"ON\" then visitor mobile number is required during check-in.",
+    "OFF": "If turned \"OFF\" visitor mobile number will be optional. request."
+  },
+  "CONFIRM_MOBILE_NO_REQUIRED": {
+    "VALUE": "Confirm Mobile Number Required ( Mobile app only)",
+    "ON": "If turned \"ON\" then visitor mobile number to be verified.",
+    "OFF": "If turned \"OFF\" mobile number field will not be visible to visitor. request."
+  },
+  "COMPANY_NAME_REQUIRED": {
+    "VALUE": "Company Name Required",
+    "ON": "If turned \"ON\" then company name field is required during check-in.",
+    "OFF": "If turned \"OFF\" company name field will be optional. request."
+  },
+  "CAPTURE_NEW_PHOTO": {
+    "VALUE": "Capture new photo",
+    "ON": "If turned \"ON\" then visitor will be asked to take new picture everytime while doing check-in.",
+    "OFF": "If turned \"OFF\" previously uploaded picture will be used as current picture. request."
+  }
+
+}

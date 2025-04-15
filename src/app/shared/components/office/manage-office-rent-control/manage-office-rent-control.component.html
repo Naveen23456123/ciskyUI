@@ -1,0 +1,188 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteRent">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3> 
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <form [formGroup]="rentForm" (submit)="submit()">
+                    <div class="row control-div">                       
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Project</mat-label>
+                                <mat-select formControlName="projectid">
+                                    <mat-option  *ngFor="let field of projectList" [value]="field.id">
+                                        {{field.projectcode + ' - '+field.projectshortname}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Basic Amount</mat-label>
+                                <input matInput formControlName="basicamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>TDS Percentage</mat-label>
+                                <input  type="number" matInput formControlName="tdspercentage">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>TDS Amount</mat-label>
+                                <input matInput readonly >
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                       
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Total Amount</mat-label>
+                                <input matInput >
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Agreement Duration</mat-label>
+                                <input matInput formControlName="agreementduration">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">                          
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Agreement Date</mat-label>
+                                <input matInput  formControlName="agreementstartdate" [matDatepicker]="agreementstartdate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="agreementstartdate"></mat-datepicker-toggle>
+                                <mat-datepicker #agreementstartdate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        
+                       
+                        <div class="col-md-3">                          
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Agreement End Date</mat-label>
+                                <input matInput  formControlName="agreementenddate" [matDatepicker]="agreementenddate">
+                              
+                                <mat-datepicker-toggle matIconSuffix [for]="agreementenddate"></mat-datepicker-toggle>
+                                <mat-datepicker #agreementenddate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                       
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Owner Name</mat-label>
+                                <input matInput formControlName="ownername">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                     
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Bank Name</mat-label>
+                                <input matInput formControlName="bankname">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Account Holder Name</mat-label>
+                                <input matInput formControlName="accountholdername">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Account Number</mat-label>
+                                <input matInput formControlName="accountnumber">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>                     
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>IFSC Code</mat-label>
+                                <input matInput formControlName="ifsccode">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>PAN Card</mat-label>
+                                <input matInput formControlName="panno">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>GST No.</mat-label>
+                                <input matInput formControlName="gstno">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Phone Number</mat-label>
+                                <input matInput formControlName="phoneno">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>Address</mat-label>
+                                <textarea matInput formControlName="address"></textarea>
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                       
+                    </div>
+                    
+                    <div class="row control-div">
+                        <div class="col-md-12 button-row" align="right">
+                            <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                            <button class="submit-btn" mat-flat-button [disabled]="!rentForm.valid" color="primary">
+                                {{isEdit?'Update':'Submit'}}</button>
+                        </div>
+                    </div>                    
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card *ngIf="deleteRent">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl">{{rentForm.controls['name'].value}}</span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,0 +1,8 @@
+.mat-progress-spinner
+{
+    display: inline-block;
+    vertical-align: middle;
+}
+::ng-deep .mat-mdc-progress-spinner circle {
+    stroke:white !important;
+}

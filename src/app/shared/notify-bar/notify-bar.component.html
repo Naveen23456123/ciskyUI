@@ -1,0 +1,12 @@
+<div class="container">
+    <mat-toolbar color="warn" *ngIf="messages.warn && messages.warn.length">
+        <mat-toolbar-row *ngFor="let message of messages.warn ; trackBy:trackByfn;">
+            <span translate>{{message}}</span>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <mat-toolbar color="info" *ngIf="messages.info && messages.info.length">
+        <mat-toolbar-row *ngFor="let message of messages.info ; trackBy:trackByfn;">
+            <span translate>{{message}}</span>
+        </mat-toolbar-row>
+    </mat-toolbar>
+</div>

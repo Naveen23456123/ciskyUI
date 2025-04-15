@@ -1,0 +1,128 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteCOS">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <!-- <form [formGroup]="organizationForm" > -->
+                <form [formGroup]="cosForm" (submit)="submit()">
+                    <div class="row control-div">
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>COS Code</mat-label>
+                                <input [readonly]="isEdit ? true : null" matInput formControlName="code">
+                                <mat-error>Please enter COS code</mat-error>
+                            </mat-form-field>
+                        </div>                        
+                        <div class="col-md-6">                           
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Process Initiate Date</mat-label>
+                                <input matInput  [readonly]="isEdit ? true : null" formControlName="initiatedate" [matDatepicker]="initiatedate">
+                                <mat-error>Please select Initiate Date</mat-error>
+                                <mat-datepicker-toggle matIconSuffix [disabled]="isEdit ? true : false" [for]="initiatedate"></mat-datepicker-toggle>
+                                <mat-datepicker #initiatedate></mat-datepicker>
+                                
+                              </mat-form-field>
+                        </div>
+                        <div class="col-md-6" *ngIf="isEdit">                           
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Process Close Date</mat-label>
+                                <input matInput  formControlName="closedate" [matDatepicker]="closedate">  
+                                <mat-error>Please select Close Date</mat-error>                              
+                                <mat-datepicker-toggle matIconSuffix  [for]="closedate"></mat-datepicker-toggle>
+                                <mat-datepicker #closedate></mat-datepicker>
+                              </mat-form-field>
+                        </div> 
+                        <div class="col-md-6" *ngIf="!isEdit">
+                            <mat-form-field>
+                                <mat-label>Amount</mat-label>
+                                <input type="number" matInput formControlName="amount">
+                                <mat-error>Please enter amount</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6" *ngIf="isEdit">
+                            <mat-form-field>
+                                <mat-label>COS Status</mat-label>
+                                <mat-select (selectionChange)="statusChange($event)" formControlName="statusid">
+                                    <mat-option  *ngFor="let field of approvalStatusList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select COS status</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-6" *ngIf="isEdit && isApproved">
+                            <mat-form-field>
+                                <mat-label>Approved Amount </mat-label>
+                                <input type="number" matInput formControlName="approvedamount">
+                                <mat-error>Please enter approved amount</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div *ngIf="!isEdit" class="col-md-6">                           
+                            <app-select-search className="form-field-80" *ngIf="letterInit" 
+                                        searchPlaceholder="Search Letter" emptySearchMessage="No Letter Found"
+                                        label="Initiate Letter" [defaultValue]="cosForm.controls['initiateletterid'].value"
+                                        (onValueChange)="letterSelect($event)" [valueArrays]="letterList">
+                            </app-select-search>
+                            <button mat-icon-button type="button" matTooltip="New COS Letter" (click)="newLetter()">
+                                <mat-icon>add_circle</mat-icon>
+                              </button>                            
+                        </div>  
+                        <div *ngIf="isEdit" class="col-md-6">                           
+                            <app-select-search className="form-field-80" *ngIf="letterInit" 
+                                        searchPlaceholder="Search Letter" emptySearchMessage="No Letter Found"
+                                        label="Close Letter" [defaultValue]="cosForm.controls['closeletterid'].value"
+                                        (onValueChange)="letterSelect($event)" [valueArrays]="letterList">
+                            </app-select-search>
+                            <button mat-icon-button type="button" matTooltip="New COS Letter" (click)="newLetter()">
+                                <mat-icon>add_circle</mat-icon>
+                              </button>                            
+                        </div>   
+                      
+                        <div class="col-md-12 button-row" align="right">
+                                <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                                <button [ngClass]="cosForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!cosForm.valid" color="primary">
+                                    {{isEdit?'Update':'Submit'}}</button>
+                        </div>
+                        
+                    </div>
+                    
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card *ngIf="deleteCOS">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl">{{cosForm.controls['code'].value}}</span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

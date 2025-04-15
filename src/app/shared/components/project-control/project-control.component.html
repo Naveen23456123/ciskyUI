@@ -1,0 +1,6 @@
+<app-select-search *ngIf="isProjectLoaded" [required]="true" selectPlaceholder="Project"
+        searchPlaceholder="Search Project" emptySearchMessage="No Project Found" label="Select Project"
+        (onValueChange)="projectChange($event)" [valueArrays]="projectList"
+        [defaultValue]="defaultValue" [disable]="disable"
+        >
+    </app-select-search>

@@ -1,0 +1,41 @@
+hr{
+    margin: 0px;
+}
+::ng-deep .mat-mdc-row:nth-child(even) {
+    background-color: #f0f0f0  !important;
+}
+
+.view-btn{
+    font-size: 14px;
+    height: 26px !important;
+    background-color: #3c3c5b !important;
+    color: white !important;
+}
+
+.hr-5{
+    margin-top: 5px;
+}
+.mat-mdc-row:nth-child(even){
+    background-color: transparent !important;
+  }
+
+.details-Data{
+    box-shadow: var(--mdc-fab-small-container-elevation-shadow, var(--mat-sys-level3));
+    // background-image: linear-gradient(#000e50, #c1c1c1);
+    // color: white;
+    margin-bottom: 12px;
+  }
+  .pad-right-0{
+    padding-right: 0px;
+  }
+  .letters-view{
+    padding-right: 0;
+    align-items: center;
+    display: flex;
+  }
+  h6{
+    color: var(--bs-primary-text-emphasis);
+  }
+  .bill-val{
+    font-size: 1rem;
+  }

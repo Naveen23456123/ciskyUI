@@ -1,0 +1,227 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteLetter">        
+        <h3 mat-dialog-title class="justify-content-center"> {{isEdit?'Edit ': 'Add '}} {{title}} Letter</h3>
+        <mat-dialog-content class="mat-typography">
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="">
+                <form [formGroup]="letterForm" >
+                    <div class="row control-div">
+                        <div class="col-md-4" *ngIf="!isLetterEntity && !isEdit">
+                            
+                              <app-project-control   (onValueChange)="projectChange($event)"
+                              [defaultValue]="letterForm.get('projectid')?.value" ></app-project-control>
+                        </div>                       
+                        <div class="col-md-4" *ngIf="!isLetterEntity && !isEdit">
+                            <mat-form-field>
+                                <mat-label>Related To</mat-label>
+                                <mat-select  formControlName="relatedtoid">
+                                    @for (option of workOwnerList; track option) {
+                                        <mat-option [value]="option.id">{{ option.name }}</mat-option>
+                                      }
+                                </mat-select>
+                                <mat-error>Please select RelatedTo</mat-error>
+                              </mat-form-field>                            
+                        </div>
+                        <div class="col-md-4" *ngIf="!isLetterEntity && isContractor  && !isEdit">                          
+                                <mat-form-field>
+                                    <mat-label>Contractor</mat-label>
+                                    <mat-select  formControlName="contractorid">
+                                      
+                                      @for (option of contractorList; track option) {
+                                        <mat-option [value]="option.id">{{ option.contractorname }}</mat-option>
+                                      }
+                                    </mat-select>
+                                  </mat-form-field> 
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Letter Exchange Type</mat-label>
+                                <mat-select (selectionChange)="exchangeTypeChange($event)" formControlName="exchangetypeid">
+                                  
+                                  @for (option of exchangeType; track option) {
+                                    <mat-option [value]="option.id">{{ option.name }}</mat-option>
+                                  }
+                                </mat-select>
+                                <mat-error>Please select Letter Exchange Type</mat-error>
+                              </mat-form-field>
+                        </div>
+                        <div class="col-md-4" *ngIf="isSend">
+                            <mat-form-field>
+                                <mat-label>Reply By</mat-label>
+                                <mat-select formControlName="replybyid">
+                                    @for (option of replyByList; track option) {
+                                        <mat-option [value]="option.id">{{ option.name }}</mat-option>
+                                      }
+                                </mat-select>
+                              </mat-form-field>
+                        </div>  
+                        <div class="col-md-4" >
+                            <mat-form-field>
+                                <mat-label>Letter Type</mat-label>
+                                <mat-select  formControlName="lettertypeid">
+                                    @for (option of letterTypeList; track option) {
+                                        <mat-option [value]="option.id">{{ option.name }}</mat-option>
+                                      }
+                                </mat-select>
+                                <mat-error>Please select Letter Type</mat-error>
+                              </mat-form-field>
+                        </div>  
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>{{isSend ? "Send" : "Recieve"}} Letter No.</mat-label>
+                                <input matInput formControlName="letternumber">
+                                <mat-error>Please provide Letter No.</mat-error>
+                            </mat-form-field>
+                        </div>                       
+                        <div class="col-md-4">                            
+                            <mat-form-field class="example-full-width">
+                                <mat-label>{{isSend ? "Send" : "Recieve"}} Letter Date</mat-label>
+                                <input matInput  formControlName="letterdate" [matDatepicker]="letterDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="letterDate"></mat-datepicker-toggle>
+                                <mat-datepicker #letterDate></mat-datepicker>
+                                <mat-error>Please select {{isSend ? "Send" : "Recieve"}} Date</mat-error>
+                              </mat-form-field>
+                        </div>                  
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Subject</mat-label>
+                                <input matInput formControlName="subject">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Status</mat-label>
+                                <mat-select formControlName="statusid">
+                                  
+                                    @for (option of status; track option) {
+                                      <mat-option [value]="option.id">{{ option.name }}</mat-option>
+                                    }
+                                </mat-select>
+                                <mat-error>Please select Status</mat-error>
+                              </mat-form-field>
+                        </div>                       
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Department</mat-label>
+                                <mat-select formControlName="departmentid">
+                               
+                                    @for (option of deptType; track option) {
+                                      <mat-option [value]="option.id">{{ option.name }}</mat-option>
+                                    }
+                                </mat-select>
+                              </mat-form-field>
+                        </div>
+                        <div *ngIf="isSend" class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Letter From</mat-label>
+                                <input matInput formControlName="letterfrom">
+                            </mat-form-field>
+                        </div>   
+                        <div  class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Letter To</mat-label>
+                                <input matInput formControlName="letterto">
+                            </mat-form-field>
+                        </div>                      
+                       
+                        <div class="col-md-4">
+                           
+                            <app-select-search *ngIf="letterInit" [defaultValue]="associateLetterIds" 
+                                        searchPlaceholder="Search Letter" emptySearchMessage="No Letter Found"
+                                          [multiple]="true" label="Associated Letter"
+                                        (onValueChange)="letterSelect($event)" [valueArrays]="letterList">
+                            </app-select-search>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Remarks</mat-label>
+                                <input matInput formControlName="remarks">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>  
+                    </div>
+                   
+                    <div class="row col-md-12">
+                        <div class="col-md-10 ">  
+                            <span class="sub-heading control-div ">Documents</span>
+                        </div>
+                     <div class="col-md-2">
+                        <div  class="table-title-row float-end">
+                           
+                            <div class="button-row">  
+                            
+                              <button mat-icon-button type="button" matTooltip="New Document" (click)="addDocControls()">
+                                <mat-icon>add_circle</mat-icon>
+                              </button>     
+                          </div>
+                        </div>
+                     </div>                       
+                 </div>
+                 <hr>
+                    <div class="wrapper" formArrayName="files">
+                        <div *ngFor="let item of files.controls; let i = index" [formGroupName]="i">
+                            <div class="col-md-12 row control-div">
+                            <div class="col-md-12">                       
+                          <app-attach-file  (onfileUpload)="fileUploded($event,i)" [showRemove]="i !== 0" (clickEvent)="removeDocControl(i)" (textChanged)="onDocNameUpdate($event,i)" Uploadtitle="Document" ></app-attach-file>
+                           </div>
+                           <!-- <div class="col-md-2 content-center">                            
+                           
+                            <button *ngIf="i !== 0"  type="button" mat-mini-fab matTooltip="Remove Document" color="" (click)="removeDocControl(i)" class="warn-linear-image float-end"  >
+                                <mat-icon>remove</mat-icon>
+                            </button>
+                           </div>                           -->
+                        </div>
+                        
+                    </div>
+                   </div>
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <div class="row control-div">
+            <div class=" button-row" align="right">
+                  <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                  <button [ngClass]="letterForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!letterForm.valid || isBtnClicked" (click)="submit()" color="primary">
+                    <span [hidden]="isBtnClicked">{{isEdit?'Update':'Submit'}}</span> 
+                    <app-btn-loader [IsLoading]="isBtnClicked"></app-btn-loader>
+                    </button>
+          </div>
+          </div>
+      </mat-dialog-actions>
+    </mat-card>
+    <mat-card *ngIf="deleteLetter">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl">{{letterForm.controls['letternumber'].value}}</span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+</div>

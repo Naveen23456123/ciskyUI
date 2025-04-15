@@ -1,0 +1,18 @@
+<div class=" col-md-12 row">
+    <div class="col-md-6">
+        <mat-form-field>
+            <mat-label>Document Name</mat-label>
+            <input matInput (input)="onInputChange()" [(ngModel)]="fileName"> 
+            <mat-error></mat-error>
+        </mat-form-field> 
+    </div>
+    <div class="col-md-5">
+     <app-file-uploader [required]="true" [title]="Uploadtitle" (onfileUpload)="onfileUploaded($event)" [title]="Uploadtitle"></app-file-uploader>
+    </div>
+    <div class="col-md-1 control-div content-center v-end">
+        <button  type="button" mat-mini-fab matTooltip="Remove Document" *ngIf="showRemove" (click)="clicked()" class="warn-linear-image float-end"  >
+            <mat-icon>remove</mat-icon>
+        </button>
+    </div>
+   
+</div>

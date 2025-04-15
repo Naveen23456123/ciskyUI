@@ -1,0 +1,126 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteConAcc">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <form [formGroup]="consultantForm" enctype="multipart/form-data" (submit)="submit()">                     
+                        <div class="row control-div">                      
+                        <div class="col-md-4" *ngIf="!isEdit">
+                            <mat-form-field>
+                                <mat-label>Sub Company Name</mat-label>
+                                <mat-select formControlName="companyId">
+                                    <mat-option  *ngFor="let field of subCompanyList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select Sub Company name.</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-4" *ngIf="!isEdit">
+                            <mat-form-field>
+                                <mat-label>Account Type</mat-label>
+                                <mat-select formControlName="accTypeId">
+                                    <mat-option  *ngFor="let field of accountTypeList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select Account type.</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Bank Name</mat-label>
+                                <input matInput formControlName="bankName">
+                                <mat-error>Please enter Bank name</mat-error>
+                            </mat-form-field>
+                        </div>                  
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <mat-label>Account Number</mat-label>
+                                    <input matInput formControlName="accountNo">
+                                    <mat-error>Please enter Account number</mat-error>
+                                </mat-form-field>
+                            </div>   
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <mat-label>IFSC Code</mat-label>
+                                    <input matInput formControlName="ifscCode">
+                                    <mat-error>Please enter IFSC code</mat-error>
+                                </mat-form-field>
+                            </div>   
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <mat-label>PAN Number</mat-label>
+                                    <input matInput formControlName="panNo">
+                                    <mat-error>Please enter PAN number</mat-error>
+                                </mat-form-field>
+                            </div>   
+                                          
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <mat-label>GST Number</mat-label>
+                                    <input matInput formControlName="gstNo">
+                                    <mat-error>Please enter GST number</mat-error>
+                                </mat-form-field>
+                            </div>   
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <mat-label>Address</mat-label>
+                                    <textarea rows="1" matInput formControlName="bankAddress"></textarea>
+                                    <mat-error>Please enter Bank address</mat-error>
+                                </mat-form-field>
+                            </div>   
+                            <div class="col-md-4" *ngIf="!isEdit">
+                                <app-file-uploader [required]="true" title="GST Certificate" (onfileUpload)="filedata($event)" ></app-file-uploader>
+                            </div>   
+                        </div>         
+                        <div class="row">
+                        <div class=" button-row" align="right">
+                                <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                                <button [ngClass]="consultantForm.valid ? 'submit-btn':''" mat-flat-button [disabled]="!consultantForm.valid || isClicked" color="primary">
+                                    <span [hidden]="isClicked">{{isEdit?'Update':'Submit'}}</span> 
+                                    <app-btn-loader [IsLoading]="isClicked"></app-btn-loader>
+                                </button>
+                                   
+                        </div> 
+                        </div>
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card *ngIf="deleteConAcc">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete account details with Account Number : <span class="vw-lbl">{{consultantForm.controls['accountNo'].value}}</span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

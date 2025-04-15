@@ -1,0 +1,35 @@
+mat-icon{
+    margin-right: 4px;
+}
+// .mat-mdc-mini-fab{
+//     width: auto;
+//     padding: 0px 12px 0px 6px;
+//     background-color: #3c3c5b;
+//     color: white;
+// }
+
+::ng-deep .mdc-tab-indicator--active{
+    // background-image: linear-gradient(#274ca9, #ffffff);
+}
+.project-details{
+    color: black;
+    font-weight: 600;
+}
+
+
+hr{
+    margin: 6px  0 !important;
+}
+::ng-deep .mdc-tab{
+    padding: 0 0px !important;
+}
+
+.ed-btn-row{
+    margin-bottom: 15px;
+}
+mat-tab-body mat-card-content{
+    padding: 0;
+}
+.justify{
+    text-align: justify;
+}

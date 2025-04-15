@@ -1,0 +1,582 @@
+<div class="container"> 
+     <!-- <h3>Project Details - {{projectName}}</h3> -->  
+    <mat-card>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div  *ngIf="!informationLoading">
+                <div class="row">
+                    <div class="col-md-2">
+                    <span>Project Name</span>
+                    </div>
+                    <div class="col-md-10 justify">
+                     <span class="project-details ">{{workingProject.projectname}}</span>                        
+                    </div>
+                </div> <hr>
+                <div class="row">
+                    <div class="col-md-2">
+                     <span>Project Key Points</span>
+                    </div>
+                    <div class="col-md-10">
+                     <span class="project-details">{{workingProject.keypoints}}</span>                        
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+   <div class="wrapper">
+      <mat-card>        
+        <mat-card-content>
+          <div class="load-wrap" *ngIf="isLoading">
+            <app-loader [IsLoading]="isLoading"></app-loader>
+          </div>
+          <div class="" *ngIf="!isLoading">
+            <form [formGroup]="projectForm" (submit)="submit()">
+                    <div class="row content-center">
+                      <div class="col-md-3">    
+                          <mat-form-field>
+                            <mat-icon matPrefix>list_alt</mat-icon>
+                            <mat-label>Select</mat-label>
+                            <mat-select (selectionChange)="projectEntityChange()"  formControlName="conscontName">
+                                @for (option of workOwnerList; track option) {
+                                    <mat-option [value]="option.id">{{ option.name }}</mat-option>
+                                  }
+                            </mat-select>
+                          </mat-form-field> 
+                    </div>
+                      <div class="col-md-6">
+                          <mat-form-field  *ngIf="!isConsultant && contractorList && contractorList.length>0">
+                            <mat-icon matPrefix>format_list_bulleted</mat-icon>
+                            <mat-label>Select Contractor</mat-label>
+                              <mat-select (selectionChange)="projectEntityChange()" formControlName="contractorId">
+                                <mat-option  *ngFor="let field of contractorItemList" [value]="field.value">
+                                  {{field.text}}
+                              </mat-option>             
+                              </mat-select>
+                            </mat-form-field>
+                      </div>                    
+                      <div class="col-md-3" >       
+                            <button *ngIf="!isConsultant" class="title-btn float-end"  (click)="contractor()"   mat-mini-fab extended>
+                              <mat-icon>add box</mat-icon>Contractor 
+                            </button>
+                      </div>
+                    </div>
+            </form>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <div class="wrapper">
+        <mat-card>        
+          <mat-card-content>
+            <mat-tab-group animationDuration="0ms" [selectedIndex]="selectTab">
+                          <mat-tab>
+                            <ng-template mat-tab-label>
+                              <mat-icon class="example-tab-icon">info</mat-icon>
+                              Information
+                            </ng-template>                     
+                            <mat-card style="min-height: 400px;">                       
+                              <mat-card-title>                             
+                              </mat-card-title>
+                              <div class="load-wrap" *ngIf="informationLoading">
+                                <app-loader [IsLoading]="informationLoading"></app-loader>
+                              </div>
+                              <div class="" *ngIf="!informationLoading">
+                              <mat-card-content>
+                                <div *ngIf="isConsultant" class="row col-md-12">
+                                  <div class="ed-btn-row col-md-12">
+                                      
+                                        <button class="title-btn float-end" type="button" mat-mini-fab (click)="edit_consultant()">
+                                          <mat-icon  class="material-symbols-outlined">
+                                            edit
+                                          </mat-icon> Edit
+                                        </button>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-text">
+                                      Tender Id
+                                    </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">
+                                      {{workingProject.tenderid}}
+                                    </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-text">
+                                      Bid Due Date
+                                    </span>
+                                  </div>                     
+                                  <div class="col-md-3">
+                                    <span class="details-val">
+                                      {{workingProject.bidduedate | formatDate  }}
+                                    </span>
+                                  </div>
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text">
+                                      Lead
+                                    </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">
+                                      {{workingProject.lead}}
+                                    </span>
+                                  </div>                    
+                                  <div class="col-md-3">
+                                    <span class="details-text">
+                                      Consultant LOA Date
+                                    </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">
+                                      {{workingProject.loadate | formatDate }}
+                                    </span>
+                                  </div>
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text">
+                                      JV
+                                    </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">
+                                      {{workingProject.jv}}
+                                    </span>
+                                  </div>                    
+                                  <div class="col-md-3">
+                                    <span class="details-text">
+                                      Agreement Date
+                                    </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">{{workingProject.agreementdate | formatDate }}  </span>
+                                  </div>
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text">Commencement Date </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">{{workingProject.commencementdate | formatDate }}  </span>
+                                  </div>                    
+                                  <div class="col-md-3">
+                                    <span class="details-text">Our Role </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">{{workingProject.ourrole}}  </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Schedule Construction Completion Date</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.scheduleconstructioncompletedate | formatDate }} </span>
+                                  </div>                    
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Association</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.association}} </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text">Actual Construction Completion Date </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.actualconstructioncompletedate | formatDate }} </span>
+                                  </div>                    
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Work Type</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.worktype}} </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text">Schedule Completion Date </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.schedulecompletedate | formatDate }} </span>
+                                  </div>                    
+                                  <div class="col-md-3">
+                                    <span class="details-text">Contract Mode </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.contractmode}} </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Actual Completion Date</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.actualcompletedate | formatDate }} </span>
+                                  </div>                    
+                                  <div class="col-md-3">
+                                    <span class="details-text">Authority Engineer </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.authengineer}} </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text">Employee Count </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">  </span>
+                                  </div>                    
+                                  <div class="col-md-3">
+                                    <span class="details-text">Coordinator </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.cordinator}} </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Extension of Time Count</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">  </span>
+                                  </div>                    
+                                  <div class="col-md-3">
+                                    <span class="details-text">Project Length (in Km) </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.projectlength}} </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Remark</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.remark}} </span>
+                                  </div>                    
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Project Duration (in Months)</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.projectduration}} </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text">Location (State) </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.projectlocation}} </span>
+                                  </div>                    
+                                  <div class="col-md-3">
+                                    <span class="details-text">Consultancy Fees </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">{{workingProject.consultancyfees | formatCurrency}} </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text">Site Address </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.siteaddress}} </span>
+                                  </div>                    
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Client</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.client}} </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Regional Office Name (RO Name)</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.regionalofficename}} </span>
+                                  </div>  
+                                </div> 
+                                <div *ngIf="!isConsultant && contractorList && contractorList.length>0" class=" col-md-12 row">                                 
+                                  <div class="ed-btn-row col-md-12">                              
+                                    <div class="button-row float-end">              
+                                      <button class="title-btn" type="button" mat-mini-fab (click)="edit_contractor()">
+                                        <mat-icon  class="material-symbols-outlined">
+                                          edit
+                                        </mat-icon> Edit
+                                      </button>
+                                      <button  (click)="delete_contractor()" class="warn-linear-image" matTooltip="Delete" mat-mini-fab >
+                                    <mat-icon>delete_forever</mat-icon> 
+                                  </button>
+                                
+                                  </div>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-text">Name </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.contractorname}} </span>
+                                  </div> 
+                                  <div class="col-md-3">
+                                    <span class="details-text">Bid Due Date </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.bidduedate | formatDate }} </span>
+                                  </div>  
+                                  <hr>                  
+                                  <div class="col-md-3">
+                                    <span class="details-text">Total Project cost ( Cr.) </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.projectcost | formatCurrency}} </span>
+                                  </div> 
+                                  
+                                  <div class="col-md-3">
+                                    <span class="details-text">LOA Date </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">{{selectedContractor?.loadate | formatDate }} </span>
+                                  </div> 
+                                  <hr>                   
+                                  <div class="col-md-3">
+                                    <span class="details-text">Project Length (in Km) </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.projectlength}} </span>
+                                  </div> 
+                                
+                                  <div class="col-md-3">
+                                    <span class="details-text">Agreement Date </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.agreementdate | formatDate }} </span>
+                                  </div> 
+                                  <hr>                   
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Project Duration (in Months)</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.projectduration}} </span>
+                                  </div> 
+                                  
+                                  <div class="col-md-3">
+                                    <span class="details-text">Commencement Date </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.commencementdate | formatDate }} </span>
+                                  </div>  
+                                  <hr>                  
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Project Duration With EOT (in Months)</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.projectduration}} </span>
+                                  </div> 
+                              
+                                  <div class="col-md-3">
+                                    <span class="details-text">Schedule Construction Completion Date </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.scheduleconstructioncompletedate | formatDate }} </span>
+                                  </div> 
+                                  <hr>               
+                                  <div class="col-md-3">
+                                    <span class="details-text">Extension of Time Count </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.contractorname}} </span>
+                                  </div> 
+                                  
+                                  <div class="col-md-3">
+                                    <span class="details-text">Actual Construction Completion Date </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.actualconstructioncompletedate | formatDate }} </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text">COS of Count </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.contractorname}} </span>
+                                  </div> 
+                                  
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Schedule Completion Date</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">{{selectedContractor?.schedulecompletedate | formatDate }}  </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text">address </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.contractoraddress}} </span>
+                                  </div> 
+                                  <div class="col-md-3">
+                                    <span class="details-text">Actual Completion Date </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{selectedContractor?.actualcompletedate | formatDate }} </span>
+                                  </div> 
+                                  
+                                  <hr>
+                                </div>
+                                  <app-no-data *ngIf="!isConsultant && contractorList.length==0" icon="find_in_page" message="No Contractor details found at this moment!!.">
+
+                                  </app-no-data>
+                              </mat-card-content>
+                            </div>
+                            </mat-card>
+                            <div *ngIf="isConsultant" class="col-md-12">
+                               <app-insurance-list></app-insurance-list>
+                            </div>                 
+                            <div *ngIf="isConsultant" class="col-md-12">
+                               <app-bank-guarantee-list></app-bank-guarantee-list>
+                            </div>
+                          </mat-tab>
+                          <mat-tab>
+                            <ng-template mat-tab-label>
+                              <mat-icon class="example-tab-icon">receipt_long</mat-icon>
+                              Letters
+                            </ng-template>
+                            <ng-template matTabContent>
+                              <div class="col-md-12">
+                                 <app-letters-list></app-letters-list>
+                              </div>
+                            </ng-template>
+                          
+                          </mat-tab>
+                          <mat-tab *ngIf="!isConsultant">
+                            <ng-template mat-tab-label>
+                              <mat-icon class="example-tab-icon">currency_rupee</mat-icon>
+                              Bills
+                            </ng-template>
+                            <ng-template matTabContent>
+                              <div class="col-md-12">
+                                 <app-contractor-billing-list></app-contractor-billing-list>
+                              </div>
+                            </ng-template>
+                            
+                          </mat-tab>
+                        
+                          <mat-tab *ngIf="!isConsultant">
+                            <ng-template mat-tab-label>
+                              <mat-icon class="example-tab-icon">payments</mat-icon>
+                              Billing Details
+                            </ng-template>
+                        
+                            Content 3
+                          </mat-tab>
+                          <mat-tab *ngIf="!isConsultant">
+                              <ng-template mat-tab-label>
+                                <mat-icon class="example-tab-icon">route</mat-icon>
+                                Mile Stone
+                              </ng-template>
+                              <ng-template matTabContent>
+                                <div class="col-md-12">
+                                     <app-milestone-list></app-milestone-list>
+                                </div>
+                              </ng-template>
+                            </mat-tab>
+                          
+                            <mat-tab *ngIf="!isConsultant">
+                              <ng-template mat-tab-label>
+                                <mat-icon class="example-tab-icon">sync_arrow_up</mat-icon>
+                                Site Progress
+                              </ng-template>
+                              <ng-template matTabContent>
+                                <div class="col-md-12">
+                                   <app-site-progress-list></app-site-progress-list>
+                                </div>
+                              </ng-template>
+                              
+                            </mat-tab>                    
+                            <mat-tab>
+                              <ng-template mat-tab-label>
+                                <mat-icon class="example-tab-icon">more_time</mat-icon>
+                                EOT
+                              </ng-template>
+                              <ng-template matTabContent>
+                                <div class="col-md-12">
+                                   <app-eot-list></app-eot-list>
+                                </div>
+                              </ng-template>                      
+                            </mat-tab>
+                            <mat-tab>
+                              <ng-template mat-tab-label>
+                                <mat-icon class="example-tab-icon">update</mat-icon>
+                                COS
+                              </ng-template>
+                              <ng-template matTabContent>
+                                <div class="col-md-12">
+                                   <app-cos-list></app-cos-list>
+                                </div>
+                              </ng-template>                        
+                            </mat-tab>
+                          <mat-tab *ngIf="isConsultant">
+                            <ng-template mat-tab-label>
+                              <mat-icon class="example-tab-icon">group</mat-icon>
+                              Employees
+                            </ng-template>
+                            <ng-template matTabContent>
+                              <div class="col-md-12">
+                                 <app-manage-employee-list [showFilters]="false" ></app-manage-employee-list>
+                              </div>
+                            </ng-template>
+                            
+                          </mat-tab>
+                          <mat-tab *ngIf="isConsultant">
+                            <ng-template mat-tab-label>
+                              <mat-icon class="example-tab-icon">directions_car</mat-icon>
+                            Vehicle(s)
+                            </ng-template>  
+                            <ng-template matTabContent>
+                              <div class="col-md-12">
+                                 <app-manage-vehicle-list></app-manage-vehicle-list>
+                              </div>
+                            </ng-template>                    
+                          
+                          </mat-tab>
+                          <mat-tab *ngIf="isConsultant">
+                            <ng-template mat-tab-label>
+                              <mat-icon class="example-tab-icon">inventory_2</mat-icon>
+                              Inventory 
+                            </ng-template>
+                            <ng-template matTabContent>
+                              <div class="col-md-12">
+                                 <app-manage-inventory-list></app-manage-inventory-list>
+                              </div>
+                            </ng-template>                          
+                          </mat-tab>  
+                          <mat-tab *ngIf="isConsultant">
+                            <ng-template mat-tab-label>
+                              <mat-icon class="example-tab-icon">contacts</mat-icon>
+                              Contacts
+                            </ng-template>
+                            <ng-template matTabContent>
+                              <div class="col-md-12">
+                                <!-- <ng-container *ngComponentOutlet="contactListcomponentData" /> -->
+                                 <app-contact-list></app-contact-list>
+                              </div>
+                            </ng-template>                            
+                          </mat-tab>                      
+                            <mat-tab>
+                              <ng-template mat-tab-label>
+                                <mat-icon class="example-tab-icon">description</mat-icon>
+                                Other Documents
+                              </ng-template>
+                          
+                              Content 3
+                            </mat-tab>
+                           
+            </mat-tab-group>
+          </mat-card-content>
+        </mat-card>
+    </div>
+  </div>
+</div>
+<app-help [help]="help"></app-help>
+<ng-template #help>
+    <div class="dialog">
+        <h1 mat-dialog-title>Dialog with elements</h1>
+        <div mat-dialog-content>This dialog showcases the title, close, content and actions elements.</div>
+        <div mat-dialog-actions>
+            <button mat-button mat-dialog-close>Close</button>
+        </div>
+    </div>
+</ng-template>                

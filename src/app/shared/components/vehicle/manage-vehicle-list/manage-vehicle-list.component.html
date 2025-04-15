@@ -1,0 +1,106 @@
+<div class="container">
+    <mat-card>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div  *ngIf="!isLoading">                
+
+                <div class="mat-elevation-z8">                    
+                    
+                    <div class="table-title-row">
+                      <mat-form-field>
+                        <mat-label>Filter</mat-label>
+                        <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+                      </mat-form-field>
+                      <div class="button-row">              
+                        <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
+
+                        <button class="title-btn" type="button" (click)="add_vehicle()"  mat-mini-fab color="primary">
+                            <mat-icon>add box</mat-icon> Vehicle
+                        </button> 
+                        <app-download-csv (clickEvent)="export()" ></app-download-csv> 
+                       </div>
+                    </div>
+                    <app-no-data icon="directions_car" message="No Vehicle Details found at this moment !!" ></app-no-data>
+                      <div   class="mat-elevation-z8">
+                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>                     
+                        
+                          <ng-container matColumnDef="serial">
+                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                          </ng-container>                 
+                          <!-- contractName Column -->
+                          <ng-container matColumnDef="projectshortname">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Name </th>
+                            <td mat-cell *matCellDef="let row"> {{row.project}} </td>
+                          </ng-container>
+                      
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Vehicle Name </th>
+                            <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                          </ng-container>    
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="vehiclenum">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Vehicle No. </th>
+                            <td mat-cell *matCellDef="let row"> {{row.number}} </td>
+                          </ng-container>    
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="fixedkm">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Fixed Km </th>
+                            <td mat-cell *matCellDef="let row"> {{row.fixedkm}} </td>
+                          </ng-container>    
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="fixedbillamt">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Fixed Bill Amount </th>
+                            <td mat-cell *matCellDef="let row"> {{row.fixedbillamount | formatCurrency}} </td>
+                          </ng-container> 
+                          <ng-container matColumnDef="extraamtabovefixkm">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Extra Amt./Km </th>
+                            <td mat-cell *matCellDef="let row"> {{row.extraamountafterfixedkm |formatCurrency}} </td>
+                          </ng-container> 
+                          <ng-container matColumnDef="docs">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Document(s) </th>
+                            <td mat-cell *matCellDef="let row">                               
+                              <app-document-manage-btn (clickEvent)="viewdocs(row.id)"></app-document-manage-btn>
+                            </td>
+                          </ng-container>    
+                          <ng-container matColumnDef="log">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Logs </th>
+                            <td mat-cell *matCellDef="let row"> 
+                              <button class="log-btn" [state]="row"
+                                [routerLink]="['/vehicle-log/view',row.id]" matTooltip="View" mat-mini-fab >
+                              <mat-icon>description</mat-icon> 
+                            </button>
+                            </td>
+                          </ng-container>    
+                          <!-- con_personName Column -->
+                          <ng-container  matColumnDef="action">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                            <td mat-cell class="action-col" *matCellDef="let row"> 
+                              <div class="button-row">                               
+                                <app-edit-btn (clickEvent)="edit_vehicle(row)" ></app-edit-btn>                              
+                                <app-delete-btn (clickEvent)="delete_vehicle(row)"></app-delete-btn>
+                                
+                              </div>
+                           </td>
+                          </ng-container>
+                        
+                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+                          <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                              No Vehicle Details found at this moment.</td>
+                          </tr>
+                        </table>
+                        <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+                        </mat-paginator>
+                      </div>                    
+                      
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+<router-outlet></router-outlet>

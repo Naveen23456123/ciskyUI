@@ -1,0 +1,108 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteRenumeration">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3> 
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <!-- <form [formGroup]="organizationForm" > -->
+                <form [formGroup]="renumerationForm" (submit)="submit()">
+                    <div class="row control-div">
+                        <div class="col-md-6">                            
+                            <app-select-search *ngIf="designationLoad" 
+                            searchPlaceholder="Search Designation" emptySearchMessage="No Designation Found"
+                               label="Designation"
+                            (onValueChange)="desgSelect($event)" [valueArrays]="designationList">
+                             </app-select-search>
+                        </div>  
+                        <div class="col-md-6">
+                            <mat-form-field >
+                                <mat-label>Professional</mat-label>
+                                <mat-select  formControlName="professionalid">
+                                    <mat-option  *ngFor="let field of professionaList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                          
+                        </div> 
+                        <div class="col-md-6">                          
+                            <app-select-search *ngIf="employeeLoad" 
+                            searchPlaceholder="Search employee" emptySearchMessage="No Employee Found"
+                               label="Employee"
+                            (onValueChange)="empSelect($event)" [valueArrays]="empList">
+                             </app-select-search>
+                        </div>  
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>Rate</mat-label>
+                                <input type="number" matInput formControlName="rate">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>Construction Period</mat-label>
+                                <input type="number" matInput formControlName="constructionperiod">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>O&M Period</mat-label>
+                                <input type="number" matInput formControlName="oandmperiod">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>No. Of Man Month</mat-label>
+                                <input matInput >
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-12 button-row" align="right">
+                                <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                                <button class="submit-btn" mat-flat-button [disabled]="!renumerationForm.valid" color="primary">
+                                    {{isEdit?'Update':'Submit'}}</button>
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card *ngIf="deleteRenumeration">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

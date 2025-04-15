@@ -1,0 +1,144 @@
+<mat-card>
+    <mat-card-title>
+        <h6>III - Road Survey Equipment
+            <button  class="title-btn float-end no-print" routerLink="rs-create"  type="button"  mat-mini-fab color="primary">
+                <mat-icon>add box</mat-icon> Road Survey
+            </button>
+        </h6>
+    </mat-card-title>
+    <mat-card-content>
+        <table mat-table [dataSource]="dataSource" >
+        
+          <ng-container matColumnDef="serial">
+            <th mat-header-cell *matHeaderCellDef class="hide">Sr. No</th>
+            <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+          <ng-container matColumnDef="no">
+            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">No</th>
+          </ng-container>       
+       
+          <ng-container matColumnDef="desc">
+            <th mat-header-cell *matHeaderCellDef class="hide"> Description </th>
+            <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+            <td mat-footer-cell *matFooterCellDef> Total </td>
+          </ng-container>
+          <ng-container matColumnDef="descth">
+          <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Description</th>
+          </ng-container>
+
+          <ng-container matColumnDef="km">
+            <th mat-header-cell *matHeaderCellDef >KM </th>
+            <td mat-cell *matCellDef="let row"> {{row.km}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container> 
+              <ng-container matColumnDef="rateperkm">
+                <th mat-header-cell *matHeaderCellDef > Rate Per KM </th>
+                <td mat-cell *matCellDef="let row"> {{row.rate}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>       
+              <ng-container matColumnDef="survery_conducted">
+                <th mat-header-cell *matHeaderCellDef > No. of times survey to be concluded </th>
+                <td mat-cell *matCellDef="let row"> {{row.numberofsurveys}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>
+              <ng-container matColumnDef="total_amt">
+                <th mat-header-cell *matHeaderCellDef > Total Amount </th>
+                <td mat-cell *matCellDef="let row"> {{row.contractamount}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>                            
+
+
+              <ng-container matColumnDef="prev_km">
+                <th mat-header-cell *matHeaderCellDef > KM </th>
+                <td mat-cell *matCellDef="let row"> {{row.previousbillkm}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>                         
+
+              <ng-container matColumnDef="prev_amt">
+                <th mat-header-cell *matHeaderCellDef > Amount </th>
+                <td mat-cell *matCellDef="let row"> {{row.previousbill}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>
+
+              <ng-container matColumnDef="curr_km">
+                <th mat-header-cell *matHeaderCellDef > KM </th>
+                <td mat-cell *matCellDef="let row"> {{row.currentbillkm}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>                         
+
+              <ng-container matColumnDef="curr_amt">
+                <th mat-header-cell *matHeaderCellDef > Amount </th>
+                <td mat-cell *matCellDef="let row"> {{row.currentbill}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>
+              <ng-container matColumnDef="comlt_km">
+                <th mat-header-cell *matHeaderCellDef > KM </th>
+                <td mat-cell *matCellDef="let row"> {{row.commulativekm}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>                         
+
+              <ng-container matColumnDef="comlt_amt">
+                <th mat-header-cell *matHeaderCellDef > Amount </th>
+                <td mat-cell *matCellDef="let row"> {{row.commulativeamount}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>
+
+              <ng-container matColumnDef="rem_km">
+                <th mat-header-cell *matHeaderCellDef > KM </th>
+                <td mat-cell *matCellDef="let row"> {{row.remainingkm}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>                         
+
+              <ng-container matColumnDef="rem_amt">
+                <th mat-header-cell *matHeaderCellDef > Amount </th>
+                <td mat-cell *matCellDef="let row"> {{row.remainingamount}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>
+
+              <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef class="hide"> Action </th>
+                <td mat-cell *matCellDef="let row">
+                  <div class="button-row">
+                    <button class="edit-table-btn" [state]="row"
+                    [routerLink]="['rs-edit',row.id]" matTooltip="Edit" mat-mini-fab>
+                   <mat-icon>edit</mat-icon> 
+                  </button>
+                  <button class="delete-table-btn" [state]="row"
+                    [routerLink]="['rs-delete',row.id]" matTooltip="Delete" mat-mini-fab >
+                    <mat-icon>delete_forever</mat-icon> 
+                  </button>
+                  </div>  
+                </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>
+              <ng-container matColumnDef="actionth">
+                <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Action</th>
+              </ng-container>
+
+
+
+              <ng-container matColumnDef="ctrtamt">
+                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="4"> Contract Amount </th>
+              </ng-container>
+              <ng-container matColumnDef="previousinvc">
+                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Previous Invoice </th>
+              </ng-container>
+              <ng-container matColumnDef="currentinvc">
+                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Current Invoice </th>
+              </ng-container>
+              <ng-container matColumnDef="cumulativeinvc">
+                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Cumulative Amount </th>
+              </ng-container>
+              <ng-container matColumnDef="reminvc">
+                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2">Remaining Amount </th>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="['no','descth','ctrtamt','previousinvc','currentinvc','cumulativeinvc','reminvc','actionth']"></tr>
+            <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>
+            <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>  
+            <tr mat-footer-row *matFooterRowDef="dataColumn"></tr>                  
+          </table>
+
+    </mat-card-content>
+</mat-card>

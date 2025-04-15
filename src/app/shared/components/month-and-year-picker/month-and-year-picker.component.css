@@ -1,0 +1,16 @@
+::ng-deep .date-input .mat-form-field-underline {
+    display: none;
+  }
+  ::ng-deep .mat-datepicker-toggle-default-icon{
+    width: 25px !important;
+  }
+  .mat-form-field {
+    width: 80%;
+}
+.date-vw{
+    font-size: 15px;
+    font-weight: 600;
+}
+.date-input .mat-form-field{
+  padding: 0;
+}

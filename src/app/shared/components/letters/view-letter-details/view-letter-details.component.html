@@ -1,0 +1,203 @@
+<div class="dialog" >
+    <mat-card>        
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> Letter Details 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3>        
+        <mat-dialog-content class="mat-typography">
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="row col-md-12 d-flex justify-content-end">
+                <div class="col-md-6 letter-head">
+                   <h6 class="sub-heading">Letter No : {{'  '+letterDetails?.letternumber}}</h6>
+                </div>
+                <div class="col-md-6 float-end ">
+                    <app-select-search className="full-width"  *ngIf="letterInit"
+                    searchPlaceholder="Search Letter" emptySearchMessage="No Letter Found"
+                       label="Select Associated Letter(s)"
+                    (onValueChange)="letterSelect($event)" [valueArrays]="letterList">
+                   </app-select-search>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <mat-tab-group *ngIf="!isLoading" mat-stretch-tabs="false">
+                    <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon class="example-tab-icon space">info</mat-icon>
+                         Details
+                    </ng-template> 
+                    <div class="wrapper">
+                        <div  class=" row col-md-12">
+                            
+                            <div class="col-md-3">
+                            <span class="details-text">
+                                Project
+                            </span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val">
+                                {{letterDetails?.project}}
+                            </span>
+                            </div>
+                            <div  class="col-md-3">
+                            <span class="details-text">
+                                Related To
+                            </span>
+                            </div>                     
+                            <div class="col-md-3">
+                            <span class="details-val">
+                                {{letterDetails?.relatedto }}
+                            </span>
+                            </div>
+                            <hr>
+                            <div class="col-md-3">                            
+                            <span class="details-text">
+                                Exchange Type
+                            </span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val">
+                                {{letterDetails?.exchangetype}} 
+                            </span>
+                            </div>                    
+                            <div class="col-md-3">
+                                <span *ngIf="!isconsultant" class="details-text">
+                                    Contractor
+                                </span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val">
+                                {{letterDetails?.contractor}}
+                            </span>
+                            </div>
+                            <hr>
+                            <div class="col-md-3">
+                            <span class="details-text">
+                                Reply By
+                            </span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val">
+                                {{letterDetails?.replyby}}
+                            </span>
+                            </div>                    
+                            <div class="col-md-3">
+                            <span class="details-text">
+                                Letter Type
+                            </span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val">{{letterDetails?.lettertype}}  </span>
+                            </div>
+                            <hr>
+                            <div class="col-md-3">
+                            <span class="details-text">{{typetitle}} Letter Number</span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val">{{letterDetails?.letternumber  }}  </span>
+                            </div>                    
+                            <div class="col-md-3">
+                            <span class="details-text">{{typetitle}} Letter Date </span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val">{{letterDetails?.letterdate | formatDate }}  </span>
+                            </div> 
+                            <hr>
+                            <div class="col-md-3">
+                            <span class="details-text"> Subject</span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val"> {{letterDetails?.subject  }} </span>
+                            </div>                    
+                            <div class="col-md-3">
+                            <span class="details-text"> Status</span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val"> {{letterDetails?.status}} </span>
+                            </div> 
+                            <hr>
+                            <div class="col-md-3">
+                            <span class="details-text">Department</span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val"> {{letterDetails?.department }} </span>
+                            </div>                    
+                            <div class="col-md-3">
+                            <span class="details-text"> Letter From</span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val"> {{letterDetails?.letterfrom}} </span>
+                            </div> 
+                            <hr>
+                            <div class="col-md-3">
+                            <span class="details-text">Letter To</span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val"> {{letterDetails?.letterto }} </span>
+                            </div>                    
+                            <div class="col-md-3">
+                            <span class="details-text">Remarks </span>
+                            </div>
+                            <div class="col-md-3">
+                            <span class="details-val"> {{letterDetails?.remarks}} </span>
+                            </div>                             
+                        </div> 
+                    </div>
+                    </mat-tab>
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                        <mat-icon class="example-tab-icon space">description</mat-icon>
+                         Documents
+                        </ng-template>
+                        <div class="wrapper">
+                            <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+                      
+                                <ng-container matColumnDef="serial">
+                                  <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                                  <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                                </ng-container>
+                            
+                                <!-- contractName Column -->
+                                <ng-container matColumnDef="name">
+                                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+                                  <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="doc">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Document </th>
+                                    <td mat-cell *matCellDef="let row">
+                                        <app-file-icon [link]="row.docaddress"></app-file-icon>
+                                     </td>
+                                  </ng-container>
+                                <ng-container matColumnDef="action">
+                                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Action</th>
+                                  <td mat-cell *matCellDef="let row"> 
+                                    <div class="button-row">
+                                     
+                                      <button class="delete-table-btn" [state]="row"
+                                      [routerLink]="['/letters/delete',row.id]" matTooltip="Delete" mat-mini-fab >
+                                      <mat-icon>delete_forever</mat-icon> 
+                                      </button>
+                                    </div>
+                                  </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                                
+                                <tr class="mat-row" *matNoDataRow>
+                                    <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                                      No Letters Details found at this moment.</td>
+                                  </tr>
+                              </table>  
+                        </div>
+                      
+                    </mat-tab>
+                </mat-tab-group>
+           </div>
+        </mat-card-content>
+        </mat-dialog-content>
+   </mat-card>
+</div>

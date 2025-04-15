@@ -1,0 +1,28 @@
+<mat-card >      
+    <mat-card-title class="card-title d-flex justify-content-center" >
+        <mat-icon>warning</mat-icon><span>Delete Document Doc</span>
+    </mat-card-title>
+    <mat-card-content>
+        <div class="load-wrap" *ngIf="isLoading">
+            <app-loader [IsLoading]="isLoading"></app-loader>
+        </div>
+        <div class="wrapper">
+            <mat-dialog-content>
+                <span class="mat-typography alert-content">
+                    Are you sure you want to delete document <span class="vw-lbl">{{data.element.name}}</span> ?. This operation can
+                    not be un-done once performed sucessfully.
+                </span>
+            </mat-dialog-content>
+            <mat-dialog-actions align="center">
+                <div class="control-div">
+                    <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                        Delete
+                    </button>
+                    <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                        Cancel
+                    </button>
+                </div>
+            </mat-dialog-actions>
+        </div>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,143 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteVehicle">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3> 
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <!-- <form [formGroup]="organizationForm" > -->
+                <form [formGroup]="vehicleForm" (submit)="submit()">
+                    <div class="row control-div">
+                        <div class="col-md-4">                           
+                            <app-project-control (onValueChange)="projectChange($event)"
+                            [defaultValue]="vehicleForm.get('projectid')?.value" ></app-project-control>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Vehicle Name</mat-label>
+                                <mat-select (selectionChange)="vehicleChange()" formControlName="vehicleid">
+                                    <mat-option  *ngFor="let field of vehicleList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="!vehicleForm.get('projectid')?.value">Please select Project first</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Vehicle Owner Name</mat-label>
+                                <input matInput  formControlName="ownername">
+                                <mat-error></mat-error>
+                            </mat-form-field>   
+                        </div> 
+                        <div class="col-md-4">
+                          
+                            <app-month-and-year-picker [defaultValue]="vehicleForm.get('monthandyear')?.value" (onValueChange)="dateChange($event)"  ></app-month-and-year-picker> 
+                        </div> 
+                        <div class="col-md-4">                           
+                            
+                            <mat-form-field class="example-full-width">
+                                <mat-label>End Date</mat-label>
+                                <input matInput  formControlName="enddate" [matDatepicker]="enddate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="enddate"></mat-datepicker-toggle>
+                                <mat-datepicker #enddate></mat-datepicker>
+                              </mat-form-field>  
+                        </div>
+                        <div class="row control-div">
+                            <div class=" col-md-4">
+                                <mat-form-field  >
+                                    <mat-label>Fixed KM</mat-label>
+                                    <input type="number" readonly matInput formControlName="fixedkm">
+                                    <mat-error></mat-error>
+                                </mat-form-field>  
+                            </div> 
+                            <div class="col-md-4">                           
+                                <mat-form-field >
+                                    <mat-label>Extra KM</mat-label>
+                                    <input type="number" (input)="onExtraChange()" matInput formControlName="extrakm">
+                                    <mat-error></mat-error>
+                               </mat-form-field>  
+                            </div> 
+                       
+                        <div class=" col-md-4">
+                            <mat-form-field  >
+                                <mat-label>Total KM</mat-label>
+                                <input type="number" [value]="totalkm" disabled="true" matInput>
+                                <mat-error></mat-error>
+                            </mat-form-field>  
+                        </div>    
+                        <div class="col-md-4">
+                            <mat-form-field >
+                                <mat-label>Fixed Amount</mat-label>
+                                <input type="number" readonly matInput formControlName="fixedamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>  
+                        </div>                    
+                        <div class="col-md-4">
+                            <mat-form-field >
+                                <mat-label>Extra Amt. Per KM. after Fixed KM.</mat-label>
+                                <input type="number" readonly matInput formControlName="extraamountperkmafterfixedkm">
+                                <mat-error></mat-error>
+                            </mat-form-field>  
+                        </div> 
+                        <div class=" col-md-4">
+                            <mat-form-field  >
+                                <mat-label>Total Amount</mat-label>
+                                <input type="number" [value]="totalamount" disabled="true" matInput>
+                                <mat-error></mat-error>
+                            </mat-form-field>  
+                        </div>
+                    </div>
+                        <div class="col-md-12 button-row" align="right">
+                            <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                            <button [ngClass]="vehicleForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!vehicleForm.valid" color="primary">
+                                {{isEdit?'Update':'Submit'}}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<mat-card *ngIf="deleteVehicle">      
+    <mat-card-title class="card-title d-flex justify-content-center" >
+        <mat-icon>warning</mat-icon><span>{{title}}</span>
+    </mat-card-title>
+    <mat-card-content>
+        <div class="load-wrap" *ngIf="isLoading">
+            <app-loader [IsLoading]="isLoading"></app-loader>
+        </div>
+        <div class="wrapper">
+            <mat-dialog-content>
+                <span class="mat-typography alert-content">
+                    Are you sure you want to delete 
+                    <span class="vw-lbl">
+                        {{data.element.vehicleno}}
+                    </span>  
+                    billing for 
+                    <span class="vw-lbl">
+                        {{getMonthandYear(data.element.monthandyear).month}}
+                    </span> ?. This operation can
+                    not be un-done once performed sucessfully.
+                </span>
+            </mat-dialog-content>
+            <mat-dialog-actions align="center">
+                <div class="control-div">
+                    <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                        Delete
+                    </button>
+                    <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                        Cancel
+                    </button>
+                </div>
+            </mat-dialog-actions>
+        </div>
+    </mat-card-content>
+</mat-card>

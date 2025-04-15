@@ -1,0 +1,358 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteBilling">
+        <h3 mat-dialog-title class="justify-content-center"> {{title}} </h3>
+        <mat-dialog-content class="mat-typography">
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="">
+                <!-- <form [formGroup]="organizationForm" > -->
+                <form [formGroup]="billingForm" >
+                    <h5 class="sub-heading">Bill Details</h5>
+                    <hr>
+                    <div class="row wrapper control-div">
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Bill Type</mat-label>
+                                <mat-select formControlName="billtypeid">
+                                    <mat-option  *ngFor="let field of billTypeList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Bill Category</mat-label>
+                                <mat-select formControlName="billcategoryid">
+                                    <mat-option  *ngFor="let field of billCategoryList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Bill Number</mat-label>
+                                <input matInput formControlName="billnumber">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>                        
+                        <div class="col-md-3">                           
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Bill Start Date</mat-label>
+                                <input matInput  formControlName="billstartdate" [matDatepicker]="billStartDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="billStartDate"></mat-datepicker-toggle>
+                                <mat-datepicker #billStartDate></mat-datepicker>
+                              </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">                           
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Bill End Date</mat-label>
+                                <input matInput  formControlName="billenddate" [matDatepicker]="billEndDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="billEndDate"></mat-datepicker-toggle>
+                                <mat-datepicker #billEndDate></mat-datepicker>
+                              </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">                           
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Bill Submit Date</mat-label>
+                                <input  matInput  formControlName="billsubmitdate" [matDatepicker]="billSubmitDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="billSubmitDate"></mat-datepicker-toggle>
+                                <mat-datepicker #billSubmitDate></mat-datepicker>
+                              </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Work Done Amount</mat-label>
+                                <input type="number" (input)="handleBillChange()" matInput formControlName="billworkdoneamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Escalation Amount</mat-label>
+                                <input type="number" (input)="handleBillChange()" matInput formControlName="billescamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>GST Amount</mat-label>
+                                <input type="number" (input)="handleBillChange()" matInput formControlName="billgstamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Deduction Submitted Amount</mat-label>
+                                <input type="number" (input)="handleBillChange()" matInput formControlName="billdeductsubamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Submitted Bill Amount</mat-label>
+                                <input type="number" matInput [value]="billSubmitAmt"  disabled>
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Submitted Percentage Amount</mat-label>
+                                <input type="number" (input)="handleBillChange()" matInput formControlName="billsubmittedpercamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Submitted Percentage</mat-label>
+                                <input type="number" matInput   [value]="billSubmitPercentage"  disabled>
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>  
+                        <div class="col-md-3">                            
+                            <app-select-search className="form-field-80" *ngIf="letterInit" 
+                                        searchPlaceholder="Search Letter" emptySearchMessage="No Letter Found"
+                                        label="Submitted Letter" [defaultValue]="billingForm.get('billsubmittedletterid')?.value"
+                                        (onValueChange)="billletterSelect($event)" [valueArrays]="letterList">
+                            </app-select-search>
+                            <button mat-icon-button type="button"  matTooltip="Bill Letter" (click)="bill_letter()">
+                                <mat-icon >add_circle</mat-icon>
+                              </button>                            
+                        </div> 
+                    </div>                     
+                    <h5 class="sub-heading">Bill Recommended By AE/IE</h5>
+                    <hr>
+                    <div class="row wrapper control-div">
+                        <div class="col-md-3">                           
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Recommended Bill Date</mat-label>
+                                <input matInput  formControlName="sitebillrecommbilldate" [matDatepicker]="siteRecomBilDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="siteRecomBilDate"></mat-datepicker-toggle>
+                                <mat-datepicker #siteRecomBilDate></mat-datepicker>
+                              </mat-form-field>
+                        </div>                         
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>LD Amount</mat-label>
+                                <input type="number" matInput formControlName="sitebillldamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>                       
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>With Held Amount</mat-label>
+                                <input type="number" matInput formControlName="sitebillwithheldamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>  
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Work Done Amount</mat-label>
+                                <input type="number" (input)="handleSiteBillChange()" matInput formControlName="sitebillworkdoneamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>  
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Escalation Amount</mat-label>
+                                <input type="number" (input)="handleSiteBillChange()" matInput formControlName="sitebillescamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>  
+
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>GST Amount</mat-label>
+                                <input type="number" matInput (input)="handleSiteBillChange()" formControlName="sitebillgstamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Deduction Amount</mat-label>
+                                <input type="number" (input)="handleSiteBillChange()" matInput formControlName="sitebilldeductsubmittedamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Site Recomm. Bill Amount</mat-label>
+                                <input type="number" matInput   [value]="siteRecommBillAmount"  disabled>
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Recommended Amount (%)</mat-label>
+                                <input type="number" (input)="handleSiteBillChange()" matInput formControlName="sitebillrecommpercamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Site Recomm. Percentage</mat-label>
+                                <input type="number" matInput   [value]="siteRecommPercentage"  disabled>
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Released With Held Amount</mat-label>
+                                <input type="number" matInput formControlName="sitebillreleasedwithheldamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Remarks</mat-label>
+                                <textarea matInput formControlName="remarks"></textarea>
+                               
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>                        
+                        
+                    </div>
+                    <h5 class="sub-heading">Bill Approved By Authority</h5>
+                    <hr>
+                    <div class="row wrapper control-div">
+                        <div class="col-md-3">                           
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Recommended Bill Date</mat-label>
+                                <input matInput  formControlName="horecommbilldate" [matDatepicker]="hoRecomBilDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="hoRecomBilDate"></mat-datepicker-toggle>
+                                <mat-datepicker #hoRecomBilDate></mat-datepicker>
+                              </mat-form-field>
+                        </div>                         
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Work Done Amount</mat-label>
+                                <input type="number" (input)="handleHoBillChange()" matInput formControlName="howorkdoneamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>                       
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Escalation Amount</mat-label>
+                                <input type="number" (input)="handleHoBillChange()" matInput formControlName="hoescamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>  
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>GST Amount</mat-label>
+                                <input type="number" (input)="handleHoBillChange()" matInput formControlName="hogstamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>  
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Deduction Amount</mat-label>
+                                <input matInput (input)="handleHoBillChange()" formControlName="hodeductedsubmittedamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>  
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label> Recomm. Bill Amount</mat-label>
+                                <input type="number" matInput   [value]="hoRecommBillAmount"  disabled>
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Recomm. Percentage Amount</mat-label>
+                                <input type="number" (input)="handleHoBillChange()" matInput formControlName="horecommpercentageamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Recomm. Bill Percentage</mat-label>
+                                <input type="number" matInput   [value]="hoRecommBillPercentage"  disabled>
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>LD Amount</mat-label>
+                                <input type="number" matInput formControlName="holdamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>With Held Amount</mat-label>
+                                <input type="number" matInput formControlName="howithheldamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Released With Held Amount</mat-label>
+                                <input type="number" matInput formControlName="horeleasedwithheldamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">                           
+                            <app-select-search className="form-field-80" *ngIf="letterInit" 
+                            searchPlaceholder="Search Letter" emptySearchMessage="No Letter Found"
+                            label="Recommended Letter" [defaultValue]="billingForm.get('horecommletterid')?.value"
+                            (onValueChange)="recommletterSelect($event)" [valueArrays]="letterList">
+                            </app-select-search>
+                            <button mat-icon-button type="button" matTooltip="Recommended Letter" (click)="recom_Letter()">
+                                <mat-icon>add_circle</mat-icon>
+                              </button>                            
+                        </div>
+                    </div>                    
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <div class="row control-div">
+            <div class=" button-row" align="right">
+                  <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                  <button class="submit-btn" mat-flat-button (click)="submit()" [disabled]="!billingForm.valid"  color="primary">
+                      {{isEdit?'Update':'Submit'}}</button>
+          </div>
+          </div>
+      </mat-dialog-actions>
+    </mat-card>
+    <mat-card *ngIf="deleteBilling">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl">{{billingForm.controls['billnumber'].value}}</span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

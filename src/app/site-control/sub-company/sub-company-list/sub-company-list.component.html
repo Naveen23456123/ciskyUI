@@ -1,0 +1,76 @@
+<div class="container">
+    <mat-card>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div  *ngIf="!isLoading">                
+             
+                <div class="mat-elevation-z8">
+                  <div class="table-title-row">
+                      <mat-form-field>
+                        <mat-label>Filter</mat-label>
+                        <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+                      </mat-form-field>
+                      <div class="button-row">              
+                        <button class="title-btn" align="right"  type="button" routerLink="create"  mat-mini-fab color="primary">
+                          <mat-icon>add box</mat-icon> Sub Company
+                        </button>     
+                     
+                      </div>
+                  </div>
+                      <div class="mat-elevation-z8">
+                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+                      
+                          <ng-container matColumnDef="serial">
+                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                          </ng-container>
+                      
+                          <!-- contractName Column -->
+                          <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Company Name </th>
+                            <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                          </ng-container>
+                      
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="employeecount">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Employee Count </th>
+                            <td mat-cell *matCellDef="let row"> {{row.employeecount}} </td>
+                          </ng-container>
+                      
+                          <!-- con_personName Column -->
+                          <ng-container matColumnDef="viewemp">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Employees </th>
+                            <td mat-cell *matCellDef="let row">
+                            <app-view-btn *ngIf="row.employeecount!=0" (clickEvent)="viewEmp(row)"></app-view-btn>
+                            <span *ngIf="row.employeecount==0">-</span>
+                            </td>
+                          </ng-container>
+                          <!-- con_personName Column -->
+                          <ng-container matColumnDef="action">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                            <td mat-cell *matCellDef="let row"> 
+                              <div class="button-row">
+                                <app-edit-btn [routerLink]="['/sub-company/edit',row.id]" [state]="row" ></app-edit-btn>                              
+                                <app-delete-btn [state]="row" [routerLink]="['/sub-company/delete',row.id]" ></app-delete-btn>
+                          </div>
+                           </td>
+                          </ng-container>
+                        
+                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+                          <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+                          </tr>
+                        </table>
+                        <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+                        </mat-paginator>
+                      </div>                    
+                      
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+<router-outlet></router-outlet>

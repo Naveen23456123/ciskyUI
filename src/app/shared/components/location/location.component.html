@@ -1,0 +1,16 @@
+<mat-form-field *ngIf="multiple">
+    <mat-label>Action</mat-label>
+    <mat-select (selectionChange)="selectLocation()" [formControl]="organizationId" multiple>
+        <mat-select-trigger>
+            {{organizationId.value? setselectedLocation(organizationId.value[0]):''}}
+            <span *ngIf="organizationId.value?.length > 1" class="example-additional-selection">
+                (+{{organizationId.value.length - 1}}
+                {{organizationId.value?.length === 2 ? 'other' : 'others'}})
+            </span>
+        </mat-select-trigger>
+        <mat-option *ngFor="let sfield of locationList" [value]="sfield.value">
+            {{sfield.text}}
+        </mat-option>
+    </mat-select>
+    <mat-error>Required</mat-error>
+</mat-form-field>

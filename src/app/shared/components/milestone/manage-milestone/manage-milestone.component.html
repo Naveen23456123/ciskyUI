@@ -1,0 +1,139 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteMilestone">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3> 
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <form [formGroup]="milestoneForm" (submit)="submit()">
+                    <div class="row control-div">
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>Name</mat-label>
+                                <input [readonly]="isEdit ? true : null" matInput formControlName="name">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                           
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Appointed Date</mat-label>
+                                <input matInput [readonly]="isEdit ? true : null" formControlName="appointeddate" [matDatepicker]="appointDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="appointDate"></mat-datepicker-toggle>
+                                <mat-datepicker #appointDate></mat-datepicker>
+                              </mat-form-field>
+                        </div>                       
+                       
+                    </div>
+                    <div class="row control-div">
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>Days</mat-label>
+                                <input type="number" [readonly]="isEdit ? true : null" matInput formControlName="days">
+                                <mat-error>Please enter First Name.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">                          
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Milestone Date</mat-label>
+                                <input matInput [readonly]="isEdit ? true : null"  formControlName="milestonedate" [matDatepicker]="date">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="date"></mat-datepicker-toggle>
+                                <mat-datepicker #date></mat-datepicker>
+                              </mat-form-field>
+                        </div> 
+                        <div class="col-md-6" *ngIf="isEdit">
+                            <mat-form-field>
+                                <mat-label>MileStone Status</mat-label>
+                                <mat-select (selectionChange)="statusChange($event)" formControlName="statusid">
+                                    <mat-option  *ngFor="let field of statusList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select MileStone status</mat-error>
+                            </mat-form-field>
+                        </div>  
+                        <div class="col-md-6" *ngIf="isEdit && isAchvd">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Actual Date</mat-label>
+                                <input matInput  formControlName="actualdate" [matDatepicker]="actualdate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="actualdate"></mat-datepicker-toggle>
+                                <mat-datepicker #actualdate></mat-datepicker>
+                              </mat-form-field>
+                        </div>  
+                        <div class="col-md-6" *ngIf="isEdit && !isAchvd">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Reschedule Date</mat-label>
+                                <input matInput  formControlName="rescheduledate" [matDatepicker]="rescheduledate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="rescheduledate"></mat-datepicker-toggle>
+                                <mat-datepicker #rescheduledate></mat-datepicker>
+                              </mat-form-field>
+                        </div> 
+                        <div *ngIf="isEdit && isAchvd" class="col-md-6">                           
+                            <app-select-search className="form-field-80" *ngIf="letterInit" 
+                                        searchPlaceholder="Search Letter" emptySearchMessage="No Letter Found"
+                                        label="Actual Letter" [defaultValue]="milestoneForm.controls['actualletterid'].value"
+                                        (onValueChange)="letterSelect($event)" [valueArrays]="letterList">
+                            </app-select-search>
+                            <button mat-icon-button type="button" matTooltip="New EOT Letter" (click)="newLetter()">
+                                <mat-icon>add_circle</mat-icon>
+                              </button>                            
+                        </div>
+                        <div *ngIf="isEdit && !isAchvd" class="col-md-6">                           
+                            <app-select-search className="form-field-80" *ngIf="letterInit" 
+                                        searchPlaceholder="Search Letter" emptySearchMessage="No Letter Found"
+                                        label="Reschedule Letter" [defaultValue]="milestoneForm.controls['rescheduleletterid'].value"
+                                        (onValueChange)="letterSelect($event)" [valueArrays]="letterList">
+                            </app-select-search>
+                            <button mat-icon-button type="button" matTooltip="New EOT Letter" (click)="newLetter()">
+                                <mat-icon>add_circle</mat-icon>
+                              </button>                            
+                        </div>                    
+                    </div>
+                    <div class="row control-div">
+                        <div class="col-md-12 button-row" align="right">
+                            <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                            <button [ngClass]="milestoneForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!milestoneForm.valid" color="primary">
+                                {{isEdit?'Update':'Submit'}}</button>
+                        </div>
+                    </div> 
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card *ngIf="deleteMilestone">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl">{{milestoneForm.controls['name'].value}}</span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

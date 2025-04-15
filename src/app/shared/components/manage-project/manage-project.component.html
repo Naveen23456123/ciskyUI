@@ -1,0 +1,348 @@
+<div class="dialog" >
+    <mat-card>
+        <h3 mat-dialog-title class="justify-content-center"> {{title}} </h3>
+        <mat-dialog-content class="mat-typography">
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <form [formGroup]="projectForm" >
+                    <div class="row control-div">
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Tender Id</mat-label>
+                                <input matInput formControlName="tenderId">
+                                <mat-error>Please enter Tender Id.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Project Code</mat-label>
+                                <input matInput formControlName="projectCode">
+                                <mat-error>Please enter Project Code.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Project Short Name</mat-label>
+                                <input matInput formControlName="projectShortName">
+                                <mat-error *ngIf="projectForm.hasError('required', 'email')">Please enter Email Id.
+                                </mat-error>
+                                <mat-error *ngIf="projectForm.hasError('Email', 'email')">Please enter Valid Email Id.
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Location</mat-label>
+                                <input matInput formControlName="projectLocation">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                    
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>Project Name</mat-label>
+                                <input matInput formControlName="projectName">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Key Points</mat-label>
+                                <input matInput formControlName="keyPoints">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">                            
+                            <mat-form-field>
+                                <mat-label>Sub Company Name</mat-label>
+                                <mat-select formControlName="companyId">
+                                    <mat-option  *ngFor="let field of subCompanyList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select Sub company.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">                            
+                            <mat-form-field>
+                                <mat-label>Work Type</mat-label>
+                                <mat-select formControlName="workTypeId">
+                                    <mat-option  *ngFor="let field of workTypeList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select Sub company.</mat-error>
+                            </mat-form-field>
+                        </div>
+                   
+                        <div class="col-md-3">                          
+                            <mat-form-field>
+                                <mat-label>Our Role</mat-label>
+                                <mat-select formControlName="ourRoleId">
+                                    <mat-option  *ngFor="let field of roleList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select role.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Project Length</mat-label>
+                                <input matInput formControlName="projectLength">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Bid Due Date</mat-label>
+                                <input matInput  formControlName="bidDueDate" [matDatepicker]="bidDueDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="bidDueDate"></mat-datepicker-toggle>
+                                <mat-datepicker #bidDueDate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        <div class="col-md-3">                            
+                            <mat-form-field class="example-full-width">
+                                <mat-label>LOA Date</mat-label>
+                                <input matInput  formControlName="loadate" [matDatepicker]="loadate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="loadate"></mat-datepicker-toggle>
+                                <mat-datepicker #loadate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                    
+                        <div class="col-md-3">                          
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Agreement Date</mat-label>
+                                <input matInput  formControlName="aggrementDate" [matDatepicker]="aggrementDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="aggrementDate"></mat-datepicker-toggle>
+                                <mat-datepicker #aggrementDate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        <div class="col-md-3">                         
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Commencement Date</mat-label>
+                                <input matInput  formControlName="commencementDate" [matDatepicker]="commencementDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="commencementDate"></mat-datepicker-toggle>
+                                <mat-datepicker #commencementDate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Project Duration</mat-label>
+                                <input matInput formControlName="projectDuration">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Construction Duration</mat-label>
+                                <input matInput formControlName="constructionDuration">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>O&M Duration</mat-label>
+                                <input matInput formControlName="oandmDuration">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">                           
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Sch. Const. Complete Date</mat-label>
+                                <input matInput  formControlName="scheduleConstructionCompleteDate" [matDatepicker]="scheduleConstructionCompleteDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="scheduleConstructionCompleteDate"></mat-datepicker-toggle>
+                                <mat-datepicker #scheduleConstructionCompleteDate></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                   
+                        <div class="col-md-3">                            
+                            <mat-form-field>
+                                <mat-label>Auth Engineer</mat-label>
+                                <mat-select formControlName="authEngineerId">
+                                    <mat-option  *ngFor="let field of empList" [value]="field.id">
+                                        {{field.code +'- '+ field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select role.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">                            
+                            <mat-form-field>
+                                <mat-label>Cordinator</mat-label>
+                                <mat-select formControlName="cordinatorId">
+                                    <mat-option  *ngFor="let field of empList" [value]="field.id">
+                                        {{field.code +'- '+ field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select role.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Remark</mat-label>
+                                <input matInput formControlName="remark">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Consultancy Fees</mat-label>
+                                <input matInput formControlName="consultancyFees">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">                            
+                            <mat-form-field>
+                                <mat-label>Contract Mode</mat-label>
+                                <mat-select formControlName="contractModeId">
+                                    <mat-option  *ngFor="let field of contractModeList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select Contract mode.</mat-error>
+                            </mat-form-field>
+                        </div>
+                   
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Lead</mat-label>
+                                <input matInput formControlName="lead">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>JV</mat-label>
+                                <input matInput formControlName="jv">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Our Share(%)</mat-label>
+                                <input matInput formControlName="ourShare">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>JV Share(%)</mat-label>
+                                <input matInput formControlName="jvShare">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Association</mat-label>
+                                <input matInput formControlName="association">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                   
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Client</mat-label>
+                                <input matInput formControlName="client">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Regional Office Name</mat-label>
+                                <input matInput formControlName="regionalOfficeName">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Regional Office Address</mat-label>
+                                <input matInput formControlName="regionalOfficeAddress">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>PIU Address</mat-label>
+                                <input matInput formControlName="piuAddress">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                    
+                        <div class="col-md-6">
+                            <mat-form-field >
+                                <mat-label>Site Address</mat-label>
+                                <input  matInput formControlName="siteAddress">
+                            </mat-form-field>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <!-- <mat-form-field>
+                                <mat-label>Location</mat-label>
+                                <mat-select formControlName="organizationId">
+                                    <mat-option *ngFor="let lfield of locationList" [value]="lfield.value">
+                                        {{lfield.text}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field> -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div *ngIf="isEdit" class="col-md-4">
+                            <section class="example-section">
+                                <!-- <mat-slide-toggle class="example-margin" [checked]="employeeForm.controls.status.value"
+                                formControlName="status" >
+                                    Status
+                                </mat-slide-toggle> -->
+                              </section>
+                        </div>
+                        
+                    </div>
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <div class="row control-div">
+            <div class=" button-row" align="right">
+                  <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                  <button [ngClass]="projectForm.valid? 'submit-btn':''" (click)="submit()" mat-flat-button [disabled]="!projectForm.valid"  color="primary">
+                      {{isEdit?'Update':'Submit'}}</button>
+          </div>
+          </div>
+      </mat-dialog-actions>
+    </mat-card>
+    <!-- <mat-card *ngIf="isEdit">
+       
+        <mat-card-title mat-dialog-title>
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl">{{employeeName}}</span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button mat-raised-button color="default" [mat-dialog-close]="false">
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card> -->
+</div>

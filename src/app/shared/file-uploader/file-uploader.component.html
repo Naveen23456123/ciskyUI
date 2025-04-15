@@ -1,0 +1,45 @@
+<div class="col-md-12" class=" form-group">
+    <fieldset class="form-group">
+        <label class="error mat-error" *ngIf="Error">{{Error}} </label>
+        <div class="col-md-12">
+            <span></span>
+            <h5>Upload {{title}} <span *ngIf="required">*</span></h5>
+        </div>
+        
+        <div class="custom-file fileInputProfileWrap">
+            <div class="control-div row-center button-row input-file">
+                <button type="button" mat-mini-fab color=""  class="upload-btn" (click)="onClick()">
+                    <mat-icon>attachment</mat-icon>
+                </button>
+                <span class="file-name" *ngIf="isFileUploaded">{{fileName}}</span>
+                <button  type="button" mat-mini-fab color="" matTooltip="Clear Document" *ngIf="isFileUploaded" class="warn-linear-image float-end" (click)="removeFile()" >
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+            <!-- class="fileInputProfile" -->
+            <input [hidden]="true"   #fileUpload mat-fab type="file" (change)="fileChangeEvent($event)">            
+            <mat-error *ngIf="isClicked && !isFileUploaded && required" >Please attach {{title}}.</mat-error>
+            <!-- <div *ngIf="UploadType=='image'" class="img-space control-div">
+
+                <ng-container *ngIf="cardImageBase64; else logoTemplate">
+                    <img [src]="cardImageBase64" />
+                </ng-container>
+                <ng-template #logoTemplate>
+                    <img src="assets/Images/Logos/Viztro.png" class="img-responsive">
+                </ng-template>
+
+            </div> -->
+            <div *ngIf="UploadType=='csv'" class="control-div">
+                
+            </div>
+            <div *ngIf="UploadType=='image'" class="msg-note ">
+                <div>Note: Recommended image size of 514 X 514</div>
+            </div>
+
+        </div>
+    </fieldset>
+    <div class="col-md-12">
+        <!-- <a mat-button color="default" class="btn btn-danger" (click)="removeImage()" >Remove</a> -->
+
+    </div>
+</div>

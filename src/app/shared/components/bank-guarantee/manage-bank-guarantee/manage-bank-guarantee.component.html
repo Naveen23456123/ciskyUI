@@ -1,0 +1,120 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deletebg">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <!-- <form [formGroup]="organizationForm" > -->
+                <form [formGroup]="bgForm" (submit)="submit()">
+                    <div class="row control-div">
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Bank Guarantee Name</mat-label>
+                                <input matInput formControlName="bankname">
+                                <mat-error>Please provide guarantee name</mat-error>
+                            </mat-form-field>
+                        </div> 
+
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Bank Guarantee Number</mat-label>
+                                <input matInput formControlName="guaranteenumber">
+                                <mat-error>Please provide guarantee number</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Amount</mat-label>
+                                <input matInput formControlName="amount">
+                                <mat-error>Please enter amount</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-4">                           
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Bank Guarantee Date</mat-label>
+                                <input matInput  formControlName="guaranteedate" [matDatepicker]="guaranteedate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="guaranteedate"></mat-datepicker-toggle>
+                                <mat-datepicker #guaranteedate></mat-datepicker>
+                                <mat-error>Please select guarantee date</mat-error>
+                              </mat-form-field>
+                        </div> 
+                        <div class="col-md-4">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Expiry Date</mat-label>
+                                <input matInput  formControlName="guaranteeexpirydate" [matDatepicker]="guaranteeexpirydate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="guaranteeexpirydate"></mat-datepicker-toggle>
+                                <mat-datepicker #guaranteeexpirydate></mat-datepicker>
+                                <mat-error>Please select expiry date</mat-error>
+                              </mat-form-field>
+                        </div>   
+                        <div class="col-md-4">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Release Date</mat-label>
+                                <input matInput  formControlName="releasedate" [matDatepicker]="releasedate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="releasedate"></mat-datepicker-toggle>
+                                <mat-datepicker #releasedate></mat-datepicker>
+                                <mat-error>Please select release date</mat-error>
+                              </mat-form-field>
+                        </div>   
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Remarks</mat-label>
+                                <textarea  matInput formControlName="remark"></textarea>
+                                
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4" *ngIf="!isEdit">
+                            <app-file-uploader [required]="true" title="Guarantee" (onfileUpload)="filedata($event)" ></app-file-uploader>
+                        </div>   
+                        <div class="col-md-12 button-row" align="right">
+                                <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                                <button [ngClass]="bgForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!bgForm.valid || isClicked" color="primary">
+                                    <span [hidden]="isClicked">{{isEdit?'Update':'Submit'}}</span> 
+                                    <app-btn-loader [IsLoading]="isClicked"></app-btn-loader>
+                                </button>
+                        </div>
+                        
+                    </div>
+                    
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card *ngIf="deletebg">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl">{{bgForm.controls['guaranteenumber'].value}}</span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

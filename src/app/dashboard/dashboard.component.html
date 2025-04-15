@@ -1,0 +1,50 @@
+<div class="container" >   
+    <div class="row">
+    <div class="wrapper col-md-8 pr-0">
+    <mat-card>  
+        <mat-dialog-content class="mat-typography">
+        <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper" *ngIf="!isLoading">
+<h1>Data</h1>
+            </div>
+        </mat-card-content>
+        </mat-dialog-content>
+    </mat-card>
+    </div>
+    <div class="wrapper col-md-4 ">
+        <mat-card>  
+            <mat-dialog-content class="mat-typography">
+            <mat-card-content class="pad-0">
+                <div class="load-wrap" *ngIf="isLoading">
+                    <app-loader [IsLoading]="isLoading"></app-loader>
+                </div>
+                <div class="wrapper" *ngIf="!isLoading">
+                    <h1>Data</h1>
+                </div>
+            </mat-card-content>
+            </mat-dialog-content>
+        </mat-card>
+        </div>
+        <div class="wrapper col-md-8 ">
+            <mat-card class="wrapper">  
+                <mat-dialog-content class="mat-typography">
+                <mat-card-content class="pad-0">
+                    <div class="load-wrap" *ngIf="isLoading">
+                        <app-loader [IsLoading]="isLoading"></app-loader>
+                    </div>
+                    <div class="wrapper" *ngIf="!isLoading">
+                        <ngx-charts-pie-grid
+                        
+                       
+                        [results]="single"                        
+                        (select)="onSelect($event)">
+                      </ngx-charts-pie-grid>
+                    </div>
+                </mat-card-content>
+                </mat-dialog-content>
+            </mat-card>
+            </div>
+</div>

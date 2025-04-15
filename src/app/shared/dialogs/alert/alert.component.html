@@ -1,0 +1,53 @@
+<div class="dialog">
+    <mat-card>
+        <h1 mat-dialog-title class="mat-typography">
+            <mat-icon>{{getAlertIcon()}}</mat-icon><span>{{data.title}}</span>
+        </h1>
+
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        {{data.content}}
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+                        <button *ngIf="data.acceptLabel"  [mat-dialog-close]="true" mat-raised-button color="primary">
+                            {{data.acceptLabel}}
+
+                        </button>
+                        <button *ngIf="data.closeLabel" mat-raised-button color="default" [mat-dialog-close]="false">
+                            {{data.closeLabel}}
+
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+
+<!-- 
+<div class="container">
+    <div class="load-wrap" *ngIf="isLoading">
+        <app-loader [IsLoading]="isLoading"></app-loader>
+    </div>
+    <div class="wrapper">
+        <mat-card>
+            <mat-card-title><mat-icon>{{getAlertIcon()}}</mat-icon><span>{{data.title}}</span></mat-card-title>
+            <mat-card-content>
+        <h1 mat-dialog-title class="mat-typography">
+            
+        </h1>
+
+        
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div> -->

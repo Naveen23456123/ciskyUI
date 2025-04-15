@@ -1,0 +1,145 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteVehicle">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3> 
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <!-- <form [formGroup]="organizationForm" > -->
+                <form [formGroup]="vehicleForm" (submit)="submit()">
+                    <div class="row control-div">
+                        <div class="col-md-4">                            
+                            <app-project-control (onValueChange)="projectChange($event)"
+                            [defaultValue]="vehicleForm.get('projectid')?.value" ></app-project-control>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Vehicle Name</mat-label>
+                                <mat-select formControlName="vehicleid">
+                                    <mat-option  *ngFor="let field of vehicleList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="!vehicleForm.get('projectid')?.value">Please select Project first</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4">                            
+                            <app-select-search *ngIf="empInit"  [defaultValue]="vehicleForm.get('employeeids')?.value"
+                                        searchPlaceholder="Search Employee" emptySearchMessage="No Employee Found"
+                                          [multiple]="true" label="Employee(s) Using Vehicle" [required]="true" selectPlaceholder="Employee(s)"
+                                        (onValueChange)="empSelect($event)" [valueArrays]="employeeList">
+                            </app-select-search>                           
+                        </div> 
+                        <div class="col-md-4">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Vehicle Used Date</mat-label>
+                                <input matInput  formControlName="useddate" [matDatepicker]="usedDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="usedDate"></mat-datepicker-toggle>
+                                <mat-datepicker #usedDate></mat-datepicker>
+                                <mat-error>Please select Used Date</mat-error>
+                              </mat-form-field>
+                        </div> 
+                        <div class="col-md-4">                           
+                            <mat-form-field>
+                                <mat-label>From Time</mat-label>
+                                <input type="text" formControlName="fromtime" matInput [ngxMatTimepicker]="timepicker" [format]="24"
+                                  readonly/>                        
+                                <mat-icon  matSuffix (click)="openFromIcon(timepicker)">schedule</mat-icon>
+                                <mat-error >
+                                    Please select From Time</mat-error>                               
+                              </mat-form-field>                              
+                              <ngx-mat-timepicker #timepicker [enableKeyboardInput]="true"></ngx-mat-timepicker>
+                        </div> 
+                        <div class="col-md-4">                           
+                            <mat-form-field>
+                                <mat-label>To Time</mat-label>
+                                <input type="text" formControlName="totime" matInput [ngxMatTimepicker]="totimepicker" [format]="24"
+                                  readonly/>                        
+                                <mat-icon matSuffix (click)="openFromIcon(totimepicker)">schedule</mat-icon>
+                                <mat-error *ngIf="vehicleForm.get('totime')?.hasError('required')">
+                                    Please select To Time
+                                  </mat-error>
+                                <mat-error *ngIf="vehicleForm.get('totime')?.hasError('timeGreaterThan')">
+                                    Value must be greater than From Time
+                                  </mat-error>
+                              </mat-form-field>
+                              <ngx-mat-timepicker #totimepicker [enableKeyboardInput]="true"></ngx-mat-timepicker>
+                        </div> 
+                        <div class=" col-md-4">
+                            <mat-form-field >
+                                <mat-label>Initial Reading</mat-label>
+                                <input matInput formControlName="initialreading">
+                                <mat-error>Please enter Initial Reading</mat-error>
+                            </mat-form-field> 
+                        </div> 
+                        <div class=" col-md-4">
+                                <mat-form-field>
+                                  <mat-label>End Reading</mat-label>
+                                  <input matInput formControlName="endreading">
+                                  <mat-error *ngIf="vehicleForm.get('endreading')?.hasError('required')">
+                                    Please enter End Reading
+                                  </mat-error>
+                                  <mat-error *ngIf="vehicleForm.get('endreading')?.hasError('greaterThan')">
+                                    Value must be greater than Initial Reading
+                                  </mat-error>
+                                </mat-form-field>               
+                        </div> 
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Purpose And Place</mat-label>
+                                <input matInput formControlName="purposeandplace">
+                                <mat-error>Please enter Purpose & Place</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-4">
+                            <app-file-uploader title="Inital Reading"></app-file-uploader>
+                        </div> 
+                        <div class="col-md-4">
+                            <app-file-uploader title="End Reading"></app-file-uploader>
+                        </div> 
+                        <div class="col-md-12 button-row" align="right">
+                            <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                            <button [ngClass]="vehicleForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!vehicleForm.valid" color="primary">
+                                {{isEdit?'Update':'Submit'}}</button>
+                    </div>
+                    </div>
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<mat-card *ngIf="deleteVehicle">      
+    <mat-card-title class="card-title d-flex justify-content-center" >
+        <mat-icon>warning</mat-icon><span>{{title}}</span>
+    </mat-card-title>
+    <mat-card-content>
+        <div class="load-wrap" *ngIf="isLoading">
+            <app-loader [IsLoading]="isLoading"></app-loader>
+        </div>
+        <div class="wrapper">
+            <mat-dialog-content>
+                <span class="mat-typography alert-content">
+                    Are you sure you want to delete logs for <span class="vw-lbl">{{vehicleno}}</span> dated <span class="vw-lbl">{{vehicledate | formatDate}}</span> ?. This operation can
+                    not be un-done once performed sucessfully.
+                </span>
+            </mat-dialog-content>
+            <mat-dialog-actions align="center">
+                <div class="control-div">
+                    <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                        Delete
+                    </button>
+                    <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                        Cancel
+                    </button>
+                </div>
+            </mat-dialog-actions>
+        </div>
+    </mat-card-content>
+</mat-card>

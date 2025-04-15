@@ -1,0 +1,55 @@
+
+@import '~@angular/material/theming';
+
+
+// #00565B Primary and cancel button
+// #2A5DB0 Secondry & links
+// #3888Bc Visited
+// #696969 Mini-fab, Fab
+// #F4F4F4 Alt-row color
+
+$md-d1brand:(
+    50:#00343f,
+    100:#2a5db0,
+    200:#3888bc,
+    300:#353e5e,
+    400:#f4f4f4,
+    500:#b8b8b8,
+    900:#cb0000,
+    contrast:(
+        50:#fff,
+        100:#fff,
+        200:#fff,
+        300:#fff,
+        400:#000,
+        500:#000,
+        900:#ffffff,
+    )
+);
+
+
+$app-primary : mat-palette($md-d1brand,50);
+$app-tabheader : mat-palette($md-d1brand,500);
+$app-accent : mat-palette($md-d1brand,100);
+$fabber : mat-palette($md-d1brand,300);
+$link : mat-palette($md-d1brand,100);
+$link-visited : mat-palette($md-d1brand,200);
+$alt-row : mat-palette($md-d1brand,400);
+
+//The warn palette is optional (default to red)
+$app-warn : mat-palette($md-d1brand,900);
+
+
+// Create the theme object  (a sass map containing all of the palettes).
+$app-theme : mat-light-theme($app-primary,$app-accent,$app-warn);
+
+//Material design icon font path
+$material-design-icon-font-path :"~/material-design-icons-iconfont/dist/fonts";
+
+$container-max-widths:(
+    sm:420px,
+    md:720px,
+    lg:960px
+);
+
+@include mat-checkbox-theme($app-theme);

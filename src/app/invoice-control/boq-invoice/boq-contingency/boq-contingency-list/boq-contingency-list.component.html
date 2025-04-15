@@ -1,0 +1,58 @@
+<mat-card>
+    <mat-card-title>
+        <h6>X-Contingencies
+            <button  class="title-btn float-end no-print"  routerLink="cont-create"   type="button"  mat-mini-fab color="primary">
+                <mat-icon>add box</mat-icon> Contingencies
+            </button>
+
+          </h6>
+    </mat-card-title>
+    <mat-card-content>
+      <div class="load-wrap" *ngIf="isLoading">
+        <app-loader [IsLoading]="isLoading"></app-loader>
+    </div>
+    <div class="wrapper" *ngIf="!isLoading"> 
+        <table mat-table [dataSource]="dataSource" >
+          
+            <ng-container matColumnDef="serial">
+              <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+              <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
+              <td mat-footer-cell *matFooterCellDef colspan="3"> Total </td>
+            </ng-container> 
+            <ng-container matColumnDef="desc">
+                <th mat-header-cell *matHeaderCellDef>Description</th>
+                <td mat-cell *matCellDef="let row"> {{row.description}} </td>
+              </ng-container>
+          
+              <!-- contractName Column -->
+              <ng-container matColumnDef="unit">
+                <th mat-header-cell *matHeaderCellDef >	Unit </th>
+                <td mat-cell *matCellDef="let row"> {{row.unit}} </td>
+              </ng-container>       
+              <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef > Amount</th>
+                <td mat-cell *matCellDef="let row"> {{row.amount}} </td>
+                <td mat-footer-cell *matFooterCellDef> {{getTotalAmount()}}</td>
+              </ng-container>                      
+              
+              <ng-container matColumnDef="action">
+                <th mat-header-cell class="no-print"  *matHeaderCellDef > Action </th>
+                <td mat-cell class="no-print"  *matCellDef="let row">  <div class="button-row">
+                  <button class="edit-table-btn" [state]="row"
+                  [routerLink]="['cont-edit',row.id]" matTooltip="Edit" mat-mini-fab>
+                 <mat-icon>edit</mat-icon> 
+               </button>
+               <button class="delete-table-btn" [state]="row"
+               [routerLink]="['cont-delete',row.id]" matTooltip="Delete" mat-mini-fab >
+                 <mat-icon>delete_forever</mat-icon> 
+               </button>
+              </div> </td>
+              <td mat-footer-cell class="no-print"  *matFooterCellDef> </td>
+              </ng-container>
+            <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>
+            <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>      
+            <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>                     
+          </table>
+    </div>
+    </mat-card-content>
+</mat-card>   

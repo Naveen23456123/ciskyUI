@@ -1,0 +1,22 @@
+<mat-form-field [ngClass]="className">
+  <mat-label>{{label}}</mat-label>
+  <mat-select [multiple]="multiple" (selectionChange)="change($event)" [formControl]="ArrayCtrl" [placeholder]="selectPlaceholder"
+    #singleSelect>
+    <mat-option>
+      <ngx-mat-select-search  
+      [placeholderLabel]="searchPlaceholder" [formControl]="ArrayFilterCtrl"
+        [noEntriesFoundLabel]="emptySearchMessage"></ngx-mat-select-search>
+    </mat-option>
+    <!-- [showToggleAllCheckbox]="true"
+    [toggleAllCheckboxIndeterminate]="isIndeterminate"
+    [toggleAllCheckboxChecked]="isChecked"
+    (toggleAll)="toggleSelectAll($event)" -->
+    <mat-option *ngFor="let item of filteredvalueArray | async" [value]="item">
+      {{item.name}}    
+    </mat-option>
+    
+  </mat-select>
+  <mat-error *ngIf="ArrayCtrl.hasError('required')">
+    {{errorMsg}}
+  </mat-error>
+</mat-form-field>

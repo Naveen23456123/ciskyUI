@@ -1,0 +1,92 @@
+<div class="container">
+    <mat-card>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div  *ngIf="!isLoading">                
+
+                <div class="mat-elevation-z8">                   
+                      <div class="table-title-row">
+                        <mat-form-field>
+                          <mat-label>Filter</mat-label>
+                          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+                        </mat-form-field>
+                        <div class="button-row">              
+                          <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
+                            <mat-icon>add box</mat-icon> Office Rent
+                        </button> 
+                      </div>
+                    </div> 
+                      <div class="mat-elevation-z8">
+                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+                      
+                          <ng-container matColumnDef="serial">
+                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                          </ng-container>
+                            <!-- contractName Column -->
+                            <ng-container matColumnDef="project">
+                              <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
+                              <td mat-cell *matCellDef="let row"> {{row.projectshortname}} </td>
+                            </ng-container>
+                      
+                          <!-- contractName Column -->
+                          <ng-container matColumnDef="basicamount">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Basic Amount </th>
+                            <td mat-cell *matCellDef="let row"> {{row.basicamount}} </td>
+                          </ng-container>
+                      
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="agrdate">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Agreement Date </th>
+                            <td mat-cell *matCellDef="let row"> {{row.agreementstartdate}} </td>
+                          </ng-container>
+                      
+                          <!-- con_personName Column -->
+                          <ng-container matColumnDef="ownername">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Owner Name </th>
+                            <td mat-cell *matCellDef="let row"> {{row.ownername}} </td>
+                          </ng-container>
+                          <!-- con_personName Column -->
+                          <ng-container matColumnDef="mobileno">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Phone Number </th>
+                            <td mat-cell *matCellDef="let row"> {{row.phoneno}} </td>
+                          </ng-container> 
+                          <ng-container matColumnDef="documents">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Documents </th>
+                            <td mat-cell *matCellDef="let row">  </td>
+                          </ng-container>
+                          <!-- con_personName Column -->
+                          <ng-container matColumnDef="action">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                            <td class="action-col" mat-cell *matCellDef="let row"> 
+                              <div class="button-row">
+                               <button class="edit-table-btn" [state]="row"
+                               [routerLink]="['/ofc-rent/edit',row.id]" matTooltip="Edit" mat-mini-fab>
+                              <mat-icon>edit</mat-icon> 
+                            </button>
+                            <button class="delete-table-btn" [state]="row"
+                            [routerLink]="['/ofc-rent/delete',row.id]" matTooltip="Delete" mat-mini-fab >
+                              <mat-icon>delete_forever</mat-icon> 
+                            </button>
+                          </div>
+                           </td>
+                          </ng-container>
+                        
+                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+                          <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+                          </tr>
+                        </table>
+                        <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+                        </mat-paginator>
+                      </div>                    
+                      
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+<router-outlet></router-outlet>

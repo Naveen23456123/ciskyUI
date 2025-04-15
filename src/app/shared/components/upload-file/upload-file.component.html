@@ -1,0 +1,353 @@
+<div class="dialog" >
+    <mat-card>
+        <!-- <mat-card-title class="card-title d-flex justify-content-center"> 
+            <div class="card-title-row">
+           <Span>  Upload your {{title}} recordes in below format : </Span>            
+              <section class="right-button">
+                <div class="button-row">                   
+                    <button mat-mini-fab class="popup-close-btn" mat-dialog-close>
+                        <mat-icon>close</mat-icon>
+                      </button> 
+                </div>
+              </section>
+            </div>
+        </mat-card-title> -->
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> 
+            Upload your {{title}} recordes in below format : 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3> 
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                        
+               <div *ngIf="isImport">
+                <app-file-uploader UploadType="csv" (onfileUpload)="fileuploaded($event)">
+                </app-file-uploader>
+                <div class="  col-md-12">
+                    <div class="row">
+                        <div class="col-md-9">
+                            Upload a CSV file to import new <b>{{title}}</b> details. Please ensure that your file follow the template 
+                            format.
+                        </div>
+                        <div class="col-md-3">
+                            <button class="template-btn" mat-raised-button (click)="download_sample()" color="primary">
+                                <mat-icon>save_alt</mat-icon> {{title}} Template
+                            </button>
+                        </div>
+                        <hr>
+                        <div class="col-md-12 ">
+                            <b>Points to Remember : </b>
+                        </div>                        
+                        <!-- <div class="col-md-12">
+                            <span> 1. First Row Should be the same header as mentioned below.</span>
+                        </div>
+                        <div class="col-md-12 msg-note control-div">
+                            <div><b>"First Name" , "Last Name" , "Email" , "Phone Number" , "Company" , "Subject" ,
+                                    "Location", "Visitor Type" , "Host Name", "Start Date" , "End Date".</b></div>
+                        </div> -->
+                        <div class="col-md-12 control-div">
+                            <span> 1. All Dates should be in DD-MM-YYYY format.</span>
+                        </div>
+                        <div class="col-md-12 row">
+                            <ng-container *ngTemplateOutlet="currentTemplate"  ></ng-container>
+                        </div>
+                        <div *ngIf="errorLoadingCSV && errorLoadingCSV.length>0"
+                            class="col-md-12 warning-note control-div">
+                            <div class="col-md-12">
+                                <ul>
+                                    <b>Look like, there are few issue in processing your CSV file. Please try again
+                                        after correction of below mentioned issues.</b>
+                                    <li *ngFor="let error of errorLoadingCSV">
+                                        {{error}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                       
+                        <div *ngIf="dataSource.filteredData.length>0" class="col-md-12">
+                            <div  class="row col-md-12 control-div">
+                                <div class="col-md-12">
+                                     Have a look on the guest(s) details which are uploaded by you. Once clicked on
+                                     <b>Import </b> button all guest(s) will be uploading to your invitations directory.
+
+                                 </div>
+                        </div>
+                       
+                            <div class="mat-elevation-z8">
+                                    <table mat-table [dataSource]="dataSource">
+                                        <ng-container *ngFor="let column of displayedColumns">
+                                          <ng-container [matColumnDef]="column">
+                                            <th mat-header-cell *matHeaderCellDef>{{ column | titlecase |replaceUnderscore  }}</th>
+                                            <td mat-cell *matCellDef="let element">{{ element[column] }}</td>
+                                          </ng-container>
+                                        </ng-container>
+                                  
+                                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                                      </table>
+                                   
+                            </div>
+                        </div>
+                    </div>
+                    <mat-dialog-actions align="end">
+                        <div class="control-div">
+                            <button class="cancel-btn" mat-stroked-button [mat-dialog-close]="false" color="default">Cancel</button>
+                            <button class="upload-btn" type="button" *ngIf="errorLoadingCSV && errorLoadingCSV.length===0"
+                                mat-raised-button (click)="importInvitation()" color="primary">
+                                <mat-icon>publish</mat-icon>Import
+                            </button>
+                        </div>
+                    </mat-dialog-actions>
+                </div>
+            </div>
+            
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <ng-template #COS>
+        <div  class="row col-md-12">
+            <div  class="col-md-4">
+                <ul> <span class="msg-note">COS Code</span> 
+                    <li>Value should be a unique value.</li>
+                </ul>
+            </div>
+            <div  class="col-md-4">
+                <ul> <span class="msg-note">Letter</span> 
+                    <li>Provided letter number that will be unique and not attached to any other letter already present.</li>
+                </ul>
+            </div>
+            <div  class="col-md-4">
+                <ul> <span class="msg-note">COS status can be any one of below :</span> 
+                    <li>Pending</li>
+                    <li>Rejected</li>
+                    <li>Approved</li>
+            </ul>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #PROJECT>
+    </ng-template>
+    <ng-template #CONTRACTORLETTER>
+        <div  class="row col-md-12">
+            <div  class="col-md-3">
+                <ul> <span class="msg-note">Letter Number</span> 
+                    <li>Value should be a unique value.</li>
+                </ul>
+            </div>
+            <div  class="col-md-3">
+                <ul> <span class="msg-note">Letter Type can be any one of below :</span> 
+                    <li>eot</li>
+                    <li>cos</li>
+                    <li>billing</li>
+                    <li>design</li>
+                    <li>ncr</li>
+                    <li>other</li>
+                </ul>
+            </div>
+            <div  class="col-md-3">
+                <ul> <span class="msg-note">Reply By can be any one of below :</span> 
+                    <li>HO</li>
+                    <li>SO</li>
+                </ul>
+            </div>
+            <div  class="col-md-3">
+                <ul> <span class="msg-note">Letter Exchange can be any one of below :</span> 
+                    <li>Send</li>
+                    <li>Recieve</li>
+            </ul>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #ALLLETTER>
+        <div  class="row col-md-12">
+            <div  class="col-md-3">
+                <ul> <span class="msg-note">Information</span> 
+                    <li>Letter Number should be a unique value.</li>
+                    <li>Fill existing project only</li>
+                    <li>Insert existing contractor only.</li>
+                    <li>In project field fill site prcode only.</li>
+                    <li>In contractor fill contractor name.</li>
+                    <li>Add contractor name only if the value of work performed by is <b>contractor</b></li>
+                </ul>
+            </div>
+            <div  class="col-md-3">
+                <ul> <span class="msg-note">Letter Type can be any one of below :</span> 
+                    <li>eot</li>
+                    <li>cos</li>
+                    <li>billing</li>
+                    <li>design</li>
+                    <li>ncr</li>
+                    <li>other</li>
+                </ul>
+            </div>
+            <div  class="col-md-3">
+                <ul> <span class="msg-note">Reply By can be any one of below :</span> 
+                    <li>HO</li>
+                    <li>SO</li>
+                </ul>
+            </div>
+            <div  class="col-md-3">
+                <ul> <span class="msg-note">Letter Exchange can be any one of below :</span> 
+                    <li>Send</li>
+                    <li>Recieve</li>
+            </ul>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #EOT>
+        <div  class="row col-md-12">
+            <div  class="col-md-4">
+                <ul> <span class="msg-note">EOT Code</span> 
+                    <li>Value should be a unique value.</li>
+                </ul>
+            </div>
+            <div  class="col-md-4">
+                <ul> <span class="msg-note">Letter</span> 
+                    <li>Provided letter number that will be unique and not attached to any other letter already present.</li>
+                </ul>
+            </div>
+            <div  class="col-md-4">
+                <ul> <span class="msg-note">EOT status can be any one of below :</span> 
+                    <li>Pending</li>
+                    <li>Rejected</li>
+                    <li>Approved</li>
+            </ul>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #SITEPROGRESS>
+        <div  class="row col-md-12">
+            <div  class="col-md-4">
+                <ul> <span class="msg-note">Month & Year</span> 
+                    <li>Month & Year should be a numeric value.</li>
+                </ul>
+            </div>
+            <div  class="col-md-4">
+                <ul> <span class="msg-note">Progress Percentage</span> 
+                    <li>Progree percentage should be in ascending order</li>
+                </ul>
+            </div>
+            
+        </div>
+    </ng-template>
+    <ng-template #INSURANCE>
+        <div  class="col-md-8">
+            <ul> <span class="msg-note">Policy number</span> 
+                <li>Insurance policy number should be a unique value.</li>
+            </ul>
+        </div>
+    </ng-template>
+    <ng-template #BANKGUARANTEE>
+        <div  class="col-md-8">
+            <ul> <span class="msg-note">Bank Guarantee Number</span> 
+                <li>Bank Guarantee Number should be Unique value.</li>
+            </ul>
+        </div>
+    </ng-template>
+    <ng-template #EMPLOYEE>
+        <div class="row col-md-12">
+            <div class="col-md-6">
+                <ul> <span class="msg-note">Information</span> 
+                    <li>Employee code should be unique.</li>
+                    <li>Email should be valid.</li>
+                    <li>Project should be existing.</li>
+                    <li>In Project field only fill site project code.</li>
+                    <li>Aadhar should have 12 digits with no spaces between the digits.</li>
+                    <li>PAN should have 10 digits with no spaces between the digits.</li>
+                    <li>Mobile numbers should have 10 digits, with no spaces between the digits, and should not start with "+91"</li>
+                    <li>Add only one mobile number</li>
+                   
+                </ul>
+            </div>
+            <div class="row col-md-6">
+                <div class="col-md-6">
+                    <ul> <span class="msg-note">Employee Role</span> 
+                        <li>Role</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul> <span class="msg-note">Professional Type</span> 
+                        <li>Professional Type</li>
+                    </ul>                    
+                </div>
+                <div class="col-md-6">
+                    <ul> <span class="msg-note">Employee Status</span> 
+                        <li>Active</li>
+                    </ul>                    
+                </div>
+                <div class="col-md-6">
+                    <ul> <span class="msg-note">Marital Status</span> 
+                        <li>Single</li>
+                    </ul>                    
+                </div>
+            </div>
+            
+        </div>
+    </ng-template>
+    <ng-template #VEHICLE>
+        <div  class="col-md-6">
+            <ul> <span class="msg-note">Information</span> 
+                <li>In name field fill the name of the vehicle.</li>
+            </ul>
+        </div>
+    </ng-template>
+    <ng-template #INVENTORY>
+        <div  class="col-md-6">
+            <ul> <span class="msg-note">Information</span> 
+                <li>In project field site project code should be filled.</li>
+                <li>Employee Code should be Valid</li>
+                <li>The item name should match exactly with the names in the Item List.</li>              
+            </ul>
+        </div>
+    </ng-template>
+    <ng-template #CONSULTANTLETTER>
+        <div class="col-md-4">
+            <ul> <span class="msg-note">Letter Type</span> 
+                <li></li>
+            </ul>
+        </div>
+        <div class="col-md-8">
+            <div class="col-md-4">
+                <ul> <span class="msg-note">Information</span> 
+                    <li>Letter Number should be unique.</li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <ul> <span class="msg-note">Letter Exchange</span> 
+                    <li></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <ul> <span class="msg-note">Reply By</span> 
+                    <li>In name field fill the name of the vehicle.</li>
+                </ul>
+            </div>
+           
+            <div class="col-md-4"></div>
+        </div>
+    </ng-template>
+    <ng-template #CONTRACTORBILLING>
+    </ng-template>
+    <ng-template #CONTACT>
+        <div  class="col-md-4">
+            <ul> <span class="msg-note">Conatct Type</span> 
+                <li>NHAI</li>
+            </ul>
+        </div>
+        <div  class="col-md-4">
+            <ul> <span class="msg-note">Designation</span> 
+                <li>Deputy Manager</li>
+            </ul>
+        </div>
+        <div  class="col-md-4">
+            <ul> <span class="msg-note">Brnach</span> 
+                <li>PI</li>
+            </ul>
+        </div>
+    </ng-template>
+  
+</div>

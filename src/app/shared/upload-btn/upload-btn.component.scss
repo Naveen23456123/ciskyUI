@@ -1,0 +1,10 @@
+.upload-btn{
+    background: white;
+    color: var(--mdc-fab-small-container-color);
+    border: 2px solid var(--mdc-fab-small-container-color);
+}
+.upload-btn:hover{
+    background: var(--mdc-fab-small-container-color);
+    color: white;
+    border: none;
+}

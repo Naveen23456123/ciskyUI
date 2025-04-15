@@ -1,0 +1,110 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteIns">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3>        
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <!-- <form [formGroup]="organizationForm" > -->
+                <form [formGroup]="insForm" (submit)="submit()">
+                    <div class="row control-div">
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Insurance Name</mat-label>
+                                <input matInput formControlName="insurancename">
+                                <mat-error>Please provide insurance name</mat-error>
+                            </mat-form-field>
+                        </div> 
+
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Company Name</mat-label>
+                                <input matInput formControlName="companyname">
+                                <mat-error>Please provide company name</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Amount</mat-label>
+                                <input type="number" matInput formControlName="amount">
+                                <mat-error>Please provide amount</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Policy Number</mat-label>
+                                <input matInput formControlName="policynumber">
+                                <mat-error>Please provide policy number</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-4">                           
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Start Date</mat-label>
+                                <input matInput  formControlName="startdate" [matDatepicker]="startdate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="startdate"></mat-datepicker-toggle>
+                                <mat-datepicker #startdate></mat-datepicker>
+                                <mat-error>Please select start date</mat-error>
+                              </mat-form-field>
+                        </div> 
+                        <div class="col-md-4">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>End Date</mat-label>
+                                <input matInput  formControlName="enddate" [matDatepicker]="enddate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="enddate"></mat-datepicker-toggle>
+                                <mat-datepicker #enddate></mat-datepicker>
+                                <mat-error>Please select end date</mat-error>
+                              </mat-form-field>
+                        </div>   
+                        <div class="col-md-4" *ngIf="!isEdit">
+                            <app-file-uploader [required]="true" title="Insurance" (onfileUpload)="filedata($event)" ></app-file-uploader>
+                        </div>  
+                        <div class="col-md-12 button-row" align="right">
+                                <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                                <button [ngClass]="insForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!insForm.valid || isClicked" color="primary">
+                                    <span [hidden]="isClicked">{{isEdit?'Update':'Submit'}}</span> 
+                                    <app-btn-loader [IsLoading]="isClicked"></app-btn-loader>
+                                </button>
+                        </div>
+                        
+                    </div>
+                    
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card *ngIf="deleteIns">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl">{{insForm.controls['insurancename'].value}}</span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

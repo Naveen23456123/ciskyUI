@@ -1,0 +1,7 @@
+{
+    "api":{
+        "url":"http://localhost:5187/api/",
+        "prefix":""
+    },
+    "loginUrl":"http://localhost:4200/login"
+}

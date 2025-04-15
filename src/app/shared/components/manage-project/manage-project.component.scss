@@ -1,0 +1,29 @@
+
+::ng-deep .mdc-text-field--filled {
+    background-color: transparent !important;
+}
+
+// mat-card-title {
+//     text-align: center;
+//     border-bottom: 1px solid gray;
+//     padding: 15px 0px 15px 0px;
+//     font-weight: 500;
+//     background-image: linear-gradient(#09002d, #737373);
+//     color: #fff;
+// }
+::ng-deep .mat-mdc-dialog-surface{
+    border-radius: 10px !important;
+}
+
+::ng-deep mat-dialog-container{
+    //margin-top: 40px !important;
+}
+
+
+  
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Ensure body doesn't scroll */
+  }
+  

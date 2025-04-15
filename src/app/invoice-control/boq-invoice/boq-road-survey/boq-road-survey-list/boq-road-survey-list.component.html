@@ -1,0 +1,70 @@
+<div class="container">
+<mat-card>
+    <mat-card-title>
+        <h6>IX-Road Survey Equipment
+            <button  class="title-btn float-end no-print" routerLink="rs-create"   type="button"  mat-mini-fab color="primary">
+                <mat-icon>add box</mat-icon> Road Survey
+            </button>
+
+          </h6>
+    </mat-card-title>
+    <mat-card-content>
+      <div class="load-wrap" *ngIf="isLoading">
+        <app-loader [IsLoading]="isLoading"></app-loader>
+    </div>
+    <div class="wrapper" *ngIf="!isLoading"> 
+        <table mat-table [dataSource]="dataSource" >
+          
+            <ng-container matColumnDef="serial">
+              <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+              <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
+              <td mat-footer-cell *matFooterCellDef colspan="5"> Total </td>
+            </ng-container> 
+            <ng-container matColumnDef="desc">
+                <th mat-header-cell *matHeaderCellDef>Description</th>
+                <td mat-cell *matCellDef="let row"> {{row.description}} </td>
+              </ng-container>
+          
+              <!-- contractName Column -->
+              <ng-container matColumnDef="km">
+                <th mat-header-cell *matHeaderCellDef >	KM. </th>
+                <td mat-cell *matCellDef="let row"> {{row.km}} </td>
+              </ng-container>       
+              <ng-container matColumnDef="rateperkm">
+                <th mat-header-cell *matHeaderCellDef > Nos. of times survey to be concluded </th>
+                <td mat-cell *matCellDef="let row"> {{row.numberofsurveytime}} </td>
+              </ng-container>                      
+              <ng-container matColumnDef="noofsurvey">
+                <th mat-header-cell *matHeaderCellDef > Rate per No. of times* survey to be conducted (Rs.)</th>
+                <td mat-cell *matCellDef="let row"> {{row.ratepersurvey}} </td>
+              </ng-container>
+              <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef > Amount(Rs.) </th>
+                <td mat-cell *matCellDef="let row"> {{row.totalamount}} </td>
+                <td mat-footer-cell *matFooterCellDef> {{getTotalAmount()}} </td>
+              </ng-container>
+              <ng-container matColumnDef="action">
+                <th mat-header-cell class="no-print" *matHeaderCellDef > Action </th>
+                <td mat-cell class="no-print"  *matCellDef="let row"> 
+                  <div class="button-row">
+                  <button class="edit-table-btn" [state]="row"
+                  [routerLink]="['rs-edit',row.id]" matTooltip="Edit" mat-mini-fab>
+                 <mat-icon>edit</mat-icon> 
+               </button>
+               <button class="delete-table-btn" [state]="row"
+               [routerLink]="['rs-delete',row.id]" matTooltip="Delete" mat-mini-fab >
+                 <mat-icon>delete_forever</mat-icon> 
+               </button>
+              </div>
+            </td>
+            <td mat-footer-cell class="no-print"  *matFooterCellDef> </td>
+              </ng-container>
+            <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>
+            <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>  
+            <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>                         
+          </table>
+    </div>
+
+    </mat-card-content>
+</mat-card>
+</div>

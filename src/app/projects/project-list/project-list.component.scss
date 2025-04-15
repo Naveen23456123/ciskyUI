@@ -1,0 +1,85 @@
+table {
+    width: 100%;
+  }
+  
+  tr.example-detail-row {
+    height: 0;
+  }
+  
+  tr.example-element-row:not(.example-expanded-row):hover {
+    background: whitesmoke;
+  }
+  
+  tr.example-element-row:not(.example-expanded-row):active {
+    background: #efefef;
+  }
+  
+  .example-element-row td {
+    border-bottom-width: 0;
+  }
+  
+  .example-element-detail {
+    overflow: hidden;
+    display: flex;
+  }
+  
+  .example-element-diagram {
+    min-width: 80px;
+    border: 2px solid black;
+    padding: 8px;
+    font-weight: lighter;
+    margin: 8px 0;
+    height: 104px;
+  }
+  
+  .example-element-symbol {
+    font-weight: bold;
+    font-size: 40px;
+    line-height: normal;
+  }
+  
+  .example-element-description {
+    padding: 16px;
+  }
+  
+  .example-element-description-attribution {
+    opacity: 0.5;
+  }
+  
+  .example-element-detail{
+     display: block !important;
+  }
+
+  .expand-lbl-text{
+    opacity: 0.6;
+  }
+
+  .details-Data{
+    box-shadow: var(--mdc-fab-small-container-elevation-shadow, var(--mat-sys-level3));
+    // background-image: linear-gradient(#000e50, #c1c1c1);
+    // color: white;
+    margin-bottom: 12px;
+  }
+
+ ::ng-deep text.ng-star-inserted {
+    // fill: white !important;
+    font-size: 1.1em !important;
+  }
+
+  .mat-mdc-row:nth-child(even){
+    background-color: transparent !important;
+  }
+  ::ng-deep g[ng-reflect-label="Site Progress"] > text{
+    // fill: white !important;
+    font-size: 1.2em !important;
+  }
+  ::ng-deep .textDataLabel {
+    font-size: 1.1em !important;
+    // fill: white;
+}
+ .mdc-data-table__cell, .mdc-data-table__header-cell {
+  padding: 2px 16px !important;
+}
+.cont-list{
+   height: 4em;
+}

@@ -1,0 +1,41 @@
+export enum BOQInvoice{
+    LOCALSTAFF='Remuneration for Local Professional Staff',
+    SUPPORTSTAF='Supporting Staff',
+    TRANSPORTATION='Transportation',
+    DUTY_TRAVEL_SITE='Duty Travel to Site',
+    OFFICE_RENT='Office Rent',
+    OFFICE_SUPPLY_UTILITY_COMM='Office Supplies, Utilities, and Communication',
+    OFFICE_FURN_EPUIP='Office Furniture and Equipment',
+    REPORT_DOCUMENT_REPORTING='Reports and Document Printing',
+    ROAD_SURVEY_EQUIP='Road Survey Equipment',
+    CONTINGENCIES='Contingencies',
+    LOCALSTAFF_KEY='ls',
+    SUPPORTSTAF_KEY='ss',
+    TRANSPORTATION_KEY='tp',
+    DUTY_TRAVEL_SITE_KEY='dt',
+    OFFICE_RENT_KEY='or',
+    OFFICE_SUPPLY_UTILITY_COMM_KEY='os',
+    OFFICE_FURN_EPUIP_KEY='Office Furniture and Equipment',
+    REPORT_DOCUMENT_REPORTING_KEY='rd',
+    ROAD_SURVEY_EQUIP_KEY='rs',
+    CONTINGENCIES_KEY='cont',
+}
+
+
+export enum ConsultanceInvoice{
+    EOT='EOT',
+    PROJECT='Project',
+    COS='COS',
+    LETTERS='Letters',
+    CONTRACTORLETTER='Contractor Letter',
+    SITEPROGRESS='Site Progress',
+    MILESTONE='Milestone',
+    CONTRACTORBILLING='Contractor Billing',
+    BANKGUARANTEE='Bank Gurarntee',
+    INSURANCE='Insurance',
+    VEHICLE='Vehicle',
+    EMPLOYEE='Employee',
+    INVENTORY="Inventory",
+    CONTACT="Contact",
+    ALLLETTER="Letter"
+}

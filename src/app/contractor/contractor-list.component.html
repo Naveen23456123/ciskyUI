@@ -1,0 +1,127 @@
+<div class="container">
+    
+    <mat-card>
+        <mat-card-title>Projects</mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+        <mat-card-title></mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper" *ngIf="!isLoading">
+  <div class="row">
+    <div class="col-md-4">
+        <mat-form-field>
+            <mat-label>Select</mat-label>
+            <mat-select  matNativeControl required>
+                <mat-option>Consultant</mat-option>
+                <mat-option>Contract</mat-option>
+             
+            </mat-select >
+          </mat-form-field>
+    </div>
+    <div class="col-md-4">
+        <mat-form-field>
+            <mat-label>Select Contractor</mat-label>
+            <mat-select  matNativeControl required>
+                <mat-option>Consultant</mat-option>
+                <mat-option>Contract</mat-option>
+            </mat-select >
+          </mat-form-field>
+    </div>
+    <div class="col-md-4">
+       
+          
+          <button routerLink="create" mat-mini-fab extended>
+            <mat-icon>add box</mat-icon>Contractor 
+          </button>
+    </div>
+  </div>
+                
+                <mat-tab-group>
+                    <mat-tab>
+                      <ng-template mat-tab-label>
+                        <mat-icon class="example-tab-icon">info</mat-icon>
+                        Information
+                      </ng-template>
+                      Content 1
+                    </mat-tab>
+                  
+                    <mat-tab>
+                      <ng-template mat-tab-label>
+                        <mat-icon class="example-tab-icon">currency_rupee</mat-icon>
+                        Bills
+                      </ng-template>
+                      Content 2
+                    </mat-tab>
+                  
+                    <mat-tab>
+                      <ng-template mat-tab-label>
+                        <mat-icon class="example-tab-icon">payments</mat-icon>
+                        Billing Details
+                      </ng-template>
+                  
+                      Content 3
+                    </mat-tab>
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                          <mat-icon class="example-tab-icon">route</mat-icon>
+                          Mile Stone
+                        </ng-template>
+                        Content 1
+                      </mat-tab>
+                    
+                      <mat-tab>
+                        <ng-template mat-tab-label>
+                          <mat-icon class="example-tab-icon">straight</mat-icon>
+                          Site Progress
+                        </ng-template>
+                        Content 2
+                      </mat-tab>
+                    
+                      <mat-tab>
+                        <ng-template mat-tab-label>
+                          <mat-icon class="example-tab-icon">update</mat-icon>
+                          EOT
+                        </ng-template>
+                    
+                        Content 3
+                      </mat-tab>
+                      <mat-tab>
+                        <ng-template mat-tab-label>
+                          <mat-icon class="example-tab-icon">hourglass_bottom</mat-icon>
+                          COS
+                        </ng-template>
+                        Content 1
+                      </mat-tab>
+                    
+                      <mat-tab>
+                        <ng-template mat-tab-label>
+                          <mat-icon class="example-tab-icon">receipt_long</mat-icon>
+                          Letters
+                        </ng-template>
+                        Content 2
+                      </mat-tab>
+                    
+                      <mat-tab>
+                        <ng-template mat-tab-label>
+                          <mat-icon class="example-tab-icon">description</mat-icon>
+                          Other Documents
+                        </ng-template>
+                    
+                        Content 3
+                      </mat-tab>
+                  </mat-tab-group>
+                  
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+                
