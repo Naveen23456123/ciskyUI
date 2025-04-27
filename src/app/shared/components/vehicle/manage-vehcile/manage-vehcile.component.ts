@@ -7,7 +7,7 @@ import { ProjectInterfaceService } from '@app/shared/services/external/project-i
 import { VehicleInterfaceService } from '@app/shared/services/external/vehicle-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
-import { finalize, take } from 'rxjs';
+import { finalize, Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-manage-vehcile',
@@ -25,6 +25,9 @@ public data: any;
   projectList:any[]=[];
   deleteVehicle=false;
   isBtnClicked=false;
+  isProject=true;
+  projectName='';
+  private subscription: Subscription = new Subscription();
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageVehicleComponent>, private formbuilder: FormBuilder,
     private sessionservice: SessionService,  private router: Router,
@@ -76,24 +79,29 @@ public data: any;
       accountholdername:[],
       accountnumber:[],
       mobilenumber:[],
-      isfccode:[],
+      ifsccode:[],
       pancard:[],
       gstnumber:[],
       address:[],
       files: this.formbuilder.array([])
     });
-    if(!this.deleteVehicle){
-      this.projectService.getAllProjectPartialDetailsByOrdIg({},'')
-      .pipe(take(1),untilDestroyed(this),finalize(()=>this.isLoading=false)).subscribe((response:any)=>{
-        if(response && response.success){
-          this.projectList= response.data;
+    if(!this.deleteVehicle){     
+      this.subscription =this.sessionservice.projectEntitySubject$.subscribe((entityResponse:any)=>{
+        if(entityResponse && entityResponse.projectId){
+          this.vehicleForm.patchValue({projectid:entityResponse.projectId});          
+          this.projectChange();
         }
-      })
-      if (this.isEdit) {
-        this.setCompanyForm(this.data.element);
-      }
-      else
-      this.addDocControls();
+        else
+          this.isProject=false;
+          if (this.isEdit) {
+            this.setCompanyForm(this.data.element);
+            this.projectName= this.data.element.project;
+            this.projectChange();
+          }
+          else
+            this.addDocControls();
+          this.isLoading=false;
+      });     
    }
    else{    
     this.vehicleForm.patchValue({
@@ -132,6 +140,7 @@ public data: any;
   projectChange(data:any=null){
     if(data && data.value){
       this.vehicleForm.patchValue({projectid:data.value.id});
+      this.projectName= data.value.projectshortname;
     } 
   }
 
@@ -177,7 +186,7 @@ public data: any;
     }
   });
     let formsValue= this.vehicleForm.value;
-    formsValue.project= this.projectList.find(x=>x.id== this.vehicleForm.get('projectid')?.value).projectshortname;
+    formsValue.project= this.projectName;
     if (this.isEdit) {
       this.vehicleForm.controls['files']?.value?.forEach((item:any, index:any) => {                
         formData.append(`files[${index}].name`, item.name);

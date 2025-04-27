@@ -23,23 +23,24 @@
       page-break-before: always; /* Forces content to start on a new page */
       break-before: page;
     }
-    th {
-      background-color: lightgray; /* Header background */
-      color: black; /* Header text color */
-    }
-     th{
-      background-color: #09002d !important;
-      color: white !important;
-    }
+    // th {
+    //   background-color: lightgray; /* Header background */
+    //   color: black; /* Header text color */
+    // }
+    //  th{
+    //   background-color: #09002d !important;
+    //   color: white !important;
+    // }
   }
 
   ::ng-deep td,th{
     border: 1px solid #c7c7c7;
   }
   ::ng-deep h5,.center,th,td{
-    text-align: center;
+    text-align: right;
     
   }
+
   ::ng-deep .div-center{
     justify-content: center;
     display: flex;
@@ -69,10 +70,10 @@
 ::ng-deep mat-card-title{
   padding: 20px;
 }
-::ng-deep th.mat-mdc-header-cell, .mat-sort-header-arrow {
-  background-color: #dedede !important;
-  color: #000000 !important;
-}
+// ::ng-deep th.mat-mdc-header-cell, .mat-sort-header-arrow {
+//   background-color: #dedede !important;
+//   color: #000000 !important;
+// }
 ::ng-deep .align-right{
   float: right !important;
 }
@@ -98,4 +99,10 @@
 ::ng-deep .mat-mdc-footer-row > .mat-column-amount{
   font-size: 17px;
   font-weight: 500;
+}
+ .mdc-data-table__header-cell {
+   padding: 0 !important; 
+}
+::ng-deep .amt{
+  width: 6% !important;
 }

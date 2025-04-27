@@ -9,5 +9,5 @@ import { Component, input, Input } from '@angular/core';
 export class NoDataComponent {
 
   @Input() message='No Data Found';
-  @Input() icon="";
+  @Input() icon:string|null=null;
 }

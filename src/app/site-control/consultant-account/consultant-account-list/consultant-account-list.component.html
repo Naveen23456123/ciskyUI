@@ -7,7 +7,7 @@
             <div class="wrapper" *ngIf="!isLoading">                
 
                 <div class="mat-elevation-z8">                    
-                    <div class="table-title-row">
+                    <div class=" table-title-row">
                         <mat-form-field>
                           <mat-label>Filter</mat-label>
                           <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
@@ -18,7 +18,8 @@
                         </button> 
                       </div>
                     </div> 
-                      <div class="mat-elevation-z8">
+                    <app-no-data *ngIf="dataSource?.data?.length==0"  message="No Consultant Account(s) details found at this moment !!" ></app-no-data>
+                    <div *ngIf="dataSource?.data?.length!=0"   class="mat-elevation-z8">
                         <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>                     
                         
                           <ng-container matColumnDef="serial">

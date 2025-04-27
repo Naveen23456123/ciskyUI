@@ -63,43 +63,53 @@ ngOnInit(): void {
       this.contractModeList= reposnse;
   })
 
-this.projectForm = this.formbuilder.group({ 
-  id: [''],
-  tenderId:['',Validators.required],
-  projectCode:['',Validators.required],
-  projectShortName:[''],
-  projectLocation:[''],
-  projectName:[''],
-  keyPoints:[''],
-  companyId:[''],
-  workTypeId:[''],
-  ourRoleId:[''],
-  projectLength:[''],
-  bidDueDate:[''],
-  loadate:[''],
-  aggrementDate:[''],
-  commencementDate:[''],
-  projectDuration:[''],
-  oandmDuration:[],
-  constructionDuration:[],
-  jvShare:[],
-  scheduleConstructionCompleteDate:[''],
-  authEngineerId:[''],
-  remark:[''],
-  cordinatorId:[''],
-  consultancyFees:[''],
-  contractModeId:[''],
-  lead:[''],
-  jv:[''],
-  ourShare:[''],
-  association:[''],
-  client:[''],
-  regionalOfficeName:[''],
-  regionalOfficeAddress:[''],
-  piuAddress:[''],
-  siteAddress:['']
-});
+  this.projectForm = this.formbuilder.group({ 
+    id: [''],
+    tenderId:['',Validators.required],
+    projectCode:['',Validators.required],
+    projectShortName:[''],
+    projectLocation:[''],
+    projectName:[''],
+    keyPoints:[''],
+    companyId:[''],
+    workTypeId:[''],
+    ourRoleId:[''],
+    projectLength:[''],
+    bidDueDate:[''],
+    loadate:[''],
+    aggrementDate:[''],
+    commencementDate:[''],
+    projectDuration:[''],
+    oandmDuration:[],
+    constructionDuration:[],
+    jvShare:[],
+    scheduleConstructionCompleteDate:[''],
+    authEngineerId:[''],
+    remark:[''],
+    cordinatorId:[''],
+    consultancyFees:[''],
+    contractModeId:[''],
+    lead:[''],
+    jv:[''],
+    ourShare:[''],
+    association:[''],
+    client:[''],
+    regionalOfficeName:[''],
+    regionalOfficeAddress:[''],
+    directorname:[],
+    directorLocation:[],
+    membername:[],
+    memberlocation:[],
+    piuAddress:[''],
+    siteAddress:['']
+  });
+  this.projectForm.valueChanges.subscribe(values => {
+    const { constructionDuration, oandmDuration } = values;
+    const total = (parseFloat(constructionDuration) || 0) + (parseFloat(oandmDuration) || 0);
+    this.projectForm.get('projectDuration')?.setValue(total, { emitEvent: false });
+  });
 }
+
 
 
 submit(){  

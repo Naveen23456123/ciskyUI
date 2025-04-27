@@ -69,7 +69,7 @@ public data: any;
     this.osForm = this.formbuilder.group({ 
       id: [''],
       projectid:[],
-      itemname :[],
+      description :[],
       numberofmonths:[],
       ratepermonth:[]
     });
@@ -83,7 +83,7 @@ public data: any;
   setosForm(data: any) {    
     this.osForm.setValue({
       id: data.id,
-      itemname:data.itemname,
+      description:data.description,
       projectid:data.projectid,
       numberofmonths :data.numberofmonths,
       ratepermonth:data.ratepermonth,

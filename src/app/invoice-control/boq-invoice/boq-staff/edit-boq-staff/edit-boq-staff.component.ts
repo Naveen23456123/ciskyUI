@@ -14,7 +14,6 @@ constructor(private route: ActivatedRoute, private dialog: MatDialog,
     private router: Router) { }
 
   defaultdialogOptionConfig: MatDialogConfig = {
-    minWidth: '1100px',
     disableClose: true,
     data: {}
   }
@@ -28,7 +27,7 @@ constructor(private route: ActivatedRoute, private dialog: MatDialog,
       type: this.route.snapshot.data['type'],
       element: window.history.state
     };
-
+    this.defaultdialogOptionConfig.minWidth='50vw';
     const dialogRef = this.dialog.open(ManageSupportStaffComponent, this.defaultdialogOptionConfig);
     dialogRef.afterClosed().subscribe((data) => {
       if (data.valid) {

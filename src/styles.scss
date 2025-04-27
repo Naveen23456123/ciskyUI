@@ -90,6 +90,23 @@ div.mat-mdc-select-panel {
     font-size: 17px;
     font-weight: 600;
 }
+.vw-details-text{
+    font-weight: 500;
+    font-size: 15px;
+    opacity: 0.6;
+  }
+.vw-details-val{
+    font-weight: 500;
+    font-size: 17px;    
+  }  
+.vw-hr{
+    margin-top: 0.7rem !important;
+    margin-bottom: 0.7rem;
+  }
+  .report-mat-card-title {
+    padding :20px 19px 0px 20px !important;
+    }
+
 .child-table > tr{
     height: auto !important;
   }

@@ -15,7 +15,7 @@
                     <div class="row control-div">
                         <div class="col-md-6">                            
                             <app-select-search *ngIf="designationLoad" 
-                            searchPlaceholder="Search Designation" emptySearchMessage="No Designation Found"
+                            searchPlaceholder="Search Designation" [defaultValue]="renumerationForm.get('designationid')?.value" emptySearchMessage="No Designation Found"
                                label="Designation"
                             (onValueChange)="desgSelect($event)" [valueArrays]="designationList">
                              </app-select-search>
@@ -33,7 +33,7 @@
                         </div> 
                         <div class="col-md-6">                          
                             <app-select-search *ngIf="employeeLoad" 
-                            searchPlaceholder="Search employee" emptySearchMessage="No Employee Found"
+                            searchPlaceholder="Search employee" [defaultValue]="renumerationForm.get('employeeid')?.value" emptySearchMessage="No Employee Found"
                                label="Employee"
                             (onValueChange)="empSelect($event)" [valueArrays]="empList">
                              </app-select-search>

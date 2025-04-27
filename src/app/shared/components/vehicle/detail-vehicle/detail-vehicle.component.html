@@ -1,0 +1,119 @@
+<div class="dialog" >
+    <mat-card>        
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> Vehicle Details 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3>        
+        <mat-dialog-content class="mat-typography">
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="container">
+                <h3 class="sub-heading ">Vehicle Number  : {{vehicleDetails?.number}} </h3>
+                <hr class="vw-hr">
+                <div  class="row col-md-12 ml-0">                    
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> Project</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{vehicleDetails?.project}}</span>
+                    </div>
+                    <div  class="col-md-3">
+                    <span class="vw-details-text">Vehicle Name</span>
+                    </div>                     
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{vehicleDetails?.name }}</span>
+                    </div>
+                    <hr class="vw-hr">                                       
+                    <div class="col-md-3">
+                        <span  class="vw-details-text"> Fixed Km</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{vehicleDetails?.fixedkm}} </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> KM Per Liter </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{vehicleDetails?.kmperliter}} </span>
+                    </div>      
+                    <hr class="vw-hr">              
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> Fuel Price </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{vehicleDetails?.fuelprice | formatCurrency}} </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-text">Fixed Bill Amount</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{vehicleDetails?.fixedbillamount  | formatCurrency}}  </span>
+                    </div>    
+                    <hr class="vw-hr">                
+                    <div class="col-md-3">
+                    <span class="vw-details-text">Extra Amt./Km After fixed km </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{vehicleDetails?.extraamountafterfixedkm | formatCurrency }}  </span>
+                    </div> 
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> Bank Name</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{vehicleDetails?.bankname  }} </span>
+                    </div>  
+                    <hr class="vw-hr">                  
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> Account Holder Name</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{vehicleDetails?.accountholdername}} </span>
+                    </div> 
+                    <div class="col-md-3">
+                    <span class="vw-details-text">Account Number</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{vehicleDetails?.accountnumber }} </span>
+                    </div>   
+                    <hr class="vw-hr">                 
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> Mobile Number</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{vehicleDetails?.mobilenumber}} </span>
+                    </div> 
+                    <div class="col-md-3">
+                    <span class="vw-details-text">IFSC Code</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{vehicleDetails?.ifsccode }} </span>
+                    </div>   
+                    <hr class="vw-hr">                 
+                    <div class="col-md-3">
+                    <span class="vw-details-text">PAN Card </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{vehicleDetails?.pancard}} </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-text">GST Number</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{vehicleDetails?.gstnumber }} </span>
+                    </div>     
+                    <hr class="vw-hr">                    
+                    <div class="col-md-3">
+                    <span class="vw-details-text">Address </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{vehicleDetails?.address}} </span>
+                    </div>                             
+                </div> 
+            </div>
+            </mat-card-content>
+        </mat-dialog-content>
+    </mat-card>
+</div>

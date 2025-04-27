@@ -16,7 +16,12 @@ const routes: Routes = [
       loadChildren: () => import('app/projects/project-list/project-list.module').then(x => x.ProjectListModule),
       data: { pageGuid: '', roles: [] }
     },
-     {
+    {
+      path: 'explore',
+      loadChildren:()=>import('app/explore/explore.module').then(x=>x.ExploreModule),
+      data:{pageGuid:'',type:'view'}
+    },
+    {
       path: 'sub-company',
       loadChildren:()=>import('app/site-control/sub-company/sub-company-list/sub-company-list.module').then(x=>x.SubCompanyListModule),
       data:{pageGuid:'',type:'view'}
@@ -100,10 +105,35 @@ const routes: Routes = [
       path: 'consultancy-invoice',
       loadChildren:()=>import('app/invoice-control/consultancy-invoice/consultancy-invoice.module').then(x=>x.ConsultancyInvoiceModule),
       data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'profit-loss-details',
+      loadChildren:()=>import('app/profit-loss/profit-loss-details/profit-loss-details.module').then(x=>x.ProfitLossDetailsModule),
+      data:{pageGuid:'',type:'view'}
     }, 
     {
       path: 'ofc-rent',
       loadChildren:()=>import('app/office-rent/office-rent-list/office-rent-list.module').then(x=>x.OfficeRentListModule),
+      data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'profit-loss',
+      loadChildren:()=>import('app/profit-loss/profit-loss-list/profit-loss-list.module').then(x=>x.ProfitLossListModule),
+      data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'ticket',
+      loadChildren:()=>import('app/ticket-control/ticket-list/ticket-list.module').then(x=>x.TicketListModule),
+      data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'imperest',
+      loadChildren:()=>import('app/siteops-fund/imperest/imperest-list/imperest-list.module').then(x=>x.ImperestListModule),
+      data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'expense',
+      loadChildren:()=>import('app/siteops-fund/expense/expense-list/expense-list.module').then(x=>x.ExpenseListModule),
       data:{pageGuid:'',type:'view'}
     },
   ]),

@@ -12,12 +12,20 @@
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Sub Company Name</mat-label>
-                                <mat-select formControlName="CompanyId">
+                                <mat-select (selectionChange)="companyChange($event)" formControlName="CompanyId">
                                     <mat-option  *ngFor="let field of subCompanyList" [value]="field.id">
                                         {{field.name}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
+                        </div>
+                        <div class="col-md-3" *ngIf="!hasProject && !isEdit">
+                            <app-select-search *ngIf="projectInit " [defaultValue]="employeeForm.get('projectid')?.value" 
+                                        searchPlaceholder="Search Project" emptySearchMessage="No Project Found"
+                                        label="Project"
+                                        selectPlaceholder="Project" otherErrorMsg="Select Company First" [required]="true"
+                                        (onValueChange)="projectSelect($event)" [valueArrays]="projectList">
+                            </app-select-search>
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>

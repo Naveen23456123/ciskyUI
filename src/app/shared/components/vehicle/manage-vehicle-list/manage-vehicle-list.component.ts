@@ -15,6 +15,7 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { ManageVehicleDocComponent } from '../manage-vehicle-doc/manage-vehicle-doc.component';
+import { DetailVehicleComponent } from '../detail-vehicle/detail-vehicle.component';
 
 @Component({
   selector: 'app-manage-vehicle-list',
@@ -108,7 +109,7 @@ vehicles:any[]= [];
         pageGuid: this.route.snapshot.data['pageGuid'],
         type: DialogOperation.ADD
       };
-      config.minWidth='65vw';
+      config.minWidth='70vw';
       const dialogRef = this.dialog.open(ManageVehicleComponent, config);
       dialogRef.afterClosed().subscribe((data) => {
         if (data && data.valid) {       
@@ -126,7 +127,7 @@ vehicles:any[]= [];
          type: DialogOperation.EDIT,
          element: row
        };
-       this.defaultdialogoptions.minWidth='65vw';
+       this.defaultdialogoptions.minWidth='70vw';
        const dialogRef = this.dialog.open(ManageVehicleComponent, this.defaultdialogoptions);
        dialogRef.afterClosed().subscribe((data) => {       
          if (data.valid) {
@@ -233,6 +234,21 @@ vehicles:any[]= [];
       else {
       }
     });
+  }
+  viewVehicle(data:any){
+    this.defaultdialogoptions.data = {
+      pageGuid: this.route.snapshot.data['pageGuid'],      
+      element:{id:data.id}
+    };
+    this.defaultdialogoptions.minWidth='75vw';
+    const dialogRef = this.dialog.open(DetailVehicleComponent, this.defaultdialogoptions);
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data.valid) {
+       
+      }
+      else {
+      }
+    });   
   }
 }
 

@@ -1,3 +1,89 @@
 .pr-0{
     padding-right: 0;
 }
+.demo-chart{
+    height: 280px;
+}
+
+.expense-chart{
+    height: 320px;
+}
+.letter-chart{
+    height: 350px;
+}
+.total-cost-val{
+    font-size: 1.4em;
+    font-weight: 700;
+    letter-spacing: -0.07em;
+    padding-left: 12px;
+}
+.lm-val{
+    font-size: 1em;
+    font-weight: 500;
+    opacity: 0.7;
+    padding: 12px;
+}
+.cm-val{
+    font-size: 1em;
+    font-weight: 500;   
+    padding: 0px 5px 0px 11px;
+}
+.cost-val{
+    font-size: 1.2em;
+    font-weight: 700;  
+    letter-spacing: -0.07em;
+    padding-left: 12px;
+}
+.cost-txt{
+    font-size: 0.9em;
+    font-weight: 500;
+    opacity: 0.7;
+    padding: 12px;
+}
+.up{
+    color: rgb(2 192 36);
+}
+.down{
+    color: red;
+}
+
+.card {
+    min-height: 100%;
+  }
+  .echart-container {
+    width: 100%;
+    
+  }
+  .ht-100{
+    height: 100%;
+  }
+  .last-txt{
+    font-size: 0.8em;
+  }
+  .prgs-chart{
+    height: 400px;
+  }
+  .gph-head{
+    font-weight: 700;
+  }
+  .wd-auto{
+    width: auto;
+  }
+  .scrollable-div {
+    max-height: 330px;     /* or any fixed height */
+         /* Enables vertical scrolling */
+    overflow-x: hidden;    /* Optional: hide horizontal scroll */
+    scroll-behavior: smooth;
+    overflow-y: scroll;       /* Enables mouse wheel scrolling */
+  scrollbar-width: none;    /* Firefox */
+  -ms-overflow-style: none; 
+  }
+  .no-scroll {
+    position: sticky;
+    top: 0;
+    background: white; /* Optional: to hide what's behind when scrolling */
+    z-index: 1; /* Keep it above scrollable content */
+  }
+  .fs-08 {
+    font-size: 0.8em;
+  }

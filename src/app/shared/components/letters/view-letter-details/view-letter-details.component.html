@@ -22,7 +22,7 @@
                    </app-select-search>
                 </div>
             </div>
-            <hr>
+            <hr class="vw-hr">
             <div class="row">
                 <mat-tab-group *ngIf="!isLoading" mat-stretch-tabs="false">
                     <mat-tab>
@@ -34,116 +34,116 @@
                         <div  class=" row col-md-12">
                             
                             <div class="col-md-3">
-                            <span class="details-text">
+                            <span class="vw-details-text">
                                 Project
                             </span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val">
+                            <span class="vw-details-val">
                                 {{letterDetails?.project}}
                             </span>
                             </div>
                             <div  class="col-md-3">
-                            <span class="details-text">
+                            <span class="vw-details-text">
                                 Related To
                             </span>
                             </div>                     
                             <div class="col-md-3">
-                            <span class="details-val">
+                            <span class="vw-details-val">
                                 {{letterDetails?.relatedto }}
                             </span>
                             </div>
-                            <hr>
+                            <hr class="vw-hr">
                             <div class="col-md-3">                            
-                            <span class="details-text">
+                            <span class="vw-details-text">
                                 Exchange Type
                             </span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val">
+                            <span class="vw-details-val">
                                 {{letterDetails?.exchangetype}} 
                             </span>
                             </div>                    
                             <div class="col-md-3">
-                                <span *ngIf="!isconsultant" class="details-text">
+                                <span *ngIf="!isconsultant" class="vw-details-text">
                                     Contractor
                                 </span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val">
+                            <span class="vw-details-val">
                                 {{letterDetails?.contractor}}
                             </span>
                             </div>
-                            <hr>
+                            <hr class="vw-hr">
                             <div class="col-md-3">
-                            <span class="details-text">
+                            <span class="vw-details-text">
                                 Reply By
                             </span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val">
+                            <span class="vw-details-val">
                                 {{letterDetails?.replyby}}
                             </span>
                             </div>                    
                             <div class="col-md-3">
-                            <span class="details-text">
+                            <span class="vw-details-text">
                                 Letter Type
                             </span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val">{{letterDetails?.lettertype}}  </span>
+                            <span class="vw-details-val">{{letterDetails?.lettertype}}  </span>
                             </div>
-                            <hr>
+                            <hr class="vw-hr">
                             <div class="col-md-3">
-                            <span class="details-text">{{typetitle}} Letter Number</span>
+                            <span class="vw-details-text">{{typetitle}} Letter Number</span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val">{{letterDetails?.letternumber  }}  </span>
+                            <span class="vw-details-val">{{letterDetails?.letternumber  }}  </span>
                             </div>                    
                             <div class="col-md-3">
-                            <span class="details-text">{{typetitle}} Letter Date </span>
+                            <span class="vw-details-text">{{typetitle}} Letter Date </span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val">{{letterDetails?.letterdate | formatDate }}  </span>
+                            <span class="vw-details-val">{{letterDetails?.letterdate | formatDate }}  </span>
                             </div> 
-                            <hr>
+                            <hr class="vw-hr">
                             <div class="col-md-3">
-                            <span class="details-text"> Subject</span>
+                            <span class="vw-details-text"> Subject</span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val"> {{letterDetails?.subject  }} </span>
+                            <span class="vw-details-val"> {{letterDetails?.subject  }} </span>
                             </div>                    
                             <div class="col-md-3">
-                            <span class="details-text"> Status</span>
+                            <span class="vw-details-text"> Status</span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val"> {{letterDetails?.status}} </span>
+                            <span class="vw-details-val"> {{letterDetails?.status}} </span>
                             </div> 
-                            <hr>
+                            <hr class="vw-hr">
                             <div class="col-md-3">
-                            <span class="details-text">Department</span>
+                            <span class="vw-details-text">Department</span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val"> {{letterDetails?.department }} </span>
+                            <span class="vw-details-val"> {{letterDetails?.department }} </span>
                             </div>                    
                             <div class="col-md-3">
-                            <span class="details-text"> Letter From</span>
+                            <span class="vw-details-text"> Letter From</span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val"> {{letterDetails?.letterfrom}} </span>
+                            <span class="vw-details-val"> {{letterDetails?.letterfrom}} </span>
                             </div> 
-                            <hr>
+                            <hr class="vw-hr">
                             <div class="col-md-3">
-                            <span class="details-text">Letter To</span>
+                            <span class="vw-details-text">Letter To</span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val"> {{letterDetails?.letterto }} </span>
+                            <span class="vw-details-val"> {{letterDetails?.letterto }} </span>
                             </div>                    
                             <div class="col-md-3">
-                            <span class="details-text">Remarks </span>
+                            <span class="vw-details-text">Remarks </span>
                             </div>
                             <div class="col-md-3">
-                            <span class="details-val"> {{letterDetails?.remarks}} </span>
+                            <span class="vw-details-val"> {{letterDetails?.remarks}} </span>
                             </div>                             
                         </div> 
                     </div>

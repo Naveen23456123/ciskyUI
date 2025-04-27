@@ -27,11 +27,11 @@
                         <!-- contractName Column -->
                <ng-container matColumnDef="position">
                 <th mat-header-cell *matHeaderCellDef > Position </th>
-                <td mat-cell *matCellDef="let row"> {{row.value}} </td>
+                <td mat-cell *matCellDef="let row"> {{row.designation}} </td>
               </ng-container>         
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef > Name </th>
-              <td mat-cell *matCellDef="let row"> {{row.amount}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.employeename}} </td>
             </ng-container>
              
 
@@ -54,23 +54,18 @@
                 <td mat-cell *matCellDef="let row"> {{row.rate}} </td>
               </ng-container>
               <ng-container matColumnDef="amount">
-                <th mat-header-cell *matHeaderCellDef > Amount(Rs.) </th>
-                <td mat-cell *matCellDef="let row"> {{row.totalamount}} </td>
-                <td mat-footer-cell *matFooterCellDef > {{getkpTotalAmount()}} </td>
+                <th mat-header-cell class="amt" *matHeaderCellDef > Amount(Rs.) </th>
+                <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount}} </td>
+                <td mat-footer-cell *matFooterCellDef > {{getkpTotalAmount() | formatCurrency}} </td>
               </ng-container>
               <ng-container matColumnDef="action"  >
                 <th mat-header-cell class="no-print" *matHeaderCellDef > Action </th>
-                <td mat-cell class="no-print" *matCellDef="let row">  
-                    <div class="button-row">
-                    <button class="edit-table-btn" [state]="row"
-                    [routerLink]="['boq-staff-edit',row.id]" matTooltip="Edit" mat-mini-fab>
-                   <mat-icon>edit</mat-icon> 
-                 </button>
-                 <button class="delete-table-btn" [state]="row"
-                 [routerLink]="['boq-staff-delete',row.id]" matTooltip="Delete" mat-mini-fab >
-                   <mat-icon>delete_forever</mat-icon> 
-                 </button>
-               </div> </td>
+                <td mat-cell class="no-print action-col" *matCellDef="let row">  
+                  <div class="button-row">                   
+                    <app-edit-btn [state]="row" [routerLink]="['boq-staff-edit',row.id]" ></app-edit-btn>                              
+                    <app-delete-btn [state]="row" [routerLink]="['boq-staff-delete',row.id]"></app-delete-btn>
+                  </div>
+                </td>
                <td mat-footer-cell class="no-print" *matFooterCellDef >  </td>
               </ng-container>             
 
@@ -98,11 +93,11 @@
                     
              <ng-container matColumnDef="position">
               <th mat-header-cell *matHeaderCellDef > Position </th>
-              <td mat-cell *matCellDef="let row"> {{row.value}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.designation}} </td>
             </ng-container>         
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef > Name </th>
-            <td mat-cell *matCellDef="let row"> {{row.amount}} </td>
+            <td mat-cell *matCellDef="let row"> {{row.employeename}} </td>
           </ng-container>
            
 
@@ -125,22 +120,18 @@
               <td mat-cell *matCellDef="let row"> {{row.rate}} </td>
             </ng-container>
             <ng-container matColumnDef="amount">
-              <th mat-header-cell *matHeaderCellDef > Amount(Rs.) </th>
-              <td mat-cell *matCellDef="let row"> {{row.totalamount}} </td>
-              <td mat-footer-cell *matFooterCellDef > {{getspsTotalAmount()}} </td>
+              <th mat-header-cell class="amt" *matHeaderCellDef > Amount(Rs.) </th>
+              <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount}} </td>
+              <td mat-footer-cell  *matFooterCellDef > {{getspsTotalAmount() | formatCurrency}} </td>
             </ng-container>
             <ng-container matColumnDef="action">
               <th mat-header-cell class="no-print" *matHeaderCellDef > Action </th>
-              <td mat-cell class="no-print" *matCellDef="let row"> <div class="button-row">
-                <button class="edit-table-btn" [state]="row"
-                [routerLink]="['boq-staff-edit',row.id]" matTooltip="Edit" mat-mini-fab>
-               <mat-icon>edit</mat-icon> 
-             </button>
-             <button class="delete-table-btn" [state]="row"
-             [routerLink]="['boq-staff-delete',row.id]" matTooltip="Delete" mat-mini-fab >
-               <mat-icon>delete_forever</mat-icon> 
-             </button>
-           </div>  </td>
+              <td mat-cell class="no-print action-col" *matCellDef="let row"> 
+                <div class="button-row">                   
+                  <app-edit-btn [state]="row" [routerLink]="['boq-staff-edit',row.id]" ></app-edit-btn>                              
+                  <app-delete-btn [state]="row" [routerLink]="['boq-staff-delete',row.id]"></app-delete-btn>
+                </div>
+              </td>
               <td mat-footer-cell class="no-print" *matFooterCellDef >  </td>
             </ng-container>
           <tr mat-header-row *matHeaderRowDef="spsdataColumn"></tr>
@@ -166,11 +157,11 @@
                           <!-- contractName Column -->
                  <ng-container matColumnDef="position">
                   <th mat-header-cell *matHeaderCellDef > Position </th>
-                  <td mat-cell *matCellDef="let row"> {{row.value}} </td>
+                  <td mat-cell *matCellDef="let row"> {{row.designation}} </td>
                 </ng-container>         
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef > Name </th>
-                <td mat-cell *matCellDef="let row"> {{row.amount}} </td>
+                <td mat-cell *matCellDef="let row"> {{row.employeename}} </td>
               </ng-container>
                
 
@@ -193,22 +184,18 @@
                   <td mat-cell *matCellDef="let row"> {{row.rate}} </td>
                 </ng-container>
                 <ng-container matColumnDef="amount">
-                  <th mat-header-cell *matHeaderCellDef > Amount(Rs.) </th>
-                  <td mat-cell *matCellDef="let row"> {{row.totalamount}} </td>
-                  <td mat-footer-cell *matFooterCellDef> {{getssTotalAmount()}}</td>
+                  <th mat-header-cell class="amt" *matHeaderCellDef > Amount(Rs.) </th>
+                  <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount}} </td>
+                  <td mat-footer-cell *matFooterCellDef> {{getssTotalAmount() | formatCurrency}}</td>
                 </ng-container>
                 <ng-container matColumnDef="action">
                   <th mat-header-cell class="no-print" *matHeaderCellDef > Action </th>
-                  <td mat-cell class="no-print" *matCellDef="let row"> <div class="button-row">
-                    <button class="edit-table-btn" [state]="row"
-                    [routerLink]="['boq-staff-edit',row.id]" matTooltip="Edit" mat-mini-fab>
-                   <mat-icon>edit</mat-icon> 
-                 </button>
-                 <button class="delete-table-btn" [state]="row"
-                 [routerLink]="['boq-staff-delete',row.id]" matTooltip="Delete" mat-mini-fab >
-                   <mat-icon>delete_forever</mat-icon> 
-                 </button>
-               </div>  </td>
+                  <td mat-cell class="no-print action-col" *matCellDef="let row"> 
+                    <div class="button-row">                   
+                      <app-edit-btn [state]="row" [routerLink]="['boq-staff-edit',row.id]" ></app-edit-btn>                              
+                      <app-delete-btn [state]="row" [routerLink]="['boq-staff-delete',row.id]"></app-delete-btn>
+                    </div>  
+                  </td>
                   <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
                 </ng-container>
               <tr mat-header-row *matHeaderRowDef="ssdataColumn"></tr>

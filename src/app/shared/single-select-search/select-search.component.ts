@@ -5,6 +5,7 @@ import { ReplaySubject, Subject } from 'rxjs';
 import { MatSelect } from '@angular/material/select';
 import { FormControl, Validators } from '@angular/forms';
 import { Logger } from '@app/core/logger.service';
+import { id } from '@swimlane/ngx-charts';
 
 const log = new Logger('Single select search');
 @Component({
@@ -17,6 +18,7 @@ export class SelectSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   /** select placeholder */
   @Input() selectPlaceholder: string = "Select";
 
+  @Input() otherErrorMsg:string='';
   /** search textbox placeholder */
   @Input() searchPlaceholder: string = "Search";
 
@@ -83,6 +85,7 @@ export class SelectSearchComponent implements OnInit, AfterViewInit, OnDestroy {
       else{
         this.ArrayCtrl.setValue(this.valueArrays.find(obj => obj.id==this.defaultValue));
       }
+      this.onValueChange.emit({ value: this.ArrayCtrl.value, valid: this.ArrayCtrl.valid });
      }
 
     // load the initial value list
@@ -129,7 +132,8 @@ export class SelectSearchComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
   change(data: any) {
-    this.onValueChange.emit({ value: data.value, valid: this.ArrayCtrl.valid });
+    if(data && data.value)
+      this.onValueChange.emit({ value: data.value, valid: this.ArrayCtrl.valid });
   }
 
   /**

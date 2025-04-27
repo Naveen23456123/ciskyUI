@@ -1,10 +1,10 @@
 <div class="dialog" >
     <mat-card *ngIf="!deleteor">
-        
-        <h3 mat-dialog-title> {{title}}             
-        </h3>
-        
-        <mat-dialog-content class="mat-typography">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3> 
         <mat-card-content>
             <div class="load-wrap" *ngIf="isLoading">
                 <app-loader [IsLoading]="isLoading"></app-loader>
@@ -13,7 +13,13 @@
                 <!-- <form [formGroup]="organizationForm" > -->
                 <form [formGroup]="orForm" (submit)="submit()">
                     <div class="row control-div">                       
-                       
+                        <div class="col-md-12">
+                            <mat-form-field>
+                                <mat-label>Description</mat-label>
+                                <input  matInput formControlName="description">
+                                <mat-error>Please enter First Name.</mat-error>
+                            </mat-form-field>
+                        </div>
                         <div class="col-md-12">
                             <mat-form-field>
                                 <mat-label>No. Of Months</mat-label>
@@ -38,9 +44,7 @@
                 </form>
             </div>
         </mat-card-content>
-        </mat-dialog-content>
-    
-    
+ 
 </mat-card>
     <mat-card *ngIf="deleteor">      
         <mat-card-title class="card-title d-flex justify-content-center" >

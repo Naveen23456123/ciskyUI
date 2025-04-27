@@ -29,7 +29,7 @@ public data: any;
   itemList:any[] = [];
   isProject=true;
   projectName='';
-  empInit=false;
+  empInit=true;
   private subscription: Subscription = new Subscription();
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
@@ -82,23 +82,16 @@ public data: any;
     if(!this.deleteInventory){
       this.subscription =this.sessionservice.projectEntitySubject$.subscribe((entityResponse:any)=>{
         if(entityResponse && entityResponse.projectId){
-          this.inventoryForm.patchValue({projectid:entityResponse.projectId});
+          this.inventoryForm.patchValue({projectid:entityResponse.projectId});          
+          this.projectChange();
         }
         else
           this.isProject=false;
           forkJoin({
             itemAPI:this.itemService.getItemListByOrgId({  }, ''),
-            employeeAPI:this.employeeService.getSiteEmployeeParital({ },'')
           }).pipe(finalize(() => { this.isLoading = false })).subscribe((response:any) => {
               if(response && response.itemAPI && response.itemAPI.success)
-                this.itemList= response.itemAPI.data;
-              if(response && response.employeeAPI && response.employeeAPI.success){
-                this.empList= response.employeeAPI.data.map((item:any)=>({
-                  id:item.id,
-                  name: item.code+' - '+item.name
-                }));
-                this.empInit=true;
-              }
+                this.itemList= response.itemAPI.data;              
           });
     
           if (this.isEdit) {
@@ -135,7 +128,7 @@ public data: any;
     let projectId = this.inventoryForm.controls['projectid'].value;
     if(projectId){
       forkJoin({        
-        empAPI:this.employeeService.getSiteEmployeeParital({},'')
+        empAPI:this.employeeService.getSiteEmployeeParital({projectId: projectId},'')
       }).pipe(untilDestroyed(this), finalize(()=> this.isLoading=false))
       .subscribe((response:any)=>{       
        if(response && response.empAPI.success){

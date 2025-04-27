@@ -1764,6 +1764,19 @@ export class EmployeeInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
+
+  uploadEmployeeImage(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'SiteEmployee/UploadImage',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+
   updateEmployee(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'SiteEmployee',

@@ -6,6 +6,7 @@ import { untilDestroyed } from '@app/core/until-destroyed';
 import { CommonInterfaceService } from '@app/shared/services/external/common-interface.service';
 import { DesignationInterfaceService } from '@app/shared/services/external/designation-interface.service';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
+import { ProjectInterfaceService } from '@app/shared/services/external/project-interface.service';
 import { SiteControlInterfaceService } from '@app/shared/services/external/site-control-interface.service';
 import { SubCompanyInterfaceService } from '@app/shared/services/external/sub-company-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
@@ -35,14 +36,17 @@ public data: any;
   empstatusList:any[] = [];
   genderList:any[] = [];
   maritalList:any[] = [];
+  projectList:any[]=[];
   isBtnClicked=false;
+  projectInit=true;
+  hasProject=false;
   empObj:any;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageEmployeeComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService,  private router: Router,
     private notifibarservice: NotifyBarService, private commonService:CommonInterfaceService,
-    private employeeService:EmployeeInterfaceService,
-  private subCompanyService:SubCompanyInterfaceService, private designationService:DesignationInterfaceService){
+    private employeeService:EmployeeInterfaceService,private projectService:ProjectInterfaceService,
+    private subCompanyService:SubCompanyInterfaceService, private designationService:DesignationInterfaceService){
       this.data = data || {};
   }
   
@@ -107,17 +111,15 @@ public data: any;
     if(!this.deleteEmployee){
       let apiCalls:any= {
         subCompanyAPI: this.subCompanyService.getSubCompanyListByOrgId({},''), 
-        roleAPI:this.commonService.getEmployeeRoleList({ organizationId: this.activeOrgId }, ''),
-        designationAPI:this.designationService.getDesignationListByOrgId ({ organizationId: this.activeOrgId }, '')
+        roleAPI:this.commonService.getEmployeeRoleList({ organizationId: this.activeOrgId }, '')        
       };
        this.sessionService.projectEntitySubject$.pipe(take(1),finalize(()=>{
             this.isLoading=false
           }),untilDestroyed(this))
           .subscribe((entityData)=>{ 
             if(entityData){     
-                this.employeeForm.patchValue({
-                  projectid:entityData.projectId
-            }); 
+                this.employeeForm.patchValue({projectid:entityData.projectId}); 
+                this.hasProject=true;
           }
         });
       
@@ -126,12 +128,10 @@ public data: any;
       } 
       forkJoin(apiCalls).pipe(finalize(() => { this.isLoading = false }))
         .subscribe((response:any) => {        
-          if(response.roleAPI)
-            this.empRoleList=response.roleAPI;        
+            if(response && response.roleAPI && response.roleAPI.success)
+              this.empRoleList=response.roleAPI.data;        
             if(response.subCompanyAPI && response.subCompanyAPI.success)
-              this.subCompanyList= response.subCompanyAPI.data;
-            if(response.designationAPI && response.designationAPI.success)
-              this.empdesignationList = response.designationAPI.data;
+              this.subCompanyList= response.subCompanyAPI.data;          
             if(response && response.empById && response.empById.success)
               this.empObj= response.empById.data;
             this.sessionService.genderTypeSubject$.subscribe((response)=>{
@@ -150,8 +150,10 @@ public data: any;
               if(response)
                 this.empTypeList=response;
             });
-            if(this.isEdit)
+            if(this.isEdit){
               this.setEmployeeForm(this.empObj);
+              this.companyChange();
+            }
       });
     
     }
@@ -164,7 +166,35 @@ public data: any;
     }
   }
 
- ngOnDestroy(){}
+  ngOnDestroy(){}
+
+  companyChange(event:any=null){
+    this.projectInit=false;
+    if(event)
+    this.employeeForm.patchValue({CompanyId:event.value});
+    forkJoin({
+      projectAPI:this.projectService.getAllProjectPartialDetailsByOrdIg({compId:this.employeeForm.get('CompanyId')?.value},''),
+      desgAPI:this.designationService.getDesignationList({companyId:this.employeeForm.get('CompanyId')?.value},'')
+    }).pipe(finalize(() => { }))
+    .subscribe((response:any) => {
+      if(response && response.projectAPI && response.projectAPI.success){
+        this.projectList= response.projectAPI.data.map((item:any)=>({
+          id:item.id,
+          name:item.projectcode + ' - '+ item.projectshortname
+         }));
+         this.projectInit=true;
+      }
+      if(response && response.desgAPI && response.desgAPI.success){
+        this.empdesignationList = response.desgAPI.data;
+      }
+    });
+  
+  }
+
+  projectSelect(event:any){
+    if(event && event.value)
+      this.employeeForm.patchValue({projectid:event.value.id});
+  }
 
   setEmployeeForm(newdata: any) {
     this.employeeForm.patchValue({
@@ -264,6 +294,8 @@ public data: any;
         formData.append(`files[${index}].name`, item.name);
         formData.append(`files[${index}].file`, item.file);
       });
+      console.log(this.employeeForm.value);
+      console.log(formData);
       this.employeeService.createEmployee(formData, '')
         .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false  })).subscribe({
           next:(response: any) => {

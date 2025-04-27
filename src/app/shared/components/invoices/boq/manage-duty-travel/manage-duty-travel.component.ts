@@ -69,7 +69,7 @@ public data: any;
     this.dtForm = this.formbuilder.group({ 
       id: [''],
       projectid:[],
-      trips :[],
+      description :[],
       numberofminimumtrips:[],
       ratepertrip:[]
     });
@@ -83,7 +83,7 @@ public data: any;
   setdtForm(data: any) {    
     this.dtForm.patchValue({
       id: data.id,
-      trips :data.trips,
+      description :data.description,
       numberofminimumtrips:data.numberofminimumtrips,
       ratepertrip:data.ratepertrip
     });

@@ -12,7 +12,7 @@ const log = new Logger('File Uploader');
 })
 export class FileUploaderComponent implements OnInit {
 
-  @Input() title:string="Upload file here....";
+  @Input() title:string="";
   Error: string='';
   isImageSaved: boolean=false;
   cardImageBase64: string ='';
@@ -27,7 +27,9 @@ export class FileUploaderComponent implements OnInit {
   isClicked=false;
   constructor() { }
 
-  ngOnInit(): void {   
+  ngOnInit(): void {  
+    if(this.title!=='')
+      this.title= 'Upload '+this.title; 
   }
   onClick() {
     if (this.fileUpload)
@@ -86,9 +88,6 @@ export class FileUploaderComponent implements OnInit {
         // const img_height = rs.currentTarget['height'];
         // const img_width = rs.currentTarget['width'];
 
-        console.log(img_height, img_width);
-
-
         if (img_height > max_height && img_width > max_width) {
           this.Error =
             'Maximum dimentions allowed ' +
@@ -102,7 +101,7 @@ export class FileUploaderComponent implements OnInit {
           this.cardImageBase64 = imgBase64Path;
           this.isImageSaved = true;
           log.debug(this.cardImageBase64);
-          this.onfileUpload.emit(this.cardImageBase64);
+          this.onfileUpload.emit({base64:this.cardImageBase64,file:fileInput.target.files[0]});
           // this.previewImagePath = imgBase64Path;
           return true;
         }

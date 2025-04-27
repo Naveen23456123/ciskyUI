@@ -79,11 +79,15 @@ export class CommonInterfaceService {
      return this.coreApi.standardService(standardAttribute); 
   }
   getEmployeeRoleList(param: any, guid: string){
-  return of([
-    {'id':'67cc6db1dde7f7107ec46082', 'name':'Admin'},
-    {'id':'67cc6db1dde7f7107ec46082', 'name':'HR'},
-    {'id':'67cc6db1dde7f7107ec46082', 'name':'HO'}
-    ]);
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Common/EmployeeRoles',
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+     return this.coreApi.standardService(standardAttribute);
   }
   getEmployeeStatusList(param: any, guid: string){
     const standardAttribute: ServiceAttributeModel = {

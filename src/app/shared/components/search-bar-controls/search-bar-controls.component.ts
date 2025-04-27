@@ -1,4 +1,4 @@
-import { Component, input, Input } from '@angular/core';
+import { Component, EventEmitter, input, Input, Output } from '@angular/core';
 import { DesignationInterfaceService } from '@app/shared/services/external/designation-interface.service';
 import { ProjectInterfaceService } from '@app/shared/services/external/project-interface.service';
 import { SubCompanyInterfaceService } from '@app/shared/services/external/sub-company-interface.service';
@@ -17,7 +17,10 @@ export class SearchBarControlsComponent {
   @Input() isAny=false;
   @Input() isProfessional=false;
   @Input() isDesignation=false;
-  @Input() isStatus=false
+  @Input() isStatus=false;
+  @Input() projectId='';
+  @Input() selectProjectDefault=false;
+  @Output() OnProjectChange:EventEmitter<any> = new EventEmitter();
   isProjectLoaded=false;
   subCompanies:any=[];
   professionals:any=[];
@@ -42,7 +45,7 @@ export class SearchBarControlsComponent {
     if (this.professionals)
       apiCalls.subCompanyAPI = this.subCompanyService.getSubCompanyListByOrgId({},'');
     if (this.designations)
-      apiCalls.designationAPI = this.designationService.getDesignationListByOrgId({  }, '');
+      apiCalls.designationAPI = this.designationService.getDesignationList({  }, '');
     
 
     forkJoin(apiCalls).subscribe((response:any)=>{
@@ -58,6 +61,10 @@ export class SearchBarControlsComponent {
           name:item.projectcode + ' - '+item.projectshortname
         }));
         this.isProjectLoaded=true;
+        if(this.selectProjectDefault){
+          if(this.projectId=='')
+            this.projectId= this.projects[0].id;
+        }
       }
       if(this.isProfessional){
         this.sessionservice.staffTypeSubject$.pipe(take(1)).subscribe((response:any)=>{
@@ -74,7 +81,9 @@ export class SearchBarControlsComponent {
    });
   }
   projectChange(data:any){
-
+    console.log(data);
+    if(data && data.value)
+      this.OnProjectChange.emit({value:data.value});
   }
   applyFilter(data:any){
 

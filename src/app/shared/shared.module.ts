@@ -110,6 +110,11 @@ import { ViewEmployeeDetailsComponent } from './components/employee/view-employe
 import { ManageEmployeeDocComponent } from './components/employee/manage-employee-doc/manage-employee-doc.component';
 import { DeleteEmployeeDocComponent } from './components/employee/delete-employee-doc/delete-employee-doc.component';
 import { DocumentManageBtnComponent } from './components/document-manage-btn/document-manage-btn.component';
+import { DetailVehicleComponent } from './components/vehicle/detail-vehicle/detail-vehicle.component';
+import { ManageProfitLossComponent } from './components/proft-and-loss/manage-profit-loss/manage-profit-loss.component';
+import { ManageTicketComponent } from './components/manage-ticket/manage-ticket.component';
+import { ManageImperestComponent } from './components/siteops/manage-imperest/manage-imperest.component';
+import { ManageExpenseComponent } from './components/siteops/manage-expense/manage-expense.component';
 
 @NgModule({
   declarations: [NotifyBarComponent, AlertComponent, LoaderComponent,  
@@ -126,7 +131,7 @@ import { DocumentManageBtnComponent } from './components/document-manage-btn/doc
     ManageVehicleListComponent, ManageEmployeeListComponent, ManageInventoryListComponent, ManageConsultantComponent, ManageBoqAttendenceComponent, ContactListComponent, ManageContactComponent, ContractorBillingDetailsComponent, ManageCircularComponent, ManageBoqInvoiceComponent, ManageConsultancyInvoiceComponent,
      ManageSupportStaffComponent, ManageTransportationComponent, ManageDutyTravelComponent, 
      ManageOfficeRentComponent, ManageOfficeSuppliesComponent, ManageOfficeFurnitureComponent, ManageReportDocComponent, ManageRoadSurveyComponent, ManageContingenciesComponent, ManageConsultancyStaffComponent, ManageConsultancyContingenciesComponent, ManageConsultancyReportDocComponent, ManageConsultancyOfficeFurnitureComponent, ManageConsultancyOfficeSuppliesComponent, ManageConsultancyOfficeRentComponent, ManageConsultancyDutyTravelComponent, ManageConsultancyTransportationComponent, ManageOfficeRentControlComponent, 
-     FileIconComponent, BreadCrumComponent, SearchBarControlsComponent, ViewLetterDetailsComponent, ViewEmployeeListComponent, ViewBtnComponent, ProjectControlComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent, ManageVehicleDocComponent, DeleteVehicleDocComponent, NoDataComponent, ViewEmployeeDetailsComponent, ManageEmployeeDocComponent, DeleteEmployeeDocComponent, DocumentManageBtnComponent],
+     FileIconComponent, BreadCrumComponent, SearchBarControlsComponent, ViewLetterDetailsComponent, ViewEmployeeListComponent, ViewBtnComponent, ProjectControlComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent, ManageVehicleDocComponent, DeleteVehicleDocComponent, NoDataComponent, ViewEmployeeDetailsComponent, ManageEmployeeDocComponent, DeleteEmployeeDocComponent, DocumentManageBtnComponent, DetailVehicleComponent, ManageProfitLossComponent, ManageTicketComponent, ManageImperestComponent, ManageExpenseComponent],
   imports: [
     CommonModule, 
     //LockerModule, 

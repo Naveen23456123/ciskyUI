@@ -7,18 +7,21 @@
             <div class="wrapper" *ngIf="!isLoading">                
 
                 <div class="mat-elevation-z8">
+                  <div class="table-title-row">
+                    <div class="row col-md-12 content-center">
+                      <div class="col-md-9">
+                        <div >
+                          <app-search-bar-controls  [selectProjectDefault]="true" (OnProjectChange)="projectChange($event)"  [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Invoice Number" ></app-search-bar-controls>
+                        </div>  
+                    </div>       
+                    <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">                            
+                      <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
+                        <mat-icon>add box</mat-icon> Invoice
+                      </button>                       
+                    </div>
+                  </div>
+                </div>
                    
-                      <div class="table-title-row">
-                        <mat-form-field>
-                          <mat-label>Filter</mat-label>
-                          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
-                        </mat-form-field>
-                        <div class="button-row">              
-                          <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
-                            <mat-icon>add box</mat-icon> Invoice
-                        </button>  
-                      </div>
-                    </div> 
                       <div class="mat-elevation-z8">
                         <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
                       
@@ -29,20 +32,22 @@
                       
                           <!-- contractName Column -->
                           <ng-container matColumnDef="projectid">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Code </th>
-                            <td mat-cell *matCellDef="let row"> {{row.projectcode}} </td>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Number </th>
+                            <td mat-cell *matCellDef="let row"> {{row.number}} </td>
                           </ng-container> 
-                          <ng-container matColumnDef="name">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Name </th>
-                            <td mat-cell *matCellDef="let row"> {{row.projectshortname}} </td>
+                          <ng-container matColumnDef="month">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Month </th>
+                            <td mat-cell *matCellDef="let row"> {{getMonthAndYear(row.monthandyear).month}} </td>
                           </ng-container>                      
-                         
+                          <ng-container matColumnDef="year">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Month </th>
+                            <td mat-cell *matCellDef="let row"> {{getMonthAndYear(row.monthandyear).year}} </td>
+                          </ng-container> 
                           <!-- con_personName Column -->
                           <ng-container matColumnDef="view">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> View </th>
                             <td mat-cell *matCellDef="let row"> 
-                              <button class="edit-table-btn" [state]="row"
-                            [routerLink]="['/consultancy-invoice']" matTooltip="View" mat-mini-fab >
+                              <button class="edit-table-btn" (click)="details(row)" matTooltip="View" mat-mini-fab >
                               <mat-icon>visibility</mat-icon> 
                             </button>
                             </td>
@@ -61,7 +66,7 @@
                           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
                           <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+                            <td class="mat-cell" colspan="4"></td>
                           </tr>
                         </table>
                         <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>

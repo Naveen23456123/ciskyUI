@@ -1,11 +1,10 @@
 <div class="dialog" >
     <mat-card *ngIf="!deleteInvoice">
-        <mat-card-title class="card-title">{{title}}
-          
-            <button mat-mini-fab class="popup-close-btn" mat-dialog-close>
-                <mat-icon>close</mat-icon>
-              </button>
-        </mat-card-title>
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3>        
         <mat-card-content>
             <div class="load-wrap" *ngIf="isLoading">
                 <app-loader [IsLoading]="isLoading"></app-loader>
@@ -21,19 +20,12 @@
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div> 
+                        <div class="col-md-6" *ngIf="!isEdit">
+                            <app-project-control (onValueChange)="projectChange($event)"
+                            [defaultValue]="invoiceForm.get('projectid')?.value" ></app-project-control>
+                        </div>
                         <div class="col-md-6">
-                            <mat-form-field >
-                                <mat-label>Project</mat-label>
-                                <mat-select formControlName="projectId">
-                                    <mat-option  *ngFor="let field of projectList" [value]="field.value">
-                                        {{field.text}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                          
-                        </div>  
-                        <div class="col-md-6">
-                            <app-month-and-year-picker></app-month-and-year-picker>
+                            <app-month-and-year-picker (onValueChange)="dateChange($event)"></app-month-and-year-picker>
                            
                         </div>
                         <div class="col-md-12 button-row" align="right">

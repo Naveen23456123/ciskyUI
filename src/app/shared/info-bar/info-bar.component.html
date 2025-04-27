@@ -37,13 +37,24 @@
       </div>
 
     
-    <div class="float-end">
-        <button mat-icon-button class="example-icon favorite-icon float-end" aria-label="Example icon-button with heart icon">
-            <mat-icon>logout</mat-icon>
-          </button>
-          <button mat-icon-button class="example-icon float-end" aria-label="Example icon-button with share icon">
-            <mat-icon>notifications</mat-icon>
-          </button>
-    </div>
-  
+    <div class="float-end wrapper">
+      <mat-card class="ht-100">        
+        <mat-card-content class="pad-0">
+          <div class="row justify-content-center">
+            <!-- <mat-form-field appearance="outline">
+              <mat-label>Outline form field</mat-label>
+              <input matInput placeholder="Placeholder">
+              <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+             
+            </mat-form-field> -->
+            <button mat-icon-button (click)="logout()" class="example-icon favorite-icon float-end" aria-label="Example icon-button with heart icon">
+              <mat-icon>logout</mat-icon>
+            </button>
+            <button mat-icon-button class="example-icon float-end" aria-label="Example icon-button with share icon">
+              <mat-icon>notifications</mat-icon>
+            </button>
+          </div>         
+        </mat-card-content>      
+      </mat-card>      
+    </div>  
   </mat-toolbar>

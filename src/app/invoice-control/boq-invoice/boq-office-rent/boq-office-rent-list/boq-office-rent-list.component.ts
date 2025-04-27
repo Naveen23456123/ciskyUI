@@ -18,7 +18,7 @@ export class BoqOfficeRentListComponent {
 data:any[]=[];
   isLoading = true;
 
-  dataColumn: string[] =  ['serial','month','ratemonth','amount','action' ];
+  dataColumn: string[] =  ['serial','desc','month','ratemonth','amount','action' ];
   footerColumns: string[] = ['serial', 'amount','action'];
   dataSource!: MatTableDataSource<any[]>;
   @Output() onAmountChange: EventEmitter<any> = new EventEmitter();  
@@ -74,6 +74,7 @@ data:any[]=[];
       if(element){
       element.id = data.id;
       element.projectid=data.projectid,
+      element.description=data.description,
       element.totalamount= data.totalamount,
       element.numberofmonths =data.numberofmonths,
       element.ratepermonth=data.ratepermonth,
@@ -84,6 +85,7 @@ data:any[]=[];
       const data1:any = {
         id: data.id,
         projectid:data.projectid,
+        description:data.description,
         totalamount: data.totalamount,
         numberofmonths :data.numberofmonths,
         ratepermonth:data.ratepermonth,

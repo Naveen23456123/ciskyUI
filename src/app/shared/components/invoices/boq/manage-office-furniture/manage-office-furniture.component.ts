@@ -68,6 +68,7 @@ public data: any;
     this.getTitle(this.data.type);
     this.ofForm = this.formbuilder.group({ 
       id: [''],
+      description:[],
       projectid:[],
       numberofmonths:[],
       ratepermonth:[]
@@ -82,6 +83,7 @@ public data: any;
   setofForm(data: any) {    
     this.ofForm.setValue({
       id: data.id,
+      description:data.description,
       projectid:data.projectid,
       numberofmonths :data.numberofmonths,
       ratepermonth:data.ratepermonth,

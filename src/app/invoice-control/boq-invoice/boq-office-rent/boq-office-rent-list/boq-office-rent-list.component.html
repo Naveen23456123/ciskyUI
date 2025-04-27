@@ -17,9 +17,12 @@
             <ng-container matColumnDef="serial">
               <th mat-header-cell *matHeaderCellDef> Sr. No </th>
               <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
-              <td mat-footer-cell *matFooterCellDef colspan="3"> Total </td>
+              <td mat-footer-cell *matFooterCellDef colspan="4"> Total </td>
             </ng-container> 
-           
+            <ng-container matColumnDef="desc">
+              <th mat-header-cell *matHeaderCellDef>Description</th>
+              <td mat-cell *matCellDef="let row"> {{row.description}} </td>
+            </ng-container>
               <!-- contractName Column -->
               <ng-container matColumnDef="month">
                 <th mat-header-cell *matHeaderCellDef > No. of Months </th>
@@ -32,21 +35,17 @@
            
               <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef > Amount(Rs.) </th>
-                <td mat-cell *matCellDef="let row"> {{row.totalamount}} </td>
-                <td mat-footer-cell *matFooterCellDef> {{getTotalAmount()}}</td>
+                <td mat-cell  class="amt" *matCellDef="let row"> {{row.totalamount}} </td>
+                <td mat-footer-cell *matFooterCellDef> {{getTotalAmount() | formatCurrency}}</td>
               </ng-container>
               <ng-container matColumnDef="action">
                 <th mat-header-cell class="no-print"  *matHeaderCellDef > Action </th>
-                <td mat-cell class="no-print"  *matCellDef="let row">  <div class="button-row">
-                  <button class="edit-table-btn" [state]="row"
-                  [routerLink]="['or-edit',row.id]" matTooltip="Edit" mat-mini-fab>
-                 <mat-icon>edit</mat-icon> 
-               </button>
-               <button class="delete-table-btn" [state]="row"
-               [routerLink]="['or-delete',row.id]" matTooltip="Delete" mat-mini-fab >
-                 <mat-icon>delete_forever</mat-icon> 
-               </button>
-              </div> </td>
+                <td mat-cell class="no-print action-col"  *matCellDef="let row">  
+                  <div class="button-row">                   
+                    <app-edit-btn [state]="row" [routerLink]="['or-edit',row.id]" ></app-edit-btn>                              
+                    <app-delete-btn [state]="row" [routerLink]="['or-delete',row.id]"></app-delete-btn>
+                  </div> 
+                </td>
               <td mat-footer-cell class="no-print"  *matFooterCellDef> </td>
               </ng-container>
             <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>

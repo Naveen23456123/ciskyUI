@@ -24,7 +24,7 @@ export class SiteControlService {
     return this.departmentService.getDepartmentListByOrgId(param,guid);
   }
   getDesignationListByOrgId(param: any, guid: string) {
-    return this.designationService.getDesignationListByOrgId(param,guid);
+    return this.designationService.getDesignationList(param,guid);
   }
   getConsultantAccountListByOrgId(param: any, guid: string) {
     return this.consultantAccountService.getConsultantAccountListByOrgId(param,guid);

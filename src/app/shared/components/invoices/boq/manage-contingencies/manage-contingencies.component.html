@@ -5,8 +5,6 @@
             <mat-icon>close</mat-icon>
           </button> 
         </h3> 
-        
-        <mat-dialog-content class="mat-typography">
         <mat-card-content>
             <div class="load-wrap" *ngIf="isLoading">
                 <app-loader [IsLoading]="isLoading"></app-loader>
@@ -45,7 +43,6 @@
                 </form>
             </div>
         </mat-card-content>
-        </mat-dialog-content>   
 
 </mat-card>
     <mat-card *ngIf="deletecon">      

@@ -26,8 +26,6 @@ readonly dialog = inject(MatDialog);
   }
   
   private defaultdialogoptions:  MatDialogConfig = {
-    panelClass: 'custom-dialog-container',
-    minWidth: '800px',
     disableClose: false,
     data: {},
   };
@@ -38,6 +36,7 @@ readonly dialog = inject(MatDialog);
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type']
     };
+    config.minWidth='50vw';
     const dialogRef = this.dialog.open(ManageSupportStaffComponent, config);
     dialogRef.afterClosed().subscribe((data) => {
       if (data && data.valid) {

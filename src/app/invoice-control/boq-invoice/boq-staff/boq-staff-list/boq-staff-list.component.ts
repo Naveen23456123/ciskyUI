@@ -127,6 +127,8 @@ export class BoqStaffListComponent {
       element.professionalid=data.professionalid,
       element.employeeid=data.employeeid,
       element.rate=data.rate,
+      element.designation=data.designation,
+      element.employeename= data.employeename,
       element.totalamount= data.totalamount,
       element.constructionperiod=data.constructionperiod,
       element.oandmperiod=data.oandmperiod
@@ -148,6 +150,8 @@ export class BoqStaffListComponent {
         id: data.id,
         designationid :data.designationid,
         professionalid:data.professionalid,
+        designation:data.designation,
+        employeename: data.employeename,
         employeeid:data.employeeid,
         rate:data.rate,
         totalamount: data.totalamount,

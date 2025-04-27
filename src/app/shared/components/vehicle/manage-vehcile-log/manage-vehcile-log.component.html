@@ -98,10 +98,12 @@
                             </mat-form-field>
                         </div> 
                         <div class="col-md-4">
-                            <app-file-uploader title="Inital Reading"></app-file-uploader>
+                            <app-file-uploader UploadType="image"
+                            [AllowedType]="['image/png', 'image/jpeg']" (onfileUpload)="initFileUploded($event)" title="Inital Reading"></app-file-uploader>
                         </div> 
                         <div class="col-md-4">
-                            <app-file-uploader title="End Reading"></app-file-uploader>
+                            <app-file-uploader UploadType="image"
+                            [AllowedType]="['image/png', 'image/jpeg']" (onfileUpload)="endFileUploded($event)" title="End Reading"></app-file-uploader>
                         </div> 
                         <div class="col-md-12 button-row" align="right">
                             <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>

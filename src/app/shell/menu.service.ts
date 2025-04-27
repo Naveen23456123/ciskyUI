@@ -41,6 +41,13 @@ export class MenuService {
         roles: []
       },
       {
+        label: 'Glance',
+        icon: 'bxs-network-chart',
+        link: 'explore',
+        guid: '',
+        roles: []
+      },
+      {
         label: 'Site Control',
         icon: 'bx-slider-alt',
         link: '#',
@@ -184,7 +191,32 @@ export class MenuService {
       {
         label: 'Profit & Loss',
         icon: 'bx-money',
-        link: 'invitation-list',
+        link: 'profit-loss',
+        guid: '',
+        roles: []
+      },
+      {
+        label: 'SiteOps Fund',
+        icon: 'bx-rupee',
+        link: '#',
+        items: [{
+          label: 'Imperest',
+          link: 'imperest',
+          guid: '',
+          roles: []
+          //Admin - Id, SuperAdmin -Id
+        },
+        {
+          label: 'Expense',
+          link: 'expense',
+          guid: '',
+          roles: []
+        }],
+      },
+      {
+        label: 'Ticket',
+        icon: 'bx-library',
+        link: 'ticket',
         guid: '',
         roles: []
       },

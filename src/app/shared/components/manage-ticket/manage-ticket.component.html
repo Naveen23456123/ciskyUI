@@ -1,0 +1,115 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteTicket">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3> 
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <!-- <form [formGroup]="organizationForm" > -->
+                <form [formGroup]="ticketForm" (submit)="submit()">
+                    <div class="row control-div">
+                        <div class="col-md-4">                            
+                            <app-project-control (onValueChange)="projectChange($event)"
+                            [defaultValue]="ticketForm.get('projectid')?.value" ></app-project-control>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Booking Date</mat-label>
+                                <input matInput  formControlName="bookingdate" [matDatepicker]="bookingdate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="bookingdate"></mat-datepicker-toggle>
+                                <mat-datepicker #bookingdate></mat-datepicker>
+                                <mat-error>Please select Used Date</mat-error>
+                              </mat-form-field>
+                        </div> 
+                        <div class="col-md-4">
+                            <mat-form-field >
+                                <mat-label>Ticket Number</mat-label>
+                                <input matInput formControlName="ticketnumber">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field >
+                                <mat-label>Source</mat-label>
+                                <input matInput formControlName="source">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field >
+                                <mat-label>Destination</mat-label>
+                                <input matInput formControlName="destination">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field >
+                                <mat-label>Person Name</mat-label>
+                                <input matInput formControlName="personname">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field >
+                                <mat-label>Amount</mat-label>
+                                <input type="number" matInput formControlName="ticketamount">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4">                            
+                            <app-select-search *ngIf="empInit"  [defaultValue]="ticketForm.get('employeeids')?.value"
+                                        searchPlaceholder="Search Employee" emptySearchMessage="No Employee Found"
+                                          [multiple]="true" label="Employee(s)" [required]="true" selectPlaceholder="Employee(s)"
+                                        (onValueChange)="empSelect($event)" [valueArrays]="employeeList">
+                            </app-select-search>                           
+                        </div>                         
+                        <div class="col-md-4">
+                            <app-file-uploader 
+                            (onfileUpload)="fileUploded($event)" title="Ticket"></app-file-uploader>
+                        </div>                        
+                        <div class="col-md-12 button-row" align="right">
+                            <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                            <button [ngClass]="ticketForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!ticketForm.valid" color="primary">
+                                {{isEdit?'Update':'Submit'}}</button>
+                    </div>
+                    </div>
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<mat-card *ngIf="deleteTicket">      
+    <mat-card-title class="card-title d-flex justify-content-center" >
+        <mat-icon>warning</mat-icon><span>{{title}}</span>
+    </mat-card-title>
+    <mat-card-content>
+        <div class="load-wrap" *ngIf="isLoading">
+            <app-loader [IsLoading]="isLoading"></app-loader>
+        </div>
+        <div class="wrapper">
+            <mat-dialog-content>
+                <span class="mat-typography alert-content">
+                    Are you sure you want to delete ticket number <span class="vw-lbl">{{ticketForm.get('ticketnumber')?.value}}</span> ?. This operation can
+                    not be un-done once performed sucessfully.
+                </span>
+            </mat-dialog-content>
+            <mat-dialog-actions align="center">
+                <div class="control-div">
+                    <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                        Delete
+                    </button>
+                    <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                        Cancel
+                    </button>
+                </div>
+            </mat-dialog-actions>
+        </div>
+    </mat-card-content>
+</mat-card>

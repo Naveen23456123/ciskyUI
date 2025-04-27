@@ -3,7 +3,7 @@
         <label class="error mat-error" *ngIf="Error">{{Error}} </label>
         <div class="col-md-12">
             <span></span>
-            <h5>Upload {{title}} <span *ngIf="required">*</span></h5>
+            <h5>{{title}} <span *ngIf="required">*</span></h5>
         </div>
         
         <div class="custom-file fileInputProfileWrap">
@@ -11,8 +11,8 @@
                 <button type="button" mat-mini-fab color=""  class="upload-btn" (click)="onClick()">
                     <mat-icon>attachment</mat-icon>
                 </button>
-                <span class="file-name" *ngIf="isFileUploaded">{{fileName}}</span>
-                <button  type="button" mat-mini-fab color="" matTooltip="Clear Document" *ngIf="isFileUploaded" class="warn-linear-image float-end" (click)="removeFile()" >
+                <span  class="file-name" *ngIf="isFileUploaded && UploadType!='image'">{{fileName}}</span>
+                <button  type="button" mat-mini-fab color="" matTooltip="Clear Document" *ngIf="isFileUploaded && UploadType!='image'" class="warn-linear-image float-end" (click)="removeFile()" >
                     <mat-icon>delete</mat-icon>
                 </button>
             </div>
@@ -32,7 +32,7 @@
             <div *ngIf="UploadType=='csv'" class="control-div">
                 
             </div>
-            <div *ngIf="UploadType=='image'" class="msg-note ">
+            <div *ngIf="UploadType=='image1'" class="msg-note ">
                 <div>Note: Recommended image size of 514 X 514</div>
             </div>
 

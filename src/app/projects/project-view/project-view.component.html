@@ -230,13 +230,13 @@
                                   <div class="col-md-3">
                                     <span class="details-val"> {{workingProject.cordinator}} </span>
                                   </div> 
-                                  <hr>
+                                  <hr>                                                    
                                   <div class="col-md-3">
-                                    <span class="details-text"> Extension of Time Count</span>
+                                    <span class="details-text"> Client</span>
                                   </div>
                                   <div class="col-md-3">
-                                    <span class="details-val">  </span>
-                                  </div>                    
+                                    <span class="details-val"> {{workingProject.client}} </span>
+                                  </div>                  
                                   <div class="col-md-3">
                                     <span class="details-text">Project Length (in Km) </span>
                                   </div>
@@ -269,26 +269,53 @@
                                   <div class="col-md-3">
                                     <span class="details-val">{{workingProject.consultancyfees | formatCurrency}} </span>
                                   </div> 
+                                 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Project Director Name</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.directorname}} </span>
+                                  </div> 
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Project Director Location</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.directorlocation}} </span>
+                                  </div> 
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Regional Officer Name</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.regionalofficename}} </span>
+                                  </div> 
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Regional Officer Location</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.regionalofficeaddress}} </span>
+                                  </div>  
+                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Member (T) Name</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.membername}} </span>
+                                  </div> 
+                                  <div class="col-md-3">
+                                    <span class="details-text"> Member (T) Location</span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val"> {{workingProject.memberlocation}} </span>
+                                  </div> 
                                   <hr>
                                   <div class="col-md-3">
                                     <span class="details-text">Site Address </span>
                                   </div>
-                                  <div class="col-md-3">
+                                  <div class="col-md-9">
                                     <span class="details-val"> {{workingProject.siteaddress}} </span>
-                                  </div>                    
-                                  <div class="col-md-3">
-                                    <span class="details-text"> Client</span>
-                                  </div>
-                                  <div class="col-md-3">
-                                    <span class="details-val"> {{workingProject.client}} </span>
                                   </div> 
-                                  <hr>
-                                  <div class="col-md-3">
-                                    <span class="details-text"> Regional Office Name (RO Name)</span>
-                                  </div>
-                                  <div class="col-md-3">
-                                    <span class="details-val"> {{workingProject.regionalofficename}} </span>
-                                  </div>  
                                 </div> 
                                 <div *ngIf="!isConsultant && contractorList && contractorList.length>0" class=" col-md-12 row">                                 
                                   <div class="ed-btn-row col-md-12">                              
@@ -402,7 +429,7 @@
                                   </div> 
                                   <hr>
                                   <div class="col-md-3">
-                                    <span class="details-text">address </span>
+                                    <span class="details-text">Address </span>
                                   </div>
                                   <div class="col-md-3">
                                     <span class="details-val"> {{selectedContractor?.contractoraddress}} </span>

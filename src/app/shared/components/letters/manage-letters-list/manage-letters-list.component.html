@@ -27,7 +27,8 @@
                           <app-download-csv (clickEvent)="export()" ></app-download-csv>
                       </div>
                     </div> 
-                      <div class="mat-elevation-z8">
+                    <app-no-data *ngIf="dataSource?.data?.length==0" message="No Letter(s) found at this moment !!" ></app-no-data>
+                    <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">     
                         <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
                       
                           <ng-container matColumnDef="serial">
@@ -68,7 +69,7 @@
                           
                           <ng-container matColumnDef="action">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Action</th>
-                            <td mat-cell *matCellDef="let row"> 
+                            <td mat-cell class="action-col" *matCellDef="let row"> 
                               <div class="button-row">                               
                                 <app-edit-btn (clickEvent)="editLetter(row)" ></app-edit-btn>                              
                                 <app-delete-btn (clickEvent)="deleteLetter(row)"></app-delete-btn>

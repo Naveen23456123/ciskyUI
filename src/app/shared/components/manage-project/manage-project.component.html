@@ -133,11 +133,14 @@
                               </mat-form-field>
                         </div>
                         <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Project Duration</mat-label>
-                                <input matInput formControlName="projectDuration">
-                                <mat-error></mat-error>
-                            </mat-form-field>
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Sch. Const. Complete Date</mat-label>
+                                <input matInput  formControlName="scheduleConstructionCompleteDate" [matDatepicker]="scheduleConstructionCompleteDate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="scheduleConstructionCompleteDate"></mat-datepicker-toggle>
+                                <mat-datepicker #scheduleConstructionCompleteDate></mat-datepicker>
+                              </mat-form-field>
+                            
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>
@@ -154,13 +157,11 @@
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">                           
-                            <mat-form-field class="example-full-width">
-                                <mat-label>Sch. Const. Complete Date</mat-label>
-                                <input matInput  formControlName="scheduleConstructionCompleteDate" [matDatepicker]="scheduleConstructionCompleteDate">
-                                
-                                <mat-datepicker-toggle matIconSuffix [for]="scheduleConstructionCompleteDate"></mat-datepicker-toggle>
-                                <mat-datepicker #scheduleConstructionCompleteDate></mat-datepicker>
-                              </mat-form-field>
+                            <mat-form-field>
+                                <mat-label>Project Duration</mat-label>
+                                <input matInput readonly formControlName="projectDuration">
+                                <mat-error></mat-error>
+                            </mat-form-field>
                         </div>
                    
                         <div class="col-md-3">                            
@@ -254,20 +255,46 @@
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>
-                                <mat-label>Regional Office Name</mat-label>
+                                <mat-label>Project Director Name</mat-label>
+                                <input matInput formControlName="directorname">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Project Director Location</mat-label>
+                                <input matInput formControlName="directorLocation">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Regional Officer Name</mat-label>
                                 <input matInput formControlName="regionalOfficeName">
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>
-                                <mat-label>Regional Office Address</mat-label>
+                                <mat-label>Regional Officer Location</mat-label>
                                 <input matInput formControlName="regionalOfficeAddress">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Member (T) Name</mat-label>
+                                <input matInput formControlName="membername">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Member (T) Location</mat-label>
+                                <input matInput formControlName="memberlocation">
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
                             <mat-form-field>
-                                <mat-label>PIU Address</mat-label>
+                                <mat-label>PIU/PMU Address</mat-label>
                                 <input matInput formControlName="piuAddress">
                                 <mat-error></mat-error>
                             </mat-form-field>

@@ -24,9 +24,7 @@ readonly dialog = inject(MatDialog);
     this.openDialog();
   }
   
-  private defaultdialogoptions:  MatDialogConfig = {
-    panelClass: 'custom-dialog-container',
-    minWidth: '900px',
+  private defaultdialogoptions:  MatDialogConfig = {    
     disableClose: false,
     data: {},
     //scrollStrategy: this.scrollStrategy.noop()
@@ -38,12 +36,13 @@ readonly dialog = inject(MatDialog);
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type']
     };
+    config.minWidth= '50vw';
     const dialogRef = this.dialog.open(ManageConsultancyInvoiceComponent, config);
     dialogRef.afterClosed().subscribe((data) => {
       if (data && data.valid) {
         let navigationExtras: NavigationExtras = {
           relativeTo: this.route,
-          state: { value: data.value, event: 'invadd', valid: true, msg: 'The Inventory created successfully.' }
+          state: { value: data.value, event: 'invadd', valid: true, msg: 'The Invoice created successfully.' }
         };
         this.router.navigate(['../'], navigationExtras);
       }

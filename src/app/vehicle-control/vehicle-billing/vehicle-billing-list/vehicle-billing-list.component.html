@@ -18,7 +18,8 @@
                         </button> 
                       </div>
                     </div> 
-                      <div class="mat-elevation-z8">
+                    <app-no-data *ngIf="dataSource?.data?.length==0" message="No Vehicle Billing(s) found at this moment !!" ></app-no-data>
+                    <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">     
                         <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>                     
                         
                           <ng-container matColumnDef="serial">

@@ -31,7 +31,7 @@ public data: any;
   deleteVehicle=false;
   vehicleno='';
   vehicledate='';
-
+  isBtnClicked=false;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageVehcileLogComponent>, private formbuilder: FormBuilder,
     private sessionservice: SessionService,  private router: Router,
@@ -86,7 +86,9 @@ public data: any;
       initialreadingimage:[],
       endreading:[,[Validators.required, this.validatorService.greaterThan('initialreading')]],
       endreadingimage:[],
-      purposeandplace:[,Validators.required]
+      purposeandplace:[,Validators.required],
+      initialfile:[],
+      endfile:[]
     });
     if(!this.deleteVehicle){
       if (this.isEdit) {      
@@ -119,7 +121,7 @@ public data: any;
     if(projectId){
       forkJoin({
         vehicleAPI:this.vehicleService.getVehiclePartialDetailsByProjectId({projectId: projectId},''),
-        empAPI:this.employeeService.getSiteEmployeeParital({},'')
+        empAPI:this.employeeService.getSiteEmployeeParital({projectId: projectId},'')
       }).pipe(untilDestroyed(this), finalize(()=> this.isLoading=false))
       .subscribe((response:any)=>{
        if(response && response.vehicleAPI.success)
@@ -158,12 +160,33 @@ public data: any;
     }
   }
 
+  initFileUploded(data:any){ 
+    if(data)
+      this.vehicleForm.patchValue({initialfile:data.file});
+  }
+  endFileUploded(data:any){   
+    if(data)   
+      this.vehicleForm.patchValue({endfile:data.file});
+  }
+  
   submit(){   
     let formsValue= this.vehicleForm.value;
     formsValue.vehiclename= this.vehicleList.find(x=>x.id== this.vehicleForm.get('vehicleid')?.value).name;
     formsValue.vehiclenumber= this.vehicleList.find(x=>x.id== this.vehicleForm.get('vehicleid')?.value).number;   
+    this.isBtnClicked=true;
+    let formData = new FormData(); 
+    Object.entries(this.vehicleForm.controls).forEach(([key, value]) => {
+      if(key!='useddate'){          
+        if (value.value != null) {
+          formData.append(key, value.value);
+        } else {
+          formData.delete(key);
+        }
+      }    
+    });    
+    formData.append('useddate', this.vehicleForm.controls['useddate']?.value?.toISOString());
     if (this.isEdit) {
-      this.vehicleLogService.updateVehicleLog(this.vehicleForm.value, '')
+      this.vehicleLogService.updateVehicleLog(formData, '')
         .pipe(finalize(() => { this.isLoading = false; })).subscribe({
           next: (response:any) => {
           if(response && response.success)
@@ -175,7 +198,7 @@ public data: any;
         });
     } else {
       this.vehicleForm.value.id=null;      
-      this.vehicleLogService.createVehicleLog(this.vehicleForm.value, '')
+      this.vehicleLogService.createVehicleLog(formData, '')
         .pipe(finalize(() => { this.isLoading = false; })).subscribe({
           next:(response: any) => {
           if (response && response.success) {

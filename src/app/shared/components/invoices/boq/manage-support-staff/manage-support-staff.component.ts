@@ -10,7 +10,7 @@ import { DesignationInterfaceService } from '@app/shared/services/external/desig
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
-import { finalize, forkJoin, take } from 'rxjs';
+import { finalize, forkJoin, Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-manage-support-staff',
@@ -32,6 +32,7 @@ export class ManageSupportStaffComponent {
   empList:any[] = [];
   designationLoad=false;
   employeeLoad=false;
+  empName='';
   readonly dialog = inject(MatDialog);
 
    private defaultdialogoptions:  MatDialogConfig = {
@@ -39,6 +40,7 @@ export class ManageSupportStaffComponent {
         disableClose: false,
         data: {},
   };
+  private subscription:Subscription = new Subscription();
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageSupportStaffComponent>, private formbuilder: FormBuilder,
@@ -91,29 +93,41 @@ export class ManageSupportStaffComponent {
         this.professionaList= response;
       }
     })
-    forkJoin({
-          designationAPI:this.designationService.getDesignationListByOrgId({},''),
-          employeeAPI:this.employeeService.getSiteEmployeeParital({},''),          
-        }).pipe(take(1), untilDestroyed(this)).subscribe((response:any)=>{
-          if(response){
-            if(response.designationAPI && response.designationAPI.success){
-              this.designationLoad=true;
-              this.designationList=response.designationAPI.data;
+    if(!this.deleteRenumeration) {
+    this.subscription=  this.sessionService.projectEntitySubject$.pipe(untilDestroyed(this)).subscribe((projectEntity:any)=>{
+        if(projectEntity){
+          forkJoin({
+            designationAPI:this.designationService.getDesignationList({},''),
+            employeeAPI:this.employeeService.getSiteEmployeeParital({projectId:projectEntity.projectId},''),          
+          }).pipe(take(1), untilDestroyed(this), finalize(()=> this.isLoading=false)).subscribe((response:any)=>{
+            if(response){
+              if(response.designationAPI && response.designationAPI.success){
+                this.designationLoad=true;
+                this.designationList=response.designationAPI.data;
+              }
+              if(response.employeeAPI && response.employeeAPI.success){
+                this.empList = response.employeeAPI.data.map((emp:any) => ({
+                  id: emp.id,
+                  name: emp.name + ' - '+emp.code,
+                  empname:emp.name
+                }));
+                this.employeeLoad=true;
+              }
+              if (this.isEdit) {
+                this.setRenumerationForm(this.data.element);
+              }            
             }
-            if(response.employeeAPI && response.employeeAPI.success){
-              this.empList = response.employeeAPI.data.map((emp:any) => ({
-                id: emp.id,
-                name: emp.name + ' - '+emp.code
-              }));
-              this.employeeLoad=true;
-            }            
-          }
-        });
-    
-    if (this.isEdit || this.deleteRenumeration) {
-      this.setRenumerationForm(this.data.element);
+          });         
+        }
+      });
     }
-    this.isLoading=false;
+    else {
+      this.renumerationForm.patchValue({
+        id: this.data.element.id
+      });
+      this.empName= this.data.element.employeename;
+      this.isLoading=false;
+    }   
   }
 
   setRenumerationForm(data: any) {    
@@ -137,9 +151,13 @@ export class ManageSupportStaffComponent {
       this.renumerationForm.patchValue({employeeid :data.value.id});
   }
 
-  ngOnDestroy(){}
+  ngOnDestroy(){
+    this.subscription.unsubscribe();
+  }
 
   submit(){ 
+    this.renumerationForm.value.employeename= this.empList.find(x=>x.id==this.renumerationForm.get('employeeid')?.value).empname;
+    this.renumerationForm.value.designation= this.designationList.find(x=>x.id==this.renumerationForm.get('designationid')?.value).name;
     this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
       if(response && response.projectId){
         this.renumerationForm.patchValue({projectid:response.projectId});

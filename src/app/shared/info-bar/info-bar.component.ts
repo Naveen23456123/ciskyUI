@@ -77,7 +77,9 @@ export class InfoBarComponent implements OnInit {
   ngOnDestroy() {
 
   }
-
+  logout(){
+    this.router.navigate(['/login']);
+  }
   openbottom(){
     //this.bottomService.open(VisitorDetailsComponent);
   }

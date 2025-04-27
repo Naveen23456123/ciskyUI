@@ -19,7 +19,7 @@ export class BoqOfficeSupplyListComponent {
   data:any[]=[];
   isLoading = true;
 
-  dataColumn: string[] = ['serial','item','months','monthlyrate','amount','action' ];
+  dataColumn: string[] = ['serial','desc','months','monthlyrate','amount','action' ];
   footerColumns: string[] = ['serial', 'amount','action'];
   dataSource!: MatTableDataSource<any[]>;
   @Output() onAmountChange: EventEmitter<any> = new EventEmitter(); 
@@ -73,7 +73,7 @@ export class BoqOfficeSupplyListComponent {
       const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
       if(element){
         element.id = data.id;
-        element.itemname=data.itemname,
+        element.description=data.description,
         element.projectid=data.projectid,
         element.totalamount= data.totalamount,
         element.numberofmonths =data.numberofmonths,
@@ -84,7 +84,7 @@ export class BoqOfficeSupplyListComponent {
     addRowData(data: any) {
       const data1:any = {
         id: data.id,
-        itemname:data.itemname,
+        description:data.description,
         totalamount: data.totalamount,
         projectid:data.projectid,
         numberofmonths :data.numberofmonths,

@@ -42,7 +42,7 @@ readonly dialog = inject(MatDialog);
       if (data && data.valid) {
         let navigationExtras: NavigationExtras = {
           relativeTo: this.route,
-          state: { value: data.value, event: 'invadd', valid: true, msg: 'The Inventory created successfully.' }
+          state: { value: data.value, event: 'invdelete', valid: true, msg: 'The Inventory removed successfully.' }
         };
         this.router.navigate(['../'], navigationExtras);
       }

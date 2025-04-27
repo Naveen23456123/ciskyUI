@@ -1,4 +1,4 @@
-import { Component,Inject,Optional,inject } from '@angular/core';
+import { ChangeDetectorRef, Component,Inject,Optional,inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router,NavigationExtras } from '@angular/router';
@@ -30,7 +30,7 @@ export class ManageBoqAttendenceComponent {
   empInit=true;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageBoqAttendenceComponent>, private formbuilder: FormBuilder,
-    private sessionservice: SessionService,  private router: Router,
+    private sessionservice: SessionService,  private router: Router,private cdr:ChangeDetectorRef,
     private notifibarservice: NotifyBarService, private attendenceService:AttendenceInterfaceService,
     private subCompanyService:SubCompanyInterfaceService, private employeeService:EmployeeInterfaceService){
       this.data = data || {};
@@ -84,7 +84,7 @@ export class ManageBoqAttendenceComponent {
     this.isLoading=false;
   }
 
-  setBoqForm(data: any) {    
+  setBoqForm(data: any) { 
     this.boqForm.setValue({
       companyid:data.companyid,
       employeeid:data.employeeid,
@@ -94,7 +94,9 @@ export class ManageBoqAttendenceComponent {
       id :data.id,
     });
   }
-
+  ngAfterViewInit(){
+    this.cdr.detectChanges();
+  }
   companyChange(){
     this.empInit=false;
     let compId= this.boqForm.controls['companyid'].value;

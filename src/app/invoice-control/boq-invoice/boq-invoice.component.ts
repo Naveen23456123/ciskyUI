@@ -4,17 +4,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-import { ManageContingenciesComponent } from '@app/shared/components/invoices/boq/manage-contingencies/manage-contingencies.component';
-import { ManageDutyTravelComponent } from '@app/shared/components/invoices/boq/manage-duty-travel/manage-duty-travel.component';
-import { ManageOfficeFurnitureComponent } from '@app/shared/components/invoices/boq/manage-office-furniture/manage-office-furniture.component';
-import { ManageOfficeRentComponent } from '@app/shared/components/invoices/boq/manage-office-rent/manage-office-rent.component';
-import { ManageOfficeSuppliesComponent } from '@app/shared/components/invoices/boq/manage-office-supplies/manage-office-supplies.component';
-import { ManageReportDocComponent } from '@app/shared/components/invoices/boq/manage-report-doc/manage-report-doc.component';
-import { ManageRoadSurveyComponent } from '@app/shared/components/invoices/boq/manage-road-survey/manage-road-survey.component';
-import { ManageSupportStaffComponent } from '@app/shared/components/invoices/boq/manage-support-staff/manage-support-staff.component';
-import { ManageTransportationComponent } from '@app/shared/components/invoices/boq/manage-transportation/manage-transportation.component';
 import { StaffType } from '@app/shared/models/constant.config';
 import { BOQInvoice } from '@app/shared/models/Invoice';
+import { CommonService } from '@app/shared/services/common.service';
 import { SessionService } from '@app/shared/services/session.service';
 
 @Component({
@@ -37,6 +29,7 @@ export class BoqInvoiceComponent {
       disableClose: false,
       data: {},
     };
+    tax:number=18;
   
  
   boqList:any[]=[
@@ -65,7 +58,7 @@ export class BoqInvoiceComponent {
     }
 
     constructor(private route: ActivatedRoute,private router: Router,private sessionService:SessionService,
-      private cdr: ChangeDetectorRef
+      private cdr: ChangeDetectorRef, private commonService:CommonService
     ){
       this.projectObject= window.history.state;
     }
@@ -105,4 +98,16 @@ export class BoqInvoiceComponent {
           this.boqList.find((x:any)=>x.key==BOQInvoice.SUPPORTSTAF_KEY).amount= data.totalAmount;
       }    
     }
+
+  getSubTotalAmount(){
+    let total= this.boqList.map(t => t.amount).reduce((acc, value) => acc + value, 0);    
+    return total;
+  }
+  getgstAmount(){
+    let total= this.commonService.roundValue((this.boqList.map(t => t.amount).reduce((acc, value) => acc + value, 0))*this.tax/100);    
+    return total;
+  }
+  getTotalAmount(){
+    return this.getSubTotalAmount()+ this.getgstAmount();
+  }
 }

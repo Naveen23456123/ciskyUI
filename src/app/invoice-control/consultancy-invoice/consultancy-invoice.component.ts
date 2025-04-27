@@ -14,22 +14,22 @@ import { SessionService } from '@app/shared/services/session.service';
 export class ConsultancyInvoiceComponent {
   isLoading=false;
     displayedColumns: string[] = ['serial','value','contract_amount','comm_of_previous_month','this_period','commulated','remaining' ];
-     ordataColumn: string[] =['serial','desc','months','rate','totalamt','prev_month','prev_amt','curr_month','curr_amt','comlt_month','comlt_amt','rem_month','rem_amt','action'];
-    osdataColumn: string[] =['serial','desc','contract_month','rate','totalamt','prev_month','prev_amt','curr_month','curr_amt','comlt_month','comlt_amt','rem_month','rem_amt','action'];
-    ofdataColumn: string[] =['serial','desc','contract_month','rate','totalamt','prev_month','prev_amt','curr_month','curr_amt','comlt_month','comlt_amt','rem_month','rem_amt','action'];
-    rddataColumn: string[] =['serial','desc','no_ofreport','copies_per_report','total_copy','rate_per_copy','total_amt','prev_month','prev_amt','curr_month','curr_amt','comlt_month','comlt_amt','rem_month','rem_amt','action'];
-    rsdataColumn: string[] =['serial','desc','km','rateperkm','survery_conducted','total_amt','prev_survery_conducted','prev_amt','curr_month','curr_amt','comlt_survery_conducted','comlt_amt','rem_survery_conducted','rem_amt','action'];
-    contdataColumn: string[] = ['serial','month','actualmonth','curr_amount','action' ];
+    //  ordataColumn: string[] =['serial','desc','months','rate','totalamt','prev_month','prev_amt','curr_month','curr_amt','comlt_month','comlt_amt','rem_month','rem_amt','action'];
+    // osdataColumn: string[] =['serial','desc','contract_month','rate','totalamt','prev_month','prev_amt','curr_month','curr_amt','comlt_month','comlt_amt','rem_month','rem_amt','action'];
+    // ofdataColumn: string[] =['serial','desc','contract_month','rate','totalamt','prev_month','prev_amt','curr_month','curr_amt','comlt_month','comlt_amt','rem_month','rem_amt','action'];
+    // rddataColumn: string[] =['serial','desc','no_ofreport','copies_per_report','total_copy','rate_per_copy','total_amt','prev_month','prev_amt','curr_month','curr_amt','comlt_month','comlt_amt','rem_month','rem_amt','action'];
+    // rsdataColumn: string[] =['serial','desc','km','rateperkm','survery_conducted','total_amt','prev_survery_conducted','prev_amt','curr_month','curr_amt','comlt_survery_conducted','comlt_amt','rem_survery_conducted','rem_amt','action'];
+     contdataColumn: string[] = ['serial','month','actualmonth','curr_amount','action' ];
 
     dataSource!: MatTableDataSource<any[]>;
-    tpDataSource!: MatTableDataSource<any[]>;
-    dtDataSource!: MatTableDataSource<any[]>;
-    orDataSource!: MatTableDataSource<any[]>;
-    osDataSource!: MatTableDataSource<any[]>;
-    ofDataSource!: MatTableDataSource<any[]>;
-    rdDataSource!: MatTableDataSource<any[]>;
-    rsDataSource!: MatTableDataSource<any[]>;
-    contDataSource!: MatTableDataSource<any[]>;
+    // tpDataSource!: MatTableDataSource<any[]>;
+    // dtDataSource!: MatTableDataSource<any[]>;
+    // orDataSource!: MatTableDataSource<any[]>;
+    // osDataSource!: MatTableDataSource<any[]>;
+    // ofDataSource!: MatTableDataSource<any[]>;
+    // rdDataSource!: MatTableDataSource<any[]>;
+    // rsDataSource!: MatTableDataSource<any[]>;
+     contDataSource!: MatTableDataSource<any[]>;
 
     readonly dialog = inject(MatDialog);
       private defaultdialogoptions:  MatDialogConfig = {     
@@ -53,9 +53,7 @@ export class ConsultancyInvoiceComponent {
 
     ngOnInit()  {
         this.isLoading=false;
-        this.dataSource = new MatTableDataSource(this.consultancyList);  
-        this.tpDataSource= new MatTableDataSource(this.tpList);     
-        this.sessionService.setInvoiceEntity({invoiceId:'67cdaf27b327e10ca3e6ac8c'});
+        this.dataSource = new MatTableDataSource(this.consultancyList);        
       }
     
     constructor(private route: ActivatedRoute,private router: Router,

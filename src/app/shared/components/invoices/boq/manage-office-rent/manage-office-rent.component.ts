@@ -69,6 +69,7 @@ public data: any;
     this.orForm = this.formbuilder.group({ 
       id: [''],
       projectid:[],
+      description:[],
       numberofmonths :[],
       ratepermonth:[]
     });
@@ -82,6 +83,7 @@ public data: any;
   setorForm(data: any) {    
     this.orForm.setValue({
       id: data.id,
+      description:data.description,
       projectid:data.projectid,
       numberofmonths :data.numberofmonths,
       ratepermonth:data.ratepermonth,

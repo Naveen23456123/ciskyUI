@@ -73,7 +73,7 @@ export class BoqDutyTravelListComponent {
       const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
       if(element){
       element.id = data.id;
-      element.trips =data.trips,
+      element.description =data.description,
       element.totalamount= data.totalamount,
       element.numberofminimumtrips=data.numberofminimumtrips,
       element.ratepertrip=data.ratepertrip
@@ -83,7 +83,7 @@ export class BoqDutyTravelListComponent {
     addRowData(data: any) {
       const data1:any = {
         id: data.id,
-        trips :data.trips,
+        description :data.description,
         totalamount: data.totalamount,
         numberofminimumtrips:data.numberofminimumtrips,
         ratepertrip:data.ratepertrip

@@ -101,11 +101,15 @@ ngOnInit(): void {
     if(reposnse)
       this.contractModeList= reposnse;
   })
-if (this.isEdit || this.deleteConsultant) { 
-  this.setConsultantForm(this.data.element);
-}
+  if (this.isEdit || this.deleteConsultant) { 
+    this.setConsultantForm(this.data.element);
+  }
 //console.log(this.consultantForm.controls['name'].value);
-
+this.consultantForm.valueChanges.subscribe(values => {
+  const { constructionDuration, oandmDuration } = values;
+  const total = (parseFloat(constructionDuration) || 0) + (parseFloat(oandmDuration) || 0);
+  this.consultantForm.get('projectDuration')?.setValue(total, { emitEvent: false });
+});
 this.isLoading = false;
 }
 

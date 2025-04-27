@@ -20,6 +20,9 @@ export class SessionService {
   private userSubject: ReplaySubject<any> = new ReplaySubject<any>(1);
   public userSubject$ = this.userSubject.asObservable();
 
+  private orgSubject: ReplaySubject<any> = new ReplaySubject<any>(1);
+  public orgSubject$ = this.orgSubject.asObservable();
+
   //working location Subject selected by the user
   private workingProjectSubject: ReplaySubject<any> = new ReplaySubject<any>(1);
   public workingProjectSubject$ = this.workingProjectSubject.asObservable();
@@ -53,7 +56,8 @@ export class SessionService {
   public ourRoleSubject$ = this.ourRoleSubject.asObservable(); 
   private contractModeSubject = new BehaviorSubject<any[]>([]); 
   public contractModeSubject$ = this.contractModeSubject.asObservable(); 
-
+  private profileLossScopeSubject = new BehaviorSubject<any[]>([]); 
+  public profileLossScopeSubject$ = this.profileLossScopeSubject.asObservable(); 
 
   private generalStatusSubject = new BehaviorSubject<any[]>([]); 
   public generalStatusSubject$ = this.generalStatusSubject.asObservable(); 
@@ -80,6 +84,10 @@ export class SessionService {
     return this._helperservice.getRunTimeConfigFile(config);
   }
 
+  public setOrganization(orgObj: any) {
+    this.orgSubject.next({ organization: orgObj });
+  }
+
   public setAllLocation(locationsObj: any) {
     this.allLocationSubject.next({ organizations: locationsObj });
   }
@@ -104,7 +112,10 @@ export class SessionService {
     //this._storageService.set(Constants.workingProjectStorage, projectObj);
     this.invoiceEntitySubject.next(projectObj);
   }
-
+  public setProfileLossScope(scopesObj: any) {
+    //this._storageService.set(Constants.workingProjectStorage, projectObj);
+    this.profileLossScopeSubject.next(scopesObj);
+  }
   // Project
   public setCurrentProject(projectObj: any) {
     this._storageService.set(Constants.workingProjectStorage, projectObj);

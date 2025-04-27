@@ -9,13 +9,13 @@ import { CoreAPIService } from './coreapi.service';
 export class DesignationInterfaceService {
 
   constructor(private coreApi:CoreAPIService) { }
-  getDesignationListByOrgId(request: any, guid: string) {
+  getDesignationList(param: any, guid: string) {
    const standardAttribute: ServiceAttributeModel = {
     url: 'Designation',
-    params: {},
+    params: param,
     headers: true,
     guid: '',
-    request: request,
+    request: {},
     action: Operation.GET
    }
    return this.coreApi.standardService(standardAttribute);

@@ -649,6 +649,17 @@ export class VehicleInterfaceService {
       }
       return this.coreApi.standardService(standardAttribute);
   }
+  getVehicleDetailsById(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+        url: 'Vehicle/Details/'+param.id,
+        params: {},
+        headers: true,
+        guid: '',
+        request: {},
+        action: Operation.GET
+      }
+      return this.coreApi.standardService(standardAttribute);
+  }
   getVehicleDocumentsById(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
         url: 'Vehicle/Documents/'+param.id,

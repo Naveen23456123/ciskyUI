@@ -59,8 +59,8 @@
 
               <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Amount (Rs.) </th>
-                <td mat-cell *matCellDef="let row"> {{row.totalamount}} </td>
-                <td mat-footer-cell *matFooterCellDef> {{getTotalAmount()}} </td>
+                <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount}} </td>
+                <td mat-footer-cell *matFooterCellDef> {{getTotalAmount() | formatCurrency}} </td>
               </ng-container>
               <ng-container matColumnDef="amountth">
                 <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Amount (Rs.)</th>
@@ -68,17 +68,11 @@
 
               <ng-container matColumnDef="action" >
                 <th mat-header-cell class="no-print" *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Action </th>
-                <td mat-cell class="no-print" *matCellDef="let row">
-                  <div class="button-row">
-                    <button class="edit-table-btn" [state]="row"
-                    [routerLink]="['tp-edit',row.id]" matTooltip="Edit" mat-mini-fab>
-                   <mat-icon>edit</mat-icon> 
-                 </button>
-                 <button class="delete-table-btn" [state]="row"
-                 [routerLink]="['tp-delete',row.id]" matTooltip="Delete" mat-mini-fab >
-                   <mat-icon>delete_forever</mat-icon> 
-                 </button>
-               </div>               
+                <td mat-cell class="no-print action-col" *matCellDef="let row">                 
+                  <div class="button-row">                   
+                    <app-edit-btn [state]="row" [routerLink]="['tp-edit',row.id]" ></app-edit-btn>                              
+                    <app-delete-btn [state]="row" [routerLink]="['tp-delete',row.id]"></app-delete-btn>
+                  </div>              
                 </td>
                 <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
               </ng-container>
