@@ -10,6 +10,7 @@ import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common
 import { HttpService } from './http/http.service';
 import { RouteReuseStrategy } from '@angular/router';
 import { RouteReusableStrategy } from './route-reusable-strategy';
+import { AuthInterceptor } from './http/auth.interceptor';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { RouteReusableStrategy } from './route-reusable-strategy';
   ],
   providers: [
     I18nService,
+    AuthInterceptor,
     ApiPrefixInterceptor,
     CacheInterceptor,
     ErrorHandlerInterceptor,
@@ -31,7 +33,8 @@ import { RouteReusableStrategy } from './route-reusable-strategy';
     provide: RouteReuseStrategy,
     useClass: RouteReusableStrategy
   },
-  {provide: HTTP_INTERCEPTORS, useClass: ApiPrefixInterceptor, multi: true},]
+  {provide: HTTP_INTERCEPTORS, useClass: ApiPrefixInterceptor, multi: true},
+  {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}]
 })
 export class CoreModule {
   // constructor(@Optional() @SkipSelf() parentModule:CoreModule)

@@ -136,6 +136,11 @@ const routes: Routes = [
       loadChildren:()=>import('app/siteops-fund/expense/expense-list/expense-list.module').then(x=>x.ExpenseListModule),
       data:{pageGuid:'',type:'view'}
     },
+    {
+      path: 'approval',
+      loadChildren:()=>import('app/settings/approval/approval-list/approval-list.module').then(x=>x.ApprovalListModule),
+      data:{pageGuid:'',type:'view'}
+    },
   ]),
   // { path: 'login', loadChildren: () => import('app/login/login.module').then(x => x.LoginModule) },
   { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }

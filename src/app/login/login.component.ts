@@ -29,6 +29,7 @@ export class LoginComponent {
     this.authService.login(this.loginform.value,'').subscribe((response:any)=>{
       if(response && response.success){
         console.log(response.data);
+        localStorage.setItem('auth_token', response.data.token);
         this.router.navigate(['/dashboard']);
       }
     })

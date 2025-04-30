@@ -42,8 +42,18 @@ export class CommonInterfaceService {
       action: Operation.GET
     }
      return this.coreApi.standardService(standardAttribute);
+  } 
+  getApprovalRoles(){
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Common/ApprovalRoles',
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+     return this.coreApi.standardService(standardAttribute);
   }
-
   getGeneralStatusList(param: any, guid: string){
     const standardAttribute: ServiceAttributeModel = {
       url: 'Common/GeneralStatus',

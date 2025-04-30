@@ -10,9 +10,9 @@ export class AdminInterfaceService {
 
   constructor(private coreapi: CoreAPIService) { }
 
-  getModuleList() {
+  getBillinModuleList() {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'admin/GetModules',
+      url: 'Module/Billing',
       params: false,
       headers: true,
       guid: '',

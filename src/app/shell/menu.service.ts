@@ -158,7 +158,6 @@ export class MenuService {
           link: 'boq-list',
           guid: '',
           roles: []
-          //Admin - Id, SuperAdmin -Id
         },
         {
           label: 'Invoice',
@@ -231,8 +230,12 @@ export class MenuService {
         label: 'Settings',
         icon: 'bxs-cog',
         link: 'invitation-list',
-        guid: '',
-        roles: []
+        items: [{
+          label: 'Approvals',
+          link: 'approval',
+          guid: '',
+          roles: []
+        }]
       },
       
     ]

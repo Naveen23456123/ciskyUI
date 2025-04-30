@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ApiPrefixInterceptor } from './api-prefix.interceptor';
 import { ErrorHandlerInterceptor } from './error-handler.interceptor';
 import { CacheInterceptor } from './cache.interceptor';
+import { AuthInterceptor } from './auth.interceptor';
 
 // HTTPClient is decalred in a re-exported module, so we have to extend the original module to make it work properly
 // (see https://github.com/Microsoft/TypeScript/issues/13897)
@@ -68,7 +69,7 @@ export class HttpService extends HttpClient {
 
     if (!this._interceptors) {
       // Configure default intereptors that can be disabled here.
-      this._interceptors = [this._injector.get(ApiPrefixInterceptor), this._injector.get(ErrorHandlerInterceptor)];
+      this._interceptors = [this._injector.get(ApiPrefixInterceptor),this._injector.get(AuthInterceptor), this._injector.get(ErrorHandlerInterceptor)];
     }
   }
 
