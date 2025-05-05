@@ -28,7 +28,7 @@
                             <!-- contractName Column -->
                             <ng-container matColumnDef="project">
                               <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
-                              <td mat-cell *matCellDef="let row"> {{row.projectshortname}} </td>
+                              <td mat-cell *matCellDef="let row"> {{row.projectname}} </td>
                             </ng-container>
                       
                           <!-- contractName Column -->
@@ -40,7 +40,7 @@
                           <!-- Name Column -->
                           <ng-container matColumnDef="agrdate">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Agreement Date </th>
-                            <td mat-cell *matCellDef="let row"> {{row.agreementstartdate}} </td>
+                            <td mat-cell *matCellDef="let row"> {{row.agreementstartdate | formatDate}} </td>
                           </ng-container>
                       
                           <!-- con_personName Column -->
@@ -53,24 +53,21 @@
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Phone Number </th>
                             <td mat-cell *matCellDef="let row"> {{row.phoneno}} </td>
                           </ng-container> 
-                          <ng-container matColumnDef="documents">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Documents </th>
-                            <td mat-cell *matCellDef="let row">  </td>
+                        
+                          <ng-container matColumnDef="docs">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Document(s) </th>
+                            <td mat-cell *matCellDef="let row">                               
+                              <app-document-manage-btn (clickEvent)="viewdocs(row.id)"></app-document-manage-btn>
+                            </td>
                           </ng-container>
-                          <!-- con_personName Column -->
+
                           <ng-container matColumnDef="action">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
                             <td class="action-col" mat-cell *matCellDef="let row"> 
-                              <div class="button-row">
-                               <button class="edit-table-btn" [state]="row"
-                               [routerLink]="['/ofc-rent/edit',row.id]" matTooltip="Edit" mat-mini-fab>
-                              <mat-icon>edit</mat-icon> 
-                            </button>
-                            <button class="delete-table-btn" [state]="row"
-                            [routerLink]="['/ofc-rent/delete',row.id]" matTooltip="Delete" mat-mini-fab >
-                              <mat-icon>delete_forever</mat-icon> 
-                            </button>
-                          </div>
+                              <div class="button-row">                               
+                                <app-edit-btn [state]="row"  [routerLink]="['/ofc-rent/edit',row.id]" ></app-edit-btn>                              
+                                <app-delete-btn [state]="row" [routerLink]="['/ofc-rent/delete',row.id]"></app-delete-btn>
+                              </div>
                            </td>
                           </ng-container>
                         

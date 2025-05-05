@@ -10,6 +10,8 @@ import { finalize } from 'rxjs';
 import { OfficeService } from '../office.service';
 import { StateDataService } from '@app/shared/services/state-data.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
+import { ManageOfficeDocComponent } from '@app/shared/components/office/manage-office-doc/manage-office-doc.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-office-rent-list',
@@ -20,7 +22,7 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 export class OfficeRentListComponent {
   rents:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','project','basicamount', 'agrdate', 'ownername','mobileno','documents','action'];
+  displayedColumns: string[] = ['serial','project','basicamount', 'agrdate', 'ownername','mobileno','docs','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -37,7 +39,8 @@ export class OfficeRentListComponent {
   };
 
  constructor(private officeService:OfficeService,private helperService:HelperService,
-  private stateDataService :StateDataService, private notifyBarService:NotifyBarService
+  private stateDataService :StateDataService, private notifyBarService:NotifyBarService,
+  private route :ActivatedRoute
  ){
   this.dataSource = new MatTableDataSource(this.rents);
  }
@@ -95,20 +98,11 @@ export class OfficeRentListComponent {
         element.id=data.id,
         element.projectid =data.projectid,
         element.basicamount=data.basicamount,
-        element.tdspercentage=data.tdspercentage,
         element.agreementduration=data.agreementduration,
         element.agreementstartdate=data.agreementstartdate,
-        element.agreementenddate=data.agreementenddate,
         element.ownername=data.ownername,
-        element.bankname=data.bankname,
-        element.accountholdername=data.accountholdername,
-        element.accountnumber=data.accountnumber,
-        element.ifsccode=data.ifsccode,
-        element.panno=data.panno,
-        element.gstno=data.gstno,
+        element.projectname=data.projectname,
         element.phoneno=data.phoneno,
-        element.address=data.address,
-        element.documentaddress=data.documentaddress
         this.dataSource._updateChangeSubscription();
       }
   }
@@ -117,20 +111,11 @@ export class OfficeRentListComponent {
       id: data.id,
       projectid :data.projectid,
       basicamount:data.basicamount,
-      tdspercentage:data.tdspercentage,
       agreementduration:data.agreementduration,
       agreementstartdate:data.agreementstartdate,
-      agreementenddate:data.agreementenddate,
       ownername:data.ownername,
-      bankname:data.bankname,
-      accountholdername:data.accountholdername,
-      accountnumber:data.accountnumber,
-      ifsccode:data.ifsccode,
-      panno:data.panno,
-      gstno:data.gstno,
+      projectname:data.projectname,
       phoneno:data.phoneno,
-      address:data.address,
-      documentaddress:data.documentaddress 
     }      
     this.dataSource.data.unshift(data1);  
     this.dataSource._updateChangeSubscription(); 
@@ -140,6 +125,21 @@ export class OfficeRentListComponent {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
+  }
+  viewdocs(data:any){
+    this.defaultdialogoptions.data = {
+      pageGuid: this.route.snapshot.data['pageGuid'],      
+      element:{id:data}
+    };
+    this.defaultdialogoptions.minWidth='75vw';
+    const dialogRef = this.dialog.open(ManageOfficeDocComponent, this.defaultdialogoptions);
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data.valid) {
+       
+      }
+      else {
+      }
+    });
   }
 }
 

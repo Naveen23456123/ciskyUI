@@ -9,7 +9,14 @@ import { CoreAPIService } from './coreapi.service';
 export class DepartmentInterfaceService {
 
   constructor(private coreApi:CoreAPIService) { }
-
+  getTemplateColumnList() {
+    let columns = [
+      { label: 'name', value: 'name' },
+      { label: 'company', value: 'companyname' },
+      
+    ];
+  return columns;
+  }
    getDepartmentListByOrgId(param: any, guid: string) {
       const standardAttribute: ServiceAttributeModel = {
           url: 'department',
@@ -24,6 +31,17 @@ export class DepartmentInterfaceService {
   createDepartment(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Department',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  createBulkDepartments(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Department/Bulk',
       params: {},
       headers: true,
       guid: '',

@@ -5,6 +5,7 @@ import { extractTitle } from '@app/core/i18n.service';
 import { AddDesignationComponent } from '../add-designation/add-designation.component';
 import { EditDesignationComponent } from '../edit-designation/edit-designation.component';
 import { DeleteDesignationComponent } from '../delete-designation/delete-designation.component';
+import { UploadDesgComponent } from '../upload-desg/upload-desg.component';
 
 const routes: Routes = [
   {
@@ -29,6 +30,12 @@ const routes: Routes = [
         component: DeleteDesignationComponent,
         loadChildren:()=>import('app/site-control/designation/delete-designation/delete-designation.module').then(x=>x.DeleteDesignationModule),
         data:{pageGuid:'',type:'delete'}
+      },
+      {
+        path: 'upload-desg',
+        component: UploadDesgComponent,
+        loadChildren:()=>import('app/site-control/designation/upload-desg/upload-desg.module').then(x=>x.UploadDesgModule),
+        data:{pageGuid:'',type:'upload'}
       }
     ]
   }

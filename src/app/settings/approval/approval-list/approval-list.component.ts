@@ -94,7 +94,9 @@ export class ApprovalListComponent {
     if(element){
     element.id = data.id;
     element.name = data.name;
-    element.companyid = data.companyid;
+    element.moduleid = data.moduleid;
+    element.modulename= data.modulename,
+    element.levels=data.levels
     this.dataSource._updateChangeSubscription();
     }
   }
@@ -102,7 +104,9 @@ export class ApprovalListComponent {
     const data1:any = {
       id:newdata.id,
       name : newdata.name,
-      companyid : newdata.companyid,
+      moduleid: newdata.moduleid,
+      modulename:newdata.modulename,
+      levels:newdata.levels
     }      
     this.dataSource.data.unshift(data1);  
     this.dataSource._updateChangeSubscription();

@@ -5,6 +5,7 @@ import { extractTitle } from '@app/core/i18n.service';
 import { AddDepartmentComponent } from '../add-department/add-department.component';
 import { EditDepartmentComponent } from '../edit-department/edit-department.component';
 import { DeleteDepartmentComponent } from '../delete-department/delete-department.component';
+import { UploadDeptComponent } from '../upload-dept/upload-dept.component';
 
 const routes: Routes = [
   {
@@ -29,6 +30,12 @@ const routes: Routes = [
         component: DeleteDepartmentComponent,
         loadChildren:()=>import('app/site-control/department/delete-department/delete-department.module').then(x=>x.DeleteDepartmentModule),
         data:{pageGuid:'',type:'delete'}
+      },
+      {
+        path: 'upload-dept',
+        component: UploadDeptComponent,
+        loadChildren:()=>import('app/site-control/department/upload-dept/upload-dept.module').then(x=>x.UploadDeptModule),
+        data:{pageGuid:'',type:'upload'}
       }
     ]
   }

@@ -21,10 +21,7 @@ export class ExploreComponent {
   isLoading=false;
   letterDataSource!: MatTableDataSource<any[]>;
   letterdisplayedColumns: string[] = ['serial','letterno', 'lettertype','subject',  'letterdate','status','view'];
-  cosdisplayedColumns: string[] = ['serial','coscode', 'initiatedate','amount',  'approveddate','cosstatus','letters'];
-  cosdataSource!: MatTableDataSource<any[]>;
-  eotdisplayedColumns: string[] = ['serial','eotcode', 'initiatedate','days',  'approveddate','eotstatus','letters'];
-  eotdataSource!: MatTableDataSource<any[]>;
+  
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
@@ -47,16 +44,7 @@ export class ExploreComponent {
     if(response && response.success)
       this.letterDataSource = new MatTableDataSource(response.data);
    })
-   this.cosService.getAllCOSDetailsByOrdIdProjectId({},'').pipe(finalize(()=> this.isLoading=false))
-   .subscribe((response:any)=>{
-    if(response && response.success)
-      this.cosdataSource = new MatTableDataSource(response.data);
-   })
-   this.eotService.getAllEOTDetailsByOrdIdProjectId({},'').pipe(finalize(()=> this.isLoading=false))
-   .subscribe((response:any)=>{
-    if(response && response.success)
-      this.cosdataSource = new MatTableDataSource(response.data);
-   })
+
   }
   viewletter(data:any){
     const config = this.defaultdialogoptions;

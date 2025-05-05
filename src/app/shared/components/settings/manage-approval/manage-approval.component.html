@@ -25,7 +25,7 @@
                         </div>
                         <div class="row col-md-12" >
                             <div class="col-md-10 ">  
-                                <span class="sub-heading control-div ">{{isEdit ? 'Edit':'Add'}} Approval(s) Stage</span>
+                                <span class="sub-heading control-div ">{{isEdit ? 'Edit':'Add'}} Approval Level(s)</span>
                             </div>
                             <div class="col-md-2">
                                 <div  class="table-title-row float-end">                               
@@ -42,27 +42,27 @@
                                     <div class="col-md-12 row control-div">                                     
                                         <div class="col-md-4">
                                             <mat-form-field>
-                                                <mat-label>Stage</mat-label>
+                                                <mat-label>Level</mat-label>
                                                 <input  matInput  formControlName="name">
                                                 <mat-error></mat-error>
                                             </mat-form-field>
                                         </div> 
                                         <div class="col-md-3">
                                             <mat-form-field>
-                                                <mat-label>Name</mat-label>
-                                                <mat-select (selectionChange)="onRoleChange($event)"  formControlName="roleid">
+                                                <mat-label>Role</mat-label>
+                                                <mat-select  formControlName="roleid">
                                                     <mat-option  *ngFor="let field of roleList" [value]="field.id">
                                                         {{field.name}}
                                                     </mat-option>
                                                 </mat-select>
-                                                <mat-error>Please select Name</mat-error>
+                                                <mat-error>Please select Role for approval</mat-error>
                                             </mat-form-field>
                                         </div>
                                         <div class="col-md-4">
-                                            <app-select-search *ngIf="empInit" 
-                                            searchPlaceholder="Search Employee" emptySearchMessage="No Employee Found"
+                                            <app-select-search *ngIf="levels.at(i).get('empInit')?.value" 
+                                            searchPlaceholder="Search Employee" [defaultValue]="levels.at(i).get('employeeid')?.value" emptySearchMessage="No Employee Found"
                                              label="Employee" [required]="true" selectPlaceholder="Employee(s)"
-                                            (onValueChange)="empSelect($event,i)" [valueArrays]="empList">
+                                            (onValueChange)="empSelect($event,i)" [valueArrays]="levels.at(i).get('employees')?.value">
                                            </app-select-search>  
                                         </div>   
                                         <div class="col-md-1">
@@ -99,7 +99,7 @@
             <div class="wrapper">
                 <mat-dialog-content>
                     <span class="mat-typography alert-content">
-                        Are you sure you want to delete <span class="vw-lbl">{{approvalForm.controls['name'].value}}</span> ?. This operation can
+                        Are you sure you want to delete <span class="vw-lbl">{{approvalForm.get('modulename')?.value}}</span> ?. This operation can
                         not be un-done once performed sucessfully.
                     </span>
                 </mat-dialog-content>

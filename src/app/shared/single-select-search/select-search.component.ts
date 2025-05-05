@@ -88,8 +88,9 @@ export class SelectSearchComponent implements OnInit, AfterViewInit, OnDestroy {
       this.onValueChange.emit({ value: this.ArrayCtrl.value, valid: this.ArrayCtrl.valid });
      }
 
-    // load the initial value list
-    this.filteredvalueArray.next(this.valueArrays.slice());
+    if(this.valueArrays)
+      // load the initial value list
+      this.filteredvalueArray.next(this.valueArrays.slice());
     
     // listen for search field value changes
     this.ArrayFilterCtrl.valueChanges

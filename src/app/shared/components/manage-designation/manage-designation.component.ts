@@ -63,7 +63,7 @@ export class ManageDesignationComponent {
     this.getTitle(this.data.type);
     this.designationForm = this.formbuilder.group({ 
       name: ['',[Validators.required]],
-      companyId:['',[Validators.required]],
+      companyid:['',[Validators.required]],
       id :[]
     });
     if(!this.deleteDesignation){
@@ -85,13 +85,13 @@ export class ManageDesignationComponent {
   setCompanyForm(data: any) { 
     this.designationForm.setValue({
       name: data.name,
-      companyId:data.companyid,
+      companyid:data.companyid,
       id:data.id
     });
   }
 
   submit(){
-    const companyName= this.subCompanyList.find(x=>x.id==this.designationForm.get('companyId')?.value)?.name; 
+    const companyName= this.subCompanyList.find(x=>x.id==this.designationForm.get('companyid')?.value)?.name; 
     let formValues= this.designationForm.value;
     formValues.companyname= companyName;  
     if (this.isEdit) {

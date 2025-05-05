@@ -9,6 +9,16 @@ import { CoreAPIService } from './coreapi.service';
 export class DesignationInterfaceService {
 
   constructor(private coreApi:CoreAPIService) { }
+
+  getTemplateColumnList() {
+    let columns = [
+      { label: 'name', value: 'name' },
+      { label: 'company', value: 'companyname' },
+      
+    ];
+  return columns;
+  }
+
   getDesignationList(param: any, guid: string) {
    const standardAttribute: ServiceAttributeModel = {
     url: 'Designation',
@@ -23,6 +33,17 @@ export class DesignationInterfaceService {
   createDesignation(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Designation',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  createBulkDesignations(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Designation/Bulk',
       params: {},
       headers: true,
       guid: '',

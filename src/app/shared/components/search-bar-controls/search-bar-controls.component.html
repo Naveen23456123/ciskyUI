@@ -2,8 +2,9 @@
 <div class="col-md-3" *ngIf="isSubCompany">
     <mat-form-field>
         <mat-icon matPrefix>domain</mat-icon>
-        <mat-label>Sub Company Name</mat-label>
-        <mat-select >
+        <mat-label>Sub Company</mat-label>
+        <mat-select (selectionChange)="subCompanyChange($event)" >
+            <mat-option value="">All</mat-option>
             <mat-option  *ngFor="let field of subCompanies" [value]="field.id">
                 {{field.name}}
             </mat-option>
@@ -19,7 +20,7 @@
 <div class="col-md-4" *ngIf="isAny">
     <mat-form-field>
         <mat-icon matPrefix>search</mat-icon>
-        <mat-label>Search By {{searchByAnyPlaceholder}}</mat-label>
+        <mat-label>{{searchByAnyPlaceholder}}</mat-label>
         <input matInput (keyup)="applyFilter($event)"  #input>
       </mat-form-field>
 </div>

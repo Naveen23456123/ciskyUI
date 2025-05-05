@@ -10,36 +10,30 @@
                 <app-loader [IsLoading]="isLoading"></app-loader>
             </div>
             <div class="wrapper">
-                <form [formGroup]="rentForm" (submit)="submit()">
+                <form [formGroup]="rentForm" >
                     <div class="row control-div">                       
                         <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Project</mat-label>
-                                <mat-select formControlName="projectid">
-                                    <mat-option  *ngFor="let field of projectList" [value]="field.id">
-                                        {{field.projectcode + ' - '+field.projectshortname}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
+                            <app-project-control (onValueChange)="projectChange($event)"
+                            [defaultValue]="rentForm.get('projectid')?.value" ></app-project-control>
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Basic Amount</mat-label>
-                                <input matInput formControlName="basicamount">
+                                <input type="number" matInput (input)="onAmountChangeEvent()"  formControlName="basicamount">
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div> 
-                        <div class="col-md-3">
+                        <div class="col-md-3" *ngIf="showTDS" >
                             <mat-form-field>
                                 <mat-label>TDS Percentage</mat-label>
-                                <input  type="number" matInput formControlName="tdspercentage">
+                                <input  type="number" (input)="onAmountChangeEvent()" matInput formControlName="tdspercentage">
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" *ngIf="showTDS">
                             <mat-form-field>
                                 <mat-label>TDS Amount</mat-label>
-                                <input matInput readonly >
+                                <input matInput [value]="tdsAmount" readonly >
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div>
@@ -47,7 +41,7 @@
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Total Amount</mat-label>
-                                <input matInput >
+                                <input matInput readonly [value]="totalAmount" >
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div>
@@ -143,14 +137,39 @@
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div> 
-                       
+                        <div class="row col-md-12" *ngIf="!isEdit">
+                            <div class="col-md-10 ">  
+                                <span class="sub-heading control-div ">Office Document(s)</span>
+                            </div>
+                            <div class="col-md-2">
+                                <div  class="table-title-row float-end">                               
+                                    <div class="button-row">                                  
+                                    <button mat-icon-button type="button" matTooltip="New Document" (click)="addDocControls()">
+                                        <mat-icon>add_circle</mat-icon>
+                                    </button>     
+                                </div>
+                                </div>
+                            </div>  
+                            <hr>
+                            <div class="wrapper" formArrayName="files">
+                                <div *ngFor="let item of files.controls; let i = index" [formGroupName]="i">
+                                    <div class="col-md-12 row control-div">
+                                    <div class="col-md-12">                       
+                                    <app-attach-file  (onfileUpload)="fileUploded($event,i)" [showRemove]="i !== 0" (clickEvent)="removeDocControl(i)" (textChanged)="onDocNameUpdate($event,i)" Uploadtitle="Document" ></app-attach-file>
+                                    </div>                            
+                                </div>
+                            </div>
+                       </div>
+                        </div>
                     </div>
                     
                     <div class="row control-div">
                         <div class="col-md-12 button-row" align="right">
                             <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-                            <button class="submit-btn" mat-flat-button [disabled]="!rentForm.valid" color="primary">
-                                {{isEdit?'Update':'Submit'}}</button>
+                            <button [ngClass]="rentForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!rentForm.valid || isBtnClicked" (click)="submit()" color="primary">
+                                <span [hidden]="isBtnClicked">{{isEdit?'Update':'Submit'}}</span> 
+                                <app-btn-loader [IsLoading]="isBtnClicked"></app-btn-loader>
+                                </button>
                         </div>
                     </div>                    
                 </form>
@@ -168,7 +187,7 @@
             <div class="wrapper">
                 <mat-dialog-content>
                     <span class="mat-typography alert-content">
-                        Are you sure you want to delete <span class="vw-lbl">{{rentForm.controls['name'].value}}</span> ?. This operation can
+                        Are you sure you want to delete <span class="vw-lbl"></span>?. This operation can
                         not be un-done once performed sucessfully.
                     </span>
                 </mat-dialog-content>

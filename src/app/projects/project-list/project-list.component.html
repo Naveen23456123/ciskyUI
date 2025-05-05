@@ -24,10 +24,9 @@
             </div>
             <div class="wrapper" *ngIf="!isLoading">
 
-                <div class="mat-elevation-z8">
+              <app-no-data *ngIf="dataSource?.data?.length==0" message="No Project(s) found at this moment !!" ></app-no-data>
+              <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">
 
-
-                      <div class="mat-elevation-z8">
                         <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
 
                           <ng-container matColumnDef="serial">
@@ -275,8 +274,7 @@
                         </table>
 
                         <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
-                      </div>
-
+                     
 
                 </div>
             </div>

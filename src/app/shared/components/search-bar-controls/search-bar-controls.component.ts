@@ -21,6 +21,8 @@ export class SearchBarControlsComponent {
   @Input() projectId='';
   @Input() selectProjectDefault=false;
   @Output() OnProjectChange:EventEmitter<any> = new EventEmitter();
+  @Output() OnSubCompanyChange:EventEmitter<any> = new EventEmitter();
+  @Output() OnAnyChange:EventEmitter<any> = new EventEmitter();
   isProjectLoaded=false;
   subCompanies:any=[];
   professionals:any=[];
@@ -81,11 +83,15 @@ export class SearchBarControlsComponent {
    });
   }
   projectChange(data:any){
-    console.log(data);
     if(data && data.value)
       this.OnProjectChange.emit({value:data.value});
   }
-  applyFilter(data:any){
-
+  subCompanyChange(data:any){
+    if(data)
+      this.OnSubCompanyChange.emit({value:data.value});
+  }
+  applyFilter(event:any){
+    if(event)
+      this.OnAnyChange.emit({value:(event.target as HTMLInputElement).value});
   }
 }

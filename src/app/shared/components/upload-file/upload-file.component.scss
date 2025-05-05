@@ -17,4 +17,7 @@ hr{
   .upload-btn{
     border: 1px solid #005cbb !important;
   }
+  .mat-mdc-card-content:last-child ,.mat-mdc-card-content:first-child{
+    padding: 0px;
+  } 
 

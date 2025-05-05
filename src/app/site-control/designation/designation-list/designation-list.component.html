@@ -7,19 +7,20 @@
             <div class="wrapper" *ngIf="!isLoading">                
 
                 <div class="mat-elevation-z8">
-                    
-                      <div class="table-title-row">
-                        <mat-form-field>
-                          <mat-label>Filter</mat-label>
-                          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
-                        </mat-form-field>
-                        <div class="button-row">              
-                          <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
-                            <mat-icon>add box</mat-icon> Designation
-                        </button> 
-                       
-                        </div>
-                    </div>
+                  <div class="row content-center">
+                    <div class="col-md-9">
+                        <app-search-bar-controls [isSubCompany]="true" [isAny]="true"
+                        (OnSubCompanyChange)="filterChange($event)"
+                        (OnAnyChange)="filterChange($event)"
+                         searchByAnyPlaceholder="Designation / SubCompany" ></app-search-bar-controls>                         
+                  </div>       
+                  <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">
+                    <app-upload-btn routerLink="upload-desg" ></app-upload-btn>          
+                    <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
+                      <mat-icon>add box</mat-icon> Designation
+                  </button> 
+                  </div>
+                </div>                    
                     <app-no-data *ngIf="dataSource?.data?.length==0"  message="No Designation(s) details found at this moment !!" ></app-no-data>
                     <div *ngIf="dataSource?.data?.length!=0"   class="mat-elevation-z8">
                         <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
@@ -69,7 +70,8 @@
                           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
                           <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                              No Designation found at this moment.</td>
                           </tr>
                         </table>
                         <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>

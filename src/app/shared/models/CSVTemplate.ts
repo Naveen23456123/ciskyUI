@@ -1,4 +1,6 @@
 export enum TemplateType{
+    DEPARTMENT='Department',
+    DESIGNATION='Designation',
     EOT='EOT',
     PROJECT='Project',
     COS='COS',

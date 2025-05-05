@@ -56,6 +56,10 @@ export class DesignationListComponent {
       this.deleteRow(data.value.id);
       this.notifyBarService.showsnackbar(data.msg);
       this.stateDataService.stateDataSubject.next({});
+    } else if(data.event == 'updesgadd' && data.valid && data.value){
+      this.addBulk(data.value);
+      this.notifyBarService.showsnackbar(data.msg);
+      this.stateDataService.stateDataSubject.next({});
     }
   });
   this.pageSize=this.helperService.getPageSize();
@@ -88,7 +92,7 @@ export class DesignationListComponent {
     if(element){
     element.id = data.id;
     element.name = data.name;
-    element.companyid = data.companyId;
+    element.companyid = data.companyid;
     element.companyname=data.companyname;
     this.dataSource._updateChangeSubscription();
     }
@@ -97,7 +101,7 @@ export class DesignationListComponent {
     const data1:any = {
       id:newdata.id,
       name : newdata.name,
-      companyid : newdata.companyId,
+      companyid : newdata.companyid,
       companyname:newdata.companyname,
       empcount:0
     }      
@@ -122,6 +126,19 @@ export class DesignationListComponent {
         }
         else {
         }
+      });
+    }
+    filterChange(data:any){
+      if(data && data.value){ 
+        this.dataSource.filter = data.value.trim().toLowerCase()
+      }
+      else{
+        this.dataSource.filter = '';
+      }
+    }
+    addBulk(data:any){
+      data.forEach((desg:any) => {
+        this.addRowData(desg);
       });
     }
 }

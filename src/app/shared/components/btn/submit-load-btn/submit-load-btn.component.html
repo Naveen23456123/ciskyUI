@@ -1,0 +1,4 @@
+<button [ngClass]="isValid? 'submit-btn':''" mat-flat-button [disabled]="!isValid || isClicked" (click)="clicked()" color="primary">
+    <span [hidden]="isClicked">{{text}}</span> 
+    <app-btn-loader [IsLoading]="isClicked"></app-btn-loader>
+    </button>

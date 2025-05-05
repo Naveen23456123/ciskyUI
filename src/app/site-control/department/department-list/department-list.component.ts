@@ -3,6 +3,8 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { UploadFileComponent } from '@app/shared/components/upload-file/upload-file.component';
+import { TemplateType } from '@app/shared/models/CSVTemplate';
 import { HelperService } from '@app/shared/services/helper.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { StateDataService } from '@app/shared/services/state-data.service';
@@ -54,16 +56,20 @@ export class DepartmentListComponent {
       this.deleteRow(data.value.id);
       this.notifyBarService.showsnackbar(data.msg);
       this.stateDataService.stateDataSubject.next({});
+    } else if(data.event == 'updeptadd' && data.valid && data.value){
+      this.addBulk(data.value);
+      this.notifyBarService.showsnackbar(data.msg);
+      this.stateDataService.stateDataSubject.next({});
     }
   });
-    this.siteControlService.getDepartmentListByOrgId({ organizationId: this.activeOrgId }, '')
-           .pipe(finalize(() => this.isLoading = false))
-           .subscribe((response: any) => {
-            if (response && response.success) {
-              this.departments = response.data;
-              this.dataSource = new MatTableDataSource(this.departments);
-             }
-      });
+  this.siteControlService.getDepartmentListByOrgId({}, '')
+    .pipe(finalize(() => this.isLoading = false))
+    .subscribe((response: any) => {
+    if (response && response.success) {
+      this.departments = response.data;
+      this.dataSource = new MatTableDataSource(this.departments);
+    }
+  });
   }
 
   ngAfterViewInit() {
@@ -71,26 +77,12 @@ export class DepartmentListComponent {
     this.dataSource.sort = this.sort;
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-
-  private updateTable(info: any) {
-    this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
-  }
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
     if(element){
     element.id = data.id;
     element.name = data.name;
-    element.companyid = data.companyId;
+    element.companyid = data.companyid;
     element.companyname = data.companyname;
     this.dataSource._updateChangeSubscription();
     }
@@ -99,11 +91,16 @@ export class DepartmentListComponent {
     const data1:any = {
       id:newdata.id,
       name : newdata.name,
-      companyid : newdata.companyId,
+      companyid : newdata.companyid,
       companyname:newdata.companyname
     }      
     this.dataSource.data.unshift(data1);  
     this.dataSource._updateChangeSubscription();
+  }
+  addBulk(data:any){
+    data.forEach((dept:any) => {
+      this.addRowData(dept);
+    });
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);
@@ -111,4 +108,12 @@ export class DepartmentListComponent {
     this.dataSource._updateChangeSubscription();
   }
 
+  filterChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
+    }
+  }
 }

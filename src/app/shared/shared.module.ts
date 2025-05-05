@@ -116,6 +116,16 @@ import { ManageTicketComponent } from './components/manage-ticket/manage-ticket.
 import { ManageImperestComponent } from './components/siteops/manage-imperest/manage-imperest.component';
 import { ManageExpenseComponent } from './components/siteops/manage-expense/manage-expense.component';
 import { ManageApprovalComponent } from './components/settings/manage-approval/manage-approval.component';
+import { ExploreMilestoneComponent } from './components/explore/explore-milestone/explore-milestone.component';
+import { ExploreSiteProgressComponent } from './components/explore/explore-site-progress/explore-site-progress.component';
+import { ExploreEotComponent } from './components/explore/explore-eot/explore-eot.component';
+import { ExploreCosComponent } from './components/explore/explore-cos/explore-cos.component';
+import { ManageOfficeDocComponent } from './components/office/manage-office-doc/manage-office-doc.component';
+import { DeleteOfficeDocComponent } from './components/office/delete-office-doc/delete-office-doc.component';
+import { ExploreBankGuaranteeComponent } from './components/explore/explore-bank-guarantee/explore-bank-guarantee.component';
+import { ExploreInsuranceComponent } from './components/explore/explore-insurance/explore-insurance.component';
+import { ExploreLettersComponent } from './components/explore/explore-letters/explore-letters.component';
+import { SubmitLoadBtnComponent } from './components/btn/submit-load-btn/submit-load-btn.component';
 
 @NgModule({
   declarations: [NotifyBarComponent, AlertComponent, LoaderComponent,  
@@ -132,7 +142,7 @@ import { ManageApprovalComponent } from './components/settings/manage-approval/m
     ManageVehicleListComponent, ManageEmployeeListComponent, ManageInventoryListComponent, ManageConsultantComponent, ManageBoqAttendenceComponent, ContactListComponent, ManageContactComponent, ContractorBillingDetailsComponent, ManageCircularComponent, ManageBoqInvoiceComponent, ManageConsultancyInvoiceComponent,
      ManageSupportStaffComponent, ManageTransportationComponent, ManageDutyTravelComponent, 
      ManageOfficeRentComponent, ManageOfficeSuppliesComponent, ManageOfficeFurnitureComponent, ManageReportDocComponent, ManageRoadSurveyComponent, ManageContingenciesComponent, ManageConsultancyStaffComponent, ManageConsultancyContingenciesComponent, ManageConsultancyReportDocComponent, ManageConsultancyOfficeFurnitureComponent, ManageConsultancyOfficeSuppliesComponent, ManageConsultancyOfficeRentComponent, ManageConsultancyDutyTravelComponent, ManageConsultancyTransportationComponent, ManageOfficeRentControlComponent, 
-     FileIconComponent, BreadCrumComponent, SearchBarControlsComponent, ViewLetterDetailsComponent, ViewEmployeeListComponent, ViewBtnComponent, ProjectControlComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent, ManageVehicleDocComponent, DeleteVehicleDocComponent, NoDataComponent, ViewEmployeeDetailsComponent, ManageEmployeeDocComponent, DeleteEmployeeDocComponent, DocumentManageBtnComponent, DetailVehicleComponent, ManageProfitLossComponent, ManageTicketComponent, ManageImperestComponent, ManageExpenseComponent, ManageApprovalComponent],
+     FileIconComponent, BreadCrumComponent, SearchBarControlsComponent, ViewLetterDetailsComponent, ViewEmployeeListComponent, ViewBtnComponent, ProjectControlComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent, ManageVehicleDocComponent, DeleteVehicleDocComponent, NoDataComponent, ViewEmployeeDetailsComponent, ManageEmployeeDocComponent, DeleteEmployeeDocComponent, DocumentManageBtnComponent, DetailVehicleComponent, ManageProfitLossComponent, ManageTicketComponent, ManageImperestComponent, ManageExpenseComponent, ManageApprovalComponent, ExploreMilestoneComponent, ExploreSiteProgressComponent, ExploreEotComponent, ExploreCosComponent, ManageOfficeDocComponent, DeleteOfficeDocComponent, ExploreBankGuaranteeComponent, ExploreInsuranceComponent, ExploreLettersComponent, SubmitLoadBtnComponent],
   imports: [
     CommonModule, 
     //LockerModule, 
@@ -162,6 +172,8 @@ import { ManageApprovalComponent } from './components/settings/manage-approval/m
   SearchBarControlsComponent, UploadBtnComponent, DownloadCsvComponent, ManageEmployeeListComponent,
   ManageVehicleListComponent, ManageInventoryListComponent, EotListComponent, CosListComponent,InsuranceListComponent,BankGuaranteeListComponent,
 ContractorBillingListComponent,MilestoneListComponent, SiteProgressListComponent, ManageLettersListComponent,ContactListComponent,
-ViewBtnComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent,NoDataComponent, ViewEmployeeDetailsComponent]
+ViewBtnComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent,NoDataComponent, ViewEmployeeDetailsComponent, ExploreMilestoneComponent,
+ExploreSiteProgressComponent, ExploreEotComponent, ExploreCosComponent, DocumentManageBtnComponent, ExploreBankGuaranteeComponent,ExploreInsuranceComponent,
+ExploreLettersComponent]
 })
 export class SharedModule { }

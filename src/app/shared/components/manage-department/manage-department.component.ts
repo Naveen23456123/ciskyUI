@@ -63,7 +63,7 @@ export class ManageDepartmentComponent {
     this.getTitle(this.data.type);
     this.deptForm = this.formbuilder.group({ 
       name: ['',[Validators.required]],
-      companyId:['',[Validators.required]],
+      companyid:['',[Validators.required]],
       id :[]
     });
     if(!this.deleteDepartment){
@@ -84,13 +84,13 @@ export class ManageDepartmentComponent {
   setCompanyForm(data: any) {    
     this.deptForm.setValue({
       name: data.name,
-      companyId:data.companyid,
+      companyid:data.companyid,
       id:data.id
     });
   }
 
   submit(){  
-    const companyName= this.subCompanyList.find(x=>x.id==this.deptForm.get('companyId')?.value)?.name; 
+    const companyName= this.subCompanyList.find(x=>x.id==this.deptForm.get('companyid')?.value)?.name; 
     let formValues= this.deptForm.value;
     formValues.companyname= companyName; 
     if (this.isEdit) {

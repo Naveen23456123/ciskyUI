@@ -1,5 +1,5 @@
 import { Component, Inject, Optional } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AdminInterfaceService } from '@app/shared/services/external/admin-interface.service';
@@ -50,13 +50,13 @@ export class ManageApprovalComponent {
   getTitle(val: string) {
     switch (val) {
       case 'add':
-        this.title = 'New Item';
+        this.title = 'New Approval(s)';
         break;
       case 'delete':
-        this.title = 'Delete Item';
+        this.title = 'Delete Approval';
         break;
       case 'edit':
-        this.title = 'Edit Item';
+        this.title = 'Edit Approval(s)';
         break;
     }
   }
@@ -69,23 +69,30 @@ export class ManageApprovalComponent {
       moduleid:[],
       id :[]
     });
-    forkJoin({
-      roleAPI: this.commomService.getApprovalRoles(),
-      moduleAPI: this.adminService.getBillinModuleList()
-    }).pipe(finalize(()=> this.isLoading=false)).subscribe((response:any)=>{
-      if(response && response.roleAPI && response.roleAPI.success){
-        this.roleList= response.roleAPI.data;
-      }
-      if(response && response.moduleAPI && response.moduleAPI.success){
-        this.moduleList= response.moduleAPI.data;
-      }
-    })
-  
-    if (this.isEdit || this.deleteItem) {
-      this.setApprovalForm(this.data.element);
+    if(!this.deleteItem){
+      forkJoin({
+        roleAPI: this.commomService.getApprovalRoles(),
+        moduleAPI: this.adminService.getBillinModuleList()
+      }).pipe(finalize(()=> this.isLoading=false)).subscribe((response:any)=>{
+        if(response && response.roleAPI && response.roleAPI.success){
+          this.roleList= response.roleAPI.data;
+        }
+        if(response && response.moduleAPI && response.moduleAPI.success){
+          this.moduleList= response.moduleAPI.data;
+        }
+        if (this.isEdit) {
+          this.setApprovalForm(this.data.element);
+        }
+      })
+    }
+    else{
+      this.approvalForm.patchValue({
+        id:this.data.element.id,
+        modulename:this.data.element.modulename
+      })
+      this.isLoading=false;
     }
   }
-
 
   get levels() {
     return this.approvalForm.get('levels') as FormArray;
@@ -93,20 +100,72 @@ export class ManageApprovalComponent {
 
   addlevelsControls() {
     const group = this.formbuilder.group({
+      empInit:[true],
       id:[],
       roleid: ['',Validators.required], 
+      roles:[this.getFreshRoles()],
       name: ['',Validators.required],
-      employeeid:['']
+      employeeid:[''],
+      employees:[],
+      employeename:[],
+      rolename:[],
+    });
+    group.get('roleid')?.valueChanges.subscribe(value => {
+      group.patchValue({
+        empInit:false,
+        rolename:this.roleList.find(x=>x.id==value).name
+       })
+      this.employeeService.getSiteEmployeeParital({roleId:value},'').subscribe((response:any)=>{
+        if(response && response.success){
+         let list= response.data.map((item:any)=>({
+          id:item.id,
+          name:item.code+ ' - '+item.name ,
+          empname:item.name       
+         }));
+         group.patchValue({
+          empInit:true,
+          employees:list
+         })
+        }
+      })
     });
     this.levels.push(group);
   }
-
+  getFreshRoles() {
+    return this.roleList.map(role => ({ ...role })); // returns a new array of objects
+  }
   addlevelsControlswithValue(data:any) {  
     const group = this.formbuilder.group({
+      empInit:[true],
       id:[data.id],
-      roleid: [data.id,Validators.required], 
-      name: [data.id,Validators.required],
-      employeeid:[data.id,Validators.required]
+      roleid: [data.roleid,Validators.required], 
+      name: [data.name,Validators.required],
+      employeeid:[data.employeeid,Validators.required],
+      employees:[] ,
+      employeename:[],
+      rolename:[],
+    });
+    group.get('roleid')?.valueChanges.subscribe(value => {
+      group.patchValue({
+        empInit:false
+       })
+      this.employeeService.getSiteEmployeeParital({roleId:value},'').subscribe((response:any)=>{
+        if(response && response.success){
+         let list= response.data.map((item:any)=>({
+          id:item.id,
+          name:item.code+ ' - '+item.name ,
+          empname:item.name,       
+         }));
+         group.patchValue({
+          empInit:true,
+          employees:list
+         })
+        }
+      })
+    });
+    group.patchValue({
+      roleid:data.roleid,
+      rolename:this.roleList.find(x=>x.id==data.roleid).name
     });
     this.levels.push(group);
   }
@@ -125,36 +184,30 @@ export class ManageApprovalComponent {
       group.patchValue({moduleid:data.value});
     });
   }
-  onRoleChange(data:any){
-    if(data && data.value)
-    this.employeeService.getSiteEmployeeParital({roleId:data.value},'').subscribe((response:any)=>{
-      if(response && response.success){
-       this.empList= response.data.map((item:any)=>({
-        id:item.id,
-        name:item.code+ ' - '+item.name        
-       }));
-       this.empInit=true;
-      }
-    })
-  }
 
   setApprovalForm(data: any) {    
-    this.approvalForm.setValue({
-      name: data.name,
-      companyid:data.companyid,
+    this.approvalForm.patchValue({
+      moduleid:data.moduleid,
       id:data.id
+    });
+    data.levels.forEach((element:any) => {
+      this.addlevelsControlswithValue(element);
     });
   }
 
   empSelect(event:any,index:number){
     if(event.value){
       (this.approvalForm.controls['levels'] as FormArray).at(index).patchValue({
-        employeeid:event.value.id
+        employeeid:event.value.id,
+        employeename :event.value.empname
       });  
     }
   }
 
-  submit(){   
+  submit(){ 
+    this.approvalForm.value.modulename= this.moduleList.find(x=>x.id==this.approvalForm.get('moduleid')?.value).name;
+    this.approvalForm.value.employees= null;
+    this.approvalForm.value.roles= null;
     console.log(this.approvalForm.value);
     if (this.isEdit) {
       this.approvalService.updateApproval(this.approvalForm.value, '')
@@ -173,7 +226,6 @@ export class ManageApprovalComponent {
         .pipe(finalize(() => { this.isLoading = false; })).subscribe({
           next:(response: any) => {
             if (response && response.success)  {
-              console.log(response.data);
               //this.approvalForm.controls["id"].setValue(response.data.id);
               this.dialogRef.close({ value: this.approvalForm.value, valid: true });
           } else {

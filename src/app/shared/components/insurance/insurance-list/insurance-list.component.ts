@@ -15,8 +15,6 @@ import { InsuranceInterfaceService } from '@app/shared/services/external/insuran
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { DialogOperation } from '@app/shared/models/constant.config';
 
-
-
 @Component({
   selector: 'app-insurance-list',
   standalone: false,

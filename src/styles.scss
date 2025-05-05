@@ -330,7 +330,9 @@ mat-card{
 .alert-content{
     font-size: 18px;
 }
-
+.alert-danger{
+    background-color: var(--bs-danger-bg-subtle) !important;
+}
 .card-title-row {
     display: flex;
     justify-content: space-between;  /* Aligns title to left and button to right */

@@ -1,11 +1,13 @@
-import { ChangeDetectorRef, Component,Inject,inject, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ChangeDetectorRef, Component,Inject,inject, Optional, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { TemplateType } from '@app/shared/models/CSVTemplate';
 import { BankGuaranteeInterfaceService } from '@app/shared/services/external/bank-guarantee-interface.service';
 import { ContactInterfaceService } from '@app/shared/services/external/contact-interface.service';
 import { ContractorInterfaceService } from '@app/shared/services/external/contractor-interface.service';
 import { CosInterfaceService } from '@app/shared/services/external/cos-interface.service';
+import { DepartmentInterfaceService } from '@app/shared/services/external/department-interface.service';
+import { DesignationInterfaceService } from '@app/shared/services/external/designation-interface.service';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
 import { EotInterfaceService } from '@app/shared/services/external/eot-interface.service';
 import { InsuranceInterfaceService } from '@app/shared/services/external/insurance-interface.service';
@@ -14,9 +16,12 @@ import { LetterInterfaceService } from '@app/shared/services/external/letter-int
 import { MilestoneInterfaceService } from '@app/shared/services/external/milestone-interface.service';
 import { ProjectInterfaceService } from '@app/shared/services/external/project-interface.service';
 import { SiteProgressInterfaceService } from '@app/shared/services/external/site-progress-interface.service';
+import { SubCompanyInterfaceService } from '@app/shared/services/external/sub-company-interface.service';
 import { VehicleInterfaceService } from '@app/shared/services/external/vehicle-interface.service';
 import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
+import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import  moment from 'moment';
+import { finalize, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-upload-file',
@@ -31,10 +36,13 @@ export class UploadFileComponent {
   displayedColumns:string[]=[];
   allColumnsData:any;
   dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
-  isImport: Boolean = true;
+  isImport: boolean = false;
+  subCompnayList:any[]=[];
   currentTemplate!:TemplateRef<any>;
   @ViewChild('COS', { static: false }) cosRef!: TemplateRef<any>;
   @ViewChild('MILESTONE', { static: false }) milestoneRef!: TemplateRef<any>;
+  @ViewChild('DEPT', { static: false }) deptRef!: TemplateRef<any>;
+  @ViewChild('DESG', { static: false }) desgRef!: TemplateRef<any>;
   @ViewChild('PROJECT', { static: false }) projectRef!: TemplateRef<any>;
   @ViewChild('EOT', { static: false }) eotRef!: TemplateRef<any>;
   @ViewChild('CONTRACTORLETTER', { static: false }) contractorLetterRef!: TemplateRef<any>;
@@ -50,6 +58,7 @@ export class UploadFileComponent {
   dialogData:any;
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
+  @Optional() private dialogRef: MatDialogRef<UploadFileComponent>,
   private siteProgressService : SiteProgressInterfaceService,
   private cosService:CosInterfaceService,
   private eotService:EotInterfaceService,
@@ -64,17 +73,26 @@ export class UploadFileComponent {
   private employeeService:EmployeeInterfaceService,
   private vehicleService:VehicleInterfaceService,
   private inventoryService:InventoryInterfaceService,
-  private contactService:ContactInterfaceService
+  private contactService:ContactInterfaceService,
+  private departmentService:DepartmentInterfaceService,
+  private designationService:DesignationInterfaceService,
+  private subcompanyService:SubCompanyInterfaceService
   ) {
     this.dialogData= data;
   }
 
   ngOnInit(){
+    let apiCalls: any={};
     if(this.dialogData){
     this.title = this.dialogData.template_type;
     }
-    
-    if (this.title.toLowerCase() === TemplateType.COS.toLowerCase()) {
+    if (this.title.toLowerCase() === TemplateType.DEPARTMENT.toLowerCase()) {
+      this.allColumnsData = this.departmentService.getTemplateColumnList();
+      apiCalls.subCompanyAPI= this.subcompanyService.getSubCompanyListByOrgId({},'');
+    } else if (this.title.toLowerCase() === TemplateType.DESIGNATION.toLowerCase()) {
+      apiCalls.subCompanyAPI= this.subcompanyService.getSubCompanyListByOrgId({},'');
+      this.allColumnsData = this.designationService.getTemplateColumnList();
+    } else if (this.title.toLowerCase() === TemplateType.COS.toLowerCase()) {
       this.allColumnsData = this.cosService.getTemplateColumnList();
     } else if (this.title.toLowerCase() === TemplateType.MILESTONE.toLowerCase()) {
       this.allColumnsData = this.milestoneService.getTemplateColumnList();
@@ -104,12 +122,23 @@ export class UploadFileComponent {
       this.allColumnsData = this.letterService.getTemplateColumnList();
     } 
 
-    this.displayedColumns = this.siteProgressService.getTemplateColumnList().map(user => user.value);
+    this.displayedColumns = this.allColumnsData.map((x:any) => x.value);
+    forkJoin(apiCalls).pipe().subscribe((response:any)=>{
+      if(response){
+        if(response.subCompanyAPI){
+          this.subCompnayList= response.subCompanyAPI.data;
+        }
+      }
+    })
     this.isLoading=false;
   }
 
 ngAfterViewInit() {
-  if (this.title.toLowerCase() === TemplateType.COS.toLowerCase()) {
+  if (this.title.toLowerCase() === TemplateType.DEPARTMENT.toLowerCase()) {
+    this.currentTemplate = this.deptRef;
+  } else if (this.title.toLowerCase() === TemplateType.DESIGNATION.toLowerCase()) {
+    this.currentTemplate = this.desgRef;
+  }else if (this.title.toLowerCase() === TemplateType.COS.toLowerCase()) {
     this.currentTemplate = this.cosRef;
   } else if (this.title.toLowerCase() === TemplateType.MILESTONE.toLowerCase()) {
     this.currentTemplate = this.milestoneRef;
@@ -255,8 +284,77 @@ ngAfterViewInit() {
 
   }
 
-  importInvitation(){
-    
+  importData(){
+    if (this.title.toLowerCase() === TemplateType.DEPARTMENT.toLowerCase()) {
+      let dataElement = this.uploadedDetails.filter((ele) => {
+         if(!this.subCompnayList.find(x=>x.name==ele.companyname)){          
+            ele.error = true;           
+            return ele;
+          }
+          else{
+            ele.companyid=this.subCompnayList.find(x=>x.name==ele.companyname).id;  
+          }
+        });
+       
+      if(dataElement.length > 0)
+        this.errorLoadingCSV.push('Kindly provide the correct SubCompany Name and then try again.');
+      else {
+        this.isImport=true;
+        this.departmentService.createBulkDepartments(this.uploadedDetails, '')
+          .pipe(finalize(() => { this.isImport = false; })).subscribe({
+            next:(response: any) => {
+              if (response && response.success)  {
+                response.data.forEach((dept:any) => {
+                  dept.companyname= this.subCompnayList.find(x=>x.id==dept.companyid).name;
+                });
+                this.dialogRef.close({ value: response.data, valid: true });
+            } else {
+              this.dialogRef.close({ value: null, valid: false });
+            }
+          },
+          error: (err: any) => {
+              this.dialogRef.close(err);
+            }
+        });
+      }
+    }
+    if (this.title.toLowerCase() === TemplateType.DESIGNATION.toLowerCase()) {
+      this.desgData();
+    }
   }
 
+  desgData(){
+    let dataElement = this.uploadedDetails.filter((ele) => {
+      if(!this.subCompnayList.find(x=>x.name==ele.companyname)){          
+         ele.error = true;           
+         return ele;
+       }
+       else{
+         ele.companyid=this.subCompnayList.find(x=>x.name==ele.companyname).id;  
+       }
+     });
+    
+   if(dataElement.length > 0)
+     this.errorLoadingCSV.push('Kindly provide the correct SubCompany Name and then try again.');
+   else {
+     this.isImport=true;
+     this.designationService.createBulkDesignations(this.uploadedDetails, '')
+       .pipe(finalize(() => { this.isImport = false; })).subscribe({
+         next:(response: any) => {
+           if (response && response.success)  {
+             response.data.forEach((desg:any) => {
+               desg.companyname= this.subCompnayList.find(x=>x.id==desg.companyid).name;
+             });
+             this.dialogRef.close({ value: response.data, valid: true });
+         } else {
+           this.dialogRef.close({ value: null, valid: false });
+         }
+       },
+       error: (err: any) => {
+           this.dialogRef.close(err);
+         }
+     });
+   }
+  }
+  
 }

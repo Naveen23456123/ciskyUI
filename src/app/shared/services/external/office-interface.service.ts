@@ -241,7 +241,17 @@ export class OfficeInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
-
+  getOfficeRentsById(param: any, guid: string){
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'OfficeRent/'+param.id,
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   createOfficeRent(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'OfficeRent',
@@ -275,5 +285,39 @@ export class OfficeInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
-
+  getOfficeRentDocumentsById(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+        url: 'OfficeRent/Documents/'+param.id,
+        params: {},
+        headers: true,
+        guid: '',
+        request: {},
+        action: Operation.GET
+      }
+      return this.coreApi.standardService(standardAttribute);
+  }
+  createOfficeRentDocumentsById(request: any, guid: string) {
+    console.log(request);
+    const standardAttribute: ServiceAttributeModel = {
+        url: 'OfficeRent/Documents',
+        params: {},
+        headers: true,
+        guid: '',
+        request: request,
+        action: Operation.CREATE
+      }
+      return this.coreApi.standardService(standardAttribute);
+  }
+  deleteOfficeRentDocumentsById(request: any, guid: string) {
+    console.log(request);
+    const standardAttribute: ServiceAttributeModel = {
+        url: 'OfficeRent/DeleteDoc',
+        params: {},
+        headers: true,
+        guid: '',
+        request: request,
+        action: Operation.CREATE
+      }
+      return this.coreApi.standardService(standardAttribute);
+  }
 }
