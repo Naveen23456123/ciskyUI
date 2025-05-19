@@ -25,11 +25,8 @@ readonly dialog = inject(MatDialog);
   }
   
   private defaultdialogoptions:  MatDialogConfig = {
-    panelClass: 'custom-dialog-container',
-    minWidth: '1200px',
     disableClose: false,
     data: {},
-    //scrollStrategy: this.scrollStrategy.noop()
   };
 
   openDialog(): void {
@@ -38,6 +35,7 @@ readonly dialog = inject(MatDialog);
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type']
     };
+    config.minWidth='75vw';
     const dialogRef = this.dialog.open(ManageEmployeeComponent, config);
     dialogRef.afterClosed().subscribe((data) => {
       if (data && data.valid) {

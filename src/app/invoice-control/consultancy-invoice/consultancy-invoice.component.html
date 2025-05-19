@@ -4,7 +4,7 @@
     </div>
         <div class="wrapper" *ngIf="!isLoading">                
             <div class="mat-elevation-z8">
-                <div class="no-print div-center">
+                <div class="no-print div-center container">
                     <div class="button-row">
                     <button class="print-btn" onclick="window.print()" mat-fab extended>
                         <mat-icon>print</mat-icon>
@@ -14,14 +14,14 @@
                         <mat-icon>add box</mat-icon> Add
                        </button>
                        <mat-menu #menu="matMenu">
-                        <button  mat-menu-item>Remuneration </button>                       
-                        <button   mat-menu-item>Transportation </button>
-                        <button   mat-menu-item>Duty Travel to Site </button>
-                        <button   mat-menu-item>Office Rent </button>
-                        <button   mat-menu-item>Office Supplies </button>
-                        <button   mat-menu-item>Office Furniture </button>
-                        <button  mat-menu-item>Reports and Document </button>
-                        <button  mat-menu-item>Road Survey  </button>
+                        <button routerLink="staff-create" mat-menu-item>Remuneration </button>                       
+                        <button routerLink="tp-create"  mat-menu-item>Transportation </button>
+                        <button routerLink="dt-create"  mat-menu-item>Duty Travel to Site </button>
+                        <button routerLink="or-create"  mat-menu-item>Office Rent </button>
+                        <button routerLink="os-create"  mat-menu-item>Office Supplies </button>
+                        <button routerLink="of-create"  mat-menu-item>Office Furniture </button>
+                        <button routerLink="rd-create" mat-menu-item>Reports and Document </button>
+                        <button routerLink="rs-create" mat-menu-item>Road Survey  </button>
                         <button   mat-menu-item>Contingencies </button>
                      </mat-menu>   
                 </div>
@@ -35,13 +35,13 @@
                       
                             <ng-container matColumnDef="serial">
                               <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                              <td mat-cell *matCellDef="let row"> {{row.srno}} </td>
+                              <td mat-cell *matCellDef="let row"> {{row.srno}} </td>                             
                             </ng-container>
                         
-                            <!-- contractName Column -->
+                           
                             <ng-container matColumnDef="value">
                               <th mat-header-cell *matHeaderCellDef > Description </th>
-                              <td  mat-cell *matCellDef="let row">
+                              <td  mat-cell class="heading-desc" *matCellDef="let row">
                                 <span class="align-left">
                                   {{row.value}} 
                                 </span> </td>
@@ -50,56 +50,57 @@
                               <th mat-header-cell *matHeaderCellDef > Amount </th>
                               <td mat-cell *matCellDef="let row">
                                 <span class="float-end">
-                                  {{row.amount}}
+                                  {{row.amount | formatAmount}}
                                 </span>  </td> 
                             </ng-container>
                             <ng-container matColumnDef="contract_amount">
-                                <th mat-header-cell *matHeaderCellDef > Contract Amount </th>
+                                <th mat-header-cell *matHeaderCellDef > Contract Value </th>
                                 <td mat-cell *matCellDef="let row">
                                   <span class="float-end">
-                                    {{row.contract_amount}}
+                                    {{row.contract_amount | formatAmount}}
                                   </span>  </td> 
                               </ng-container>
-                              <ng-container matColumnDef="comm_of_previous_month">
-                                <th mat-header-cell *matHeaderCellDef > Cumulated Total of Preceding Months </th>
+                              <ng-container matColumnDef="previous_amount">
+                                <th mat-header-cell *matHeaderCellDef > Up to Previous </th>
                                 <td mat-cell *matCellDef="let row">
                                   <span class="float-end">
-                                    {{row.comm_of_previous_month}}
+                                    {{row.previous_amount | formatAmount}}
                                   </span>  </td> 
                               </ng-container>
-                              <ng-container matColumnDef="this_period">
-                                <th mat-header-cell *matHeaderCellDef > This Period </th>
+                              <ng-container matColumnDef="current_amount">
+                                <th mat-header-cell *matHeaderCellDef > This Bill </th>
                                 <td mat-cell *matCellDef="let row">
                                   <span class="float-end">
-                                    {{row.this_period}}
+                                    {{row.current_amount | formatAmount}}
                                   </span>  </td> 
                               </ng-container> 
                               <ng-container matColumnDef="commulated">
-                                <th mat-header-cell *matHeaderCellDef > Cumulated Total including current Invoice </th>
+                                <th mat-header-cell *matHeaderCellDef > Cummulative Bill </th>
                                 <td mat-cell *matCellDef="let row">
                                   <span class="float-end">
-                                    {{row.amount}}
+                                    {{row.commulative_amt | formatAmount}}
                                   </span>  </td> 
                               </ng-container> 
                               <ng-container matColumnDef="remaining">
-                                <th mat-header-cell *matHeaderCellDef > Remaining amount against contract value </th>
+                                <th mat-header-cell *matHeaderCellDef > Remaining  </th>
                                 <td mat-cell *matCellDef="let row">
                                   <span class="float-end">
-                                    {{row.amount}}
-                                  </span>  </td> 
+                                    {{row.remaining_amt | formatAmount}}
+                                  </span>  </td>
                               </ng-container> 
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>                     
+                            <tr mat-row [ngClass]="row.footer? 'mat-mdc-footer-row':''" *matRowDef="let row; columns: displayedColumns;"></tr>
                           </table>
                     </mat-card-content>
-                </mat-card>  
-              <app-con-transportation-list></app-con-transportation-list>
-              <app-con-duty-travel-list></app-con-duty-travel-list>
-              <app-con-ofc-rent-list></app-con-ofc-rent-list>
-              <app-con-ofc-supply-list></app-con-ofc-supply-list>
-              <app-con-ofc-furniture-list></app-con-ofc-furniture-list>
-              <app-con-report-doc-list></app-con-report-doc-list>
-              <app-con-road-survey-list></app-con-road-survey-list>
+                </mat-card> 
+              <app-con-staff-list (onAmountChange)="stf_amt($event)"></app-con-staff-list> 
+              <app-con-transportation-list (onAmountChange)="tp_amt($event)"></app-con-transportation-list>
+              <app-con-duty-travel-list (onAmountChange)="dt_amt($event)"></app-con-duty-travel-list>
+              <app-con-ofc-rent-list (onAmountChange)="or_amt($event)"></app-con-ofc-rent-list>
+              <app-con-ofc-supply-list (onAmountChange)="os_amt($event)"></app-con-ofc-supply-list>
+              <app-con-ofc-furniture-list (onAmountChange)="of_amt($event)"></app-con-ofc-furniture-list>
+              <app-con-report-doc-list (onAmountChange)="rd_amt($event)"></app-con-report-doc-list>
+              <app-con-road-survey-list (onAmountChange)="rs_amt($event)"></app-con-road-survey-list>
                 <mat-card>
                     <mat-card-title>
                         <h6>V-Contingencies

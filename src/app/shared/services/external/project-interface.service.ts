@@ -159,6 +159,18 @@ export class ProjectInterfaceService {
     return this.coreApi.standardService(standardAttribute);
   
   }
+  getProjectScopeDurationById(params: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Consultant/ScopeDuration/'+params.id,
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  
+  }
   getAllProjectDetailsById(params: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Consultant/'+params.id,

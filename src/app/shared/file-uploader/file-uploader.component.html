@@ -6,13 +6,14 @@
             <h5>{{title}} <span *ngIf="required">*</span></h5>
         </div>
         
-        <div class="custom-file fileInputProfileWrap">
+        <div class="row custom-file fileInputProfileWrap">
             <div class="control-div row-center button-row input-file">
                 <button type="button" mat-mini-fab color=""  class="upload-btn" (click)="onClick()">
                     <mat-icon>attachment</mat-icon>
                 </button>
-                <span  class="file-name" *ngIf="isFileUploaded && UploadType!='image'">{{fileName}}</span>
-                <button  type="button" mat-mini-fab color="" matTooltip="Clear Document" *ngIf="isFileUploaded && UploadType!='image'" class="warn-linear-image float-end" (click)="removeFile()" >
+                <span  class="file-name" *ngIf="isFileUploaded ">{{fileName}}</span>
+                <button  type="button" mat-mini-fab color="" matTooltip="Clear Document" *ngIf="isFileUploaded " 
+                class="warn-linear-image file-delete float-end ml-2" (click)="removeFile()" >
                     <mat-icon>delete</mat-icon>
                 </button>
             </div>

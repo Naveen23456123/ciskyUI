@@ -1,4 +1,4 @@
-import { Component, Inject, Optional } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -32,12 +32,13 @@ public data: any;
   vehicleno='';
   vehicledate='';
   isBtnClicked=false;
+  totalKm=0;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageVehcileLogComponent>, private formbuilder: FormBuilder,
     private sessionservice: SessionService,  private router: Router,
     private vehicleLogService: VehicleLogInterfaceService, private vehicleService : VehicleInterfaceService,
     private employeeService: EmployeeInterfaceService,
-    private projectService:ProjectInterfaceService, private validatorService:ValidatorService){
+    private cdr:ChangeDetectorRef, private validatorService:ValidatorService){
       this.data = data || {};
   }
   
@@ -69,6 +70,9 @@ public data: any;
   openFromIcon(timepicker: { open: () => void }) {    
       timepicker.open();
   
+  }
+  ngAfterViewInit(){
+    this.cdr.detectChanges();
   }
 
   ngOnInit(){
@@ -106,10 +110,14 @@ public data: any;
       this.vehicleForm.patchValue({id:this.data.element.id});
       this.isLoading=false;
     }
-    
+    this.vehicleForm.valueChanges.subscribe(values => {
+      const { initialreading, endreading } = values;
+      const total = (parseFloat(endreading) || 0) - (parseFloat(initialreading) || 0);
+      this.totalKm= total;
+    });
   }
   ngOnDestroy(){
-
+    
   }
 
   projectChange(data:any=null){
@@ -184,12 +192,14 @@ public data: any;
         }
       }    
     });    
-    formData.append('useddate', this.vehicleForm.controls['useddate']?.value?.toISOString());
+    formData.append('useddate', new Date(this.vehicleForm.controls['useddate']?.value).toISOString());
     if (this.isEdit) {
       this.vehicleLogService.updateVehicleLog(formData, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false; })).subscribe({
           next: (response:any) => {
           if(response && response.success)
+            formsValue.endimageaddress=response.data.endimageaddress;
+            formsValue.initialimageaddress=response.data.initialimageaddress;
             this.dialogRef.close({ value: formsValue, valid: true });
         },
         error: (err: any) => {
@@ -199,10 +209,12 @@ public data: any;
     } else {
       this.vehicleForm.value.id=null;      
       this.vehicleLogService.createVehicleLog(formData, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false; })).subscribe({
           next:(response: any) => {
           if (response && response.success) {
             formsValue.id=response.data.id;
+            formsValue.endimageaddress=response.data.endimageaddress;
+            formsValue.initialimageaddress=response.data.initialimageaddress;
             this.dialogRef.close({ value: formsValue, valid: true });
           } else {
             this.dialogRef.close({ value: null, valid: false });

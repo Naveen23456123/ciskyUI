@@ -36,14 +36,23 @@ readonly dialog = inject(MatDialog);
     config.data = {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type'],
-      element: window.history.state
+      element:{
+        professionalid:window.history.state.professionalid,
+        pid:window.history.state.invoiceid,
+        designation:window.history.state.designation,
+        id:window.history.state.id,
+        currentbillmonths:window.history.state.currentbillmonths,
+        currentbill:window.history.state.currentbill,
+        employeename:window.history.state.name,
+        rate:window.history.state.rate,
+      }
     };
     const dialogRef = this.dialog.open(ManageConsultancyStaffComponent, config);
     dialogRef.afterClosed().subscribe((data) => {
       if (data && data.valid) {
         let navigationExtras: NavigationExtras = {
           relativeTo: this.route,
-          state: { value: data.value, event: 'contstaffedit', valid: true, msg: 'The Staff invoice details updated successfully.' }
+          state: { value: data.value,professionalData:data.professionalData, event: 'contstaffedit', valid: true, msg: 'The Staff invoice details updated successfully.' }
         };
         this.router.navigate(['../../'], navigationExtras);
       }

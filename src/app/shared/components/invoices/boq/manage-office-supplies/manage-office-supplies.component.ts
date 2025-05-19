@@ -1,5 +1,5 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
@@ -24,7 +24,7 @@ public data: any;
   osForm: FormGroup = new FormGroup({});
   deleteos=false;
   readonly dialog = inject(MatDialog);
-
+  isBtnClicked=false;
    private defaultdialogoptions:  MatDialogConfig = {
         minWidth: '700px', 
         disableClose: false,
@@ -69,9 +69,9 @@ public data: any;
     this.osForm = this.formbuilder.group({ 
       id: [''],
       projectid:[],
-      description :[],
-      numberofmonths:[],
-      ratepermonth:[]
+      description :[ ,Validators.required],
+      numberofmonths:[,Validators.required],
+      ratepermonth:[,Validators.required]
     });
     
     if (this.isEdit || this.deleteos) {
@@ -93,12 +93,13 @@ public data: any;
   ngOnDestroy(){}
 
   submit(){ 
+    this.isBtnClicked=true;
     this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
       if(response && response.projectId){
         this.osForm.patchValue({projectid:response.projectId});
         if (this.isEdit) {
           this.officeSupplyService.updateBoqOfficeSupply(this.osForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next: (response:any) => {
               if(response && response.success){
                 this.osForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
@@ -112,7 +113,7 @@ public data: any;
         } else {
           this.osForm.value.id=null;
           this.officeSupplyService.createBoqOfficeSupply(this.osForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
                 this.osForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));

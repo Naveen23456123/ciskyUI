@@ -22,10 +22,13 @@ export class DesignationListComponent {
   displayedColumns: string[] = ['serial','name', 'employeecount', 'companyname','employees','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
 
   readonly dialog = inject(MatDialog);
   
@@ -61,20 +64,26 @@ export class DesignationListComponent {
       this.notifyBarService.showsnackbar(data.msg);
       this.stateDataService.stateDataSubject.next({});
     }
-  });
-  this.pageSize=this.helperService.getPageSize();
+  });  
     this.siteControlService.getDesignationListByOrgId({ organizationId: this.activeOrgId }, '')
-           .pipe(finalize(() => this.isLoading = false))
-           .subscribe((response: any) => {
-            if (response && response.success) {
-              this.designations = response.data;
-              this.dataSource = new MatTableDataSource(this.designations);
-             }
-      });
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe((response: any) => {
+      if (response && response.success) {
+        this.designations = response.data;
+        this.updateTable(this.designations);
+        }
+    });
+  }
+
+  private updateTable(info: any) {
+    this.dataSource = new MatTableDataSource(this.designations);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);
+    this.resultsLength=info.length;
+    this.pageSize = this.helperService.getPageSize();   
+    this.dataSource.sort = this.sort;   
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -114,32 +123,32 @@ export class DesignationListComponent {
     this.dataSource._updateChangeSubscription();
   }
   viewEmp(data:any){
-      const config = this.defaultdialogoptions;
-  
-      config.data = {
-        element:data,
-        type:'desg'
-      };
-      const dialogRef = this.dialog.open(ViewEmployeeListComponent, config);
-      dialogRef.afterClosed().subscribe((data) => {
-        if (data && data.valid) {
-        }
-        else {
-        }
-      });
-    }
-    filterChange(data:any){
-      if(data && data.value){ 
-        this.dataSource.filter = data.value.trim().toLowerCase()
+    const config = this.defaultdialogoptions;
+
+    config.data = {
+      element:data,
+      type:'desg'
+    };
+    const dialogRef = this.dialog.open(ViewEmployeeListComponent, config);
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data && data.valid) {
       }
-      else{
-        this.dataSource.filter = '';
+      else {
       }
+    });
+  }
+  filterChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
     }
-    addBulk(data:any){
-      data.forEach((desg:any) => {
-        this.addRowData(desg);
-      });
+    else{
+      this.dataSource.filter = '';
     }
+  }
+  addBulk(data:any){
+    data.forEach((desg:any) => {
+      this.addRowData(desg);
+    });
+  }
 }
 

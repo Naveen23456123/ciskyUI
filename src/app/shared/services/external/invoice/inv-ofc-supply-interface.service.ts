@@ -21,7 +21,17 @@ export class InvOfcSupplyInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
-
+  getBoqOfficeSupplyListForInsertByProjectId(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqOfficeSupply/Insert/'+param.id,
+       params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   createBoqOfficeSupply(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'BoqOfficeSupply',
@@ -58,7 +68,7 @@ export class InvOfcSupplyInterfaceService {
   getConsultantOfficeSupplyListByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'InvOfficeSupply/'+param.id,
-       params: {},
+       params: param,
       headers: true,
       guid: '',
       request: {},

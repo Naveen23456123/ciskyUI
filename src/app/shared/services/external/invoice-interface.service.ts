@@ -12,8 +12,8 @@ export class InvoiceInterfaceService {
 
   getInvoiceListByOrgId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'Invoice/'+param.id,
-      params: {},
+      url: 'Invoice',
+      params: param,
       headers: true,
       guid: '',
       request: {},

@@ -32,7 +32,8 @@ export class ProjectControlComponent {
           this.projectList =  response.data.map((item :any)=>({
             id: item.id,
             name:item.projectcode + ' - '+item.projectshortname,
-            projectshortname:item.projectshortname
+            projectshortname:item.projectshortname,
+            companyid:item.companyid
           }));
           this.isProjectLoaded=true;
       }

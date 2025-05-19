@@ -35,7 +35,9 @@ ngOnInit(): void {
     this.defaultdialogOptionConfig.data = {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type'],
-      element: window.history.state
+      element: {
+        id:window.history.state.invoiceid
+      }
     };
     const dialogRef = this.dialog.open(ManageConsultancyDutyTravelComponent, this.defaultdialogOptionConfig);
     dialogRef.afterClosed().subscribe((data) => {

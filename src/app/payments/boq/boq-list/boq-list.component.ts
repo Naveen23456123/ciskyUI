@@ -54,12 +54,12 @@ export class BoqListComponent {
     this.dataSource.sort = this.sort;
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+  filterChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
     }
   }
 

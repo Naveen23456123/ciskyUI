@@ -111,6 +111,7 @@ export class UploadFileComponent {
     } else if (this.title.toLowerCase() === TemplateType.BANKGUARANTEE.toLowerCase()) {
       this.allColumnsData = this.bankGuaranteeService.getTemplateColumnList();
     }  else if (this.title.toLowerCase() === TemplateType.EMPLOYEE.toLowerCase()) {
+      apiCalls.subCompanyAPI= this.subcompanyService.getSubCompanyListByOrgId({},'');
       this.allColumnsData = this.employeeService.getTemplateColumnList();
     } else if (this.title.toLowerCase() === TemplateType.VEHICLE.toLowerCase()) {
       this.allColumnsData = this.vehicleService.getTemplateColumnList();
@@ -274,6 +275,7 @@ ngAfterViewInit() {
   }
 
   private updateTable(info: any) {
+    console.log(info);
     let ErrorData = info.filter((ele:any) => {
       return ele.error === true;
     });

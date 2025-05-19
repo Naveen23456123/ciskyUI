@@ -20,7 +20,7 @@
                             </mat-form-field>
                         </div>
                         <div class="col-md-3" *ngIf="!hasProject && !isEdit">
-                            <app-select-search *ngIf="projectInit " [defaultValue]="employeeForm.get('projectid')?.value" 
+                            <app-select-search  *ngIf="projectInit " [defaultValue]="employeeForm.get('projectid')?.value" 
                                         searchPlaceholder="Search Project" emptySearchMessage="No Project Found"
                                         label="Project"
                                         selectPlaceholder="Project" otherErrorMsg="Select Company First" [required]="true"

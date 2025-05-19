@@ -14,21 +14,22 @@ export class VehicleInterfaceService {
 
   getTemplateColumnList() {
     let columns = [
-        { label: 'Vehicle_Name', value: 'eotcode' },
-        { label: 'Vehicle_Number', value: 'processinitiatedate' },
-        { label: 'Fixed_KM', value: 'approveddate' },
-        { label: 'Fixed_Bill_Amount', value: 'approveddays' },
-        { label: 'Extra_Amt_After_Fixed_KM', value: 'letter' },
-        { label: 'KM_Per_Liter', value: 'eotstatus' },
-        { label: 'Fuel_Price', value: 'eotcode' },
-        { label: 'Bank_Name', value: 'eotstatus' },
-        { label: 'Account_Number', value: 'eotcode' },
-        { label: 'Account_Holder_Name', value: 'processinitiatedate' },
-        { label: 'IFSC_Code', value: 'approveddate' },
-        { label: 'PAN_Number', value: 'approveddays' },
-        { label: 'Address', value: 'letter' },
-        { label: 'Mobile', value: 'eotstatus' },
-        { label: 'GST_Number', value: 'eotcode' },
+        { label: 'Vehicle_Name', value: 'name' },
+        { label: 'Project_Code', value: 'project' },
+        { label: 'Vehicle_Number', value: 'number' },
+        { label: 'Fixed_KM', value: 'fixedkm' },
+        { label: 'Fixed_Bill_Amount', value: 'fixedbillamount' },
+        { label: 'Extra_Amt_After_Fixed_KM', value: 'extraamountafterfixedkm' },
+        { label: 'KM_Per_Liter', value: 'kmperliter' },
+        { label: 'Fuel_Price', value: 'fuelprice' },
+        { label: 'Bank_Name', value: 'bankname' },
+        { label: 'Account_Number', value: 'accountnumber' },
+        { label: 'Account_Holder_Name', value: 'accountholdername' },
+        { label: 'IFSC_Code', value: 'ifsccode' },
+        { label: 'PAN_Number', value: 'pancard' },
+        { label: 'Address', value: 'address' },
+        { label: 'Mobile', value: 'mobilenumber' },
+        { label: 'GST_Number', value: 'gstnumber' },
         
     
     ];
@@ -675,6 +676,18 @@ export class VehicleInterfaceService {
     console.log(request);
     const standardAttribute: ServiceAttributeModel = {
         url: 'Vehicle/Documents',
+        params: {},
+        headers: true,
+        guid: '',
+        request: request,
+        action: Operation.CREATE
+      }
+      return this.coreApi.standardService(standardAttribute);
+  }
+  createBulkVehicles(request: any, guid: string) {
+    console.log(request);
+    const standardAttribute: ServiceAttributeModel = {
+        url: 'Vehicle/Bulk',
         params: {},
         headers: true,
         guid: '',

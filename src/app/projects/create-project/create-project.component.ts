@@ -28,13 +28,8 @@ export class CreateProjectComponent {
   }
   
   private defaultdialogoptions:  MatDialogConfig = {
-    //width: '1200px',
-    panelClass: 'custom-dialog-container',
-    minWidth: '1200px', 
-    //maxHeight: '90vh',
     disableClose: false,
     data: {},
-    //scrollStrategy: this.scrollStrategy.noop()
   };
 
   openDialog(): void {
@@ -43,6 +38,7 @@ export class CreateProjectComponent {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type']
     };
+    config.minWidth='75vw';
     const dialogRef = this.dialog.open(ManageProjectComponent, config);
     dialogRef.afterClosed().subscribe((data) => {
       if (data && data.valid) {

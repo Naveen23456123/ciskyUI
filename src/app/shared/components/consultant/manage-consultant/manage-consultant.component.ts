@@ -138,7 +138,7 @@ getTitle(val: string) {
   }
 }
 setConsultantForm(data: any) { 
-  this.consultantForm.setValue({
+  this.consultantForm.patchValue({
     id:data.id,
     tenderId:data.tenderid,
     projectLocation:data.projectlocation,

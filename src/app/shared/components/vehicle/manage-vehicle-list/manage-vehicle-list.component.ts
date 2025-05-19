@@ -16,6 +16,7 @@ import { SessionService } from '@app/shared/services/session.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { ManageVehicleDocComponent } from '../manage-vehicle-doc/manage-vehicle-doc.component';
 import { DetailVehicleComponent } from '../detail-vehicle/detail-vehicle.component';
+import { ManageUploadVehicleComponent } from '../manage-upload-vehicle/manage-upload-vehicle.component';
 
 @Component({
   selector: 'app-manage-vehicle-list',
@@ -36,12 +37,13 @@ vehicles:any[]= [];
   private subscription: Subscription = new Subscription();
   isProject=false;
   readonly dialog = inject(MatDialog);
-  
+  showFilters=true;
   private defaultdialogoptions:  MatDialogConfig = {
     disableClose: false,
     data: {},
   };
-
+  searchObj:any={};
+  isSearchLoading=false;
  constructor(private vehicleService:VehicleService,private helperService:HelperService,
   private route: ActivatedRoute,private notifyBarService:NotifyBarService,
   private sessionService:SessionService
@@ -52,27 +54,11 @@ vehicles:any[]= [];
  ngOnInit()  {
     this.subscription = this.sessionService.projectEntitySubject$.pipe(untilDestroyed(this)).subscribe((response)=>{     
       if(response && response.projectId){
-        this.vehicleService.getVehileDetailsByOrgId({ projectId: response.projectId }, '')
-          .pipe(finalize(() => this.isLoading = false))
-          .subscribe((response: any) => {
-            if (response && response.success) {
-              this.vehicles = response.data;
-              this.dataSource = new MatTableDataSource(this.vehicles);
-              this.pageSize= this.helperService.getPageSize();
-            }
-        });
+        this.getVehicleDetails({ projectId: response.projectId });
         this.isProject=true;
       }
       else {
-        this.vehicleService.getVehileDetailsByOrgId({  }, '')
-        .pipe(finalize(() => this.isLoading = false))
-        .subscribe((response: any) => {
-          if (response && response.success) {
-            this.vehicles = response.data;
-            this.dataSource = new MatTableDataSource(this.vehicles);
-            this.pageSize= this.helperService.getPageSize();
-          }
-        });
+        this.getVehicleDetails({});
       }
     });
   }
@@ -96,7 +82,31 @@ vehicles:any[]= [];
       this.dataSource.paginator.firstPage();
     }
   }
-
+  projectChange(data:any){ 
+   if(data){
+    this.isSearchLoading=true;
+    this.getVehicleDetails({projectId: data.value });
+   }
+  }
+  getVehicleDetails(dataObj:any){    
+    this.vehicleService.getVehileDetailsByOrgId(dataObj, '')
+    .pipe(finalize(() => {this.isLoading = false;this.isSearchLoading=false}))
+    .subscribe((response: any) => {
+      if (response && response.success) {
+        this.vehicles = response.data;
+        this.dataSource = new MatTableDataSource(this.vehicles);
+        this.pageSize= this.helperService.getPageSize();
+      }
+    });
+  }
+  anyChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
+    }
+  }
   private updateTable(info: any) {
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, 10);
@@ -156,18 +166,31 @@ vehicles:any[]= [];
     });
   }
   import(){
-     const config = this.defaultdialogoptions;
-        config.minWidth='1200px';
-        config.data = {
-          pageGuid: this.route.snapshot.data['pageGuid'],
-          type: this.route.snapshot.data['type'], 
-          template_type: TemplateType.VEHICLE   
-        };
-      this.dialog.open(UploadFileComponent,config);
+    const config = this.defaultdialogoptions;
+    config.minWidth='80vw';
+      config.data = {
+        pageGuid: this.route.snapshot.data['pageGuid'],
+        type: this.route.snapshot.data['type'], 
+        template_type: TemplateType.VEHICLE   
+    };
+    const dialogRef = this.dialog.open(ManageUploadVehicleComponent,config);
+    dialogRef.afterClosed().subscribe((data) => { 
+      if (data && data.valid) {
+        this.addBulkVehicle(data.value);
+        this.notifyBarService.showsnackbar('The Vehicle(s) created successfully.');
+      }
+    });
   }
+  addBulkVehicle(data:any){
+    data.forEach((element:any) => {
+      this.addRowData(element);
+    });
+  }
+
   export(){
 
   }
+
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
     if(element){

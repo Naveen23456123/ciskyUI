@@ -17,6 +17,9 @@ import { ViewEmployeeDetailsComponent } from '../view-employee-details/view-empl
 import { ManageEmployeeDocComponent } from '../manage-employee-doc/manage-employee-doc.component';
 import { SessionService } from '@app/shared/services/session.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
+import { UploadDataComponent } from '../../upload-data/upload-data.component';
+import { ManageUploadEmpComponent } from '../manage-upload-emp/manage-upload-emp.component';
+import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 
 @Component({
   selector: 'app-manage-employee-list',
@@ -30,14 +33,15 @@ export class ManageEmployeeListComponent {
   isLoading = true;
   displayedColumns: string[] = ['serial','name','code', 'designation', 'emailid','phonenumber','doc','action'];
   dataSource!: MatTableDataSource<any[]>;
-  activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-
+  resultsLength!:number;
   readonly dialog = inject(MatDialog);
-  
+  isSearching=false;
   private defaultdialogoptions:  MatDialogConfig = {    
     disableClose: false,
     data: {},
@@ -45,55 +49,47 @@ export class ManageEmployeeListComponent {
 
  constructor(private employeeService:EmployeeInterfaceService,private helperService:HelperService,
   private sessionService:SessionService,
-  private route: ActivatedRoute, private stateDataService:StateDataService, private notifyBarService:NotifyBarService
+  private route: ActivatedRoute, private stateDataService:StateDataService, private notifyBarService:NotifyBarService,
+  private csvService:GenerateCsvService
  ){
   this.dataSource = new MatTableDataSource(this.employees);
  }
 
  ngOnInit()  {
-    this.sessionService.projectEntitySubject$.pipe(take(1),finalize(()=>{this.isLoading=false}),untilDestroyed(this))
+    this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this))
       .subscribe((entityData)=>{  
         if(entityData){    
           this.employeeService.getAllEmployeesByOrdId({ projectid:entityData.projectId }, '')
           .pipe(finalize(() => this.isLoading = false))
           .subscribe({next : (response: any) => {
            if (response && response.success) {
-             this.employees = response.data;
-             this.dataSource = new MatTableDataSource(this.employees);
-             this.pageSize= this.helperService.getPageSize();
+              this.updateTable(response.data); 
             }
           }}); 
         }
         else {
-          this.employeeService.getAllEmployeesByOrdId({ organizationId: this.activeOrgId }, '')
+          this.employeeService.getAllEmployeesByOrdId({ }, '')
           .pipe(finalize(() => this.isLoading = false))
           .subscribe({next : (response: any) => {
            if (response && response.success) {
-             this.employees = response.data;
-             this.dataSource = new MatTableDataSource(this.employees);
-             this.pageSize= this.helperService.getPageSize();
+              this.updateTable(response.data);           
             }
           }});
         }
-    });    
-    
+    });  
+  }
+  private updateTable(info: any) {
+    this.employees = info;
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.employees.length;   
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.pageSize= this.helperService.getPageSize();
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-
-ngOnDestroy(){}
+  ngOnDestroy(){}
 
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
@@ -196,7 +192,7 @@ ngOnDestroy(){}
        this.defaultdialogoptions.minWidth='75vw';
        const dialogRef = this.dialog.open(ManageEmployeeComponent, this.defaultdialogoptions);
        dialogRef.afterClosed().subscribe((data) => {       
-         if (data.valid) {
+         if (data && data.valid) {
           this.notifyBarService.showsnackbar('The Employee updated successfully.');
           this.updateRowData(data.value);
          }
@@ -213,7 +209,7 @@ ngOnDestroy(){}
     this.defaultdialogoptions.minWidth='45vw';
     const dialogRef = this.dialog.open(ManageEmployeeComponent, this.defaultdialogoptions);
     dialogRef.afterClosed().subscribe((data) => {
-      if (data.valid) {
+      if (data && data.valid) {
         this.notifyBarService.showsnackbar('The Employee removed successfully.');
         this.deleteRow(data.value);
       }
@@ -221,18 +217,31 @@ ngOnDestroy(){}
       }
     });
   }
-import(){
-     const config = this.defaultdialogoptions;
-          config.minWidth='75vw';
-            config.data = {
-              pageGuid: this.route.snapshot.data['pageGuid'],
-              type: this.route.snapshot.data['type'], 
-              template_type: TemplateType.EMPLOYEE   
-            };
-              this.dialog.open(UploadFileComponent,config);
+
+  import(){
+    const config = this.defaultdialogoptions;
+    config.minWidth='80vw';
+      config.data = {
+        pageGuid: this.route.snapshot.data['pageGuid'],
+        type: this.route.snapshot.data['type'], 
+        template_type: TemplateType.EMPLOYEE   
+    };
+    const dialogRef = this.dialog.open(ManageUploadEmpComponent,config);
+    dialogRef.afterClosed().subscribe((data) => { 
+      if (data && data.valid) {
+        this.addBulkEmployee(data.value);
+        this.notifyBarService.showsnackbar('The Employee(s) created successfully.');
+      }
+    });
+  }
+  addBulkEmployee(data:any){
+    data.forEach((element:any) => {
+      this.addRowData(element);
+    });
   }
   export(){
-
+    console.log(this.employees);
+  this.csvService.downloadFile(this.employees,this.employeeService.getTemplateColumnList());
   }
   view_emp(data:any){
     this.defaultdialogoptions.data = {
@@ -250,12 +259,56 @@ import(){
     this.defaultdialogoptions.minWidth='75vw';
     const dialogRef = this.dialog.open(ManageEmployeeDocComponent, this.defaultdialogoptions);
     dialogRef.afterClosed().subscribe((data) => {
-      if (data.valid) {
+      if (data && data.valid) {
        
       }
       else {
       }
     });    
+  }
+  searchObj:any={
+    projectid:'',
+    desgid:'',
+    compid:'',
+    typeid:''
+  };
+  projectChange(data:any){ 
+   this.searchObj.projectid= data.value ?? '';
+   this.filterEmployee();
+  }
+  desgChange(data:any){
+    this.searchObj.desgid= data.value ?? '';
+    this.filterEmployee();
+  }
+  compChange(data:any){
+    this.searchObj.compid= data.value ?? '';
+    this.searchObj.projectid= data.projectid ?? '';
+    this.searchObj.desgid= data.desgid ?? '';
+    this.filterEmployee();
+  }
+  anyChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
+    }
+  }
+  professionalChange(data:any){
+    this.searchObj.typeid= data.value ?? '';
+    this.filterEmployee();
+  }
+  filterEmployee(){
+  this.isSearching=true;
+    this.employeeService.searchEmployee(this.searchObj, '')
+      .pipe(finalize(() => {this.isLoading = false;this.isSearching=false}))
+      .subscribe({next : (response: any) => {
+        if (response && response.success) {
+          this.employees = response.data;
+          this.dataSource = new MatTableDataSource(this.employees);
+          this.pageSize= this.helperService.getPageSize();
+        }
+    }});
   }
 }
 

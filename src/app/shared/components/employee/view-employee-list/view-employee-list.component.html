@@ -5,13 +5,25 @@
             <mat-icon>close</mat-icon>
           </button> 
         </h3>
+        <mat-dialog-content class="mat-typography">
         <mat-card-content>
             <div class="load-wrap" *ngIf="isLoading">
                 <app-loader [IsLoading]="isLoading"></app-loader>
             </div>
             <div  *ngIf="!isLoading">                
-
-                <div class="wrapper mat-elevation-z8">  
+              <div class="row content-center">
+                <div class="col-md-8">
+                  <span class="sub-heading">{{title}} : {{titleValue}}</span>                  
+                </div>       
+                <div class="col-md-4 d-flex justify-content-end">
+                    <mat-form-field>
+                        <mat-icon matPrefix>search</mat-icon>
+                        <mat-label>Name / Code / Email / Phone No.</mat-label>
+                        <input matInput (keyup)="filterChange($event)"  #input>
+                      </mat-form-field>  
+                </div>
+            </div>
+                <div class=" mat-elevation-z8">  
                     
                         <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
                       
@@ -53,11 +65,13 @@
                           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
                           <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell" colspan="4">No Employee Found at this moment.</td>
+                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                              No Employee(s) found at this moment.</td>
                           </tr>
                         </table>
                 </div>
             </div>
         </mat-card-content>
+        </mat-dialog-content>
     </mat-card>
 </div>

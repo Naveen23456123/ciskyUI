@@ -28,8 +28,6 @@ export class GenerateCsvService {
       typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
     let str = '';
     let row = '';
-  console.log(array);
-  console.log(headerList);
     for (let index in headerList) {
       row += headerList[index].label + ',';
     }
@@ -39,11 +37,9 @@ export class GenerateCsvService {
       let line = '';
       for (let index in headerList) {
         let head = headerList[index].value;
-        console.log(head,array[i][head]);
         line += typeof(array[i][head])=='undefined'?'':array[i][head]+',';
       }  
       line = line.slice(0, -1);
-      console.log(line);
       str += line + '\r\n';
     }
     return str;

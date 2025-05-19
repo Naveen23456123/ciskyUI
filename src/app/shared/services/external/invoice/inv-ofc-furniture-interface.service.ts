@@ -21,7 +21,17 @@ export class InvOfcFurnitureInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
-
+  getBoqOfficeFurnitureListForInsertByProjectId(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqOfficeFurniture/Insert/'+param.id,
+       params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   createBoqOfficeFurniture(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'BoqOfficeFurniture',
@@ -58,7 +68,7 @@ export class InvOfcFurnitureInterfaceService {
   getConsultantOfficeFurnitureListByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'InvOfficeFurniture/'+param.id,
-       params: {},
+       params: param,
       headers: true,
       guid: '',
       request: {},

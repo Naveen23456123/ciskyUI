@@ -1,28 +1,36 @@
 <div class="container">
+  <mat-card>
+    <mat-card-content class="pb-0">
+      <div class="load-wrap" *ngIf="isLoading">
+        <app-loader [IsLoading]="isLoading"></app-loader>
+      </div>
+      <div class="row content-center">
+        <div class="col-md-9">
+            <app-search-bar-controls [isProjects]="true" [isAny]="true"
+            (OnProjectChange)="projectChnage($event)"
+            (OnAnyChange)="filterChange($event)"
+             searchByAnyPlaceholder="Project / Name" ></app-search-bar-controls>                         
+      </div>       
+      <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">
+        <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
+        <button class="title-btn" type="button" (click)="add_inv()"  mat-mini-fab color="primary">
+            <mat-icon>add box</mat-icon> Inventory
+        </button> 
+        <app-download-csv (clickEvent)="export()" ></app-download-csv> 
+      </div>
+    </div>  
+    </mat-card-content>
+   </mat-card>
+   <div class="wrapper">
     <mat-card>
         <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
+            <div class="load-wrap" *ngIf="isSearching">
+                <app-loader [IsLoading]="isSearching"></app-loader>
             </div>
-            <div  *ngIf="!isLoading">                
+            <div  *ngIf="!isSearching">                
 
-                <div class="mat-elevation-z8">                  
-                     
-                    <div class="table-title-row">
-                        <mat-form-field>
-                          <mat-label>Filter</mat-label>
-                          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
-                        </mat-form-field>
-                        <div class="button-row">              
-                          <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
-
-                          <button class="title-btn" type="button" (click)="add_inv()"  mat-mini-fab color="primary">
-                              <mat-icon>add box</mat-icon> Inventory
-                          </button> 
-                          <app-download-csv (clickEvent)="export()" ></app-download-csv> 
-                      </div>
-                    </div> 
-                    <app-no-data *ngIf="dataSource?.data?.length==0" message="No Inventories found at this moment !!" ></app-no-data>
+                <div class="mat-elevation-z8">  
+                    <app-no-data *ngIf="dataSource?.data?.length==0 && !isSearching" message="No Inventories found at this moment !!" ></app-no-data>
                     <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">     
                         <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
                       
@@ -96,5 +104,6 @@
             </div>
         </mat-card-content>
     </mat-card>
+  </div>
 </div>
 <router-outlet></router-outlet>

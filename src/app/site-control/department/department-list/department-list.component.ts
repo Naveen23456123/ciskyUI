@@ -23,11 +23,13 @@ export class DepartmentListComponent {
   displayedColumns: string[] = ['serial','name', 'subcompanyname', 'action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-
+  resultsLength!:number;
   readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
@@ -65,16 +67,23 @@ export class DepartmentListComponent {
   this.siteControlService.getDepartmentListByOrgId({}, '')
     .pipe(finalize(() => this.isLoading = false))
     .subscribe((response: any) => {
-    if (response && response.success) {
-      this.departments = response.data;
-      this.dataSource = new MatTableDataSource(this.departments);
-    }
-  });
+      if (response && response.success) {
+        this.updateTable(response.data);
+        this.dataSource = new MatTableDataSource(this.departments);
+      }
+    });
+  }
+
+  private updateTable(info: any) {
+    this.departments = info;
+    this.dataSource = new MatTableDataSource(this.departments);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.departments.length;   
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.pageSize= this.helperService.getPageSize();
   }
 
   updateRowData(data: any) {

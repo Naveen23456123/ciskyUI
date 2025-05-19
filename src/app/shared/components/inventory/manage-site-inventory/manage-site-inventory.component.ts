@@ -30,6 +30,7 @@ public data: any;
   isProject=true;
   projectName='';
   empInit=true;
+  isClicked=false;
   private subscription: Subscription = new Subscription();
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
@@ -156,13 +157,14 @@ public data: any;
   }
 
   submit(){   
+    this.isClicked=true;
     let formsValue= this.inventoryForm.value;
     formsValue.employee = this.empList.find(x=>x.id== this.inventoryForm.get('employeeid')?.value).name?.split('-')[1];
     formsValue.project = this.projectName;
     formsValue.item = this.itemList.find(x=>x.id== this.inventoryForm.get('itemid')?.value).name;
     if (this.isEdit) {
       this.inventoryService.updateInventory(this.inventoryForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false;this.isClicked=false })).subscribe({
           next:(response: any) => {
             if (response && response.success) 
               this.dialogRef.close({ value: formsValue, valid: true });
@@ -174,7 +176,7 @@ public data: any;
     } else {
       this.inventoryForm.value.id=null;
       this.inventoryService.createInventory(this.inventoryForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false;this.isClicked=false })).subscribe({
           next:(response: any) => {
             if (response && response.success)  {             
               formsValue.id=response.data.id;

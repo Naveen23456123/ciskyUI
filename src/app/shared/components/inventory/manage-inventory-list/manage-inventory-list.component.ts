@@ -16,6 +16,7 @@ import { DialogOperation } from '@app/shared/models/constant.config';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
+import { ManageUploadInventoryComponent } from '../manage-upload-inventory/manage-upload-inventory.component';
 
 @Component({
   selector: 'app-manage-inventory-list',
@@ -34,6 +35,7 @@ inventories:any[]= [];
   pagination: any;
   pageSize!: number;
   isProject=false;
+  isSearching=false;
   private subscription: Subscription = new Subscription();
 
   readonly dialog = inject(MatDialog);
@@ -52,19 +54,12 @@ inventories:any[]= [];
 
  ngOnInit()  {
     this.subscription = this.sessionService.projectEntitySubject$.pipe(untilDestroyed(this)).subscribe((response:any)=>{
-      let inventoryURL=this.inventoryService.getSiteInventoryListByOrgId({}, '');
+      let invobj={};     
       if(response && response.projectId) {
-        inventoryURL=this.inventoryService.getSiteInventoryListByProjectId({ id: response.projectId }, '')
+        invobj= { pid: response.projectId };
         this.isProject=true;
       }
-      inventoryURL.pipe(finalize(() => this.isLoading = false))
-        .subscribe((response: any) => {
-          if (response && response.success) {
-          this.inventories = response.data;
-          this.dataSource = new MatTableDataSource(this.inventories);
-          this.pageSize= this.helperService.getPageSize();
-          }
-        });
+      this.getInventoryData(invobj);
     })
   }
 
@@ -80,15 +75,23 @@ inventories:any[]= [];
     this.dataSource.sort = this.sort;
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  projectChnage(data:any){
+   let invObj={};
+   invObj= data.value==''? '': {pid:data.value};
+   this.getInventoryData(invObj);
+  }
 
+  filterChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
+    }
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
-
   private updateTable(info: any) {
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, 10);
@@ -103,12 +106,33 @@ inventories:any[]= [];
         type: this.route.snapshot.data['type'], 
         template_type: TemplateType.INVENTORY   
       };
-    this.dialog.open(UploadFileComponent,config);
+      const dialogRef = this.dialog.open(ManageUploadInventoryComponent,config);
+    dialogRef.afterClosed().subscribe((data) => { 
+      if (data && data.valid) {
+        this.addBulkInventory(data.value);
+        this.notifyBarService.showsnackbar('The Inventory created successfully.');
+      }
+    });
+  }
+  addBulkInventory(data:any){
+    data.forEach((element:any) => {
+      this.addRowData(element);
+    });
   }
   export(){
   
   }
-
+  getInventoryData(obj:any){
+    this.isSearching=true;
+    this.inventoryService.getSiteInventoryListByOrgId(obj, '').pipe(finalize(() => {this.isLoading = false; this.isSearching=false;}))
+        .subscribe((response: any) => {
+          if (response && response.success) {
+          this.inventories = response.data;
+          this.dataSource = new MatTableDataSource(this.inventories);
+          this.pageSize= this.helperService.getPageSize();
+          }
+        });
+  }
   add_inv(){
     const config = this.defaultdialogoptions;
       config.data = {

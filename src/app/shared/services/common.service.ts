@@ -54,5 +54,20 @@ export class CommonService {
     }
     return {month:'-',year:'-'};
   }  
-  
+
+  convertDateToISO(input:any){
+    // parse as UTC date with the known format
+    const parts = input.split('-');
+    return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).toISOString();    
+  }
+  isValidNumber(value: any): boolean {
+    return value !== null &&
+           value !== undefined &&
+           value !== '' &&
+           !isNaN(value) &&
+           !isNaN(parseFloat(value));
+  }
+  isRowEmpty(row: any): boolean {
+    return Object.values(row).every(value => value === null || value === undefined || value === '');
+  }
 }

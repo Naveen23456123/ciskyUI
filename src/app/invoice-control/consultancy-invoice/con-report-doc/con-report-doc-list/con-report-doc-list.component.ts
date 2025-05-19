@@ -23,7 +23,7 @@ export class ConReportDocListComponent {
   dataSource!: MatTableDataSource<any[]>;
   @Output() onAmountChange: EventEmitter<any> = new EventEmitter(); 
   readonly dialog = inject(MatDialog);
-    
+  amount:any|null;  
     private defaultdialogoptions:  MatDialogConfig = {
       minWidth: '900px', 
       disableClose: false,
@@ -44,7 +44,7 @@ export class ConReportDocListComponent {
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       } else if (data.event == 'conrdadd' && data.valid && data.value) {
-        this.addRowData(data.value);
+        this.addBulkData(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       } else if(data.event == 'conrddelete' && data.valid && data.value){
@@ -52,11 +52,12 @@ export class ConReportDocListComponent {
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       }
+      this.getTotalAmount();    
     });
 
     this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((invEntity:any)=>{
       if(invEntity && invEntity.invoiceId) {
-        this.invoiceService.getConsultantReportDocListByProjectId({id:invEntity.invoiceId }, '')
+        this.invoiceService.getConsultantReportDocListByProjectId({id:invEntity.invoiceId ,projectid:invEntity.projectId }, '')
         .pipe(finalize(() => this.isLoading = false))
         .subscribe((response: any) => {
           if (response && response.success) {
@@ -68,6 +69,7 @@ export class ConReportDocListComponent {
               ratepercopy:data.ratepercopy,
               previousbillmonths:data.previousbillmonths,
               currentbillmonths:data.currentbillmonths,
+              invoiceid:data.invoiceid,
               contractamount:this.getattributes(data).contractamount,
               previousbill:this.getattributes(data).previousbill,
               currentbill:this.getattributes(data).currentbill,
@@ -98,24 +100,12 @@ export class ConReportDocListComponent {
   }
 
     updateRowData(data: any) {
-      const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
+      const element:any = this.dataSource.data.find((x:any) => x.invoiceid == data.id);
       if(element){
-      element.id = data.id;
-      element.description =data.description,
-      element.numberofreport=data.numberofreport,
-      element.numberofcopiesperreport=data.numberofcopiesperreport,
-      element.ratepercopy=data.ratepercopy,
-      element.previousbillmonths=data.previousbillmonths,
-      element.currentbillmonths=data.currentbillmonths,
-      element.contractamount=this.getattributes(data).contractamount,
-      element.previousbill=this.getattributes(data).previousbill,
-      element.currentbill=this.getattributes(data).currentbill,
-      element.commulativemonth=this.getattributes(data).commulativemonth,
-      element.commulativeamount=this.getattributes(data).commulativeamount,
-      element.remainingmonth=this.getattributes(data).remainingmonth,
-      element.remainingamount=this.getattributes(data).remainingamount      
-      this.dataSource._updateChangeSubscription();
+      element.currentbillmonths=data.currentbillmonths 
       }
+      this.bindBilling(element); 
+      this.dataSource._updateChangeSubscription();
     }
 
     addRowData(data: any) {
@@ -127,29 +117,45 @@ export class ConReportDocListComponent {
         ratepercopy:data.ratepercopy,
         previousbillmonths:data.previousbillmonths,
         currentbillmonths:data.currentbillmonths,
-        contractamount:this.getattributes(data).contractamount,
-        previousbill:this.getattributes(data).previousbill,
-        currentbill:this.getattributes(data).currentbill,
-        commulativemonth:this.getattributes(data).commulativemonth,
-        commulativeamount:this.getattributes(data).commulativeamount,
-        remainingmonth:this.getattributes(data).remainingmonth,
-        remainingamount:this.getattributes(data).remainingamount
+        invoiceid:data.invoiceid
       }      
+      this.bindBilling(data1);
       this.dataSource.data.unshift(data1);  
       this.dataSource._updateChangeSubscription();
     }
     deleteRow(data: any) {
-      const index = this.dataSource.data.findIndex((x:any) => x.id == data);
+      const index = this.dataSource.data.findIndex((x:any) => x.invoiceid == data);
       this.dataSource.data.splice(index, 1);
       this.dataSource._updateChangeSubscription();
     }
 
-    getTotalAmount() {
-      let total= this.data.map(t => t.totalamount).reduce((acc, value) => acc + value, 0);
-      this.onAmountChange.emit(total);
-      return total;
+    bindBilling(data:any){
+      data.contractamount=data.numberofreport*data.numberofcopiesperreport*data.ratepercopy,
+      data.previousbill=data.previousbillmonths*data.ratepercopy,
+      data.currentbill=data.currentbillmonths*data.ratepercopy,
+      data.commulativemonth=data.previousbillmonths+data.currentbillmonths,
+      data.commulativeamount=(data.previousbillmonths+data.currentbillmonths)*data.ratepercopy,
+      data.remainingmonth=(data.numberofreport*data.numberofcopiesperreport)-(data.previousbillmonths+data.currentbillmonths),
+      data.remainingamount=((data.numberofreport*data.numberofcopiesperreport)*data.ratepercopy)-((data.previousbillmonths+data.currentbillmonths)*data.ratepercopy)
     }
-
+    addBulkData(data:any){
+      data.forEach((element:any) => {
+        this.addRowData(element);
+      });
+   }
+   getTotalAmount() : any|null { 
+    if(this.dataSource && this.dataSource.data){
+    this.amount ={
+        total:this.dataSource.data.map((t:any) => t.contractamount).reduce((acc, value) => acc + value, 0),
+        previous:this.dataSource.data.map((t:any) => t.previousbill).reduce((acc, value) => acc + value, 0),
+        current:this.dataSource.data.map((t:any) => t.currentbill).reduce((acc, value) => acc + value, 0),
+        commulative:this.dataSource.data.map((t:any) => t.commulativeamount).reduce((acc, value) => acc + value, 0),
+        remaining:this.dataSource.data.map((t:any) => t.remainingamount).reduce((acc, value) => acc + value, 0)
+      }
+    }
+    this.onAmountChange.emit(this.amount);
+    return this.amount;
+  }
   }
   
   

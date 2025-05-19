@@ -59,6 +59,7 @@ export class MonthAndYearPickerComponent implements OnInit {
     this.diabledNextBtn();
     if(this.defaultValue)
       this.date.setValue(moment(this.defaultValue));
+   
     this.onValueChange.emit(this.date.value);
   }
 

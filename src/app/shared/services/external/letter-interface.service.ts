@@ -14,16 +14,20 @@ export class LetterInterfaceService {
 
   getTemplateColumnList() {
     let columns = [
-      { label: 'letternum', value: 'letternum' },
-      { label: 'replyby', value: 'replyby' },
-      { label: 'subject', value: 'subject' },
-      { label: 'letterdate', value: 'letterdate' },
-      { label: 'status', value: 'status' },
-      { label: 'lettertype', value: 'lettertype' },
-      { label: 'letterExchange', value: 'letterExchange' },
-      { label: 'letterdepartment', value: 'letterdepartment' },
-      { label: 'letterfrom', value: 'letterfrom' },
-      { label: 'letterto', value: 'letterto' },
+      { label: 'Project Code', value: 'project' },
+      { label: 'Letter_Number', value: 'letternumber' },
+      { label: 'Exchange_Type', value: 'exchangetypeid' },
+      { label: 'Related_To', value: 'relatedtoid' },
+      { label: 'Reply_By', value: 'replybyid' },
+      { label: 'Letter_Type', value: 'lettertype' },
+      { label: 'Letter_Date', value: 'letterdate' },
+      { label: 'Subject', value: 'subject' },
+      { label: 'Department', value: 'department' },
+      { label: 'Status', value: 'statusid' },
+      { label: 'Letter_From', value: 'letterfrom' },
+      { label: 'Letter_To', value: 'letterto' },
+      { label: 'Contractor', value: 'contractor' },
+      { label: 'Remarks', value: 'remarks' },
     ];
   return columns;
   }
@@ -233,9 +237,54 @@ export class LetterInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
+  getLetterDocumentsById(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+        url: 'Letter/Documents/'+param.id,
+        params: {},
+        headers: true,
+        guid: '',
+        request: {},
+        action: Operation.GET
+      }
+      return this.coreApi.standardService(standardAttribute);
+  }
   createLetter(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Letter',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  createBulkLetter(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Letter/Bulk',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  createLetterDocumentsById(request: any, guid: string) {
+    console.log(request);
+    const standardAttribute: ServiceAttributeModel = {
+        url: 'Letter/Documents',
+        params: {},
+        headers: true,
+        guid: '',
+        request: request,
+        action: Operation.CREATE
+      }
+      return this.coreApi.standardService(standardAttribute);
+  }
+  searchLetters(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Letter/Search',
       params: {},
       headers: true,
       guid: '',
@@ -265,5 +314,17 @@ export class LetterInterfaceService {
       action: Operation.DELETE
     }
     return this.coreApi.standardService(standardAttribute);
+  }
+  deleteLetterDocumentsById(request: any, guid: string) {
+    console.log(request);
+    const standardAttribute: ServiceAttributeModel = {
+        url: 'Letter/DeleteDoc',
+        params: {},
+        headers: true,
+        guid: '',
+        request: request,
+        action: Operation.CREATE
+      }
+      return this.coreApi.standardService(standardAttribute);
   }
 }

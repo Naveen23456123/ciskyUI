@@ -1,4 +1,4 @@
-import { Component,ViewChild,inject} from '@angular/core';
+import { ChangeDetectorRef, Component,ViewChild,inject} from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -22,14 +22,14 @@ import { finalize } from 'rxjs';
 export class InvoiceListComponent {
 invoiceList:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','projectid','month','year', 'view','action'];
+  displayedColumns: string[] = ['serial','projectname','invno','month','year', 'view','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-
+  projectId='';
   readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
@@ -40,7 +40,8 @@ invoiceList:any[]= [];
 
  constructor(private paymentService:PaymentService,private helperService:HelperService,
   private stateDataService:StateDataService, private notifyBarService:NotifyBarService,
-  private commonService:CommonService, private router:Router, private sessionService:SessionService
+  private commonService:CommonService, private router:Router, private sessionService:SessionService,
+  private cdr:ChangeDetectorRef
  ){
   this.dataSource = new MatTableDataSource(this.invoiceList);
  }
@@ -57,7 +58,15 @@ invoiceList:any[]= [];
       this.stateDataService.stateDataSubject.next({});
     }
   });
- this.isLoading=false;
+  this.paymentService.getInvoiceListByOrgId({}, '')
+  .pipe(finalize(() => this.isLoading = false))
+  .subscribe((response: any) => {
+    if (response && response.success) {
+     this.invoiceList = response.data;
+     this.dataSource = new MatTableDataSource(this.invoiceList);
+     this.pageSize= this.helperService.getPageSize();
+    }
+  });
   }
 
   ngAfterViewInit() {
@@ -65,12 +74,12 @@ invoiceList:any[]= [];
     this.dataSource.sort = this.sort;
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+  filterChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
     }
   }
 
@@ -82,7 +91,7 @@ invoiceList:any[]= [];
   addRowData(newdata: any) {
     const data1:any = {
       id:newdata.id,
-      name : newdata.name,
+      number : newdata.number,
       projectid : newdata.projectid,
       monthandyear:newdata.monthandyear
     }      
@@ -95,8 +104,10 @@ invoiceList:any[]= [];
     this.dataSource._updateChangeSubscription();
   }
   projectChange(data:any){ 
+    console.log(data);
    if(data && data.value){
-    this.paymentService.getInvoiceListByOrgId({ id: data.value.id }, '')
+    this.projectId= data.value;
+    this.paymentService.getInvoiceListByOrgId({ projectid: data.value }, '')
     .pipe(finalize(() => this.isLoading = false))
     .subscribe((response: any) => {
       if (response && response.success) {
@@ -111,7 +122,7 @@ invoiceList:any[]= [];
     return this.commonService.getMonthandYear(date);
   }
   details(data:any){
-    this.sessionService.setInvoiceEntity({invoiceId:data.id});
+    this.sessionService.setInvoiceEntity({invoiceId:data.id, projectId:data.projectid});
     this.router.navigate(['/consultancy-invoice']);
   }
 }

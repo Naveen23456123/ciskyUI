@@ -9,7 +9,7 @@ import { Component, OnInit, Input } from '@angular/core';
 export class LoaderComponent implements OnInit {
 
   @Input() IsLoading = false;
-  @Input() size = 1;
+  @Input() size = 1.5;
   @Input() message: string | undefined;
 
   constructor() { }

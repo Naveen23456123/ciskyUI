@@ -31,7 +31,7 @@
               </ng-container>       
               <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef > Amount</th>
-                <td mat-cell class="amt" *matCellDef="let row"> {{row.amount}} </td>
+                <td mat-cell class="amt" *matCellDef="let row"> {{row.amount  | formatAmount}} </td>
                 <td mat-footer-cell *matFooterCellDef> {{getTotalAmount() | formatCurrency}}</td>
               </ng-container>                      
               

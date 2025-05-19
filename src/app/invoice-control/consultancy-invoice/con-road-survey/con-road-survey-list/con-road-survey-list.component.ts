@@ -23,7 +23,7 @@ export class ConRoadSurveyListComponent {
   dataSource!: MatTableDataSource<any[]>;
   @Output() onAmountChange: EventEmitter<any> = new EventEmitter();
   readonly dialog = inject(MatDialog);
-    
+  amount:any|null; 
     private defaultdialogoptions:  MatDialogConfig = {
       minWidth: '900px', 
       disableClose: false,
@@ -44,7 +44,7 @@ export class ConRoadSurveyListComponent {
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       } else if (data.event == 'conrsadd' && data.valid && data.value) {
-        this.addRowData(data.value);
+        this.addBulkData(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       } else if(data.event == 'conrsdelete' && data.valid && data.value){
@@ -52,10 +52,11 @@ export class ConRoadSurveyListComponent {
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       }
+      this.getTotalAmount();
     });
     this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((invEntity:any)=>{
       if(invEntity && invEntity.invoiceId){
-        this.invoiceService.getConsultantRoadSurveyListByProjectId({id:invEntity.invoiceId }, '')
+        this.invoiceService.getConsultantRoadSurveyListByProjectId({id:invEntity.invoiceId ,projectid:invEntity.projectId }, '')
         .pipe(finalize(() => this.isLoading = false))
         .subscribe((response: any) => {
           if (response && response.success) {
@@ -67,6 +68,7 @@ export class ConRoadSurveyListComponent {
               numberofsurveys:data.numberofsurveys,
               previousbillkm:data.previousbillkm,
               currentbillkm:data.currentbillkm,
+              invoiceid:data.invoiceid,
               contractamount:this.getattributes(data).contractamount,
               previousbill:this.getattributes(data).previousbill,
               currentbill:this.getattributes(data).currentbill,
@@ -97,24 +99,12 @@ export class ConRoadSurveyListComponent {
   }
 
     updateRowData(data: any) {
-      const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
+      const element:any = this.dataSource.data.find((x:any) => x.invoiceid == data.id);
       if(element){
-      element.id = data.id;
-      element.description =data.description,
-      element.km=data.km,
-      element.rate=data.rate,
-      element.numberofsurveys=data.numberofsurveys,
-      element.previousbillkm=data.previousbillkm,
-      element.currentbillkm=data.currentbillkm,
-      element.contractamount=this.getattributes(data).contractamount,
-      element.previousbill=this.getattributes(data).previousbill,
-      element.currentbill=this.getattributes(data).currentbill,
-      element.commulativekm=this.getattributes(data).commulativekm,
-      element.commulativeamount=this.getattributes(data).commulativeamount,
-      element.remainingkm=this.getattributes(data).remainingkm,
-      element.remainingamount=this.getattributes(data).remainingamount
-      this.dataSource._updateChangeSubscription();
+      element.currentbillkm=data.currentbillkm
       }
+      this.bindBilling(element);
+      this.dataSource._updateChangeSubscription();
     }
     addRowData(data: any) {
       const data1:any = {
@@ -125,26 +115,44 @@ export class ConRoadSurveyListComponent {
         numberofsurveys:data.numberofsurveys,
         previousbillkm:data.previousbillkm,
         currentbillkm:data.currentbillkm,
-        contractamount:this.getattributes(data).contractamount,
-        previousbill:this.getattributes(data).previousbill,
-        currentbill:this.getattributes(data).currentbill,
-        commulativekm:this.getattributes(data).commulativekm,
-        commulativeamount:this.getattributes(data).commulativeamount,
-        remainingkm:this.getattributes(data).remainingkm,
-        remainingamount:this.getattributes(data).remainingamount
+        invoiceid:data.invoiceid
       }      
+      this.bindBilling(data1);
       this.dataSource.data.unshift(data1);  
       this.dataSource._updateChangeSubscription();
     }
     deleteRow(data: any) {
-      const index = this.dataSource.data.findIndex((x:any) => x.id == data);
+      const index = this.dataSource.data.findIndex((x:any) => x.invoiceid == data);
       this.dataSource.data.splice(index, 1);
       this.dataSource._updateChangeSubscription();
     }
-    getTotalAmount() {
-      let total= this.data.map(t => t.totalamount).reduce((acc, value) => acc + value, 0);
-      this.onAmountChange.emit(total);
-      return total;
+
+    bindBilling(data:any){
+      data.contractamount=data.km*data.numberofsurveys*data.rate,
+      data.previousbill=data.previousbillkm*data.rate,
+      data.currentbill=data.currentbillkm*data.rate,
+      data.commulativekm=data.previousbillkm+data.currentbillkm,
+      data.commulativeamount=(data.previousbillkm+data.currentbillkm)*data.rate,
+      data.remainingkm=data.km-(data.previousbillkm+data.currentbillkm),
+      data.remainingamount=(data.km*data.numberofsurveys*data.rate)-((data.previousbillkm+data.currentbillkm)*data.rate)
+    }
+    addBulkData(data:any){
+       data.forEach((element:any) => {
+         this.addRowData(element);
+       });
+    }
+    getTotalAmount() : any|null {        
+      if(this.dataSource && this.dataSource.data){
+      this.amount ={
+          total:this.dataSource.data.map((t:any) => t.contractamount).reduce((acc, value) => acc + value, 0),
+          previous:this.dataSource.data.map((t:any) => t.previousbill).reduce((acc, value) => acc + value, 0),
+          current:this.dataSource.data.map((t:any) => t.currentbill).reduce((acc, value) => acc + value, 0),
+          commulative:this.dataSource.data.map((t:any) => t.commulativeamount).reduce((acc, value) => acc + value, 0),
+          remaining:this.dataSource.data.map((t:any) => t.remainingamount).reduce((acc, value) => acc + value, 0)
+        }
+      }
+      this.onAmountChange.emit(this.amount);
+      return this.amount;
     }
   }
   

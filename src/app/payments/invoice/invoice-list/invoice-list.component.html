@@ -11,7 +11,9 @@
                     <div class="row col-md-12 content-center">
                       <div class="col-md-9">
                         <div >
-                          <app-search-bar-controls  [selectProjectDefault]="true" (OnProjectChange)="projectChange($event)"  [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Invoice Number" ></app-search-bar-controls>
+                          <app-search-bar-controls   [showProjectAllLabel]="true"
+                          (OnProjectChange)="projectChange($event)" (OnAnyChange)="filterChange($event)"
+                          [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Invoice Number" ></app-search-bar-controls>
                         </div>  
                     </div>       
                     <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">                            
@@ -29,9 +31,11 @@
                             <th mat-header-cell *matHeaderCellDef> Sr. No </th>
                             <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
                           </ng-container>
-                      
-                          <!-- contractName Column -->
-                          <ng-container matColumnDef="projectid">
+                          <ng-container matColumnDef="projectname">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
+                            <td mat-cell *matCellDef="let row"> {{row.projectname}} </td>
+                          </ng-container> 
+                          <ng-container matColumnDef="invno">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Number </th>
                             <td mat-cell *matCellDef="let row"> {{row.number}} </td>
                           </ng-container> 
@@ -46,27 +50,24 @@
                           <!-- con_personName Column -->
                           <ng-container matColumnDef="view">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> View </th>
-                            <td mat-cell *matCellDef="let row"> 
-                              <button class="edit-table-btn" (click)="details(row)" matTooltip="View" mat-mini-fab >
-                              <mat-icon>visibility</mat-icon> 
-                            </button>
+                            <td mat-cell *matCellDef="let row">
+                            <app-view-btn (clickEvent)="details(row)"></app-view-btn>
                             </td>
                           </ng-container>
                           <!-- con_personName Column -->
                           <ng-container matColumnDef="action">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
                             <td mat-cell *matCellDef="let row"> 
-                              <button class="delete-table-btn" [state]="row"
-                            [routerLink]="['/invoice/delete',row.id]" matTooltip="Delete" mat-mini-fab >
-                              <mat-icon>delete_forever</mat-icon> 
-                            </button>
+                              <app-delete-btn [state]="row"
+                              [routerLink]="['/invoice/delete',row.id]"></app-delete-btn>
                            </td>
                           </ng-container>
                         
                           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
                           <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell" colspan="4"></td>
+                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                              No Invoice(s) found at this moment.</td>
                           </tr>
                         </table>
                         <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>

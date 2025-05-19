@@ -16,21 +16,36 @@ export class ViewEmployeeListComponent {
   isLoading = true;
   displayedColumns: string[] = ['serial','name','code', 'designation','type','jdate', 'emailid','phonenumber'];
   dataSource!: MatTableDataSource<any[]>;
-
+  title:string='';
+  titleValue:string='';
  constructor(@Inject(MAT_DIALOG_DATA) data: any,private employeeService:EmployeeInterfaceService
  ){
   this.data= data|| {};
   this.dataSource = new MatTableDataSource(this.employees);
  }
-
+ filterChange(event:any){
+  if(event){ 
+    this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase()
+  }
+  else{
+    this.dataSource.filter = '';
+  }
+  if (this.dataSource.paginator) {
+    this.dataSource.paginator.firstPage();
+  }
+}
  ngOnInit()  {
   if(this.data){
     let param;
     if(this.data.type=='desg'){
       param={ desgId:this.data.element.id  };
+      this.title='Designation';
     }
-    else
+    else{
       param= { comId:this.data.element.id  };
+      this.title="Sub Company";
+    }
+    this.titleValue= this.data.element.name;
 
       this.employeeService.getAllEmployeesByOrdId(param, '')
             .pipe(finalize(() => this.isLoading = false))

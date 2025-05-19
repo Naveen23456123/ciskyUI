@@ -35,7 +35,8 @@ readonly dialog = inject(MatDialog);
     const config = this.defaultdialogoptions;
     config.data = {
       pageGuid: this.route.snapshot.data['pageGuid'],
-      type: this.route.snapshot.data['type']
+      type: this.route.snapshot.data['type'],
+      element:window.history.state
     };
     const dialogRef = this.dialog.open(ManageConsultancyInvoiceComponent, config);
     dialogRef.afterClosed().subscribe((data) => {
@@ -44,7 +45,7 @@ readonly dialog = inject(MatDialog);
           relativeTo: this.route,
           state: { value: data.value, event: 'invdelete', valid: true, msg: 'The Inventory removed successfully.' }
         };
-        this.router.navigate(['../'], navigationExtras);
+        this.router.navigate(['../../'], navigationExtras);
       }
       else {
         this.router.navigate(['../../'], { relativeTo: this.route });

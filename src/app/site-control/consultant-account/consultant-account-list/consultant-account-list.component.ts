@@ -21,12 +21,13 @@ export class ConsultantAccountListComponent {
   isLoading = true;
   displayedColumns: string[] = ['serial','bankname', 'accountno', 'ifsccode', 'panno', 'gstno', 'bankaddress', 'docaddress', 'action'];
   dataSource!: MatTableDataSource<any[]>;
-  activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-
+  resultsLength!:number;
   readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
@@ -59,18 +60,24 @@ export class ConsultantAccountListComponent {
     }
   });
 
-    this.siteControlService.getConsultantAccountListByOrgId({ organizationId: this.activeOrgId }, '')
+    this.siteControlService.getConsultantAccountListByOrgId({ }, '')
            .pipe(finalize(() => this.isLoading = false))
            .subscribe((response: any) => {
             if (response && response.success) {
-              this.accounts = response.data;
-              this.dataSource = new MatTableDataSource(this.accounts);
+              this.updateTable(response.data);
              }
       });
   }
 
+  private updateTable(info: any) {
+    this.accounts = info;
+    this.dataSource = new MatTableDataSource(this.accounts);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.accounts.length;   
+  }
+
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    this.pageSize= this.helperService.getPageSize();
     this.dataSource.sort = this.sort;
   }
 
@@ -83,11 +90,6 @@ export class ConsultantAccountListComponent {
     }
   }
 
-  private updateTable(info: any) {
-    this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
-  }
 
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);

@@ -26,7 +26,6 @@ readonly dialog = inject(MatDialog);
   }
   
   private defaultdialogoptions:  MatDialogConfig = {
-    panelClass: 'custom-dialog-container',
     minWidth: '1000px',
     disableClose: false,
     data: {},
@@ -43,7 +42,7 @@ readonly dialog = inject(MatDialog);
       if (data && data.valid) {
         let navigationExtras: NavigationExtras = {
           relativeTo: this.route,
-          state: { value: data.value, event: 'contstaffadd', valid: true, msg: 'The Staff invoice details created successfully.' }
+          state: { value: data.value,professionalData:data.professionalData, event: 'contstaffadd', valid: true, msg: 'The Staff invoice details created successfully.' }
         };
         this.router.navigate(['../'], navigationExtras);
       }

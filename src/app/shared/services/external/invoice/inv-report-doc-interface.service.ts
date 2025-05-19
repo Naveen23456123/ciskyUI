@@ -13,7 +13,7 @@ export class InvReportDocInterfaceService {
   getBoqReportDocListByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'BoqReportDoc/'+param.id,
-       params: {},
+      params: {},
       headers: true,
       guid: '',
       request: {},
@@ -21,7 +21,17 @@ export class InvReportDocInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
-
+  getBoqReportDocListForInsertByProjectId(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqReportDoc/Insert/'+param.id,
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   createBoqReportDoc(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'BoqReportDoc',
@@ -58,7 +68,7 @@ export class InvReportDocInterfaceService {
   getConsultantReportDocListByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'InvReportDoc/'+param.id,
-       params: {},
+       params: param,
       headers: true,
       guid: '',
       request: {},

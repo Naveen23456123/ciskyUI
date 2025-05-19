@@ -10,41 +10,42 @@
                 <app-loader [IsLoading]="isLoading"></app-loader>
             </div>
             <div class="wrapper">
-                <!-- <form [formGroup]="organizationForm" > -->
-                <form [formGroup]="rsForm" (submit)="submit()">
+                <form [formGroup]="rsForm" >
                     <div class="row control-div">                       
                         <div class="col-md-12">
                             <mat-form-field>
                                 <mat-label>Description</mat-label>
                                 <textarea matInput formControlName="description" ></textarea>
-                                <mat-error>Please enter First Name.</mat-error>
+                                <mat-error>Please provide description</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-12">
                             <mat-form-field>
                                 <mat-label>KM</mat-label>
                                 <input matInput formControlName="km">
-                                <mat-error>Please enter First Name.</mat-error>
+                                <mat-error>Please provide km</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-12">
                             <mat-form-field>
                                 <mat-label>No. of times Survey Concluded</mat-label>
-                                <input matInput formControlName="numberofsurveytime">
-                                <mat-error>Please enter First Name.</mat-error>
+                                <input matInput formControlName="numberofsurveys">
+                                <mat-error>Please provide no. of survey conducted</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-12">
                             <mat-form-field>
                                 <mat-label>Rate per No. of times Survey to be Conducted</mat-label>
                                 <input matInput formControlName="ratepersurvey">
-                                <mat-error>Please enter First Name.</mat-error>
+                                <mat-error>Please provide survey count</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-12 button-row" align="right">
                             <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-                            <button class="submit-btn" mat-flat-button [disabled]="!rsForm.valid" color="primary">
-                                {{isEdit?'Update':'Submit'}}</button>
+                            <app-submit-load-btn (clickEvent)="submit()" [isClicked]="isBtnClicked"
+                                [isValid]="rsForm.valid || isBtnClicked"
+                                [isClicked]="isBtnClicked"
+                                text="{{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
                     </div>
                       
                        

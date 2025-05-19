@@ -1,3 +1,4 @@
+<div class="container">
 <mat-card>
     <mat-card-title>
         <h6>III - Duty Travel to Site(Fixed Costs)(For all lienght of project):
@@ -21,7 +22,7 @@
        
           <ng-container matColumnDef="desc">
             <th mat-header-cell *matHeaderCellDef class="hide"> Description </th>
-            <td mat-cell *matCellDef="let element"> {{element.desc}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.description}} </td>
             <td mat-footer-cell *matFooterCellDef>Total </td>
           </ng-container>
           <ng-container matColumnDef="descth">
@@ -31,7 +32,7 @@
              
               <ng-container matColumnDef="contract_rate">
                 <th mat-header-cell *matHeaderCellDef > Rate </th>
-                <td mat-cell *matCellDef="let row"> {{row.rate}} </td>
+                <td mat-cell *matCellDef="let row"> {{row.rate | formatAmount}} </td>
                 <td mat-footer-cell *matFooterCellDef> </td>
               </ng-container>       
             
@@ -42,8 +43,8 @@
               </ng-container>
               <ng-container matColumnDef="totalamt">
                 <th mat-header-cell *matHeaderCellDef > Total Amount </th>
-                <td mat-cell *matCellDef="let row"> {{row.contractamount}} </td>
-                <td mat-footer-cell *matFooterCellDef> </td>
+                <td mat-cell *matCellDef="let row"> {{row.contractamount | formatAmount}} </td>
+                <td mat-footer-cell *matFooterCellDef>{{amount?.total | formatCurrency}} </td>
               </ng-container>   
 
               <ng-container matColumnDef="prev_month">
@@ -54,8 +55,8 @@
 
               <ng-container matColumnDef="prev_amt">
                 <th mat-header-cell *matHeaderCellDef > Amount </th>
-                <td mat-cell *matCellDef="let row"> {{row.previousbill}} </td>
-                <td mat-footer-cell *matFooterCellDef> </td>
+                <td mat-cell *matCellDef="let row"> {{row.previousbill | formatAmount}} </td>
+                <td mat-footer-cell *matFooterCellDef>{{amount?.previous | formatCurrency}} </td>
               </ng-container>
 
               <ng-container matColumnDef="curr_month">
@@ -66,8 +67,8 @@
 
               <ng-container matColumnDef="curr_amt">
                 <th mat-header-cell *matHeaderCellDef > Amount </th>
-                <td mat-cell *matCellDef="let row"> {{row.currentbill}} </td>
-                <td mat-footer-cell *matFooterCellDef> </td>
+                <td mat-cell *matCellDef="let row"> {{row.currentbill | formatAmount}} </td>
+                <td mat-footer-cell *matFooterCellDef>{{amount?.current | formatCurrency}} </td>
               </ng-container>
               <ng-container matColumnDef="comlt_month">
                 <th mat-header-cell *matHeaderCellDef > Trips </th>
@@ -77,8 +78,8 @@
 
               <ng-container matColumnDef="comlt_amt">
                 <th mat-header-cell *matHeaderCellDef > Amount </th>
-                <td mat-cell *matCellDef="let row"> {{row.commulativeamount}} </td>
-                <td mat-footer-cell *matFooterCellDef> </td>
+                <td mat-cell *matCellDef="let row"> {{row.commulativeamount | formatAmount}} </td>
+                <td mat-footer-cell *matFooterCellDef>{{amount?.commulative | formatCurrency}} </td>
               </ng-container>
 
               <ng-container matColumnDef="rem_month">
@@ -89,46 +90,40 @@
 
               <ng-container matColumnDef="rem_amt">
                 <th mat-header-cell *matHeaderCellDef > Amount </th>
-                <td mat-cell *matCellDef="let row"> {{row.remainingamount}} </td>
-                <td mat-footer-cell *matFooterCellDef> </td>
+                <td mat-cell *matCellDef="let row"> {{row.remainingamount | formatAmount}} </td>
+                <td mat-footer-cell *matFooterCellDef>{{amount?.remaining | formatCurrency}} </td>
               </ng-container>
 
               <ng-container matColumnDef="action">
-                <th mat-header-cell *matHeaderCellDef class="hide"> Action </th>
-                <td mat-cell *matCellDef="let row">
+                <th mat-header-cell class="no-print"  *matHeaderCellDef class="hide"> Action </th>
+                <td mat-cell class="action-col no-print" *matCellDef="let row">
                   <div class="button-row">
-                    <button class="edit-table-btn" [state]="row"
-                    [routerLink]="['dt-edit',row.id]" matTooltip="Edit" mat-mini-fab>
-                   <mat-icon>edit</mat-icon> 
-                  </button>
-                  <button class="delete-table-btn" [state]="row"
-                    [routerLink]="['dt-delete',row.id]" matTooltip="Delete" mat-mini-fab >
-                    <mat-icon>delete_forever</mat-icon> 
-                  </button>
+                  <app-edit-btn [state]="row" [routerLink]="['dt-edit',row.id]" ></app-edit-btn>                              
+                  <app-delete-btn [state]="row" [routerLink]="['dt-delete',row.id]"></app-delete-btn>
                   </div>
                 </td>
-                <td mat-footer-cell *matFooterCellDef> </td>
+                <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
               </ng-container>
               <ng-container matColumnDef="actionth">
-                <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Action</th>
+                <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
               </ng-container>
 
 
 
               <ng-container matColumnDef="ctrtamt">
-                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="3"> As Per Contract </th>
+                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="3"> Contract Value </th>
               </ng-container>
               <ng-container matColumnDef="previousinvc">
-                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Claim upto Previous Invoice </th>
+                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Upto Previous Bill </th>
               </ng-container>
               <ng-container matColumnDef="currentinvc">
-                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Current Invoice </th>
+                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> This Bill </th>
               </ng-container>
               <ng-container matColumnDef="cumulativeinvc">
-                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Cumulative Amount upto This</th>
+                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Cummulative Bill</th>
               </ng-container>
               <ng-container matColumnDef="reminvc">
-                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2">Remaining Amount </th>
+                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2">Remaining </th>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="['no','descth','ctrtamt','previousinvc','currentinvc','cumulativeinvc','reminvc','actionth']"></tr>
@@ -139,3 +134,4 @@
 
     </mat-card-content>
 </mat-card>
+</div>

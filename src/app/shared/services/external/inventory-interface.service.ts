@@ -14,12 +14,13 @@ export class InventoryInterfaceService {
 
   getTemplateColumnList(){
     let columns = [
-        { label: 'Employee_Code', value: 'Insurance_Name' },
-        { label: 'Item_Name', value: 'Company_Name' },
-        { label: 'Description', value: 'Policy_Number' },
-        { label: 'Quantity', value: 'Amount' },
-        { label: 'Rate_Per_Item', value: 'Start_Date' },
-        { label: 'Purchase_Date', value: 'Expiry_Date' }
+        { label: 'Project_Code', value: 'project' },
+        { label: 'Employee_Code', value: 'employee' },
+        { label: 'Item_Name', value: 'item' },
+        { label: 'Description', value: 'description' },
+        { label: 'Quantity', value: 'quantity' },
+        { label: 'Cost_Per_Item', value: 'costperitem' },
+        { label: 'Purchase_Date', value: 'purchasedate' }
       
       ];
     return columns;
@@ -713,6 +714,17 @@ export class InventoryInterfaceService {
   createInventory(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Inventory',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  createBulkInventory(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Inventory/Bulk',
       params: {},
       headers: true,
       guid: '',

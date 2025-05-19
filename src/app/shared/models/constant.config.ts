@@ -88,3 +88,6 @@ export enum ProfitLossScope{
     FINANCE_COST='FINANCE_COST',
     OTHER_EXPENSES='OTHER_EXPENSES'
 }
+export enum BOQ_INVOICE{
+    ALL_RECORD_INSERTED_MESSAGE="As per BOQ , All record have been successfully added. Kindly update the record if want to change or delete the existing record and add a new one."
+}

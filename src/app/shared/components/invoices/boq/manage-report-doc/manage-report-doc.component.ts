@@ -1,5 +1,5 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
@@ -24,7 +24,7 @@ public data: any;
   rdForm: FormGroup = new FormGroup({});
   deleterd=false;
   readonly dialog = inject(MatDialog);
-
+  isBtnClicked=false;
    private defaultdialogoptions:  MatDialogConfig = {
         minWidth: '700px', 
         disableClose: false,
@@ -69,10 +69,10 @@ public data: any;
     this.rdForm = this.formbuilder.group({ 
       id: [''],
       projectid:[],
-      numberofreport :[],
-      numberofcopiesperreport:[],
-      ratepercopy:[],
-      description:[]
+      numberofreport :[ ,Validators.required],
+      numberofcopiesperreport:[,Validators.required],
+      ratepercopy:[,Validators.required],
+      description:[,Validators.required]
     });
     
     if (this.isEdit || this.deleterd) {
@@ -95,12 +95,13 @@ public data: any;
   ngOnDestroy(){}
 
   submit(){ 
+    this.isBtnClicked=true;
     this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
       if(response && response.projectId){
         this.rdForm.patchValue({projectid:response.projectId});
         if (this.isEdit) {
           this.reportService.updateBoqReportDoc(this.rdForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false; })).subscribe({
               next: (response:any) => {
               if(response && response.success){
                 this.rdForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
@@ -114,7 +115,7 @@ public data: any;
         } else {
           this.rdForm.value.id=null;
           this.reportService.createBoqReportDoc(this.rdForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
                 this.rdForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));

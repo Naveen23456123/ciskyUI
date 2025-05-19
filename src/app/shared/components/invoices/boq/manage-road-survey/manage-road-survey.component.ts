@@ -1,5 +1,5 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
@@ -24,7 +24,7 @@ export class ManageRoadSurveyComponent {
   rsForm: FormGroup = new FormGroup({});
   deleters=false;
   readonly dialog = inject(MatDialog);
-
+  isBtnClicked=false;
    private defaultdialogoptions:  MatDialogConfig = {
         minWidth: '700px', 
         disableClose: false,
@@ -69,10 +69,10 @@ export class ManageRoadSurveyComponent {
     this.rsForm = this.formbuilder.group({ 
       id: [''],
       projectid:[],
-      km :[],
-      numberofsurveytime:[],
-      ratepersurvey:[],
-      description:[]
+      km :[,Validators.required],
+      numberofsurveys:[,Validators.required],
+      ratepersurvey:[,Validators.required],
+      description:[,Validators.required]
     });
     
     if (this.isEdit || this.deleters) {
@@ -86,7 +86,7 @@ export class ManageRoadSurveyComponent {
       id: data.id,
       projectid:data.projectid,
       km :data.km,
-      numberofsurveytime:data.numberofsurveytime,
+      numberofsurveys:data.numberofsurveys,
       ratepersurvey:data.ratepersurvey,
       description:data.description,
     });
@@ -95,12 +95,13 @@ export class ManageRoadSurveyComponent {
   ngOnDestroy(){}
 
   submit(){ 
+    this.isBtnClicked=true;
     this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
       if(response && response.projectId){
         this.rsForm.patchValue({projectid:response.projectId});
         if (this.isEdit) {
           this.roadSurveyService.updateBoqRoadSurvey(this.rsForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next: (response:any) => {
               if(response && response.success){
                 this.rsForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
@@ -114,7 +115,7 @@ export class ManageRoadSurveyComponent {
         } else {
           this.rsForm.value.id=null;
           this.roadSurveyService.createBoqRoadSurvey(this.rsForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) { 
                 this.rsForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));

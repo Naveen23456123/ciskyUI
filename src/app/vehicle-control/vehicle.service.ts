@@ -17,11 +17,11 @@ export class VehicleService {
      return this.vehicleService.getVehileDetailsByOrgId(param,guid);
    }
 
-   getVehicleLogDetailsByOrgId(param: any, guid: string){
-    return this.vehicleLogService.getVehicleLogDetails(param,guid);
+   getVehicleLogDetailsByOrgId(request: any, guid: string){
+    return this.vehicleLogService.getVehicleLogDetails(request,guid);
    }
-   getVehicleBillingDetailsByOrgId(param: any, guid: string) {
-    return this.vehcileBillingService.getVehicleBillingDetails(param,guid);
+   getVehicleBillingDetailsByOrgId(request: any, guid: string) {
+    return this.vehcileBillingService.getVehicleBillingDetails(request,guid);
    }
    getVehicleViewLogDetails(param: any, guid: string) {
     return this.vehicleLogService.getVehicleViewLogDetails(param,guid);

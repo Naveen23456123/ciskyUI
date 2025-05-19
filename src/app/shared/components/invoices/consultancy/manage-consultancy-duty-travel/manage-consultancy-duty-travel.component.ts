@@ -1,10 +1,10 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
+import { BOQ_INVOICE } from '@app/shared/models/constant.config';
 import { InvDutyTravelInterfaceService } from '@app/shared/services/external/invoice/inv-duty-travel-interface.service';
-import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, take } from 'rxjs';
 
@@ -23,17 +23,18 @@ public data: any;
   dtForm: FormGroup = new FormGroup({});
   deletedt=false;
   readonly dialog = inject(MatDialog);
-
+  boqList:any[]=[];
    private defaultdialogoptions:  MatDialogConfig = {
         minWidth: '700px', 
         disableClose: false,
         data: {},
   };
-
+  empty_message= '';
+  isBtnClicked=false;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageConsultancyDutyTravelComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService, private router: Router,private route: ActivatedRoute,
-    private notifibarservice: NotifyBarService, private dutyTravelService:InvDutyTravelInterfaceService){
+    private boqService:InvDutyTravelInterfaceService, private dutyTravelService:InvDutyTravelInterfaceService){
       this.data = data || {};
   }
   
@@ -68,27 +69,53 @@ public data: any;
     this.dtForm = this.formbuilder.group({ 
       id: [''],
       invoiceid:[],
-      description :[],
-      rate:[],
-      trips:[],
-      previousbilltrips:[],
-      currentbilltrips:[]
+      controls: this.formbuilder.array([])
     });
-    
-    if (this.isEdit || this.deletedt) {
+    if(!this.deletedt){ 
+      this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((projectEntity:any)=>{
+        if(projectEntity && projectEntity.projectId){
+          if(!this.isEdit){  
+          this.boqService.getBoqDutyTravelListForInsertByProjectId({id:projectEntity.projectId }, '')
+              .pipe(finalize(() => this.isLoading = false))
+              .subscribe((response: any) => {
+                if(response && response.success){
+                  this.boqList= response.data;
+                  response.data.forEach((element:any) => {
+                    this.addControls(element,projectEntity.invoiceId);
+                  });
+                }
+                this.empty_message= BOQ_INVOICE.ALL_RECORD_INSERTED_MESSAGE;
+            });
+          } else {
+            this.addControls(this.data.element,projectEntity.invoiceId);
+            this.isLoading=false;
+          }
+        }
+      });   
+    } else {
       this.setdtForm(this.data.element);
-    }
-    this.isLoading=false;
+      this.isLoading=false;
+    }  
+  }
+
+  addControls(data:any,invId:any) {
+    const group = this.formbuilder.group({
+      id:[data.pid],
+      boqid:[data.id],
+      invoiceid:[invId],
+      description: [data.description],
+      currentbilltrips: [data.currentbilltrips,Validators.required]
+    });
+    this.controls.push(group);
+  }
+
+  get controls() {
+    return this.dtForm.get('controls') as FormArray;
   }
 
   setdtForm(data: any) {    
     this.dtForm.patchValue({
-      id: data.id,
-      description : data.description,
-      rate: data.rate,
-      trips: data.trips,
-      previousbilltrips: data.previousbilltrips,
-      currentbilltrips: data.currentbilltrips
+      id: data.id
     });
   }
 
@@ -96,15 +123,16 @@ public data: any;
   ngOnDestroy(){}
 
   submit(){ 
+    this.isBtnClicked=true; 
     this.sessionService.invoiceEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
       if(response && response.invoiceId){
         this.dtForm.patchValue({invoiceid:response.invoiceId});
         if (this.isEdit) {
-          this.dutyTravelService.updateConsultantDutyTravel(this.dtForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+          this.dutyTravelService.updateConsultantDutyTravel(this.dtForm.get('controls')?.value[0], '')
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next: (response:any) => {
               if(response && response.success){
-                this.dialogRef.close({ value: this.dtForm.value, valid: true });
+                this.dialogRef.close({ value: this.dtForm.get('controls')?.value[0], valid: true });
               }
             },
             error: (err: any) => {
@@ -113,12 +141,23 @@ public data: any;
             });
         } else {
           this.dtForm.value.id=null;
-          this.dutyTravelService.createConsultantDutyTravel(this.dtForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+          this.dutyTravelService.createConsultantDutyTravel(this.dtForm.get('controls')?.value, '')
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
-                this.dtForm.controls["id"].setValue(response.data.id);
-                this.dialogRef.close({ value: this.dtForm.value, valid: true });
+                let responseData:any[]=[];
+                response.data.forEach((element:any) => {
+                  responseData.push({
+                    id:element.boqid,
+                    currentbilltrips:element.currentbilltrips,
+                    invoiceid:element.id,
+                    description:this.boqList.find((x:any)=>x.id==element.boqid)?.description,
+                    rate:this.boqList.find((x:any)=>x.id==element.boqid)?.ratepertrip,
+                    trips:this.boqList.find((x:any)=>x.id==element.boqid)?.numberofminimumtrips,
+                    previousbilltrips:0
+                  })
+                });
+                this.dialogRef.close({ value: responseData, valid: true });
               } else {
                 this.dialogRef.close({ value: null, valid: false });
               }

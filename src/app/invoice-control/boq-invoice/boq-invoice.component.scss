@@ -64,16 +64,11 @@
 ::ng-deep .mat-mdc-form-field {
   width: 100%;
 }
-// ::ng-deep .left-right-wrap{
-//   background-color: #e3e3e3 !important;
-// }
+
 ::ng-deep mat-card-title{
-  padding: 20px;
+  padding: 15px 20px 0px 20px;
 }
-// ::ng-deep th.mat-mdc-header-cell, .mat-sort-header-arrow {
-//   background-color: #dedede !important;
-//   color: #000000 !important;
-// }
+
 ::ng-deep .align-right{
   float: right !important;
 }
@@ -92,17 +87,20 @@
 
 ::ng-deep .mat-mdc-footer-row > .mat-column-serial{
   text-align: right;
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 16px;
+
 }
 
 ::ng-deep .mat-mdc-footer-row > .mat-column-amount{
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 16px;
+
 }
  .mdc-data-table__header-cell {
    padding: 0 !important; 
 }
 ::ng-deep .amt{
   width: 6% !important;
+}
+.mat-mdc-footer-font {
+  font-size: 17px !important;   
 }

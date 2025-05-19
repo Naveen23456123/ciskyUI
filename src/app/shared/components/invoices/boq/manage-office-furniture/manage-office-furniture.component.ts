@@ -1,5 +1,5 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
@@ -24,7 +24,7 @@ public data: any;
   ofForm: FormGroup = new FormGroup({});
   deleteof=false;
   readonly dialog = inject(MatDialog);
-
+  isBtnClicked=false;
    private defaultdialogoptions:  MatDialogConfig = {
         minWidth: '700px', 
         disableClose: false,
@@ -68,10 +68,10 @@ public data: any;
     this.getTitle(this.data.type);
     this.ofForm = this.formbuilder.group({ 
       id: [''],
-      description:[],
+      description:[ ,Validators.required],
       projectid:[],
-      numberofmonths:[],
-      ratepermonth:[]
+      numberofmonths:[,Validators.required],
+      ratepermonth:[,Validators.required]
     });
     
     if (this.isEdit || this.deleteof) {
@@ -93,12 +93,13 @@ public data: any;
   ngOnDestroy(){}
 
   submit(){ 
+    this.isBtnClicked=true;
     this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
       if(response && response.projectId){
         this.ofForm.patchValue({projectid:response.projectId});
         if (this.isEdit) {
           this.officeFurnitureService.updateBoqOfficeFurniture(this.ofForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next: (response:any) => {
               if(response && response.success){
                 this.ofForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
@@ -112,7 +113,7 @@ public data: any;
         } else {
           this.ofForm.value.id=null;
           this.officeFurnitureService.createBoqOfficeFurniture(this.ofForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
                 this.ofForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));

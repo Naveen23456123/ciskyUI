@@ -1,1 +1,105 @@
-<p>manage-consultancy-staff works!</p>
+<div class="dialog" >
+    <mat-card *ngIf="!deleteStaff">
+        
+        <h3 mat-dialog-title> {{title}}             
+        </h3>
+        
+        <mat-dialog-content class="mat-typography">
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <form [formGroup]="staffForm" >
+                    <div class="row control-div">                       
+                        <div class="wrapper" formArrayName="controls">
+                            <div *ngFor="let item of controls.controls; let i = index" [formGroupName]="i">
+                                <div class="row content-center control-div">
+                                    <div class="col-md-1">                       
+                                     {{i+1}}
+                                    </div> 
+                                    <div class="col-md-4">                       
+                                        <mat-form-field>
+                                            <mat-label>Position</mat-label>
+                                            <input matInput readonly formControlName="designation">
+                                        </mat-form-field>
+                                    </div>  
+                                    <div class="col-md-3">                       
+                                        <mat-form-field>
+                                            <mat-label>Name</mat-label>
+                                            <input matInput readonly formControlName="employeename">
+                                        </mat-form-field>
+                                    </div>  
+                                    <div class="col-md-2">                       
+                                        <mat-form-field>
+                                            <mat-label>Actual Month</mat-label>
+                                            <input matInput type="number" formControlName="currentbillmonths">
+                                            <mat-error *ngIf="item.get('currentbillmonths')?.hasError('required')">Please provide month</mat-error>
+                                            <mat-error *ngIf="item.get('currentbillmonths')?.hasError('min')">
+                                                Minimum allowed is 0
+                                              </mat-error>
+                                              <mat-error *ngIf="item.get('currentbillmonths')?.hasError('max')">
+                                                Maximum allowed is 1
+                                              </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-md-2">                       
+                                        <mat-form-field>
+                                            <mat-label>Amount</mat-label>
+                                            <input matInput readonly type="number" formControlName="currentbillamount">
+                                            
+                                        </mat-form-field>
+                                    </div>                           
+                               </div>
+                            </div>
+                        </div>
+                        <h5 *ngIf="controls.length==0">
+                            {{empty_message}}
+                        </h5>
+                    </div>    
+                </form>
+            </div>
+        </mat-card-content>
+        </mat-dialog-content>
+    
+    <mat-dialog-actions align="end">
+     <div class="row control-div">
+        <div class=" button-row" align="right">
+              <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>        
+                  <app-submit-load-btn *ngIf="!isLoading && staffForm.get('controls')?.value.length>0" (clickEvent)="submit()" [isClicked]="isBtnClicked"
+                  [isValid]="staffForm.valid || isBtnClicked"
+                  [isClicked]="isBtnClicked"
+                  text="{{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
+      </div>
+      </div>
+    </mat-dialog-actions>
+</mat-card>
+    <mat-card *ngIf="deleteStaff">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl"></span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

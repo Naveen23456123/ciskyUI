@@ -10,14 +10,14 @@ export class VehicleBillingInterfaceService {
 
   constructor(private coreApi:CoreAPIService) { }
   
-  getVehicleBillingDetails(param: any, guid: string) {
+  getVehicleBillingDetails(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'VehicleBilling',
-      params: param,
+      url: 'VehicleBilling/SearchBilling',
+      params: {},
       headers: true,
       guid: '',
-      request: {},
-      action: Operation.GET
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   }

@@ -74,7 +74,7 @@ export class BoqRoadSurveyListComponent {
       element.projectid=data.projectid,
       element.km =data.km,
       element.totalamount= data.totalamount,
-      element.numberofsurveytime=data.numberofsurveytime,
+      element.numberofsurveys=data.numberofsurveys,
       element.ratepersurvey=data.ratepersurvey,
       element.description=data.description,
       this.dataSource._updateChangeSubscription();
@@ -86,7 +86,7 @@ export class BoqRoadSurveyListComponent {
         projectid:data.projectid,
         km :data.km,
         totalamount: data.totalamount,
-        numberofsurveytime:data.numberofsurveytime,
+        numberofsurveys:data.numberofsurveys,
         ratepersurvey:data.ratepersurvey,
         description:data.description,
       }      

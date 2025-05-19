@@ -21,7 +21,17 @@ export class InvDutyTravelInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
-
+  getBoqDutyTravelListForInsertByProjectId(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqDutyTravel/Insert/'+param.id,
+       params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   createBoqDutyTravel(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'BoqDutyTravel',
@@ -58,7 +68,7 @@ export class InvDutyTravelInterfaceService {
   getConsultantDutyTravelListByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'InvDutyTravel/'+param.id,
-       params: {},
+       params: param,
       headers: true,
       guid: '',
       request: {},

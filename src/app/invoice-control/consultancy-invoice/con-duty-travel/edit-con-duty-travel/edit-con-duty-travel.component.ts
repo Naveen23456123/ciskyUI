@@ -36,7 +36,12 @@ readonly dialog = inject(MatDialog);
     config.data = {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type'],
-      element: window.history.state
+      element: {
+        pid:window.history.state.invoiceid,
+        description:window.history.state.description,
+        id:window.history.state.id,
+        currentbilltrips:window.history.state.currentbilltrips
+      }
     };
     const dialogRef = this.dialog.open(ManageConsultancyDutyTravelComponent, config);
     dialogRef.afterClosed().subscribe((data) => {

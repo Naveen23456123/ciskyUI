@@ -39,9 +39,9 @@
                             <ng-container matColumnDef="serial">
                               <th mat-header-cell *matHeaderCellDef> Sr. No </th>
                               <td mat-cell *matCellDef="let row"> {{row.srno}} </td>
-                              <td mat-footer-cell *matFooterCellDef colspan="2"> Sub Total </td>
-                              <td mat-footer-cell *matFooterCellDef colspan="2"> Goods and Service Taxes ({{tax}}) </td>
-                              <td mat-footer-cell *matFooterCellDef colspan="2"> Total  </td>
+                              <td mat-footer-cell *matFooterCellDef colspan="2"> Sub Total : </td>
+                              <td mat-footer-cell *matFooterCellDef colspan="2"> Goods and Service Taxes : </td>
+                              <td mat-footer-cell *matFooterCellDef colspan="2"> Total : </td>
                             </ng-container>
                         
                             <!-- contractName Column -->
@@ -56,10 +56,10 @@
                               <th mat-header-cell *matHeaderCellDef > Amount (Rs.) </th>
                               <td mat-cell *matCellDef="let row">
                                 <span class="float-end">
-                                  {{row.amount}}
+                                  {{row.amount | formatAmount}}
                                 </span> 
                               </td>
-                                <td mat-footer-cell *matFooterCellDef >  {{getSubTotalAmount()}}</td>                                
+                                <td mat-footer-cell *matFooterCellDef >  {{getSubTotalAmount()  | formatCurrency}}</td>                                
                             </ng-container>
                              <!-- Disclaimer column -->
                             <ng-container matColumnDef="gst">
@@ -69,7 +69,7 @@
                             </ng-container>
                             <ng-container matColumnDef="gstamount">
                               <td mat-footer-cell *matFooterCellDef >
-                               {{getgstAmount()}}
+                               {{getgstAmount() | formatCurrency}}
                               </td>                              
                             </ng-container>
                             <ng-container matColumnDef="total">
@@ -79,15 +79,15 @@
                             </ng-container>
                             <ng-container matColumnDef="totalamount">
                               <td mat-footer-cell *matFooterCellDef colspan="2">
-                                {{getTotalAmount()}}
+                                {{getTotalAmount() | formatCurrency}}
                               </td>                              
                             </ng-container>
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>  
                             
                             <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>
-                            <tr mat-footer-row *matFooterRowDef="['gst','gstamount']"  ></tr>
-                            <tr mat-footer-row *matFooterRowDef="['total','totalamount']" ></tr>                    
+                            <tr mat-footer-row class="mat-mdc-footer-font" *matFooterRowDef="['gst','gstamount']"  ></tr>
+                            <tr mat-footer-row class="mat-mdc-footer-font" *matFooterRowDef="['total','totalamount']" ></tr>                    
                           </table>
                     </mat-card-content>
                 </mat-card> 

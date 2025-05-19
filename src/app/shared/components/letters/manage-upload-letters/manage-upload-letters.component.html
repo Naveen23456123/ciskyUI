@@ -1,0 +1,54 @@
+<app-upload-data [isUploading]="isImporting"
+ [templateColumns]="allColumnsData"
+ [errorLoadingCSV]="errors"
+  (onImportClick)="importing($event)" >
+  <div metadata>
+    <div  class="row ">
+        <div  class="col-md-6">
+            <ul> <span class="msg-note">Information</span> 
+                <li>Letter Number should be a unique value.</li>
+                <li>Fill existing project only</li>
+                <li>Insert existing contractor only.</li>
+                <li>In project field fill site prcode only.</li>
+                <li>In contractor fill contractor name.</li>
+                <li>Add contractor name only if the value of work performed by is <b>contractor</b></li>
+            </ul>
+        </div>
+        <div class="row col-md-6">
+            <div  class="col-md-6">        
+                <span class="msg-note">Exchange Types </span> 
+                <ul class="mt-2"> 
+                    <li *ngFor="let item of exchangeTypeList" >
+                        {{item.name}}
+                    </li>
+                </ul>
+            </div>
+            <div  class="col-md-6">            
+                <span class="msg-note">Reply By </span> 
+                <ul class="mt-2"> 
+                    <li *ngFor="let item of replyByList" >
+                        {{item.name}}
+                    </li>
+                </ul>
+            </div>
+            <div  class="col-md-6">
+                <span class="msg-note">Related To  </span> 
+                <ul class="mt-2"> 
+                    <li *ngFor="let item of relatedToList" >
+                        {{item.name}}
+                    </li>
+                </ul>
+            </div>
+            <div  class="col-md-6">
+                <span class="msg-note">Status  </span> 
+                <ul class="mt-2"> 
+                    <li *ngFor="let item of statusList" >
+                        {{item.name}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</app-upload-data>
+

@@ -4,6 +4,7 @@ import { MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { InventoryControlService } from '@app/inventory-control/inventory-control.service';
+import { ItemEmployeesComponent } from '@app/shared/components/employee/item-employees/item-employees.component';
 import { HelperService } from '@app/shared/services/helper.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { StateDataService } from '@app/shared/services/state-data.service';
@@ -19,7 +20,7 @@ import { finalize } from 'rxjs';
 export class ItemListComponent {
   itemsList:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','name', 'view','action'];
+  displayedColumns: string[] = ['serial','name','emp', 'view','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -74,15 +75,6 @@ export class ItemListComponent {
     this.dataSource.sort = this.sort;
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-
   private updateTable(info: any) {
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, 10);
@@ -94,7 +86,6 @@ export class ItemListComponent {
     if(element){
     element.id = data.id;
     element.name = data.name;
-    element.companyid = data.companyid;
     this.dataSource._updateChangeSubscription();
     }
   }
@@ -102,7 +93,6 @@ export class ItemListComponent {
     const data1:any = {
       id:newdata.id,
       name : newdata.name,
-      companyid : newdata.companyid,
     }      
     this.dataSource.data.unshift(data1);  
     this.dataSource._updateChangeSubscription();
@@ -112,5 +102,26 @@ export class ItemListComponent {
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }
+  filterChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
+    }
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+  viewEmp(data:any){
+    const config = this.defaultdialogoptions;
 
+    config.data = {
+      element:data,
+      type:'employees'
+    };
+    config.minWidth='75vw';
+    const dialogRef = this.dialog.open(ItemEmployeesComponent, config);
+    
+  }
 }

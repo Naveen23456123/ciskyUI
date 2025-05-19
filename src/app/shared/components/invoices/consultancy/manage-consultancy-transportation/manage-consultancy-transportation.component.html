@@ -10,111 +10,35 @@
                 <app-loader [IsLoading]="isLoading"></app-loader>
             </div>
             <div class="wrapper">
-                <!-- <form [formGroup]="organizationForm" > -->
-                <form [formGroup]="tpForm" (submit)="submit()">
+                <form [formGroup]="tpForm">
                     <div class="row control-div">                       
-                       
-                        <div class="col-md-6">
-                            <mat-form-field>
-                                <mat-label>Description</mat-label>
-                                <textarea matInput formControlName="description"></textarea>
-                               
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Rate</mat-label>
-                                <input  type="number" matInput formControlName="rate">
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Construction Month</mat-label>
-                                <input  type="number" matInput formControlName="constructionmonths">
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Man Month</mat-label>
-                                <input   type="number" matInput formControlName="maintenancemonths">
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Contract Total Month(s)</mat-label>
-                                <input matInput >
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Contract Amount</mat-label>
-                                <input type="number" readonly matInput value="" >
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Previous Bill Month</mat-label>
-                                <input  type="number" matInput formControlName="previousbillmonths">
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Previous Bill Amount</mat-label>
-                                <input  type="number" matInput >
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Current Bill Month</mat-label>
-                                <input  type="number" matInput formControlName="currentbillmonths">
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Current Bill Amount</mat-label>
-                                <input  type="number" matInput >
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Cummulative Bill Month</mat-label>
-                                <input  type="number" matInput>
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Cummulative Bill Amount</mat-label>
-                                <input  type="number" matInput >
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Remaining Month</mat-label>
-                                <input  type="number" matInput >
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Remaining Amount</mat-label>
-                                <input  type="number" matInput >
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                    </div>
-                   
+                        <div class="wrapper" formArrayName="controls">
+                            <div *ngFor="let item of controls.controls; let i = index" [formGroupName]="i">
+                                <div class="row content-center control-div">
+                                    <div class="col-md-1">                       
+                                     {{i+1}}
+                                    </div> 
+                                    <div class="col-md-7">                       
+                                        <mat-form-field>
+                                            <mat-label>Description</mat-label>
+                                            <textarea  matInput readonly formControlName="description"></textarea>
+                                           
+                                        </mat-form-field>
+                                    </div>  
+                                    <div class="col-md-4">                       
+                                        <mat-form-field>
+                                            <mat-label>Actual Month</mat-label>
+                                            <input matInput type="number" formControlName="currentmonth">
+                                            <mat-error>Please provide month</mat-error>
+                                        </mat-form-field>
+                                    </div>                           
+                               </div>
+                            </div>
+                            <h5 *ngIf="controls.length==0">
+                                {{empty_message}}
+                            </h5>
+                        </div>
+                    </div>                   
                 </form>
             </div>
         </mat-card-content>
@@ -124,8 +48,11 @@
      <div class="row control-div">
         <div class=" button-row" align="right">
               <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-              <button class="submit-btn" (click)="submit()" mat-flat-button  color="primary">
-                  {{isEdit?'Update':'Submit'}}</button>
+              
+                  <app-submit-load-btn *ngIf="!isLoading && tpForm.get('controls')?.value.length>0"  (clickEvent)="submit()" [isClicked]="isBtnClicked"
+                  [isValid]="tpForm.valid || isBtnClicked"
+                  [isClicked]="isBtnClicked"
+                  text="{{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
       </div>
       </div>
     </mat-dialog-actions>

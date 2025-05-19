@@ -2,7 +2,7 @@ import {AfterViewInit, Component, ViewChild, inject} from '@angular/core';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import { finalize, take } from 'rxjs';
+import { finalize, Subscription, take } from 'rxjs';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { SessionService } from '@app/shared/services/session.service';
 import { HelperService } from '@app/shared/services/helper.service';
@@ -16,6 +16,7 @@ import { AttachLetterComponent } from '@app/shared/components/letters/attach-let
 import { UploadFileComponent } from '@app/shared/components/upload-file/upload-file.component';
 import { StateDataService } from '@app/shared/services/state-data.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
+import { ManageLetterDocComponent } from '@app/shared/components/letters/manage-letter-doc/manage-letter-doc.component';
 
 @Component({
   selector: 'app-letter-list',
@@ -27,14 +28,16 @@ export class LetterListComponent {
 
   lettersList:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','letterno','project', 'lettertype','subject','from','to',  'letterdate','status','details','action'];
+  displayedColumns: string[] = ['serial','letterno','project', 'lettertype','subject','from','to',  'letterdate','status','docs','action'];
   dataSource!: MatTableDataSource<any[]>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
   projectEntity:any;
+  isSearchLoading=false;
   isConsultantLetter:boolean=true;
+  subscription:Subscription = new Subscription();
   readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
@@ -50,7 +53,7 @@ export class LetterListComponent {
   }
   
   ngOnInit()  {
-    this.stateDataService.stateDataSubject.subscribe((data:any) => {   
+    this.subscription= this.stateDataService.stateDataSubject.subscribe((data:any) => {   
       if (data.event == 'letteredit'  && data.valid && data.value) {      
         this.updateRowData(data.value);
         this.notifyBarService.showsnackbar(data.msg);
@@ -61,6 +64,10 @@ export class LetterListComponent {
         this.stateDataService.stateDataSubject.next({});
       } else if(data.event == 'letterdelete' && data.valid && data.value){
         this.deleteRow(data.value.id);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      } else if(data.event == 'uploadlet' && data.valid && data.value){
+        this.addBulkLetters(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       }
@@ -77,7 +84,9 @@ export class LetterListComponent {
     }); 
   }
   
-    
+  ngOnDestroy(){
+    this.subscription.unsubscribe();
+  }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -92,7 +101,73 @@ export class LetterListComponent {
       this.dataSource.paginator.firstPage();
     }
   }
-  
+  searchObj:any={
+    projectid:'',
+    companyid:'',
+    exchangetypeId:'',
+    lettertypeid:'',
+    relatedtoid:'',
+    statusid:'',
+    startdate:'',
+    enddate:''
+  };
+  projectChange(data:any){ 
+    this.searchObj.projectid= data.value ?? '';
+    this.filterLetter();
+  } 
+  compChange(data:any){
+    this.searchObj.companyid= data.value ?? '';
+    this.searchObj.projectid= data.projectid ?? '';
+    this.filterLetter();
+  }
+  letterTypeChange(data:any){
+    this.searchObj.lettertypeid= data.value ?? '';
+    this.filterLetter();
+  }
+  relatedChange(data:any){
+    this.searchObj.relatedtoid= data.value ?? '';
+    this.filterLetter();
+  }
+  exchangeChange(data:any){
+    this.searchObj.exchangetypeId= data.value ?? '';
+    this.filterLetter();
+  }
+  generalChange(data:any){
+    this.searchObj.statusid= data.value ?? '';
+    this.filterLetter();
+  }
+  anyChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
+    }
+  } 
+  dateRangeChange(data:any){
+    if(data){
+      this.searchObj.startdate= data.start ?? '';
+      this.searchObj.enddate= data.end ?? '';
+    }
+    this.filterLetter();
+  }
+  addBulkLetters(data:any){
+    data.forEach((element:any) => {
+      this.addRowData(element);
+    });
+  }
+  filterLetter(){
+    this.isSearchLoading=true;
+    this.letterService.searchLetters(this.searchObj, '')
+    .pipe(finalize(() =>{ this.isLoading = false; this.isSearchLoading=false;}))
+    .subscribe((response: any) => {
+      if (response && response.success) {
+        this.lettersList = response.data;
+        this.dataSource = new MatTableDataSource(this.lettersList);               
+        this.updateTable(this.lettersList);                
+      }
+  }); 
+  }
   private updateTable(info: any) {
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, 10);
@@ -174,6 +249,15 @@ export class LetterListComponent {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
+  }
+ viewdocs(data:any){
+    this.defaultdialogoptions.data = {
+      pageGuid: this.route.snapshot.data['pageGuid'],      
+      element:{id:data}
+    };
+    this.defaultdialogoptions.minWidth='75vw';
+    const dialogRef = this.dialog.open(ManageLetterDocComponent, this.defaultdialogoptions);
+   
   }
 }
   

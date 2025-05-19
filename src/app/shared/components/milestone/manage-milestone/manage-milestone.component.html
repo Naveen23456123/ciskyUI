@@ -77,7 +77,7 @@
                               </mat-form-field>
                         </div> 
                         <div *ngIf="isEdit && isAchvd" class="col-md-6">                           
-                            <app-select-search className="form-field-80" *ngIf="letterInit" 
+                            <app-select-search className="form-field-80"  *ngIf="letterInit" 
                                         searchPlaceholder="Search Letter" emptySearchMessage="No Letter Found"
                                         label="Actual Letter" [defaultValue]="milestoneForm.controls['actualletterid'].value"
                                         (onValueChange)="letterSelect($event)" [valueArrays]="letterList">

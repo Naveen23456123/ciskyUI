@@ -1,0 +1,100 @@
+<div class="dialog" >
+    <mat-card>       
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> 
+            Upload your {{title}} recordes in below format : 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3> 
+        <mat-dialog-content class="mat-typography">
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <div class="my-box">
+                    <app-file-uploader UploadType="csv" (onfileUpload)="fileuploaded($event)">                
+                    </app-file-uploader>
+                    </div>
+                </div>
+            </div>
+               
+            <div class="  col-md-12">
+                <div class="row">
+                    
+                    <div class="col-md-9">
+                        Upload a CSV file to import new <b>{{title}}</b> details. Please ensure that your file follow the template 
+                        format.
+                    </div>
+                    <div class=" col-md-3">
+                        <button class="template-btn float-end" mat-raised-button (click)="download_sample()" color="primary">
+                            <mat-icon>save_alt</mat-icon> {{title}} Template
+                        </button>
+                    </div>
+                    <hr>
+                    <div *ngIf="errorLoadingCSV && errorLoadingCSV.length>0"
+                        class="col-md-12 warning-note control-div">
+                        <div class="col-md-12">
+                            <ul>
+                                <b>Look like, there are few issue in processing your CSV file. Please try again
+                                    after correction of below mentioned issues.</b>
+                                <li *ngFor="let error of errorLoadingCSV">
+                                    {{error}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div *ngIf="dataSource.filteredData.length>0" class="col-md-12 mt-4 mb-4">
+                        <div *ngIf="errorLoadingCSV.length==0" class="row col-md-12 control-div">
+                            <div class="col-md-12">
+                                    Have a look on the {{title}} details which are uploaded by you. Once clicked on
+                                    <b>Import </b> button all {{title}} will be uploading to your {{title}} collection.
+
+                                </div>
+                        </div>                       
+                        <div class="mat-elevation-z8 overflow-x-auto">
+                            <table mat-table [dataSource]="dataSource">
+                                <ng-container *ngFor="let column of displayedColumns">
+                                    
+                                    <ng-container [matColumnDef]="column">
+                                    <th mat-header-cell *matHeaderCellDef>{{ column | titlecase |replaceUnderscore  }}</th>
+                                    <td mat-cell [ngClass]="element.error? 'alert alert-danger':''"  *matCellDef="let element">{{ element[column] }}</td>
+                                    </ng-container>
+                                </ng-container>                                
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                                </table>                                   
+                        </div>
+                        <hr>
+                    </div>
+                    
+                    <div class="col-md-12 ">
+                        <b>Points to Remember : </b>
+                    </div>                        
+                    
+                    <div class="col-md-12 control-div">
+                        <span> 1. All Dates should be in DD-MM-YYYY format.</span>
+                    </div>
+                    <div class="col-md-12 row">
+                        <ng-content select="[metadata]"></ng-content>
+                    </div>
+                </div>                    
+            </div>     
+        
+        </mat-card-content>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">       
+            <div class="row control-div">
+                <div class=" button-row" align="right">
+                    
+                        <button class="cancel-btn" mat-stroked-button [mat-dialog-close]="false" color="default">Cancel</button>
+                       
+                        <app-submit-load-btn *ngIf="errorLoadingCSV && errorLoadingCSV.length==0 && dataSource && dataSource.data && dataSource.data.length>0"
+                        (clickEvent)="importData()" [isClicked]="isUploading"
+                         text="Import" ></app-submit-load-btn>
+              </div>
+              </div>
+          </mat-dialog-actions>
+    </mat-card>
+

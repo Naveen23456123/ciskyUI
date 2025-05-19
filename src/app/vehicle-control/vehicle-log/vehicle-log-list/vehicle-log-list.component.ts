@@ -3,6 +3,8 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
+import { ViewReadingImageComponent } from '@app/shared/components/vehicle/view-reading-image/view-reading-image.component';
 import { HelperService } from '@app/shared/services/helper.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { StateDataService } from '@app/shared/services/state-data.service';
@@ -18,13 +20,14 @@ import { finalize } from 'rxjs';
 export class VehicleLogListComponent {
   vehicleLogs:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','vehiclename','vehicleno', 'date','starttime','endtime','commencementoftrip','purposeandplace', 'action'];
+  displayedColumns: string[] = ['serial','vehiclename','vehicleno', 'date','starttime','endtime','commencementoftrip','purposeandplace','images', 'action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  isSearchLoading=false;
 
   readonly dialog = inject(MatDialog);
   
@@ -35,7 +38,8 @@ export class VehicleLogListComponent {
   };
 
  constructor(private vehicleService:VehicleService,private helperService:HelperService,
-  private stateDataService:StateDataService, private notifyBarService:NotifyBarService
+  private stateDataService:StateDataService, private notifyBarService:NotifyBarService,
+  private route:ActivatedRoute
  ){
   this.dataSource = new MatTableDataSource(this.vehicleLogs);
  }
@@ -56,7 +60,7 @@ export class VehicleLogListComponent {
       this.stateDataService.stateDataSubject.next({});
     }
   });
-    this.vehicleService.getVehicleLogDetailsByOrgId({ organizationId: this.activeOrgId }, '')
+    this.vehicleService.getVehicleLogDetailsByOrgId({}, '')
            .pipe(finalize(() => this.isLoading = false))
            .subscribe((response: any) => {
             if (response && response.success) {
@@ -70,6 +74,57 @@ export class VehicleLogListComponent {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
+  searchObj:any={};
+  projectChange(data:any){ 
+    this.searchObj.projectid= data.value ?? '';
+    this.filterVehicleLogs();
+   }
+   compChange(data:any){
+     this.searchObj.companyid= data.value ?? '';
+     this.searchObj.projectid= data.projectid ?? '';
+     this.filterVehicleLogs();
+   }
+   startTimeChange(data:any){
+    this.searchObj.starttime= data.value ?? '';
+    this.filterVehicleLogs();
+   }
+   endTimeChange(data:any){
+    console.log(data);
+    this.searchObj.endtime= data.value ?? '';
+    this.filterVehicleLogs();
+   }
+   dateRangeChange(data:any){
+    if(data){
+      this.searchObj.startdate= data.start ?? '';
+      this.searchObj.enddate= data.end ?? '';
+    }
+    this.filterVehicleLogs();
+  } 
+  vehicleChange(data:any){ 
+    this.searchObj.vehicleid= data.value ?? '';
+    this.filterVehicleLogs();
+   }
+
+   anyChange(data:any){
+     if(data && data.value){ 
+       this.dataSource.filter = data.value.trim().toLowerCase()
+     }
+     else{
+       this.dataSource.filter = '';
+     }
+   }
+
+   filterVehicleLogs(){
+    this.isSearchLoading=true;
+    this.vehicleService.getVehicleLogDetailsByOrgId(this.searchObj, '')
+           .pipe(finalize(() => {this.isLoading = false; this.isSearchLoading=false}))
+           .subscribe((response: any) => {
+            if (response && response.success) {
+              this.vehicleLogs = response.data;
+              this.dataSource = new MatTableDataSource(this.vehicleLogs);
+             }
+      });
+   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -86,6 +141,7 @@ export class VehicleLogListComponent {
     this.pageSize = this.helperService.getPageSize();
   }
   updateRowData(data: any) {
+    console.log(data);
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
       if(element) {
         element.id=data.id,
@@ -96,11 +152,11 @@ export class VehicleLogListComponent {
         element.fromtime=data.fromtime,
         element.totime=data.totime,
         element.initialreading=data.initialreading,
-        element.initialreadingimage=data.initialreadingimage,
+        element.initialimageaddress=data.initialimageaddress,
         element.endreading=data.endreading,
         element.vehiclename= data.vehiclename,
         element.vehiclenumber=data.vehiclenumber,
-        element.endreadingimage=data.endreadingimage,
+        element.endimageaddress=data.endimageaddress,
         element.purposeandplace=data.purposeandplace
         this.dataSource._updateChangeSubscription();
       }
@@ -115,9 +171,9 @@ export class VehicleLogListComponent {
       fromtime:data.fromtime,
       totime:data.totime,
       initialreading:data.initialreading,
-      initialreadingimage:data.initialreadingimage,
+      initialimageaddress:data.initialimageaddress,
       endreading:data.endreading,
-      endreadingimage:data.endreadingimage,
+      endimageaddress:data.endimageaddress,
       purposeandplace:data.purposeandplace,
       vehiclename:data.vehiclename,
       vehiclenumber:data.vehiclenumber
@@ -130,6 +186,14 @@ export class VehicleLogListComponent {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
+  }
+  viewImages(data:any){
+    this.defaultdialogoptions.data = {
+         pageGuid: this.route.snapshot.data['pageGuid'],
+         element:data
+       };
+       this.defaultdialogoptions.minWidth='55vw';
+       this.dialog.open(ViewReadingImageComponent, this.defaultdialogoptions); 
   }
 }
 

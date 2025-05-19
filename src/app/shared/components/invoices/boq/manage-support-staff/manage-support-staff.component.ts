@@ -1,5 +1,5 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
@@ -33,6 +33,8 @@ export class ManageSupportStaffComponent {
   designationLoad=false;
   employeeLoad=false;
   empName='';
+  manMonth=0;
+  isBtnClicked=false;
   readonly dialog = inject(MatDialog);
 
    private defaultdialogoptions:  MatDialogConfig = {
@@ -81,12 +83,12 @@ export class ManageSupportStaffComponent {
     this.renumerationForm = this.formbuilder.group({ 
       id: [''],
       projectid:[''],
-      designationid :[],
-      professionalid:[],
-      employeeid:[],
-      rate:[],
-      constructionperiod:[],
-      oandmperiod:[]
+      designationid :[,Validators.required],
+      professionalid:[,Validators.required],
+      employeeid:[,Validators.required],
+      rate:[,Validators.required],
+      constructionperiod:[,Validators.required],
+      oandmperiod:[,Validators.required]
     });
     this.sessionService.staffTypeSubject$.subscribe((response:any)=>{
       if(response){        
@@ -97,7 +99,7 @@ export class ManageSupportStaffComponent {
     this.subscription=  this.sessionService.projectEntitySubject$.pipe(untilDestroyed(this)).subscribe((projectEntity:any)=>{
         if(projectEntity){
           forkJoin({
-            designationAPI:this.designationService.getDesignationList({},''),
+            designationAPI:this.designationService.getDesignationPartials({projectId:projectEntity.projectId},''),
             employeeAPI:this.employeeService.getSiteEmployeeParital({projectId:projectEntity.projectId},''),          
           }).pipe(take(1), untilDestroyed(this), finalize(()=> this.isLoading=false)).subscribe((response:any)=>{
             if(response){
@@ -115,7 +117,11 @@ export class ManageSupportStaffComponent {
               }
               if (this.isEdit) {
                 this.setRenumerationForm(this.data.element);
-              }            
+              }
+              this.renumerationForm.valueChanges.subscribe(values => {
+                const { constructionperiod, oandmperiod } = values;
+                this.manMonth = (parseFloat(constructionperiod) || 0) + (parseFloat(oandmperiod) || 0);
+              });            
             }
           });         
         }
@@ -123,7 +129,8 @@ export class ManageSupportStaffComponent {
     }
     else {
       this.renumerationForm.patchValue({
-        id: this.data.element.id
+        id: this.data.element.id,
+        professionalid: this.data.element.professionalid
       });
       this.empName= this.data.element.employeename;
       this.isLoading=false;
@@ -156,18 +163,24 @@ export class ManageSupportStaffComponent {
   }
 
   submit(){ 
-    this.renumerationForm.value.employeename= this.empList.find(x=>x.id==this.renumerationForm.get('employeeid')?.value).empname;
-    this.renumerationForm.value.designation= this.designationList.find(x=>x.id==this.renumerationForm.get('designationid')?.value).name;
+    this.isBtnClicked=true;
+    let formData=this.renumerationForm.value;
+    formData.employeename= this.empList.find(x=>x.id==this.renumerationForm.get('employeeid')?.value).empname;
+    formData.designation= this.designationList.find(x=>x.id==this.renumerationForm.get('designationid')?.value).name;
+    formData.professionalid = this.renumerationForm.get('professionalid')?.value;
+
     this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
       if(response && response.projectId){
         this.renumerationForm.patchValue({projectid:response.projectId});
+        formData.projectid=response.projectId;
         if (this.isEdit) {
           this.staffService.updateBoqStaff(this.renumerationForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next: (response:any) => {
               if(response && response.success){
-                this.renumerationForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
-                this.dialogRef.close({ value: this.renumerationForm.value,professionalData: this.professionaList, valid: true });
+                //this.renumerationForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
+                formData.totalamount=response.data.totalamount;
+                this.dialogRef.close({ value: formData,professionalData: this.professionaList, valid: true });
               }
             },
             error: (err: any) => {
@@ -177,12 +190,14 @@ export class ManageSupportStaffComponent {
         } else {
           this.renumerationForm.value.id=null;
           this.staffService.createBoqStaff(this.renumerationForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
-                this.renumerationForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
-                this.renumerationForm.controls["id"].setValue(response.data.id);
-                this.dialogRef.close({ value: this.renumerationForm.value,professionalData: this.professionaList, valid: true });
+                formData.totalamount=response.data.totalamount;
+                //this.renumerationForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
+                //this.renumerationForm.controls["id"].setValue(response.data.id);
+                formData.id=response.data.id;
+                this.dialogRef.close({ value: formData,professionalData: this.professionaList, valid: true });
               } else {
                 this.dialogRef.close({ value: null, valid: false });
               }

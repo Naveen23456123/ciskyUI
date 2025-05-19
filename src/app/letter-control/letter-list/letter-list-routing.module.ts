@@ -6,6 +6,7 @@ import { AddLetterComponent } from '../add-letter/add-letter.component';
 import { EditLetterComponent } from '../edit-letter/edit-letter.component';
 import { DeleteLetterComponent } from '../delete-letter/delete-letter.component';
 import { LetterDetailsComponent } from '../letter-details/letter-details.component';
+import { UploadLetterComponent } from '../upload-letter/upload-letter.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,12 @@ const routes: Routes = [
         component: LetterDetailsComponent,
         loadChildren:()=>import('app/letter-control/letter-details/letter-details.module').then(x=>x.LetterDetailsModule),
         data:{pageGuid:'',type:'Details'}
+      },
+      {
+        path: 'upload-let',
+        component: UploadLetterComponent,
+        loadChildren:()=>import('app/letter-control/upload-letter/upload-letter.module').then(x=>x.UploadLetterModule),
+        data:{pageGuid:'',type:'Upload'}
       }
     ]
   }

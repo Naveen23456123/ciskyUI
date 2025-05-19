@@ -1,5 +1,5 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { LetterType } from '@app/shared/models/constant.config';
@@ -25,7 +25,7 @@ export class ManageConsultancyInvoiceComponent {
   deleteInvoice=false;
   projectList:{value:string,text:string}[] = [];
   readonly dialog = inject(MatDialog);
-
+  isClicked=false;
    private defaultdialogoptions:  MatDialogConfig = {
         minWidth: '900px', 
         disableClose: false,
@@ -68,9 +68,9 @@ export class ManageConsultancyInvoiceComponent {
     this.getTitle(this.data.type);
     this.invoiceForm = this.formbuilder.group({ 
       id: [''],
-      number :[],
-      projectid:[],
-      monthandyear:[]
+      number :[, Validators.required],
+      projectid:[, Validators.required],
+      monthandyear:[, Validators.required]
     });
     
     if (this.isEdit || this.deleteInvoice) {
@@ -83,7 +83,7 @@ export class ManageConsultancyInvoiceComponent {
     this.invoiceForm.setValue({
       id: data.id,
       number :data.number,
-      projectId:data.projectId,
+      projectid:data.projectid,
       monthandyear:data.monthandyear
     });
   }
@@ -91,10 +91,10 @@ export class ManageConsultancyInvoiceComponent {
     this.invoiceForm.patchValue({monthandyear:data.format()});   
   }
   submit(){   
-  
+    this.isClicked=true;
     if (this.isEdit) {
       this.invoiceService.updateInvoice(this.invoiceForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false;this.isClicked=false; })).subscribe({
           next:(response: any) => {
             if (response && response.success) 
               this.dialogRef.close({ value: this.invoiceForm.value, valid: true });
@@ -106,7 +106,7 @@ export class ManageConsultancyInvoiceComponent {
     } else {
       this.invoiceForm.value.id=null;
       this.invoiceService.createInvoice(this.invoiceForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false;this.isClicked=false; })).subscribe({
           next:(response: any) => {
             if (response && response.success)  {             
               this.invoiceForm.value.id=response.data.id;

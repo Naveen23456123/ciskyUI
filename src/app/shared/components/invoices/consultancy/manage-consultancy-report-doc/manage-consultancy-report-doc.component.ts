@@ -1,10 +1,10 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
+import { BOQ_INVOICE } from '@app/shared/models/constant.config';
 import { InvReportDocInterfaceService } from '@app/shared/services/external/invoice/inv-report-doc-interface.service';
-import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, take } from 'rxjs';
 
@@ -23,7 +23,9 @@ public data: any;
   rdForm: FormGroup = new FormGroup({});
   deleterd=false;
   readonly dialog = inject(MatDialog);
-
+  boqList:any[]=[];
+  empty_message= '';
+  isBtnClicked=false;
    private defaultdialogoptions:  MatDialogConfig = {
         minWidth: '700px', 
         disableClose: false,
@@ -33,7 +35,7 @@ public data: any;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageConsultancyReportDocComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService, private router: Router,private route: ActivatedRoute,
-    private notifibarservice: NotifyBarService, private reportDocService: InvReportDocInterfaceService){
+    private boqService: InvReportDocInterfaceService, private reportDocService: InvReportDocInterfaceService){
       this.data = data || {};
   }
   
@@ -68,44 +70,67 @@ public data: any;
     this.rdForm = this.formbuilder.group({ 
       id: [''],
       invoiceid:[],
-      description :[],
-      numberofreport:[],
-      numberofcopiesperreport:[],
-      ratepercopy:[],
-      previousbillmonths:[],
-      currentbillmonths:[]
+      controls: this.formbuilder.array([])
     });
-    
-    if (this.isEdit || this.deleterd) {
+    if(!this.deleterd){ 
+      this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((projectEntity:any)=>{
+        if(projectEntity && projectEntity.projectId){
+          if(!this.isEdit){  
+          this.boqService.getBoqReportDocListForInsertByProjectId({id:projectEntity.projectId }, '')
+              .pipe(finalize(() => this.isLoading = false))
+              .subscribe((response: any) => {
+                if(response && response.success){
+                  this.boqList= response.data;
+                  response.data.forEach((element:any) => {
+                    this.addControls(element,projectEntity.invoiceId);
+                  });
+                }
+                this.empty_message= BOQ_INVOICE.ALL_RECORD_INSERTED_MESSAGE;
+            });
+          } else {
+            this.addControls(this.data.element,projectEntity.invoiceId);
+            this.isLoading=false;
+          }
+        }
+      });       
+    } else {
       this.setrdForm(this.data.element);
-    }
-    this.isLoading=false;
+      this.isLoading=false;
+    }  
+  }
+  addControls(data:any,invId:any) {
+    const group = this.formbuilder.group({
+      id:[data.pid],
+      boqid:[data.id],
+      invoiceid:[invId],
+      description: [data.description],
+      currentbillmonths: [data.currentbillmonths,Validators.required]
+    });
+    this.controls.push(group);
   }
 
+  get controls() {
+    return this.rdForm.get('controls') as FormArray;
+  }
   setrdForm(data: any) {    
     this.rdForm.patchValue({
-      id: data.id,
-      description :data.description,
-      numberofreport:data.numberofreport,
-      numberofcopiesperreport:data.numberofcopiesperreport,
-      ratepercopy:data.ratepercopy,
-      previousbillmonths:data.previousbillmonths,
-      currentbillmonths:data.currentbillmonths
+      id: data.id
     });
   }
 
   ngOnDestroy(){}
 
   submit(){ 
+    this.isBtnClicked=true; 
     this.sessionService.invoiceEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
       if(response && response.invoiceId){
         this.rdForm.patchValue({invoiceid:response.invoiceId});
         if (this.isEdit) {
-          this.reportDocService.updateConsultantReportDoc(this.rdForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+          this.reportDocService.updateConsultantReportDoc(this.rdForm.get('controls')?.value[0], '')
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next: (response:any) => {
               if(response && response.success){
-                this.dialogRef.close({ value: this.rdForm.value, valid: true });
+                this.dialogRef.close({ value: this.rdForm.get('controls')?.value[0], valid: true });
               }
             },
             error: (err: any) => {
@@ -114,12 +139,24 @@ public data: any;
             });
         } else {
           this.rdForm.value.id=null;
-          this.reportDocService.createConsultantReportDoc(this.rdForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+          this.reportDocService.createConsultantReportDoc(this.rdForm.get('controls')?.value, '')
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
-                this.rdForm.controls["id"].setValue(response.data.id);
-                this.dialogRef.close({ value: this.rdForm.value, valid: true });
+                let responseData:any[]=[];
+                response.data.forEach((element:any) => {
+                  responseData.push({
+                    id:element.boqid,
+                    currentbillmonths:element.currentbillmonths,
+                    invoiceid:element.id,
+                    description:this.boqList.find((x:any)=>x.id==element.boqid)?.description,
+                    ratepercopy:this.boqList.find((x:any)=>x.id==element.boqid)?.ratepercopy,
+                    numberofreport:this.boqList.find((x:any)=>x.id==element.boqid)?.numberofreport,
+                    numberofcopiesperreport:this.boqList.find((x:any)=>x.id==element.boqid)?.numberofcopiesperreport,
+                    previousbillmonths:0
+                  })
+                });
+                this.dialogRef.close({ value: responseData, valid: true });
               } else {
                 this.dialogRef.close({ value: null, valid: false });
               }

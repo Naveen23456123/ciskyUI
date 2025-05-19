@@ -104,6 +104,9 @@ export class BoqTransportationListComponent {
       this.onAmountChange.emit(total);
       return total;
     }
+    add_desc(){
+      
+    }
   }
   
   

@@ -50,16 +50,17 @@ body{
 .mat-mdc-dialog-container .mat-mdc-dialog-title {
     --mdc-dialog-subhead-weight:500;
 }
-.mat-mdc-footer-row{
-    font-weight: 600 !important;
-    font-size: 17px !important;
-   
+.mat-mdc-footer-row,.mat-mdc-footer-row td{
+    font-weight: 600 !important;   
 }
 .pad-right-1{
     padding-right: 1rem;
 }
 .pad-left-1{
     padding-left: 1rem;
+}
+.pr-0{
+    padding-right: 0 !important;
 }
 .mat-mdc-tab{
     font-size: var(--mat-sys-title-medium-size) !important;
@@ -83,6 +84,13 @@ div.mat-mdc-select-panel {
     font-weight: 600;
     opacity: 0.6;
 }
+.overflow-x-auto {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .action-col-3{
+    width: 160px;
+  }
 .pad-0{
     padding: 0px !important;
   }
@@ -209,9 +217,10 @@ mat-card{
     margin-top: 14px !important;
     margin-left: 20px !important;
 }
-.mat-toolbar.mat-primary {   
-    background-image: linear-gradient(#09002d, #737373) !important;
+.mat-toolbar.mat-primary {      
+    background: var(--mdc-fab-small-container-color);
 }
+
 .card-title {    
     border-bottom: 1px solid gray !important;
     padding: 13px 0px 13px 0px !important;
@@ -366,7 +375,7 @@ mat-card{
     font-size: 15px;  
   }
   .mdc-data-table__cell, .mdc-data-table__header-cell {
-    padding: 10px 16px !important;
+    padding: 10px 10px !important;
 }
   .mat-mdc-row:nth-child(even){
     //background-color: #e9e9e9 ;

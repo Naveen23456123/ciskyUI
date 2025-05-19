@@ -21,7 +21,17 @@ export class InvOfcRentInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
-
+  getBoqOfficeRentListForInsertByProjectId(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqOfficeRent/Insert/'+param.id,
+       params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   createBoqOfficeRent(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'BoqOfficeRent',
@@ -59,7 +69,7 @@ export class InvOfcRentInterfaceService {
   getConsultantOfficeRentListByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'InvOfficeRent/'+param.id,
-       params: {},
+       params: param,
       headers: true,
       guid: '',
       request: {},

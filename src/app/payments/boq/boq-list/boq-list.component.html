@@ -7,11 +7,12 @@
             <div  *ngIf="!isLoading">    
                 <div class="mat-elevation-z8">
                       <div class="table-title-row">
-                        <mat-form-field>
-                          <mat-label>Filter</mat-label>
-                          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
-                        </mat-form-field>
-                       
+                        <div class="row col-md-12">
+                         
+                            <app-search-bar-controls   (OnAnyChange)="filterChange($event)"
+                            [isAny]="true" searchByAnyPlaceholder="Project Code / Name" ></app-search-bar-controls>
+                         
+                       </div>
                     </div> 
                       <div class="mat-elevation-z8">
                         <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
@@ -48,7 +49,8 @@
                           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
                           <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                              No BOQ(s) detail found at this moment.</td>
                           </tr>
                         </table>
                         <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>

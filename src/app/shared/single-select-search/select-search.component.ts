@@ -17,7 +17,7 @@ const log = new Logger('Single select search');
 export class SelectSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   /** select placeholder */
   @Input() selectPlaceholder: string = "Select";
-
+  @Input() showAllLabel=false;
   @Input() otherErrorMsg:string='';
   /** search textbox placeholder */
   @Input() searchPlaceholder: string = "Search";
@@ -38,6 +38,8 @@ export class SelectSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() multiple: Boolean = false;
 
   @Input() disable: Boolean = false;
+
+  @Input() isLoadingData:boolean=false;
 
   /** Value to emit when selection Chage */
   @Output() onValueChange: EventEmitter<any> = new EventEmitter();
@@ -88,9 +90,14 @@ export class SelectSearchComponent implements OnInit, AfterViewInit, OnDestroy {
       this.onValueChange.emit({ value: this.ArrayCtrl.value, valid: this.ArrayCtrl.valid });
      }
 
-    if(this.valueArrays)
+    if(this.valueArrays){
+      if(this.showAllLabel){
+        if(!this.valueArrays.find(x=>x.id==''))
+          this.valueArrays.unshift({id:'',name:'All'});
+      }
       // load the initial value list
       this.filteredvalueArray.next(this.valueArrays.slice());
+    }
     
     // listen for search field value changes
     this.ArrayFilterCtrl.valueChanges

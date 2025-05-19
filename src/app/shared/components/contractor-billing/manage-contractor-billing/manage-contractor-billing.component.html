@@ -116,7 +116,7 @@
                             </mat-form-field>
                         </div>  
                         <div class="col-md-3">                            
-                            <app-select-search className="form-field-80" *ngIf="letterInit" 
+                            <app-select-search className="form-field-80"  [isLoadingData]="!letterInit"
                                         searchPlaceholder="Search Letter" emptySearchMessage="No Letter Found"
                                         label="Submitted Letter" [defaultValue]="billingForm.get('billsubmittedletterid')?.value"
                                         (onValueChange)="billletterSelect($event)" [valueArrays]="letterList">
@@ -303,7 +303,7 @@
                             </mat-form-field>
                         </div> 
                         <div class="col-md-3">                           
-                            <app-select-search className="form-field-80" *ngIf="letterInit" 
+                            <app-select-search className="form-field-80" [isLoadingData]="!letterInit" 
                             searchPlaceholder="Search Letter" emptySearchMessage="No Letter Found"
                             label="Recommended Letter" [defaultValue]="billingForm.get('horecommletterid')?.value"
                             (onValueChange)="recommletterSelect($event)" [valueArrays]="letterList">

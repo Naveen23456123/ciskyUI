@@ -1,0 +1,16 @@
+<app-upload-data [isUploading]="isImporting"
+ [templateColumns]="allColumnsData"
+ [errorLoadingCSV]="errors"
+  (onImportClick)="importing($event)" >
+  <div metadata>
+    <div  class="col-md-6">
+        <span class="msg-note">Information</span>
+        <ul  class="mt-2">  
+            <li>In project field site project code should be filled.</li>
+            <li>Employee Code should be Valid.</li>
+            <li>The item name should match exactly with the names in the Item List.</li>              
+        </ul>
+    </div>
+</div>
+</app-upload-data>
+

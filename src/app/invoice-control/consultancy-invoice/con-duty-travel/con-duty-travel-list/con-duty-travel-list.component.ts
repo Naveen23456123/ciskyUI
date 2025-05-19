@@ -23,7 +23,8 @@ data:any[]=[];
   dataSource!: MatTableDataSource<any[]>;
   @Output() onAmountChange: EventEmitter<any> = new EventEmitter(); 
   readonly dialog = inject(MatDialog);
-    
+  amount:any|null;
+
     private defaultdialogoptions:  MatDialogConfig = {
       minWidth: '900px', 
       disableClose: false,
@@ -44,7 +45,7 @@ data:any[]=[];
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       } else if (data.event == 'condtadd' && data.valid && data.value) {
-        this.addRowData(data.value);
+        this.addBulkData(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       } else if(data.event == 'condtdelete' && data.valid && data.value){
@@ -52,10 +53,11 @@ data:any[]=[];
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       }
+      this.getTotalAmount();  
     });
     this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((invEntity:any)=>{
       if(invEntity && invEntity.invoiceId){
-        this.invoiceService.getConsultantDutyTravelListByProjectId({id:invEntity.invoiceId }, '')
+        this.invoiceService.getConsultantDutyTravelListByProjectId({id:invEntity.invoiceId,projectid:invEntity.projectId }, '')
         .pipe(finalize(() => this.isLoading = false))
         .subscribe((response: any) => {
           if (response && response.success) {
@@ -64,6 +66,7 @@ data:any[]=[];
               description : data.description,
               rate: data.rate,
               trips: data.trips,
+              invoiceid:data.invoiceid,
               previousbilltrips: data.previousbilltrips,
               currentbilltrips: data.currentbilltrips,
               contractamount:this.getattributes(data).contractamount,
@@ -95,56 +98,62 @@ data:any[]=[];
     }
   }
 
-    updateRowData(data: any) {
-      const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
-      if(element){
-      element.id = data.id;
-      element.description = data.description,
-      element.rate=data.rate,
-      element.trips= data.trips,
-      element.previousbilltrips= data.previousbilltrips,
-      element.currentbilltrips=data.currentbilltrips,
-      element.contractamount=this.getattributes(data).contractamount,
-      element.previousbill=this.getattributes(data).previousbill,
-      element.currentbill=this.getattributes(data).currentbill,
-      element.commulativetrips=this.getattributes(data).commulativetrips,
-      element.commulativeamount=this.getattributes(data).commulativeamount,
-      element.remainingtrip=this.getattributes(data).remainingtrip,
-      element.remainingamount=this.getattributes(data).remainingamount     
-      this.dataSource._updateChangeSubscription();
+  updateRowData(data: any) {
+    const element:any = this.dataSource.data.find((x:any) => x.invoiceid == data.id);
+    if(element){
+    element.currentbilltrips=data.currentbilltrips     
+    }
+    this.bindBilling(element);
+    this.dataSource._updateChangeSubscription();
+  }
+  addRowData(data: any) {
+    const data1:any = {
+      id: data.id,
+      description : data.description,
+      rate: data.rate,
+      trips: data.trips,
+      previousbilltrips: data.previousbilltrips,
+      currentbilltrips: data.currentbilltrips,
+      invoiceid:data.invoiceid,
+    }  
+    this.bindBilling(data1);    
+    this.dataSource.data.unshift(data1);  
+    this.dataSource._updateChangeSubscription();   
+  }
+  deleteRow(data: any) {
+    const index = this.dataSource.data.findIndex((x:any) => x.invoiceid == data);
+    this.dataSource.data.splice(index, 1);
+    this.dataSource._updateChangeSubscription();
+  }
+
+  bindBilling(data:any){
+    data.contractamount=(data.trips)*data.rate,
+    data.previousbill=data.previousbilltrips*data.rate,
+    data.currentbill=data.currentbilltrips*data.rate,
+    data.commulativetrips=data.previousbilltrips+data.currentbilltrips,
+    data.commulativeamount=(data.previousbilltrips+data.currentbilltrips)*data.rate,
+    data.remainingtrip=(data.trips)-(data.previousbilltrips+data.currentbilltrips),
+    data.remainingamount=((data.trips)*data.rate)-((data.previousbilltrips+data.currentbilltrips)*data.rate)   
+  }
+  addBulkData(data:any){
+    data.forEach((element:any) => {
+      this.addRowData(element);
+    });
+  }  
+  getTotalAmount() : any|null {
+    if(this.dataSource && this.dataSource.data){
+    this.amount ={
+        total:this.dataSource.data.map((t:any) => t.contractamount).reduce((acc, value) => acc + value, 0),
+        previous:this.dataSource.data.map((t:any) => t.previousbill).reduce((acc, value) => acc + value, 0),
+        current:this.dataSource.data.map((t:any) => t.currentbill).reduce((acc, value) => acc + value, 0),
+        commulative:this.dataSource.data.map((t:any) => t.commulativeamount).reduce((acc, value) => acc + value, 0),
+        remaining:this.dataSource.data.map((t:any) => t.remainingamount).reduce((acc, value) => acc + value, 0)
       }
     }
-    addRowData(data: any) {
-      const data1:any = {
-        id: data.id,
-        description : data.description,
-        rate: data.rate,
-        trips: data.trips,
-        previousbilltrips: data.previousbilltrips,
-        currentbilltrips: data.currentbilltrips,
-        contractamount:this.getattributes(data).contractamount,
-        previousbill:this.getattributes(data).previousbill,
-        currentbill:this.getattributes(data).currentbill,
-        commulativetrips:this.getattributes(data).commulativetrips,
-        commulativeamount:this.getattributes(data).commulativeamount,
-        remainingtrip:this.getattributes(data).remainingtrip,
-        remainingamount:this.getattributes(data).remainingamount        
-      }      
-      this.dataSource.data.unshift(data1);  
-      this.dataSource._updateChangeSubscription();
-    }
-    deleteRow(data: any) {
-      const index = this.dataSource.data.findIndex((x:any) => x.id == data);
-      this.dataSource.data.splice(index, 1);
-      this.dataSource._updateChangeSubscription();
-    }
-    getTotalAmount() {
-      let total= this.data.map(t => t.totalamount).reduce((acc, value) => acc + value, 0);
-      this.onAmountChange.emit(total);
-      return total;
-    }
+    this.onAmountChange.emit(this.amount);
+    return this.amount;
   }
-  
+}  
   
 
 

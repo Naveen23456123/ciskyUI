@@ -1,5 +1,5 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
@@ -8,6 +8,7 @@ import { ManageOfficeFurnitureComponent } from '../../boq/manage-office-furnitur
 import { finalize, take } from 'rxjs';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { InvOfcFurnitureInterfaceService } from '@app/shared/services/external/invoice/inv-ofc-furniture-interface.service';
+import { BOQ_INVOICE } from '@app/shared/models/constant.config';
 
 @Component({
   selector: 'app-manage-consultancy-office-furniture',
@@ -24,17 +25,18 @@ public data: any;
   ofForm: FormGroup = new FormGroup({});
   deleteof=false;
   readonly dialog = inject(MatDialog);
-
+  boqList:any[]=[];
    private defaultdialogoptions:  MatDialogConfig = {
         minWidth: '700px', 
         disableClose: false,
         data: {},
   };
-
+  empty_message= '';
+  isBtnClicked=false;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageOfficeFurnitureComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService, private router: Router,private route: ActivatedRoute,
-    private notifibarservice: NotifyBarService, private officeFurnitureService: InvOfcFurnitureInterfaceService){
+    private boqService: InvOfcFurnitureInterfaceService, private officeFurnitureService: InvOfcFurnitureInterfaceService){
       this.data = data || {};
   }
   
@@ -69,20 +71,48 @@ public data: any;
     this.ofForm = this.formbuilder.group({ 
       id: [''],
       invoiceid:[],
-      description :[],
-      unit:[],
-      quantity:[],
-      rateperunit:[],
-      previousbillmonths: [],
-      currentbillmonths: []
+      controls: this.formbuilder.array([])
     });
-    
-    if (this.isEdit || this.deleteof) {
+    if(!this.deleteof){
+      this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((projectEntity:any)=>{
+        if(projectEntity && projectEntity.projectId){
+          if(!this.isEdit){  
+            this.boqService.getBoqOfficeFurnitureListForInsertByProjectId({id:projectEntity.projectId }, '')
+                .pipe(finalize(() => this.isLoading = false))
+                .subscribe((response: any) => {
+                  if(response && response.success){
+                    this.boqList= response.data;
+                    response.data.forEach((element:any) => {
+                      this.addControls(element,projectEntity.invoiceId);
+                    });
+                  }
+                  this.empty_message= BOQ_INVOICE.ALL_RECORD_INSERTED_MESSAGE;
+            });
+          } else {
+            this.addControls(this.data.element,projectEntity.invoiceId);
+              this.isLoading=false;
+          }
+        }
+      }); 
+    } else {
       this.setofForm(this.data.element);
-    }
-    this.isLoading=false;
+      this.isLoading=false;
+    }  
+  }
+  addControls(data:any,invId:any) {
+    const group = this.formbuilder.group({
+      id:[data.pid],
+      boqid:[data.id],
+      invoiceid:[invId],
+      description: [data.description], 
+      currentbillmonths: [data.currentbillmonths,Validators.required]
+    });
+    this.controls.push(group);
   }
 
+  get controls() {
+    return this.ofForm.get('controls') as FormArray;
+  }
   setofForm(data: any) {    
     this.ofForm.patchValue({
       id: data.id,
@@ -98,15 +128,16 @@ public data: any;
   ngOnDestroy(){}
 
   submit(){ 
+    this.isBtnClicked=true; 
     this.sessionService.invoiceEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
       if(response && response.invoiceId){
         this.ofForm.patchValue({invoiceid:response.invoiceId});
         if (this.isEdit) {
-          this.officeFurnitureService.updateConsultantOfficeFurniture(this.ofForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+          this.officeFurnitureService.updateConsultantOfficeFurniture(this.ofForm.get('controls')?.value[0], '')
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next: (response:any) => {
               if(response && response.success){
-                this.dialogRef.close({ value: this.ofForm.value, valid: true });
+                this.dialogRef.close({ value: this.ofForm.get('controls')?.value[0], valid: true });
               }
             },
             error: (err: any) => {
@@ -115,12 +146,23 @@ public data: any;
             });
         } else {
           this.ofForm.value.id=null;
-          this.officeFurnitureService.createConsultantOfficeFurniture(this.ofForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+          this.officeFurnitureService.createConsultantOfficeFurniture(this.ofForm.get('controls')?.value, '')
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
-                this.ofForm.controls["id"].setValue(response.data.id);
-                this.dialogRef.close({ value: this.ofForm.value, valid: true });
+                let responseData:any[]=[];
+                response.data.forEach((element:any) => {
+                  responseData.push({
+                    id:element.boqid,
+                    currentbillmonths:element.currentbillmonths,
+                    invoiceid:element.id,
+                    description:this.boqList.find((x:any)=>x.id==element.boqid)?.description,
+                    rate:this.boqList.find((x:any)=>x.id==element.boqid)?.ratepermonth,
+                    months:this.boqList.find((x:any)=>x.id==element.boqid)?.numberofmonths,
+                    previousbillmonths:0
+                  })
+                });
+                this.dialogRef.close({ value: responseData, valid: true });
               } else {
                 this.dialogRef.close({ value: null, valid: false });
               }

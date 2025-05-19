@@ -28,7 +28,7 @@ public data: any;
   totalamount:number=0;
   projectName:any;
   deleteVehicle=false;
-
+  isBtnClicked=false;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageVehcileBillingComponent>, private formbuilder: FormBuilder,
     private sessionservice: SessionService,  private router: Router,
@@ -73,11 +73,13 @@ public data: any;
     this.vehicleForm = this.formbuilder.group({ 
       id: [''],
       projectid :[],
+      companyid :[],
       vehicleid:[, Validators.required],
       ownername:[],
       monthandyear:[],
       enddate:[],
       extrakm:[],
+      currentkm:[],
       fixedkm:[],
       extraamountperkmafterfixedkm:[],
       fixedamount:[]
@@ -102,10 +104,14 @@ public data: any;
     this.cdRef.detectChanges(); // ✅ Forces Angular to update
   }  
 
-    projectChange(data:any=null){    
+    projectChange(data:any=null){
+      console.log(data);    
       if(data && data.value){
         this.projectName=data.value.projectshortname;
-        this.vehicleForm.patchValue({projectid:data.value.id});
+        this.vehicleForm.patchValue({
+          projectid:data.value.id,
+          companyid:data.value.companyid
+        });
       }
       let projectId = this.vehicleForm.controls['projectid'].value;
       if(projectId){
@@ -150,6 +156,7 @@ public data: any;
       monthandyear:data.monthandyear,
       enddate:data.enddate,
       extrakm:data.extrakm,
+      currentkm:data.currentkm,
       fixedkm:data.fixedkm,
       extraamountperkmafterfixedkm:data.extraamountperkmafterfixedkm,
       fixedamount:data.fixedamount
@@ -165,14 +172,15 @@ public data: any;
     (parseFloat(this.vehicleForm.controls['extraamountperkmafterfixedkm'].value)* parseFloat(extrakm==null?0:extrakm));
   }
 
-  submit(){   
+  submit(){ 
+    this.isBtnClicked=true;  
     let formsValue=this.vehicleForm.value;
     formsValue.project=this.projectName;
     formsValue.vehiclename= this.vehicleList.find(x=>x.id== this.vehicleForm.get('vehicleid')?.value).name;
     formsValue.vehicleno= this.vehicleList.find(x=>x.id== this.vehicleForm.get('vehicleid')?.value).number;  
     if (this.isEdit) {
       this.vehicleBillingService.updateVehicleBilling(this.vehicleForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false; })).subscribe({
           next: (response:any) => {
           if(response && response.success)
             this.dialogRef.close({ value: formsValue, valid: true });
@@ -184,7 +192,7 @@ public data: any;
     } else {
       this.vehicleForm.value.id=null;
       this.vehicleBillingService.createVehicleBilling(this.vehicleForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false; })).subscribe({
           next:(response: any) => {
           if (response && response.success) {
             formsValue.id=response.data.id;

@@ -1,0 +1,34 @@
+<div class="dialog">
+    <mat-card>
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> Reading Images 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3> 
+      <mat-card-content class="pb-0">
+        <div class="load-wrap" *ngIf="isLoading">
+            <app-loader [IsLoading]="isLoading"></app-loader>
+        </div>
+        <div *ngIf="!isLoading">  
+            <div class="wrapper row mb-4">
+                <div class="col-md-6 content-center">
+                    <h6 class="sub-heading">Initial Reading </h6>
+                </div>
+                <div class="col-md-6 content-center">
+                    <h6 class="sub-heading">End Reading</h6>
+                </div>
+                <div class="col-md-6 content-center">
+                     
+                    <img [src]="startReading" height="100" width="100" />
+                </div>
+                <div class="col-md-6 content-center">
+                  
+                    <img [src]="endReading" height="100" width="100" />
+                </div>
+            </div>
+          
+        </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+            

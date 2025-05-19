@@ -30,6 +30,17 @@ export class DesignationInterfaceService {
    }
    return this.coreApi.standardService(standardAttribute);
  }
+ getDesignationPartials(param: any, guid: string) {
+  const standardAttribute: ServiceAttributeModel = {
+   url: 'Designation/Partial',
+   params: param,
+   headers: true,
+   guid: '',
+   request: {},
+   action: Operation.GET
+  }
+  return this.coreApi.standardService(standardAttribute);
+}
   createDesignation(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Designation',

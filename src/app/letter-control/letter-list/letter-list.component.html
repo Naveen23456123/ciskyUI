@@ -1,109 +1,125 @@
 <div class="container">
+  <mat-card>
+      <mat-card-content>
+          <div class="load-wrap" *ngIf="isLoading">
+              <app-loader [IsLoading]="isLoading"></app-loader>
+          </div>
+          <div  *ngIf="!isLoading"> 
+              <div class="mat-elevation-z8">
+                    <div class="table-title-row">                        
+                    <div class="row content-center">
+                      <div class="col-md-10">                         
+                          <app-search-bar-controls [isSubCompany]="true" [isRelatedTo]="true" [isDateRange]="true"
+                          [isExchangeType]="true"  [isGeneralStatus]="true"  [isLetterType]="true"
+                          [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Letter Number / From / To "
+                          (OnProjectChange)="projectChange($event)"
+                          (OnLetterTypeChange)="letterTypeChange($event)"
+                          (OnRelatedToChange)="relatedChange($event)"
+                          (OnExchangeTypeChange)="exchangeChange($event)"
+                          (OnGeneralStatusChange)="generalChange($event)"
+                          (OnSubCompanyChange)="compChange($event)" 
+                          (OnAnyChange)="anyChange($event)"
+                          (OnDateRangeChange)="dateRangeChange($event)" 
+                          ></app-search-bar-controls>                         
+                    </div>       
+                    <div class="col-md-2 button-row main-btn-row d-flex justify-content-end">
+                      <app-upload-btn routerLink="upload-let" ></app-upload-btn>
+                      <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
+                        <mat-icon>add box</mat-icon> Letter
+                      </button> 
+                      <app-download-csv (clickEvent)="export()" ></app-download-csv>   
+                    </div>
+                  </div>
+                  </div> 
+              </div>
+          </div>
+      </mat-card-content>
+  </mat-card>
+
+  <div class="wrapper">
     <mat-card>
-        <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
-            </div>
-            <div  *ngIf="!isLoading"> 
-                <div class="mat-elevation-z8">
-                      <div class="table-title-row">
-                        <mat-form-field>
-                          <mat-label>Filter</mat-label>
-                          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
-                        </mat-form-field>
-                        <div class="button-row">  
-                          <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
-                           <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
-                             <mat-icon>add box</mat-icon> Letter
-                          </button> 
-                          <app-download-csv (clickEvent)="export()" ></app-download-csv>                         
-                      </div>
-                    </div> 
-                    <app-no-data *ngIf="dataSource?.data?.length==0" message="No Letter(s) found at this moment !!" ></app-no-data>
-                    <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">     
-                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
-                      
-                          <ng-container matColumnDef="serial">
-                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
-                          </ng-container>
-                      
-                          <!-- contractName Column -->
-                          <ng-container matColumnDef="letterno">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Letter Number </th>
-                            <td mat-cell *matCellDef="let row"> {{row.letternumber}} </td>
-                          </ng-container>
-                          <ng-container matColumnDef="project">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
-                            <td mat-cell *matCellDef="let row">{{row.project }} </td>
-                          </ng-container>
-                          <!-- Name Column -->
-                          <ng-container matColumnDef="lettertype">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Letter Type </th>
-                            <td mat-cell *matCellDef="let row"> {{row.lettertype }} </td>
-                          </ng-container>    
-                          <ng-container matColumnDef="subject">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Subject </th>
-                            <td mat-cell *matCellDef="let row"> {{row.subject  }} </td>
-                          </ng-container>                      
-                        
-                          <ng-container matColumnDef="from">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Letter From </th>
-                            <td mat-cell *matCellDef="let row">{{row.letterfrom  }} </td>
-                          </ng-container>
-                          <ng-container matColumnDef="to">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Letter To </th>
-                            <td mat-cell *matCellDef="let row"> {{row.letterto  }} </td>
-                          </ng-container>                      
-                        
-                          <ng-container matColumnDef="letterdate">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Letter Date </th>
-                            <td mat-cell *matCellDef="let row">{{row.letterdate | formatDate }} </td>
-                          </ng-container>
-                          <ng-container matColumnDef="status">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Status</th>
-                            <td mat-cell *matCellDef="let row">{{row.status}} </td>
-                          </ng-container>
-                          <ng-container matColumnDef="details">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Details</th>
-                            <td mat-cell *matCellDef="let row">
-                             
-                                <app-view-btn [state]="row" [routerLink]="['/letters/details',row.id]" ></app-view-btn>
-                            </td>
-                          </ng-container>
-                          <ng-container matColumnDef="action">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action</th>
-                            <td class="action-col" mat-cell *matCellDef="let row"> 
-                              <div class="button-row">
-                                <button class="edit-table-btn" [state]="row"
-                                [routerLink]="['/letters/edit',row.id]" matTooltip="Edit" mat-mini-fab>
-                                <mat-icon>edit</mat-icon> 
-                                </button>
-                                <button class="delete-table-btn" [state]="row"
-                                [routerLink]="['/letters/delete',row.id]" matTooltip="Delete" mat-mini-fab >
-                                <mat-icon>delete_forever</mat-icon> 
-                                </button>
-                              </div>
-                            </td>
-                          </ng-container>
-                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                          
-                          <!-- Row shown when there is no matching data. -->
-                          <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
-                              No Letters Details found at this moment.</td>
-                          </tr>
-                        </table>
-                        <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
-                        </mat-paginator>
-                        <!-- <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
-                      </div>
-                      
-                      
-                </div>
-            </div>
-        </mat-card-content>
+      <mat-card-content>
+        <div class="load-wrap" *ngIf="isSearchLoading">
+          <app-loader [IsLoading]="isSearchLoading"></app-loader>
+      </div>
+        <app-no-data *ngIf="dataSource?.data?.length==0 && !isLoading" message="No Letter(s) found at this moment !!" ></app-no-data>
+        <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">     
+            <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+          
+              <ng-container matColumnDef="serial">
+                <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+              </ng-container>
+          
+              <!-- contractName Column -->
+              <ng-container matColumnDef="letterno">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Letter Number </th>
+                <td mat-cell *matCellDef="let row"> {{row.letternumber}} </td>
+              </ng-container>
+              <ng-container matColumnDef="project">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
+                <td mat-cell *matCellDef="let row">{{row.project }} </td>
+              </ng-container>
+              <!-- Name Column -->
+              <ng-container matColumnDef="lettertype">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Letter Type </th>
+                <td mat-cell *matCellDef="let row"> {{row.lettertype }} </td>
+              </ng-container>    
+              <ng-container matColumnDef="subject">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Subject </th>
+                <td mat-cell *matCellDef="let row"> {{row.subject  }} </td>
+              </ng-container>                      
+            
+              <ng-container matColumnDef="from">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Letter From </th>
+                <td mat-cell *matCellDef="let row">{{row.letterfrom  }} </td>
+              </ng-container>
+              <ng-container matColumnDef="to">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Letter To </th>
+                <td mat-cell *matCellDef="let row"> {{row.letterto  }} </td>
+              </ng-container>                      
+            
+              <ng-container matColumnDef="letterdate">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Letter Date </th>
+                <td mat-cell *matCellDef="let row">{{row.letterdate | formatDate }} </td>
+              </ng-container>
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Status</th>
+                <td mat-cell *matCellDef="let row">{{row.status}} </td>
+              </ng-container>   
+              <ng-container matColumnDef="docs">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Document(s) </th>
+                <td mat-cell *matCellDef="let row">                               
+                  <app-document-manage-btn (clickEvent)="viewdocs(row.id)"></app-document-manage-btn>
+                </td>
+              </ng-container>                      
+              <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Action</th>
+                <td class="action-col-3" mat-cell *matCellDef="let row"> 
+                  <div class="button-row">                              
+                    <app-view-btn [state]="row" [routerLink]="['/letters/details',row.id]"></app-view-btn>                          
+                    <app-edit-btn [state]="row"
+                    [routerLink]="['/letters/edit',row.id]" ></app-edit-btn>                              
+                    <app-delete-btn [state]="row"
+                    [routerLink]="['/letters/delete',row.id]"></app-delete-btn>
+                  </div>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              
+              <!-- Row shown when there is no matching data. -->
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                  No Letters Details found at this moment.</td>
+              </tr>
+            </table>
+            <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+            </mat-paginator>
+            <!-- <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
+          </div>
+      </mat-card-content>
     </mat-card>
+  </div>
 </div>
 <router-outlet></router-outlet>

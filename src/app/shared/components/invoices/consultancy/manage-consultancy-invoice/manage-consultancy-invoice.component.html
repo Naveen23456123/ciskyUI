@@ -17,7 +17,7 @@
                             <mat-form-field>
                                 <mat-label>Invoice Number</mat-label>
                                 <input matInput formControlName="number">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Invoice Number</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-6" *ngIf="!isEdit">
@@ -30,8 +30,11 @@
                         </div>
                         <div class="col-md-12 button-row" align="right">
                                 <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-                                <button class="submit-btn" mat-flat-button [disabled]="!invoiceForm.valid" color="primary">
-                                    {{isEdit?'Update':'Submit'}}</button>
+                                    
+                                     <app-submit-load-btn  (clickEvent)="submit()" [isClicked]="isClicked"
+                                        [isValid]="invoiceForm.valid || isClicked"
+                                        [isClicked]="isClicked"
+                                        text="{{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
                         </div>
                     </div>
                     

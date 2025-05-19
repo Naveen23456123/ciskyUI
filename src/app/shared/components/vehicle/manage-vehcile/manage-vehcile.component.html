@@ -163,10 +163,8 @@
         <div class="row control-div">
             <div class=" button-row" align="right">
                   <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-                  <button [ngClass]="vehicleForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!vehicleForm.valid || isBtnClicked" (click)="submit()" color="primary">
-                    <span [hidden]="isBtnClicked">{{isEdit?'Update':'Submit'}}</span> 
-                    <app-btn-loader [IsLoading]="isBtnClicked"></app-btn-loader>
-                    </button>
+                  <app-submit-load-btn  [isClicked]="isBtnClicked" [isValid]="vehicleForm.valid || isBtnClicked"
+                  text=" {{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
           </div>
           </div>
       </mat-dialog-actions>

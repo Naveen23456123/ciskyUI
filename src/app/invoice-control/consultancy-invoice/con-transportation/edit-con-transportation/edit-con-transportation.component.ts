@@ -32,11 +32,17 @@ readonly dialog = inject(MatDialog);
   };
 
   openDialog(): void {
+    console.log(window.history.state);
     const config = this.defaultdialogoptions;
     config.data = {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type'],
-      element: window.history.state
+      element: {
+        pid:window.history.state.invoiceid,
+        description:window.history.state.description,
+        id:window.history.state.id,
+        currentmonth:window.history.state.currentbillmonths
+      }
     };
     const dialogRef = this.dialog.open(ManageConsultancyTransportationComponent, config);
     dialogRef.afterClosed().subscribe((data) => {

@@ -10,13 +10,12 @@
                 <app-loader [IsLoading]="isLoading"></app-loader>
             </div>
             <div class="wrapper">
-                <!-- <form [formGroup]="organizationForm" > -->
-                <form [formGroup]="renumerationForm" (submit)="submit()">
+                <form [formGroup]="renumerationForm">
                     <div class="row control-div">
                         <div class="col-md-6">                            
-                            <app-select-search *ngIf="designationLoad" 
-                            searchPlaceholder="Search Designation" [defaultValue]="renumerationForm.get('designationid')?.value" emptySearchMessage="No Designation Found"
-                               label="Designation"
+                            <app-select-search *ngIf="designationLoad"  
+                            searchPlaceholder="Search Designation" [required]="true" [defaultValue]="renumerationForm.get('designationid')?.value" emptySearchMessage="No Designation Found"
+                               label="Designation" selectPlaceholder="Designation"
                             (onValueChange)="desgSelect($event)" [valueArrays]="designationList">
                              </app-select-search>
                         </div>  
@@ -28,13 +27,14 @@
                                         {{field.name}}
                                     </mat-option>
                                 </mat-select>
+                                <mat-error>Please select Professional</mat-error>
                             </mat-form-field>
                           
                         </div> 
                         <div class="col-md-6">                          
                             <app-select-search *ngIf="employeeLoad" 
-                            searchPlaceholder="Search employee" [defaultValue]="renumerationForm.get('employeeid')?.value" emptySearchMessage="No Employee Found"
-                               label="Employee"
+                            searchPlaceholder="Search employee" [required]="true" [defaultValue]="renumerationForm.get('employeeid')?.value" emptySearchMessage="No Employee Found"
+                               label="Employee" selectPlaceholder="Employee"
                             (onValueChange)="empSelect($event)" [valueArrays]="empList">
                              </app-select-search>
                         </div>  
@@ -42,34 +42,37 @@
                             <mat-form-field>
                                 <mat-label>Rate</mat-label>
                                 <input type="number" matInput formControlName="rate">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide rate.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-6">
                             <mat-form-field>
                                 <mat-label>Construction Period</mat-label>
                                 <input type="number" matInput formControlName="constructionperiod">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide construction period</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-6">
                             <mat-form-field>
                                 <mat-label>O&M Period</mat-label>
                                 <input type="number" matInput formControlName="oandmperiod">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide O&M period</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-6">
                             <mat-form-field>
                                 <mat-label>No. Of Man Month</mat-label>
-                                <input matInput >
+                                <input matInput readonly [value]="manMonth" >
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-12 button-row" align="right">
-                                <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-                                <button class="submit-btn" mat-flat-button [disabled]="!renumerationForm.valid" color="primary">
-                                    {{isEdit?'Update':'Submit'}}</button>
+                                <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>                                
+                                    <app-submit-load-btn (clickEvent)="submit()" [isClicked]="isBtnClicked"
+                                    [isValid]="renumerationForm.valid || isBtnClicked"
+                                    [isClicked]="isBtnClicked"
+                                    text="{{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
+
                         </div>
                     </div>
                     
@@ -88,7 +91,7 @@
             <div class="wrapper">
                 <mat-dialog-content>
                     <span class="mat-typography alert-content">
-                        Are you sure you want to delete ?. This operation can
+                        Are you sure you want to delete <span class="vw-lbl">{{empName}}</span>?. This operation can
                         not be un-done once performed sucessfully.
                     </span>
                 </mat-dialog-content>

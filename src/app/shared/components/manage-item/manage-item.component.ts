@@ -25,7 +25,7 @@ export class ManageItemComponent {
   itemForm: FormGroup = new FormGroup({});
   deleteItem=false;
   subCompanyList:any[] = [];
-
+  isClicked=false;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageItemComponent>, private formbuilder: FormBuilder,
     private sessionservice: SessionService,  private router: Router,
@@ -63,7 +63,6 @@ export class ManageItemComponent {
     this.getTitle(this.data.type);
     this.itemForm = this.formbuilder.group({ 
       name: ['',Validators.required],
-      companyid:['',Validators.required],
       id :[]
     });
     this.companyService.getSubCompanyListByOrgId({},'')
@@ -80,15 +79,15 @@ export class ManageItemComponent {
   setCompanyForm(data: any) {    
     this.itemForm.setValue({
       name: data.name,
-      companyid:data.companyid,
       id:data.id
     });
   }
 
   submit(){   
+    this.isClicked=true;
     if (this.isEdit) {
       this.itemService.updateItem(this.itemForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false; this.isClicked=false })).subscribe({
           next:(response: any) => {
             if (response && response.success) 
               this.dialogRef.close({ value: this.itemForm.value, valid: true });
@@ -100,7 +99,7 @@ export class ManageItemComponent {
     } else {
       this.itemForm.value.id=null;
       this.itemService.createItem(this.itemForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false;this.isClicked=false })).subscribe({
           next:(response: any) => {
             if (response && response.success)  {
               this.itemForm.controls["id"].setValue(response.data.id);
@@ -127,6 +126,26 @@ export class ManageItemComponent {
           this.dialogRef.close(err);
         }
       });
+  }
+  downloadCSV() {
+    const headers = ['Name', 'Department'];
+    const data = [
+      ['John Doe', 'Sales'],
+      ['Jane Smith', 'Engineering'],
+      ['Dropdown Options:', 'Sales | Engineering | HR'] // shows dropdown-like hint
+    ];
+  
+    const csvContent = [headers, ...data]
+      .map(e => e.join(','))
+      .join('\n');
+  
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+  
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'template.csv');
+    link.click();
   }
 }
 

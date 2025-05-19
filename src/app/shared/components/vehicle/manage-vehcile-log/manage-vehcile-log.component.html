@@ -22,7 +22,7 @@
                                 <mat-label>Vehicle Name</mat-label>
                                 <mat-select formControlName="vehicleid">
                                     <mat-option  *ngFor="let field of vehicleList" [value]="field.id">
-                                        {{field.name}}
+                                        {{field.name +' - '+field.number}}
                                     </mat-option>
                                 </mat-select>
                                 <mat-error *ngIf="!vehicleForm.get('projectid')?.value">Please select Project first</mat-error>
@@ -74,14 +74,14 @@
                         <div class=" col-md-4">
                             <mat-form-field >
                                 <mat-label>Initial Reading</mat-label>
-                                <input matInput formControlName="initialreading">
+                                <input  type="number" matInput formControlName="initialreading">
                                 <mat-error>Please enter Initial Reading</mat-error>
                             </mat-form-field> 
                         </div> 
                         <div class=" col-md-4">
                                 <mat-form-field>
                                   <mat-label>End Reading</mat-label>
-                                  <input matInput formControlName="endreading">
+                                  <input type="number" matInput formControlName="endreading">
                                   <mat-error *ngIf="vehicleForm.get('endreading')?.hasError('required')">
                                     Please enter End Reading
                                   </mat-error>
@@ -90,6 +90,13 @@
                                   </mat-error>
                                 </mat-form-field>               
                         </div> 
+                        <div class=" col-md-4">
+                            <mat-form-field >
+                                <mat-label>Total Km</mat-label>
+                                <input matInput readonly [value]="totalKm">
+                                <mat-error>Please enter Initial Reading</mat-error>
+                            </mat-form-field> 
+                        </div>
                         <div class="col-md-4">
                             <mat-form-field>
                                 <mat-label>Purpose And Place</mat-label>
@@ -107,8 +114,9 @@
                         </div> 
                         <div class="col-md-12 button-row" align="right">
                             <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-                            <button [ngClass]="vehicleForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!vehicleForm.valid" color="primary">
-                                {{isEdit?'Update':'Submit'}}</button>
+                           
+                                <app-submit-load-btn  [isClicked]="isBtnClicked" [isValid]="vehicleForm.valid || isBtnClicked"
+                               text=" {{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
                     </div>
                     </div>
                 </form>

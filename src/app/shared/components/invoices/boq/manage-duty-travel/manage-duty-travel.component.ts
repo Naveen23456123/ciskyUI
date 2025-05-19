@@ -1,5 +1,5 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
@@ -24,7 +24,7 @@ public data: any;
   dtForm: FormGroup = new FormGroup({});
   deletedt=false;
   readonly dialog = inject(MatDialog);
-
+  isBtnClicked=false;
    private defaultdialogoptions:  MatDialogConfig = {
         minWidth: '700px', 
         disableClose: false,
@@ -69,9 +69,9 @@ public data: any;
     this.dtForm = this.formbuilder.group({ 
       id: [''],
       projectid:[],
-      description :[],
-      numberofminimumtrips:[],
-      ratepertrip:[]
+      description :[,Validators.required],
+      numberofminimumtrips:[,Validators.required],
+      ratepertrip:[,Validators.required]
     });
     
     if (this.isEdit || this.deletedt) {
@@ -91,13 +91,14 @@ public data: any;
 
  ngOnDestroy(){}
 
-  submit(){     
+  submit(){   
+    this.isBtnClicked=true;  
     this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
       if(response && response.projectId){
         this.dtForm.patchValue({projectid:response.projectId});       
         if (this.isEdit) {
           this.dutyTravelService.updateBoqDutyTravel(this.dtForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next: (response:any) => {
               if(response && response.success){
                 this.dtForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
@@ -111,7 +112,7 @@ public data: any;
         } else {          
           this.dtForm.value.id=null;
           this.dutyTravelService.createBoqDutyTravel(this.dtForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
                 this.dtForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));

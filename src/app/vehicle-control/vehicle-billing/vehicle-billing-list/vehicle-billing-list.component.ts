@@ -1,4 +1,4 @@
-import { Component,ViewChild,inject} from '@angular/core';
+import { ChangeDetectorRef, Component,ViewChild,inject} from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -25,6 +25,7 @@ export class VehicleBillingListComponent {
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  isSearchLoading=false;
 
   readonly dialog = inject(MatDialog);
   
@@ -35,7 +36,8 @@ export class VehicleBillingListComponent {
   };
 
  constructor(private vehicleService:VehicleService,private helperService:HelperService,
-  private stateDataService:StateDataService, private notifyBarService:NotifyBarService
+  private stateDataService:StateDataService, private notifyBarService:NotifyBarService,
+  private cdr : ChangeDetectorRef
  ){
   this.dataSource = new MatTableDataSource(this.vehicleBilings);
  }
@@ -56,19 +58,20 @@ export class VehicleBillingListComponent {
       this.stateDataService.stateDataSubject.next({});
     }
   });
-    this.vehicleService.getVehicleBillingDetailsByOrgId({ organizationId: this.activeOrgId }, '')
-           .pipe(finalize(() => this.isLoading = false))
-           .subscribe((response: any) => {
-             if (response && response.success) {
-              this.vehicleBilings = response.data;
-              this.dataSource = new MatTableDataSource(this.vehicleBilings);
-             }
-      });
+    this.vehicleService.getVehicleBillingDetailsByOrgId({}, '')
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe((response: any) => {
+        if (response && response.success) {
+        this.vehicleBilings = response.data;
+        this.dataSource = new MatTableDataSource(this.vehicleBilings);
+        }
+    });
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.cdr.detectChanges();
   }
 
   applyFilter(event: Event) {
@@ -129,6 +132,47 @@ export class VehicleBillingListComponent {
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }
+  searchObj:any={};
+  projectChange(data:any){ 
+    this.searchObj.projectid= data.value ?? '';
+    this.filterVehicleLogs();
+   }
+   compChange(data:any){
+     this.searchObj.companyid= data.value ?? '';
+     this.searchObj.projectid= data.projectid ?? '';
+     this.filterVehicleLogs();
+   }
+
+  vehicleChange(data:any){ 
+    this.searchObj.vehicleid= data.value ?? '';
+    this.filterVehicleLogs();
+   }
+
+   anyChange(data:any){
+     if(data && data.value){ 
+       this.dataSource.filter = data.value.trim().toLowerCase()
+     }
+     else{
+       this.dataSource.filter = '';
+     }
+   }
+   monthYearChange(data:any){
+    this.searchObj.monthandyear= data.value ?? '';
+    this.filterVehicleLogs();
+   }
+
+   filterVehicleLogs(){
+    this.isSearchLoading=true;
+    this.vehicleService.getVehicleBillingDetailsByOrgId(this.searchObj, '')
+    .pipe(finalize(() => {this.isLoading = false; this.isSearchLoading=false}))
+    .subscribe((response: any) => {
+      if (response && response.success) {
+      this.vehicleBilings = response.data;
+      this.dataSource = new MatTableDataSource(this.vehicleBilings);
+      }
+      this.cdr.detectChanges();
+  });
+   }
 }
 
 

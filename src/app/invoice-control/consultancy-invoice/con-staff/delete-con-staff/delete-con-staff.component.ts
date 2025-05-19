@@ -35,14 +35,17 @@ ngOnInit(): void {
     this.defaultdialogOptionConfig.data = {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type'],
-      element: window.history.state
+      element:{
+        id:window.history.state.invoiceid,
+        professionalid:window.history.state.professionalid,
+      }
     };
     const dialogRef = this.dialog.open(ManageConsultancyStaffComponent, this.defaultdialogOptionConfig);
     dialogRef.afterClosed().subscribe((data) => {
       if (data.valid) {
         let navigationExtras: NavigationExtras = {
           relativeTo: this.route,
-          state: { value: data.value, event: 'contstaffdelete', valid: true, msg: 'The Staff invoice details removed successfully.' }
+          state: { value: data.value,professionalData:data.professionalData, event: 'contstaffdelete', valid: true, msg: 'The Staff invoice details removed successfully.' }
         };
         this.router.navigate(['../../'], navigationExtras);
       }

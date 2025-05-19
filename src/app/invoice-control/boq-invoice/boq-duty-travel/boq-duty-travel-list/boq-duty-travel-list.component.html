@@ -32,11 +32,11 @@
                               
               <ng-container matColumnDef="rate">
                 <th mat-header-cell *matHeaderCellDef >Rate per trip (Rs.) </th>
-                <td mat-cell *matCellDef="let row"> {{row.ratepertrip}} </td>
+                <td mat-cell *matCellDef="let row"> {{row.ratepertrip  | formatAmount}} </td>
               </ng-container>
               <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef > Amount(Rs.) </th>
-                <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount}} </td>
+                <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount  | formatAmount}} </td>
                 <td mat-footer-cell *matFooterCellDef> {{getTotalAmount() | formatCurrency}}</td>
               </ng-container>
               <ng-container matColumnDef="action">

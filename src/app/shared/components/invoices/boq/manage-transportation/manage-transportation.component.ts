@@ -1,5 +1,5 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
@@ -23,7 +23,7 @@ public data: any;
   tpForm: FormGroup = new FormGroup({});
   deletetp=false;
   readonly dialog = inject(MatDialog);
-
+  isBtnClicked=false;
    private defaultdialogoptions:  MatDialogConfig = {
         minWidth: '700px', 
         disableClose: false,
@@ -68,10 +68,10 @@ public data: any;
     this.tpForm = this.formbuilder.group({ 
       id: [''],
       projectid:[],
-      description :[],
-      constructionperiod:[],
-      dlpoandmperiod:[],
-      rate:[]
+      description :[,Validators.required],
+      constructionperiod:[,Validators.required],
+      dlpoandmperiod:[,Validators.required],
+      rate:[,Validators.required]
     });
     
     if (this.isEdit || this.deletetp) {
@@ -93,13 +93,14 @@ public data: any;
   ngOnDestroy(){}
 
   submit(){ 
+    this.isBtnClicked=true;
     this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
       if(response && response.projectId){
         this.tpForm.patchValue({projectid:response.projectId});
         
         if (this.isEdit) {
           this.transportService.updateBoqTransportation(this.tpForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next: (response:any) => {
               if(response && response.success){
                 this.tpForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
@@ -113,7 +114,7 @@ public data: any;
         } else {
           this.tpForm.value.id=null;
           this.transportService.createBoqTransportation(this.tpForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
                 this.tpForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));

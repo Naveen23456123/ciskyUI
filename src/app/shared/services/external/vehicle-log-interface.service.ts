@@ -10,14 +10,14 @@ export class VehicleLogInterfaceService {
 
   constructor(private coreApi:CoreAPIService) { }
 
-  getVehicleLogDetails(param: any, guid: string) {
+  getVehicleLogDetails(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'VehicleLog',
-      params: param,
+      url: 'VehicleLog/GetLogs',
+      params: {},
       headers: true,
       guid: '',
-      request: {},
-      action: Operation.GET
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   }

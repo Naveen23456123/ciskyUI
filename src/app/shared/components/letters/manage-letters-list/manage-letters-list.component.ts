@@ -26,7 +26,7 @@ import { ViewLetterDetailsComponent } from '../view-letter-details/view-letter-d
 export class ManageLettersListComponent {
   lettersList:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','letterno', 'lettertype','subject',  'letterdate','status','view','action'];
+  displayedColumns: string[] = ['serial','letterno', 'lettertype','subject',  'letterdate','status','action'];
   dataSource!: MatTableDataSource<any[]>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;

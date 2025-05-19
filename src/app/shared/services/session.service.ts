@@ -172,6 +172,7 @@ export class SessionService {
       officeTypeAPI:this.commonService.getOfficeTypeList({},''),
       workOwnerAPI:this.commonService.getWorkOwnerList({},''),
       entityTypeAPI:this.commonService.getEntityTypeList({},''),
+      staffTypeAPI:this.commonService.getStaffTypesList({},''),
       approvalStatusAPI:this.commonService.getApprovalStatusList({},'')
     }).subscribe((response:any)=>{
        if(response.genderAPI)
@@ -209,6 +210,8 @@ export class SessionService {
 
        if(response.entityTypeAPI)
         this.entityTypeSubject.next(response.entityTypeAPI.data);
+       if(response.staffTypeAPI)
+        this.staffTypeSubject.next(response.staffTypeAPI.data);
 
        if(response.approvalStatusAPI)
         this.approvalStatusSubject.next(response.approvalStatusAPI.data);

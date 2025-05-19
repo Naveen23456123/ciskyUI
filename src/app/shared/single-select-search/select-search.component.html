@@ -1,7 +1,8 @@
-<mat-form-field [ngClass]="className">
+<app-loader [size]="1" [IsLoading]="isLoadingData"></app-loader>
+<mat-form-field *ngIf="!isLoadingData" [ngClass]="className">
   <mat-label>{{label}}</mat-label>
   <mat-select [multiple]="multiple" (selectionChange)="change($event)" [formControl]="ArrayCtrl" [placeholder]="selectPlaceholder"
-    #singleSelect>
+    #singleSelect>     
     <mat-option>
       <ngx-mat-select-search  
       [placeholderLabel]="searchPlaceholder" [formControl]="ArrayFilterCtrl"

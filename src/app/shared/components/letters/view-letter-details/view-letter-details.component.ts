@@ -21,7 +21,7 @@ export class ViewLetterDetailsComponent {
   typetitle='';
   letterInit=false;
   letterList:any=[];
-  displayedColumns: string[] = ['serial','name', 'doc', 'action'];
+  displayedColumns: string[] = ['serial','name', 'doc'];
   dataSource!: MatTableDataSource<any[]>;
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,@Optional() private dialogRef: MatDialogRef<ViewLetterDetailsComponent>,

@@ -21,7 +21,17 @@ constructor(private coreApi:CoreAPIService) { }
     }
     return this.coreApi.standardService(standardAttribute);
   }
-
+  getBoqContingencyListForInsertByProjectId(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqContingency/Insert/'+param.id,
+       params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   createBoqContingency(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'BoqContingency',

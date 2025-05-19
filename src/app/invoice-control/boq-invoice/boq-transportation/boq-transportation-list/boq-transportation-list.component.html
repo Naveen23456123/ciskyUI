@@ -1,7 +1,8 @@
 <div class="container">
 <mat-card>
     <mat-card-title>
-        <h6>III - Transportation (Fixed rate on rental basis)
+        <h6 class="justify-content-center">III - Transportation (Fixed rate on rental basis)          
+          <app-add-icon-btn toolTip="Add Description" (clickEvent)="add_desc()" ></app-add-icon-btn>
           <button  class="title-btn float-end no-print" type="button" routerLink="tp-create"  mat-mini-fab color="primary">
             <mat-icon>add box</mat-icon> Transportation
         </button>
@@ -11,7 +12,8 @@
       <div class="load-wrap" *ngIf="isLoading">
         <app-loader [IsLoading]="isLoading"></app-loader>
     </div>
-    <div class="wrapper" *ngIf="!isLoading">     
+    <div class="wrapper" *ngIf="!isLoading">
+      <span>Data</span>
         <table mat-table [dataSource]="dataSource" >
         
           <ng-container matColumnDef="serial">
@@ -51,7 +53,7 @@
 
               <ng-container matColumnDef="vehpermonthrate">
                 <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Rate / Vehicle - Month (Rs.) </th>
-                <td mat-cell *matCellDef="let row"> {{row.rate}} </td>
+                <td mat-cell *matCellDef="let row"> {{row.rate  | formatAmount}} </td>
               </ng-container>
               <ng-container matColumnDef="vehpermonthth">
                 <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Rate / Vehicle - Month (Rs.)</th>
@@ -59,7 +61,7 @@
 
               <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Amount (Rs.) </th>
-                <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount}} </td>
+                <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount  | formatAmount}} </td>
                 <td mat-footer-cell *matFooterCellDef> {{getTotalAmount() | formatCurrency}} </td>
               </ng-container>
               <ng-container matColumnDef="amountth">

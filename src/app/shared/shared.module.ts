@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { LockerModule } from 'angular-safeguard';
 import { NotifyBarComponent } from './notify-bar/notify-bar.component';
 import { AlertComponent } from './dialogs/alert/alert.component';
@@ -9,7 +9,6 @@ import { CONSTANTS, Constants } from './models/constant.config';
 import { HelpComponent } from './help/help.component';
 import { InfoBarComponent } from './info-bar/info-bar.component';
 import { FileUploaderComponent } from './file-uploader/file-uploader.component';
-import { TextFieldComponent } from './components/text-field/text-field.component';
 import { ReactiveFormsModule, FormControl, FormsModule } from '@angular/forms';
 import { BtnLoaderComponent } from './btn-loader/btn-loader.component';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,7 +21,6 @@ import { DateTimePipe } from './pipes/date-time.pipe';
 //import { AgmCoreModule } from '@agm/core';
 import { TimePipe } from './pipes/time.pipe';
 import { AccessDirective } from './directives/access.directive';
-import { PlaceholderUiComponent } from './components/placeholder-ui/placeholder-ui.component';
 import { NotEditableComponent } from './components/not-editable/not-editable.component';
 import { StatusIconComponent } from './components/status-icon/status-icon.component';
 import { LocationComponent } from './components/location/location.component';
@@ -126,13 +124,24 @@ import { ExploreBankGuaranteeComponent } from './components/explore/explore-bank
 import { ExploreInsuranceComponent } from './components/explore/explore-insurance/explore-insurance.component';
 import { ExploreLettersComponent } from './components/explore/explore-letters/explore-letters.component';
 import { SubmitLoadBtnComponent } from './components/btn/submit-load-btn/submit-load-btn.component';
+import { FormatAmountPipe } from './pipes/format-amount.pipe';
+import { ManageUploadEmpComponent } from './components/employee/manage-upload-emp/manage-upload-emp.component';
+import { UploadDataComponent } from './components/upload-data/upload-data.component';
+import { ManageUploadInventoryComponent } from './components/inventory/manage-upload-inventory/manage-upload-inventory.component';
+import { AddIconBtnComponent } from './components/btn/add-icon-btn/add-icon-btn.component';
+import { ManageUploadLettersComponent } from './components/letters/manage-upload-letters/manage-upload-letters.component';
+import { ItemEmployeesComponent } from './components/employee/item-employees/item-employees.component';
+import { ManageUploadVehicleComponent } from './components/vehicle/manage-upload-vehicle/manage-upload-vehicle.component';
+import { ViewReadingImageComponent } from './components/vehicle/view-reading-image/view-reading-image.component';
+import { ManageLetterDocComponent } from './components/letters/manage-letter-doc/manage-letter-doc.component';
+import { DeleteLetterDocComponent } from './components/letters/delete-letter-doc/delete-letter-doc.component';
 
 @NgModule({
   declarations: [NotifyBarComponent, AlertComponent, LoaderComponent,  
-    FileUploaderComponent, TextFieldComponent, InfoBarComponent,BtnLoaderComponent,
+    FileUploaderComponent, InfoBarComponent,BtnLoaderComponent,
     MonthAndYearPickerComponent, HelpComponent,SelectSearchComponent,  
     NotificationTextComponent,  MonthAndYearPickerComponent, DateTimePipe, FormatDatePipe, 
-    PlaceholderUiComponent, NotEditableComponent, StatusIconComponent, LocationComponent, ManageProjectComponent,
+    NotEditableComponent, StatusIconComponent, LocationComponent, ManageProjectComponent,
     ManageContractorComponent, AttachLetterComponent, AttachFileComponent, ManageMilestoneComponent, ManageEotComponent, 
     ManageCosComponent, ManageSiteProgressComponent, SiteProgressListComponent, EotListComponent, CosListComponent, MilestoneListComponent,
     ManageLettersListComponent, UploadFileComponent,  ReplaceUnderscorePipe, UploadBtnComponent, 
@@ -142,7 +151,7 @@ import { SubmitLoadBtnComponent } from './components/btn/submit-load-btn/submit-
     ManageVehicleListComponent, ManageEmployeeListComponent, ManageInventoryListComponent, ManageConsultantComponent, ManageBoqAttendenceComponent, ContactListComponent, ManageContactComponent, ContractorBillingDetailsComponent, ManageCircularComponent, ManageBoqInvoiceComponent, ManageConsultancyInvoiceComponent,
      ManageSupportStaffComponent, ManageTransportationComponent, ManageDutyTravelComponent, 
      ManageOfficeRentComponent, ManageOfficeSuppliesComponent, ManageOfficeFurnitureComponent, ManageReportDocComponent, ManageRoadSurveyComponent, ManageContingenciesComponent, ManageConsultancyStaffComponent, ManageConsultancyContingenciesComponent, ManageConsultancyReportDocComponent, ManageConsultancyOfficeFurnitureComponent, ManageConsultancyOfficeSuppliesComponent, ManageConsultancyOfficeRentComponent, ManageConsultancyDutyTravelComponent, ManageConsultancyTransportationComponent, ManageOfficeRentControlComponent, 
-     FileIconComponent, BreadCrumComponent, SearchBarControlsComponent, ViewLetterDetailsComponent, ViewEmployeeListComponent, ViewBtnComponent, ProjectControlComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent, ManageVehicleDocComponent, DeleteVehicleDocComponent, NoDataComponent, ViewEmployeeDetailsComponent, ManageEmployeeDocComponent, DeleteEmployeeDocComponent, DocumentManageBtnComponent, DetailVehicleComponent, ManageProfitLossComponent, ManageTicketComponent, ManageImperestComponent, ManageExpenseComponent, ManageApprovalComponent, ExploreMilestoneComponent, ExploreSiteProgressComponent, ExploreEotComponent, ExploreCosComponent, ManageOfficeDocComponent, DeleteOfficeDocComponent, ExploreBankGuaranteeComponent, ExploreInsuranceComponent, ExploreLettersComponent, SubmitLoadBtnComponent],
+     FileIconComponent, BreadCrumComponent, SearchBarControlsComponent, ViewLetterDetailsComponent, ViewEmployeeListComponent, ViewBtnComponent, ProjectControlComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent, ManageVehicleDocComponent, DeleteVehicleDocComponent, NoDataComponent, ViewEmployeeDetailsComponent, ManageEmployeeDocComponent, DeleteEmployeeDocComponent, DocumentManageBtnComponent, DetailVehicleComponent, ManageProfitLossComponent, ManageTicketComponent, ManageImperestComponent, ManageExpenseComponent, ManageApprovalComponent, ExploreMilestoneComponent, ExploreSiteProgressComponent, ExploreEotComponent, ExploreCosComponent, ManageOfficeDocComponent, DeleteOfficeDocComponent, ExploreBankGuaranteeComponent, ExploreInsuranceComponent, ExploreLettersComponent, SubmitLoadBtnComponent, FormatAmountPipe, ManageUploadEmpComponent, UploadDataComponent, ManageUploadInventoryComponent, AddIconBtnComponent, ManageUploadLettersComponent, ItemEmployeesComponent, ManageUploadVehicleComponent, ViewReadingImageComponent, ManageLetterDocComponent, DeleteLetterDocComponent],
   imports: [
     CommonModule, 
     //LockerModule, 
@@ -158,22 +167,22 @@ import { SubmitLoadBtnComponent } from './components/btn/submit-load-btn/submit-
     {
       provide: CONSTANTS,
       useValue: Constants
-    },
+    },DecimalPipe
     // { provide: MAT_DIALOG_DATA, useValue: {} },
     // { provide: MatDialogRef, useValue: {} },
     // {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}
     //{ provide: MAT_COLOR_FORMATS, useValue: NGX_MAT_COLOR_FORMATS }
   ],
   exports: [NotifyBarComponent, LoaderComponent,   FileUploaderComponent, 
-    TextFieldComponent,   MonthAndYearPickerComponent,SelectSearchComponent,
+    MonthAndYearPickerComponent,SelectSearchComponent,
        NotificationTextComponent, NgxMatSelectSearchModule,InfoBarComponent,BtnLoaderComponent,
-       ReactiveFormsModule,   PlaceholderUiComponent,HelpComponent,DateTimePipe,FormatDatePipe,
+       ReactiveFormsModule,HelpComponent,DateTimePipe,FormatDatePipe,
     NotEditableComponent, StatusIconComponent, LocationComponent,ManageProjectComponent, FileIconComponent, BreadCrumComponent,
   SearchBarControlsComponent, UploadBtnComponent, DownloadCsvComponent, ManageEmployeeListComponent,
   ManageVehicleListComponent, ManageInventoryListComponent, EotListComponent, CosListComponent,InsuranceListComponent,BankGuaranteeListComponent,
 ContractorBillingListComponent,MilestoneListComponent, SiteProgressListComponent, ManageLettersListComponent,ContactListComponent,
 ViewBtnComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent,NoDataComponent, ViewEmployeeDetailsComponent, ExploreMilestoneComponent,
 ExploreSiteProgressComponent, ExploreEotComponent, ExploreCosComponent, DocumentManageBtnComponent, ExploreBankGuaranteeComponent,ExploreInsuranceComponent,
-ExploreLettersComponent]
+ExploreLettersComponent,FormatAmountPipe,UploadFileComponent, AddIconBtnComponent]
 })
 export class SharedModule { }

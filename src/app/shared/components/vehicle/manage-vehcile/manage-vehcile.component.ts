@@ -66,6 +66,7 @@ public data: any;
     this.getTitle(this.data.type);
     this.vehicleForm = this.formbuilder.group({ 
       id: [''],
+      companyid :[],
       projectid :[],
       boqId:[],
       name:[],
@@ -138,8 +139,12 @@ public data: any;
   }
   
   projectChange(data:any=null){
+    console.log(data);
     if(data && data.value){
-      this.vehicleForm.patchValue({projectid:data.value.id});
+      this.vehicleForm.patchValue({
+        projectid:data.value.id,
+        companyid:data.value.companyid
+    });
       this.projectName= data.value.projectshortname;
     } 
   }
