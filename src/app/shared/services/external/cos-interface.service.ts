@@ -12,14 +12,15 @@ export class CosInterfaceService {
 
   constructor(private coreApi:CoreAPIService) { }
 
-  getTemplateColumnList() {
+  getCSVTemplateColumnList() {
     let columns = [
-      { label: 'coscode', value: 'coscode' },
+      { label: 'Code', value: 'code' },
+      { label: 'Project', value: 'project' },
       { label: 'letter', value: 'letter' },
-      { label: 'processinitiatedate', value: 'processinitiatedate' },
-      { label: 'approvaldate', value: 'approvaldate' },
-      { label: 'amount', value: 'amount' },
-      { label: 'cosstatus', value: 'cosstatus' },
+      { label: 'Submitted_Date', value: 'initiatedate' },
+      { label: 'Close_Date', value: 'closedate' },
+      { label: 'Submitted_Amount', value: 'amount' },
+      { label: 'Status', value: 'status' },
     ];
   return columns;
   }
@@ -35,14 +36,14 @@ export class CosInterfaceService {
         } as {component: Type<any>, inputs: Record<string, unknown>}
   }
 
-  getAllCOSDetailsByOrdIdProjectId(param: any, guid: string) {
+  getAllCOSDetailsByOrdIdProjectId(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'COS',
-      params: param,
+      url: 'COS/Search',
+      params: {},
       headers: true,
       guid: '',
-      request: {},
-      action: Operation.GET
+      request:request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   //   return of([
@@ -67,37 +68,70 @@ export class CosInterfaceService {
   //     }
   // ]);
   }
-   createCOS(request: any, guid: string) {
-      const standardAttribute: ServiceAttributeModel = {
-        url: 'COS',
-        params: {},
-        headers: true,
-        guid: '',
-        request: request,
-        action: Operation.CREATE
-      }
-      return this.coreApi.standardService(standardAttribute);
+  exploreCOSDetailsByOrdIdProjectId(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'COS/SearchAll',
+      params: {},
+      headers: true,
+      guid: '',
+      request:request,
+      action: Operation.CREATE
     }
-    updateCOS(request: any, guid: string) {
-      const standardAttribute: ServiceAttributeModel = {
-        url: 'COS',
-        params: {},
-        headers: true,
-        guid: '',
-        request: request,
-        action: Operation.UPDATE
-      }
-      return this.coreApi.standardService(standardAttribute);
+    return this.coreApi.standardService(standardAttribute);
+  }
+  getCOSStatusCount(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'COS/StatusSummary',
+      params: param,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
     }
-    deleteCOS(params: any, guid: string) {
-      const standardAttribute: ServiceAttributeModel = {
-        url: 'COS',
-        params: params,
-        headers: true,
-        guid: '',
-        request: {},
-        action: Operation.DELETE
-      }
-      return this.coreApi.standardService(standardAttribute);
+    return this.coreApi.standardService(standardAttribute);
+  }
+  createCOS(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'COS',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
     }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  getCOSSummary(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'COS/Summary',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  updateCOS(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'COS',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.UPDATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  deleteCOS(params: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'COS',
+      params: params,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.DELETE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
 }

@@ -23,12 +23,23 @@ export class InvReportDocInterfaceService {
   }
   getBoqReportDocListForInsertByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'BoqReportDoc/Insert/'+param.id,
+      url: 'BoqReportDoc/Insert/'+param.id+'/'+param.invid,
       params: {},
       headers: true,
       guid: '',
       request: {},
       action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  UpdateBoqReportDocDescription(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqReportDoc/Description/',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   }

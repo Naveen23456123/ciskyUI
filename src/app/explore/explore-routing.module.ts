@@ -7,7 +7,7 @@ const routes: Routes = [
   {
       path:'',
       component:ExploreComponent,
-      data:{title:extractTitle('Explore')},
+      data:{title:extractTitle('Glance Detail(s)')},
   }
 ];
 

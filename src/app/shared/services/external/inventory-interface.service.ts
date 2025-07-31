@@ -25,7 +25,19 @@ export class InventoryInterfaceService {
       ];
     return columns;
   }
-
+  getCSVTemplateColumnList(){
+    let columns = [
+        { label: 'Item_Name', value: 'item' },
+        { label: 'Project_Code', value: 'project' },
+        { label: 'Employee_Code', value: 'employee' },        
+        { label: 'Description', value: 'description' },
+        { label: 'Quantity', value: 'quantity' },
+        { label: 'Cost_Per_Item', value: 'costperitem' },
+        { label: 'Purchase_Date', value: 'purchasedate' }
+      
+      ];
+    return columns;
+  }
   getInventoryListComponent(){
               return {
                 component: ManageInventoryListComponent,

@@ -1,6 +1,21 @@
-import { Component } from '@angular/core';
-import { EChartsCoreOption } from 'echarts/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { ECharts, EChartsCoreOption } from 'echarts/core';
 import { CommonService } from '../shared/services/common.service';
+import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
+import { EotInterfaceService } from '@app/shared/services/external/eot-interface.service';
+import { CosInterfaceService } from '@app/shared/services/external/cos-interface.service';
+import { ProjectInterfaceService } from '@app/shared/services/external/project-interface.service';
+import { LetterInterfaceService } from '@app/shared/services/external/letter-interface.service';
+import { finalize, forkJoin, Subject, takeUntil } from 'rxjs';
+import { VehicleInterfaceService } from '@app/shared/services/external/vehicle-interface.service';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { ConsultentListSummaryComponent } from '@app/shared/components/consultant/consultent-list-summary/consultent-list-summary.component';
+import { SessionService } from '@app/shared/services/session.service';
+import { LetterInfoSummaryComponent } from '@app/shared/components/letters/letter-info-summary/letter-info-summary.component';
+import { EotInfoSummaryComponent } from '@app/shared/components/eot/eot-info-summary/eot-info-summary.component';
+import { CosInfoSummaryComponent } from '@app/shared/components/cos/cos-info-summary/cos-info-summary.component';
+import { EmployeeInfoSummaryComponent } from '@app/shared/components/employee/employee-info-summary/employee-info-summary.component';
+import * as echarts from 'echarts/core';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,7 +24,33 @@ import { CommonService } from '../shared/services/common.service';
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
+  eotStatusData:any[]=[];
+  cosStatusData:any[]=[];
+  letterStatusData:any[]=[];
+  letterTypeCountData:any[]=[];
+  empTypeCounts:any[]=[];
+  projectCountData:any[]=[];
+  ourRoleData:any[]=[];
   isLoading=false;
+  isletterStatusLoading=true;
+  isLetterCountLoading=true;
+  isEotLoading=true;
+  isCosLoading=true;
+  isEmpTypeLoading=true;
+  isProjectCountLoading=true;
+  isOurRoleLoading=true;
+  isProjectDataLoading=true;
+  isVehicleDataLoading=true;
+  isfinanceLoading=true;
+  isexpenseLoading=true;
+  finance:any={};
+  activeProjectId:any=null;
+  getDataObj:any={};
+  private monthNames = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+  @ViewChild('eotChartInstance') eotChart: any;
   single:any[]=[
     {
       "name": "Germany",
@@ -36,7 +77,24 @@ export class DashboardComponent {
     '#EA7CCC',
     //'#190072','#00c45e','#00d9ff','#5656ff','#e1ff00','#000'
   ];
+  eotoption:any;
+  cosoption:any;
+  empTypeOption!:EChartsCoreOption;
+  letterStatusOption:any;
+  letterCountOptions:any;
+  projectCountOption!: EChartsCoreOption;
+  ourRoleOption!: EChartsCoreOption;
+  incomeoptions!: EChartsCoreOption;
+  expenseoption!:EChartsCoreOption;
+  @ViewChild('chartRef') chartRef!: ElementRef;
+  chartInstance: echarts.ECharts | null = null;
   view: [number,number] = [200, 220];
+  readonly dialog = inject(MatDialog);
+  private defaultdialogoptions:  MatDialogConfig = {
+    minWidth: '75vw', 
+    disableClose: false,
+    data: {},
+  };
   projects:any[]=[];
   vehicles:any[]=[];
   // options
@@ -46,98 +104,1290 @@ export class DashboardComponent {
   colorScheme = {
     domain: ['#5AA454', '#7aa3e5', '#CFC0BB', '#E44D25', '#a8385d', '#aae3f5']
   };
-  chartData = [
-    { value: 3, name: 'AE/IE' },
-    { value: 2, name: 'O&M' },
-    { value: 1, name: 'DPR' },
-    { value: 1, name: 'Safety' }
-  ];
+  private destroy$ = new Subject<void>();
   cardColor: string = '#000';
-  constructor(private commonService:CommonService) {
+  constructor(private commonService:CommonService, private employeeService:EmployeeInterfaceService,
+    private eotService:EotInterfaceService, private cosService:CosInterfaceService,
+    private projectService:ProjectInterfaceService, private letterService:LetterInterfaceService,
+    private vehicleService:VehicleInterfaceService, private sessionService:SessionService
+  ) {
     Object.assign(this, { single: this.single });
   
   }
 
- 
-  chartOption: EChartsCoreOption = {
-    legend: {
-      orient: 'horizontal',
-     bottom:'bottom'
-    },
-    color:this.ECHART_COLORS,
-    title: {
-      text: 'Project(s)',
-      left: 'center',        // center the title
-      top: 0,               // distance from top (you can adjust)
-      textStyle: {
-        fontSize: 18,
-        fontWeight: 'bold'
-      }
-    },
-    tooltip: {
-      trigger: 'item'
-    },
-   
-    series: [
-      {
-        name: 'Projects',
-        type: 'pie',
-        radius: ['50%', '70%'],
-        center: ['50%', '50%'],
-        avoidLabelOverlap: true,
-        top:20,
-        itemStyle: {
-          borderRadius: 3,
-          borderColor: '#fff',
-          borderWidth: 2
-        },
-        label: {
-          show: true,
-          position: 'outside',
-          fontWeight: 'bold',
-          fontSize: 15,
-          formatter: '{c}',
-        },
-        // emphasis: {
-        //   label: {
-        //     show: true,
-        //     fontSize: 20,
-        //     fontWeight: 'bold'
-        //   }
-        // },
-        labelLine: {
-          show: true
-        },
-        data: this.chartData,
-      }
-    ],
-    graphic: [
-      {
-        type: 'text',
-        left: 'center',
-        top: 'center',
-        style: {
-          text: `Total: 3 `,
-          textAlign: 'center',
-          fill: '#000',
-          fontSize: 20,
-          fontWeight: 'bold'
-        }
-      }
-    ]
-  };
   ngOnInit(){
-    this.projects = [
-      { id: 1, name: 'Jaiput Four Lane Highway', cost: this.commonService.costFormatter(8582723434) },
-      { id: 2, name: 'Delhi Jaipur 8 lane highway', cost: this.commonService.costFormatter(2323232323) },
-      { id: 3, name: 'Jaiput Four Lane Highway Jaiput Four Lane Highway', cost: this.commonService.costFormatter(23232323) }
-    ];
+    // this.projects = [
+    //   { id: 1, name: 'Jaiput Four Lane Highway', cost: this.commonService.costFormatter(8582723434) },
+    //   { id: 2, name: 'Delhi Jaipur 8 lane highway', cost: this.commonService.costFormatter(2323232323) },
+    //   { id: 3, name: 'Jaiput Four Lane Highway Jaiput Four Lane Highway', cost: this.commonService.costFormatter(23232323) }
+    // ];
     this.vehicles = [
       { id: 1,projectcode: 'PJ-1234', name: 'HR10AL6756', km: 23 },
       { id: 2,projectcode: 'PJ-5367', name: 'DL10AL4236', km:98 },
       { id: 3,projectcode: 'PJ-975445', name: 'RJ10AL9623', km:56 }
     ];
+    if(this.activeProjectId==null){
+      this.updateChartData();
+     
+    } 
+    // this.employeeService.geEmployeeTypeCount({},'').pipe(finalize(()=> this.isEmpTypeLoading=false)).subscribe((response:any)=>{
+    //   if(response && response.success){
+    //     this.empTypeCounts= response.data.map((element:any)=>({
+    //       name:element.name,
+    //       value:element.count,
+    //       id:element.id
+    //     }));
+    //     this.empTypeOption = {
+    //       title: {
+    //         text: '',
+    //         left: 'center',        // center the title
+    //         top: 0,               // distance from top (you can adjust)
+    //         textStyle: {
+    //           fontSize: 18,
+    //           fontWeight: 'bold'
+    //         }
+    //       },
+    //       color:this.ECHART_COLORS,
+    //       tooltip: {
+    //         trigger: 'item'
+    //       },
+    //      legend:{
+    //       bottom:0
+    //      },
+    //       series: [
+    //         {
+    //           name: 'status',
+    //           type: 'pie',
+    //           radius: ['45%', '65%'],
+    //           center: ['50%', '50%'],
+    //           avoidLabelOverlap: false,
+    //           itemStyle: {
+    //             borderRadius: 3,
+    //             borderColor: '#fff',
+    //             borderWidth: 2
+    //           },
+    //           label: {
+    //             show: true,
+    //             position: 'outside',
+    //             fontWeight: 'bold',
+    //             fontSize: 15,
+    //             formatter: '{c}',
+    //           },
+              
+    //           labelLine: {
+    //             show: true
+    //           },
+    //           data: this.empTypeCounts,
+    //         }
+    //       ],
+    //       graphic: [
+    //         {
+    //           type: 'text',
+    //           left: 'center',
+    //           top: 'center',
+    //           style: {
+    //             text: `Total: `+this.empTypeCounts.reduce((sum, item) => sum + item.value, 0),
+    //             textAlign: 'center',
+    //             fill: '#000',
+    //             fontSize: 20,
+    //             fontWeight: 'bold'
+    //           }
+    //         }
+    //       ]
+    //     };
+    //   }
+    // })
+    // this.cosService.getCOSStatusCount({},'').pipe(finalize(()=> this.isCosLoading=false)).subscribe((response:any)=>{
+    //   if(response && response.success){
+    //     this.cosStatusData= response.data.map((element:any)=>({
+    //       name:element.name,
+    //       value:element.count,
+    //       id:element.id
+    //     }));        
+    //     this.cosoption = {
+        
+    //       tooltip: {
+    //         trigger: 'item'
+    //       },
+    //       legend: {
+    //         orient: 'horizontal',
+    //       bottom:'bottom'
+    //       },
+    //       color:this.ECHART_COLORS,
+    //       series: [
+    //         {
+    //           name: 'Access From',
+    //           type: 'pie',
+    //           radius: '60%',
+    //           center: ['50%', '50%'],
+    //           data: this.cosStatusData,
+    //           label: {
+    //               show: true,
+    //               position: 'inside',
+    //               fontWeight: 'bold',
+    //               fontSize: 15,
+    //               formatter: '{c}',
+    //             },
+    //           emphasis: {
+    //             itemStyle: {
+    //               shadowBlur: 10,
+    //               shadowOffsetX: 0,
+    //               shadowColor: 'rgba(0, 0, 0, 0.5)'
+    //             }
+    //           }
+    //         }
+    //       ]
+    //     };
+    //   }
+    // })
+    // this.eotService.geEOTStatusCount({},'').pipe(finalize(()=> this.isEotLoading=false)).subscribe((response:any)=>{
+    //   if(response && response.success){
+    //     console.log(response.data);
+    //     this.eotStatusData= response.data.map((element:any)=>({
+    //       name:element.name,
+    //       value:element.count,
+    //       id:element.id
+    //     }));
+    //     this.eotoption = {
+    
+    //       tooltip: {
+    //         trigger: 'item'
+    //       },
+    //       legend: {
+    //         orient: 'horizontal',
+    //        bottom:'bottom'
+    //       },
+    //       color:this.ECHART_COLORS,
+    //       series: [
+    //         {
+    //           name: 'Access From',
+    //           type: 'pie',
+    //           radius: '60%',
+    //           center: ['50%', '50%'],
+    //           data: this.eotStatusData,
+    //           label: {
+    //               show: true,
+    //               position: 'inside',
+    //               fontWeight: 'bold',
+    //               fontSize: 15,
+    //               formatter: ' {c}',
+    //             },
+    //           emphasis: {
+    //             itemStyle: {
+    //               shadowBlur: 10,
+    //               shadowOffsetX: 0,
+    //               shadowColor: 'rgba(0, 0, 0, 0.5)'
+    //             }
+    //           }
+    //         }
+    //       ]
+    //     };
+    //   }
+    // })
+    // this.letterService.getLetterStatusCountSummary({},'').pipe(finalize(()=> this.isletterStatusLoading=false)).subscribe((response:any)=>{
+    //   if(response && response.success){
+    //     this.letterStatusData= response.data.map((element:any)=>({
+    //       name:element.name,
+    //       value:element.count,
+    //       id:element.id
+    //     }));
+    //     this.letterStatusOption = {
+    //       title: {
+    //         text: 'Letter Status',
+    //         left: 'center',        // center the title
+    //         top: 0,               // distance from top (you can adjust)
+    //         textStyle: {
+    //           fontSize: 18,
+    //           fontWeight: 'bold'
+    //         }
+    //       },
+    //       tooltip: {
+    //         trigger: 'item'
+    //       },
+    //     legend:{
+    //       bottom:0
+    //     },
+    //       series: [
+    //         {
+    //           name: 'status',
+    //           type: 'pie',
+    //           radius: ['50%', '70%'],
+    //           center: ['50%', '50%'],
+    //           avoidLabelOverlap: false,
+    //           itemStyle: {
+    //             borderRadius: 3,
+    //             borderColor: '#fff',
+    //             borderWidth: 2
+    //           },
+    //           label: {
+    //             show: true,
+    //             position: 'outside',
+    //             fontWeight: 'bold',
+    //             fontSize: 15,
+    //             formatter: '{c}',
+    //           },
+              
+    //           labelLine: {
+    //             show: true
+    //           },
+    //           data: this.letterStatusData,
+    //         }
+    //       ],
+    //       graphic: [
+    //         {
+    //           type: 'text',
+    //           left: 'center',
+    //           top: 'center',
+    //           style: {
+    //             text: `Total: `+this.letterStatusData.reduce((sum, item) => sum + item.value, 0),
+    //             textAlign: 'center',
+    //             fill: '#000',
+    //             fontSize: 20,
+    //             fontWeight: 'bold'
+    //           }
+    //         }
+    //       ]
+    //     };
+    //   }
+    // })
+    // this.letterService.getLetterTypeCountSummary({},'').pipe(finalize(()=> this.isLetterCountLoading=false)).subscribe((response:any)=>{
+    //   if(response && response.success){
+    //     this.letterTypeCountData= response.data;
+    //     const names = response.data.map((x:any) => x.name);
+    //     const consultant = response.data.map((x:any) =>({value:x.count.consultant, id:x.id}) );
+    //     const contractor = response.data.map((x:any) =>({value:x.count.contractor, id:x.id}));
+    //     this.letterCountOptions  = {
+    //       title: {
+    //         text: `Total Letter(s) : 120`,
+    //         left: 'center',        // center the title
+    //         top: 10,               // distance from top (you can adjust)
+    //         textStyle: {
+    //           fontSize: 18,
+    //           fontWeight: 'bold'
+    //         }
+    //       },
+    //       color:this.ECHART_COLORS,
+    //       tooltip: {
+    //         trigger: 'axis',
+    //         axisPointer: { type: 'shadow' }
+    //       },
+    //       legend: {
+    //         data: ['Consultant', 'Contractor'],
+    //         orient:'horizontal',
+    //         bottom:'bottom',
+            
+    //       },
+    //       xAxis: {
+    //         type: 'category',
+    //         data: names,
+    //         axisLabel:{rotate:30}
+    //       },
+    //       yAxis: {
+    //         type: 'value',
+           
+    //       },
+    //      grid: {
+    //       bottom: '10%', // Give enough space for the legend
+    //       top: '15%',
+    //       left: '3%',
+    //       right: '4%',
+    //       containLabel: true
+    //     },
+    //       series: [
+    //         {
+    //           name: 'Consultant',
+    //           type: 'bar',
+    //           //color:'#000',
+    //           label: this.labelOption,
+    //           data: consultant,
+    //           emphasis: {
+    //             focus: 'series'
+    //           },
+    //         },
+    //         {
+    //           name: 'Contractor',
+    //           type: 'bar',
+    //           label: this.labelOption,
+    //           emphasis: {
+    //             focus: 'series'
+    //           },
+    //           //data: [5,11,4,2,6,1,9]
+    //           data: contractor
+    //         }
+    //       ]
+    //     };
+    //   }
+    // })
+    // this.projectService.getProjectCountSummary({},'').pipe(finalize(()=> this.isProjectCountLoading=false)).subscribe((response:any)=>{
+    //   if(response && response.success){
+    //     this.projectCountData= response.data.map((element:any)=>({
+    //       name:element.name,
+    //       value:element.count,
+    //       id:element.id
+    //     }));
+    //     this.projectCountOption = {
+    //       legend: {
+    //         orient: 'horizontal',
+    //        bottom:0
+    //       },
+    //       color:this.ECHART_COLORS,
+    //       title: {
+    //         text: 'Project(s)',
+    //         left: 'center',        // center the title
+    //         top: 0,               // distance from top (you can adjust)
+    //         textStyle: {
+    //           fontSize: 18,
+    //           fontWeight: 'bold'
+    //         }
+    //       },
+    //       tooltip: {
+    //         trigger: 'item'
+    //       },
+         
+    //       series: [
+    //         {
+    //           name: 'Projects',
+    //           type: 'pie',
+    //           radius: ['50%', '70%'],
+    //           center: ['50%', '50%'],
+    //           avoidLabelOverlap: true,
+    //           top:20,
+    //           itemStyle: {
+    //             borderRadius: 3,
+    //             borderColor: '#fff',
+    //             borderWidth: 2
+    //           },
+    //           label: {
+    //             show: true,
+    //             position: 'outside',
+    //             fontWeight: 'bold',
+    //             fontSize: 15,
+    //             formatter: '{c}',
+    //           },
+    //           labelLine: {
+    //             show: true,
+                
+    //           },
+    //           data: this.projectCountData,
+    //         }
+    //       ],
+    //       graphic: [
+    //         {
+    //           type: 'text',
+    //           left: 'center',
+    //           top: 'center',
+    //           style: {
+    //             text: `Total: `+this.projectCountData.reduce((sum, item) => sum + item.value, 0),
+    //             textAlign: 'center',
+    //             fill: '#000',
+    //             fontSize: 20,
+    //             fontWeight: 'bold'
+    //           }
+    //         }
+    //       ]
+    //     };
+    //   }
+    // });
+    // this.projectService.getProjectRoleCountSummary({},'').pipe(finalize(()=> this.isOurRoleLoading=false)).subscribe((response:any)=>{
+    //   if(response && response.success){
+    //     this.ourRoleData= response.data.map((element:any)=>({
+    //       name:element.name,
+    //       value:element.count,
+    //       id:element.id
+    //     }));
+    //     this.ourRoleOption = {
+    //       title: {
+    //         text: 'Our Role',
+    //         subtext: 'Status',
+    //         left: 'center'
+    //       },
+    //       color:this.ECHART_COLORS,
+    //       tooltip: {
+    //         trigger: 'item'
+    //       },
+    //       legend: {
+    //         orient: 'horizontal',
+    //       //  bottom:'bottom',
+    //        bottom:0
+    //       },
+    //       series: [
+    //         {
+    //           name: 'Access From',
+    //           type: 'pie',
+    //           radius: '75%',
+    //           //radius: ['50%', '70%'],
+    //           data: this.ourRoleData,
+    //           label: {
+    //               show: true,
+    //               position: 'inside',
+    //               fontWeight: 'bold',
+    //               fontSize: 15,
+    //               formatter: ' {c}',
+    //             },
+    //           emphasis: {
+    //             itemStyle: {
+    //               shadowBlur: 10,
+    //               shadowOffsetX: 0,
+    //               shadowColor: 'rgba(0, 0, 0, 0.5)'
+    //             }
+    //           }
+    //         }
+    //       ]
+    //     };
+    //   }
+    // });
+    // this.projectService.getProjectInfoSummary({},'').pipe(finalize(()=> this.isProjectDataLoading=false)).subscribe((response:any)=>{
+    //   if(response && response.success){
+    //     this.projects= response.data.map((element:any)=>({
+    //       name:element.projectname,
+    //       cost:this.commonService.costFormatter(element.cost),
+    //       id:element.id,
+    //       duration:element.duration
+    //     }));
+    //   }
+    // });
+    // this.vehicleService.getVehicleInfoSummary({},'').pipe(finalize(()=> this.isVehicleDataLoading=false)).subscribe((response:any)=>{
+    //   if(response && response.success){
+    //     this.vehicles= response.data;
+    //   }
+    // });
+    
+    // forkJoin({
+    //   incomeAPI:this.projectService.getProjectIncomeSummary({datetime: new Date()},''),
+    //   expenseAPI:this.projectService.getProjectExpenseSummary({datetime: new Date()},'')
+    // }).pipe(finalize(()=> {this.isfinanceLoading=false; this.isexpenseLoading=false})).subscribe((response:any)=>{
+    //   const prevMonth = this.getLastThreeMonths();     
+    //   if(response && response.incomeAPI.success){
+    //     //this.finance= response.data;
+    //     this.finance.inc_latestMonth= this.monthNames[prevMonth[0].month-1]+"-"+prevMonth[0].year;
+    //     this.finance.inc_lastMonth=this.monthNames[prevMonth[1].month-1]+"-"+prevMonth[1].year;
+    //     this.finance.totalcost=response.incomeAPI.data.find((x:any) => x.month === -1)?.totalamount || 0;
+    //     this.finance.totalincome=response.incomeAPI.data.find((x:any) => x.month === 0)?.totalamount || 0;
+    //     this.finance.inc_latestTotal= response.incomeAPI.data.find((x:any) => x.month ===prevMonth[0].month)?.totalamount || 0;
+    //     this.finance.inc_lastTotal= response.incomeAPI.data.find((x:any) => x.month ===prevMonth[1].month)?.totalamount || 0;
+        
+    //   }
+    //   if(response && response.expenseAPI.success){
+    //     this.finance.expenseTotal= response.expenseAPI.data.find((x:any) => x.type === 'Total')?.totalamount || 0;
+    //     this.finance.exp_latestMonth=this.monthNames[prevMonth[0].month-1]+"-"+prevMonth[0].year;
+    //     this.finance.exp_lastMonth=this.monthNames[prevMonth[1].month-1]+"-"+prevMonth[1].year;
+    //     this.finance.exp_latestTotal= response.expenseAPI.data.find((x:any) => x.type === 'Month' && x.month==prevMonth[0].month)?.totalamount || 0;
+    //     this.finance.exp_lastTotal= response.expenseAPI.data.find((x:any) => x.type === 'Month'  && (x.month==prevMonth[1].month))?.totalamount || 0;
+        
+    //   }
+    //     //income and expense
+    //   this.incomeoptions  = {
+    //     title: {
+    //       text: `Finances`,
+    //       left: 'center',        // center the title
+    //       top: 0,               // distance from top (you can adjust)
+    //       textStyle: {
+    //         fontSize: 18,
+    //         fontWeight: 'bold'
+    //       }
+    //     },
+    //     color:this.ECHART_COLORS,
+    //     grid: {
+    //     bottom: '20%', // Give enough space for the legend
+    //     top: '15%',
+    //     left: '0%',
+    //     right: '4%',
+    //     containLabel: true
+    //     },
+    //     tooltip: {
+    //       trigger: 'axis',
+    //       axisPointer: { type: 'shadow' }
+    //     },
+    //     legend: {
+    //       data: ['Income','Expense'],
+    //       orient:'horizontal',
+    //       bottom:0
+    //     },
+    //     xAxis: {
+    //       type: 'category',
+    //       data: [''],
+          
+    //     },
+    //     yAxis: {
+    //       type: 'value',
+    //       axisLabel: {
+    //         formatter: function (value: number) {
+    //           if (value >= 10000000) return value / 10000000 + 'Cr.';
+    //           if (value >= 1000000) return value / 1000000 + 'M';
+    //           if (value >= 1000) return value / 1000 + 'K';
+    //           return value;
+    //         }
+    //       }
+    //     },
+    //     series: [
+    //       {
+    //         name: 'Income',
+    //         type: 'bar',
+    //         //color:'#000',
+    //         data: [this.finance.totalincome],
+    //         center:['50%','50%'],
+    //         emphasis: {
+    //           focus: 'series'
+    //         },
+    //       },
+    //       {
+    //         name: 'Expense',
+    //         type: 'bar',
+    //         emphasis: {
+    //           focus: 'series'
+    //         },
+    //         data:[this.finance.expenseTotal]
+    //         // data: [
+    //         //   { value: 342333, name: 'Mon', id: 'a1' },         
+    //         // ]
+    //       }
+    //     ]
+    //   };
+      
+    //   this.expenseoption = {
+    //     title: {
+    //       text: 'Expense(s)',
+    //       subtext: '',
+    //       left: 'center'
+    //     },
+    //     color:this.ECHART_COLORS,
+    //     legend: {
+    //       orient: 'horizontal',
+    //      bottom:'5%'
+    //     },
+    //     tooltip: {
+    //       trigger: 'axis',
+    //       axisPointer: {
+    //         // Use axis to trigger tooltip
+    //         type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
+    //       }
+    //     },
+       
+    //     grid: {
+    //       left: '3%',
+    //       right: '4%',
+    //       bottom: '20%',
+    //       containLabel: true
+    //     },
+    //     xAxis: {
+    //       type: 'value',
+    //       axisLabel: {
+    //         formatter: function (value: number) {
+    //           if (value >= 10000000) return value / 10000000 + 'Cr.';
+    //           if (value >= 1000000) return value / 1000000 + 'M';
+    //           if (value >= 1000) return value / 1000 + 'K';
+    //           return value;
+    //         }
+    //       }
+    //     },
+    //     yAxis: {
+    //       type: 'category',
+    //       data: [this.monthNames[prevMonth[0].month-1]+"-"+prevMonth[0].year,
+    //       this.monthNames[prevMonth[1].month-1]+"-"+prevMonth[1].year,
+    //       this.monthNames[prevMonth[2].month-1]+"-"+prevMonth[2].year]
+    //     },
+    //     series: []
+    //   };
+    //   const expenseObj:any[]=[];
+    //   const groupedAndSorted = response.expenseAPI.data.filter((x:any)=>x.type.toLowerCase()!='month' && x.type.toLowerCase()!='total').reduce((acc:any, curr:any) => {
+    //     if (!acc[curr.type]) {
+    //       acc[curr.type] = [];
+    //     }
+    //     acc[curr.type].push(curr);
+    //     return acc;
+    //   }, {} as { [key: string]: typeof response.expenseAPI.data });
+      
+    //   // Sort each group by month
+    //   for (const type in groupedAndSorted) {
+    //     groupedAndSorted[type].sort((a:any, b:any) => b.month - a.month);
+    //   }
+    //   this.expenseoption
+    //   Object.entries(groupedAndSorted).forEach(([type, items]) => {       
+    //     expenseObj.push({
+    //       name: type,
+    //       type: 'bar',
+    //       stack: 'total',
+    //       barHeight: '20%',
+    //       label: {
+    //         show: true
+    //       },
+    //       emphasis: {
+    //         focus: 'series'
+    //       },
+    //       data: (items as Array<any>).map((item:any) => item.totalamount)
+    //     });     
+    //   });
+    //   console.log(expenseObj);
+    //   this.expenseoption['series']=expenseObj;
+    // });
+      this.sessionService.dashBoardProjectSubject$.pipe(takeUntil(this.destroy$)).subscribe((response:any)=>{     
+       
+        if(response && response.value)
+          this.getDataObj.pid=response.value.id;
+        else
+        this.getDataObj.pid='';
+      this.activeProjectId=this.getDataObj.pid;
+      this.updateChartData();
+      })
+   
   }
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  ngAfterViewInit() {
+    this.chartInstance = echarts.init(this.chartRef.nativeElement);
+
+  }
+  updateChartData(){
+    this.isletterStatusLoading=true;
+    this.isLetterCountLoading=true;
+    this.isEotLoading=true;
+    this.isCosLoading=true;
+    this.isEmpTypeLoading=true;
+    this.isProjectCountLoading=true;
+    this.isOurRoleLoading=true;
+    this.isProjectDataLoading=true;
+    this.isVehicleDataLoading=true;
+    this.isfinanceLoading=true;
+    this.isexpenseLoading=true;
+    this.employeeService.geEmployeeTypeCount(this.getDataObj,'').pipe(finalize(()=> this.isEmpTypeLoading=false)).subscribe((response:any)=>{
+      if(response && response.success){
+        this.empTypeCounts= response.data.map((element:any)=>({
+          name:element.name,
+          value:element.count,
+          id:element.id
+        }));
+        this.empTypeOption = {
+          title: {
+            text: '',
+            left: 'center',        // center the title
+            top: 0,               // distance from top (you can adjust)
+            textStyle: {
+              fontSize: 18,
+              fontWeight: 'bold'
+            }
+          },
+          color:this.ECHART_COLORS,
+          tooltip: {
+            trigger: 'item'
+          },
+         legend:{
+          bottom:0
+         },
+          series: [
+            {
+              name: 'Count',
+              type: 'pie',
+              radius: ['45%', '65%'],
+              center: ['50%', '50%'],
+              avoidLabelOverlap: false,
+              itemStyle: {
+                borderRadius: 3,
+                borderColor: '#fff',
+                borderWidth: 2
+              },
+              label: {
+                show: true,
+                position: 'outside',
+                fontWeight: 'bold',
+                fontSize: 15,
+                formatter: '{c}',
+              },
+              
+              labelLine: {
+                show: true
+              },
+              data: this.empTypeCounts,
+            }
+          ],
+          graphic: [
+            {
+              type: 'text',
+              left: 'center',
+              top: 'center',
+              style: {
+                text: `Total: `+this.empTypeCounts.reduce((sum, item) => sum + item.value, 0),
+                textAlign: 'center',
+                fill: '#000',
+                fontSize: 20,
+                fontWeight: 'bold'
+              }
+            }
+          ]
+        };
+      }
+    })
+    this.cosService.getCOSStatusCount(this.getDataObj,'').pipe(finalize(()=> this.isCosLoading=false)).subscribe((response:any)=>{
+      if(response && response.success){
+        this.cosStatusData= response.data.map((element:any)=>({
+          name:element.name,
+          value:element.count,
+          id:element.id
+        }));        
+        this.cosoption = {
+        
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            orient: 'horizontal',
+          bottom:'bottom'
+          },
+          color:this.ECHART_COLORS,
+          series: [
+            {
+              name: 'Count',
+              type: 'pie',
+              radius: '60%',
+              center: ['50%', '50%'],
+              data: this.cosStatusData,
+              label: {
+                  show: true,
+                  position: 'inside',
+                  fontWeight: 'bold',
+                  fontSize: 15,
+                  formatter: '{c}',
+                },
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        };
+      }
+    })
+    this.eotService.geEOTStatusCount(this.getDataObj,'').pipe(finalize(()=> this.isEotLoading=false)).subscribe((response:any)=>{
+      if(response && response.success){
+        console.log(response.data);
+        this.eotStatusData= response.data.map((element:any)=>({
+          name:element.name,
+          value:element.count,
+          id:element.id
+        }));
+        this.eotoption = {
+    
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            orient: 'horizontal',
+           bottom:'bottom'
+          },
+          color:this.ECHART_COLORS,
+          series: [
+            {
+              name: 'Count',
+              type: 'pie',
+              radius: '60%',
+              center: ['50%', '50%'],
+              data: this.eotStatusData,
+              label: {
+                  show: true,
+                  position: 'inside',
+                  fontWeight: 'bold',
+                  fontSize: 15,
+                  formatter: ' {c}',
+                },
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        };
+      }
+    })
+    this.letterService.getLetterStatusCountSummary(this.getDataObj,'').pipe(finalize(()=> this.isletterStatusLoading=false)).subscribe((response:any)=>{
+      if(response && response.success){
+        this.letterStatusData= response.data.map((element:any)=>({
+          name:element.name,
+          value:element.count,
+          id:element.id
+        }));
+        this.letterStatusOption = {
+          title: {
+            text: 'Letter Status',
+            left: 'center',        // center the title
+            top: 0,               // distance from top (you can adjust)
+            textStyle: {
+              fontSize: 18,
+              fontWeight: 'bold'
+            }
+          },
+          tooltip: {
+            trigger: 'item'
+          },
+        legend:{
+          bottom:0
+        },
+          series: [
+            {
+              name: 'status',
+              type: 'pie',
+              radius: ['50%', '70%'],
+              center: ['50%', '50%'],
+              avoidLabelOverlap: false,
+              itemStyle: {
+                borderRadius: 3,
+                borderColor: '#fff',
+                borderWidth: 2
+              },
+              label: {
+                show: true,
+                position: 'outside',
+                fontWeight: 'bold',
+                fontSize: 15,
+                formatter: '{c}',
+              },
+              
+              labelLine: {
+                show: true
+              },
+              data: this.letterStatusData,
+            }
+          ],
+          graphic: [
+            {
+              type: 'text',
+              left: 'center',
+              top: 'center',
+              style: {
+                text: `Total: `+this.letterStatusData.reduce((sum, item) => sum + item.value, 0),
+                textAlign: 'center',
+                fill: '#000',
+                fontSize: 20,
+                fontWeight: 'bold'
+              }
+            }
+          ]
+        };
+      }
+    })
+    this.letterService.getLetterTypeCountSummary(this.getDataObj,'').pipe(finalize(()=> this.isLetterCountLoading=false)).subscribe((response:any)=>{
+      if(response && response.success){
+        this.letterTypeCountData= response.data;
+        const names = response.data.map((x:any) => x.name);
+        const consultant = response.data.map((x:any) =>({value:x.count.consultant, id:x.id}) );
+        const contractor = response.data.map((x:any) =>({value:x.count.contractor, id:x.id}));
+        this.letterCountOptions  = {
+          title: {
+            text: `Total Letter(s) : `+this.letterTypeCountData.map(x => (x.count?.consultant || 0) + (x.count?.contractor || 0))
+                                      .reduce((a, b) => a + b, 0),
+            left: 'center',        // center the title
+            top: 10,               // distance from top (you can adjust)
+            textStyle: {
+              fontSize: 18,
+              fontWeight: 'bold'
+            }
+          },
+          color:this.ECHART_COLORS,
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'shadow' }
+          },
+          legend: {
+            data: ['Consultant', 'Contractor'],
+            orient:'horizontal',
+            bottom:'bottom',
+            
+          },
+          xAxis: {
+            type: 'category',
+            data: names,
+            axisLabel:{rotate:30}
+          },
+          yAxis: {
+            type: 'value',
+           
+          },
+         grid: {
+          bottom: '10%', // Give enough space for the legend
+          top: '15%',
+          left: '3%',
+          right: '4%',
+          containLabel: true
+        },
+          series: [
+            {
+              name: 'Consultant',
+              type: 'bar',
+              //color:'#000',
+              label: this.labelOption,
+              data: consultant,
+              emphasis: {
+                focus: 'series'
+              },
+            },
+            {
+              name: 'Contractor',
+              type: 'bar',
+              label: this.labelOption,
+              emphasis: {
+                focus: 'series'
+              },
+              //data: [5,11,4,2,6,1,9]
+              data: contractor
+            }
+          ]
+        };
+      }
+    })
+    this.projectService.getProjectCountSummary(this.getDataObj,'').pipe(finalize(()=> this.isProjectCountLoading=false)).subscribe((response:any)=>{
+      if(response && response.success){
+        this.projectCountData= response.data.map((element:any)=>({
+          name:element.name,
+          value:element.count,
+          id:element.id
+        }));
+        this.projectCountOption = {
+          legend: {
+            orient: 'horizontal',
+           bottom:0
+          },
+          color:this.ECHART_COLORS,
+          title: {
+            text: 'Project(s)',
+            left: 'center',        // center the title
+            top: 0,               // distance from top (you can adjust)
+            textStyle: {
+              fontSize: 18,
+              fontWeight: 'bold'
+            }
+          },
+          tooltip: {
+            trigger: 'item'
+          },
+         
+          series: [
+            {
+              name: 'Projects',
+              type: 'pie',
+              radius: ['50%', '70%'],
+              center: ['50%', '50%'],
+              avoidLabelOverlap: true,
+              top:20,
+              itemStyle: {
+                borderRadius: 3,
+                borderColor: '#fff',
+                borderWidth: 2
+              },
+              label: {
+                show: true,
+                position: 'outside',
+                fontWeight: 'bold',
+                fontSize: 15,
+                formatter: '{c}',
+              },
+              labelLine: {
+                show: true,
+                
+              },
+              data: this.projectCountData,
+            }
+          ],
+          graphic: [
+            {
+              type: 'text',
+              left: 'center',
+              top: 'center',
+              style: {
+                text: `Total: `+this.projectCountData.reduce((sum, item) => sum + item.value, 0),
+                textAlign: 'center',
+                fill: '#000',
+                fontSize: 20,
+                fontWeight: 'bold'
+              }
+            }
+          ]
+        };
+      }
+    });
+    this.projectService.getProjectRoleCountSummary(this.getDataObj,'').pipe(finalize(()=> this.isOurRoleLoading=false)).subscribe((response:any)=>{
+      if(response && response.success){
+        this.ourRoleData= response.data.map((element:any)=>({
+          name:element.name,
+          value:element.count,
+          id:element.id
+        }));
+        this.ourRoleOption = {
+          title: {
+            text: 'Our Role',
+            subtext: 'Status',
+            left: 'center'
+          },
+          color:this.ECHART_COLORS,
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            orient: 'horizontal',
+          //  bottom:'bottom',
+           bottom:0
+          },
+          series: [
+            {
+              name: 'Our Role',
+              type: 'pie',
+              radius: '75%',
+              //radius: ['50%', '70%'],
+              data: this.ourRoleData,
+              label: {
+                  show: true,
+                  position: 'inside',
+                  fontWeight: 'bold',
+                  fontSize: 15,
+                  formatter: ' {c}',
+                },
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        };
+      }
+    });
+    this.projectService.getProjectInfoSummary(this.getDataObj,'').pipe(finalize(()=> this.isProjectDataLoading=false)).subscribe((response:any)=>{
+      if(response && response.success){
+        this.projects= response.data.map((element:any)=>({
+          name:element.projectname,
+          cost:this.commonService.costFormatter(element.cost),
+          id:element.id,
+          duration:element.duration
+        }));
+      }
+    });
+    this.vehicleService.getVehicleInfoSummary(this.getDataObj,'').pipe(finalize(()=> this.isVehicleDataLoading=false)).subscribe((response:any)=>{
+      if(response && response.success){
+        this.vehicles= response.data;
+      }
+    });
+    let apiObj=this.getDataObj.pid==''? {datetime: new Date()}:{projectid: this.getDataObj.pid,datetime: new Date()};
+    forkJoin({     
+      incomeAPI:this.projectService.getProjectIncomeSummary(apiObj,''),
+      expenseAPI:this.projectService.getProjectExpenseSummary(apiObj,'')
+    }).pipe(finalize(()=> {this.isfinanceLoading=false; this.isexpenseLoading=false})).subscribe((response:any)=>{
+      const prevMonth = this.getLastThreeMonths();     
+      if(response && response.incomeAPI.success){
+        //this.finance= response.data;
+        this.finance.inc_latestMonth= this.monthNames[prevMonth[0].month-1]+"-"+prevMonth[0].year;
+        this.finance.inc_lastMonth=this.monthNames[prevMonth[1].month-1]+"-"+prevMonth[1].year;
+        this.finance.totalcost=response.incomeAPI.data.find((x:any) => x.month === -1)?.totalamount || 0;
+        this.finance.totalincome=response.incomeAPI.data.find((x:any) => x.month === 0)?.totalamount || 0;
+        this.finance.inc_latestTotal= response.incomeAPI.data.find((x:any) => x.month ===prevMonth[0].month)?.totalamount || 0;
+        this.finance.inc_lastTotal= response.incomeAPI.data.find((x:any) => x.month ===prevMonth[1].month)?.totalamount || 0;
+        
+      }
+      if(response && response.expenseAPI.success){
+        this.finance.expenseTotal= response.expenseAPI.data.find((x:any) => x.type === 'Total')?.totalamount || 0;
+        this.finance.exp_latestMonth=this.monthNames[prevMonth[0].month-1]+"-"+prevMonth[0].year;
+        this.finance.exp_lastMonth=this.monthNames[prevMonth[1].month-1]+"-"+prevMonth[1].year;
+        this.finance.exp_latestTotal= response.expenseAPI.data.find((x:any) => x.type === 'Month' && x.month==prevMonth[0].month)?.totalamount || 0;
+        this.finance.exp_lastTotal= response.expenseAPI.data.find((x:any) => x.type === 'Month'  && (x.month==prevMonth[1].month))?.totalamount || 0;
+        
+      }
+        //income and expense
+      this.incomeoptions  = {
+        title: {
+          text: `Finances`,
+          left: 'center',        // center the title
+          top: 0,               // distance from top (you can adjust)
+          textStyle: {
+            fontSize: 18,
+            fontWeight: 'bold'
+          }
+        },
+        color:this.ECHART_COLORS,
+        grid: {
+        bottom: '20%', // Give enough space for the legend
+        top: '15%',
+        left: '0%',
+        right: '4%',
+        containLabel: true
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' }
+        },
+        legend: {
+          data: ['Income','Expense'],
+          orient:'horizontal',
+          bottom:0
+        },
+        xAxis: {
+          type: 'category',
+          data: [''],
+          
+        },
+        yAxis: {
+          type: 'value',
+          axisLabel: {
+            formatter: function (value: number) {
+              if (value >= 10000000) return value / 10000000 + 'Cr.';
+              if (value >= 1000000) return value / 1000000 + 'M';
+              if (value >= 1000) return value / 1000 + 'K';
+              return value;
+            }
+          }
+        },
+        series: [
+          {
+            name: 'Income',
+            type: 'bar',
+            //color:'#000',
+            data: [this.finance.totalincome],
+            center:['50%','50%'],
+            emphasis: {
+              focus: 'series'
+            },
+          },
+          {
+            name: 'Expense',
+            type: 'bar',
+            emphasis: {
+              focus: 'series'
+            },
+            data:[this.finance.expenseTotal]
+            // data: [
+            //   { value: 342333, name: 'Mon', id: 'a1' },         
+            // ]
+          }
+        ]
+      };
+      
+      this.expenseoption = {
+        title: {
+          text: 'Expense(s)',
+          subtext: '',
+          left: 'center'
+        },
+        color:this.ECHART_COLORS,
+        legend: {
+          orient: 'horizontal',
+         bottom:'5%'
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            // Use axis to trigger tooltip
+            type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
+          }
+        },
+       
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '20%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'value',
+          axisLabel: {
+            formatter: function (value: number) {
+              if (value >= 10000000) return value / 10000000 + 'Cr.';
+              if (value >= 1000000) return value / 1000000 + 'M';
+              if (value >= 1000) return value / 1000 + 'K';
+              return value;
+            }
+          }
+        },
+        yAxis: {
+          type: 'category',
+          data: [this.monthNames[prevMonth[0].month-1]+"-"+prevMonth[0].year,
+          this.monthNames[prevMonth[1].month-1]+"-"+prevMonth[1].year,
+          this.monthNames[prevMonth[2].month-1]+"-"+prevMonth[2].year]
+        },
+        series: []
+      };
+      const expenseObj:any[]=[];
+      const groupedAndSorted = response.expenseAPI.data.filter((x:any)=>x.type.toLowerCase()!='month' && x.type.toLowerCase()!='total').reduce((acc:any, curr:any) => {
+        if (!acc[curr.type]) {
+          acc[curr.type] = [];
+        }
+        acc[curr.type].push(curr);
+        return acc;
+      }, {} as { [key: string]: typeof response.expenseAPI.data });
+      
+      // Sort each group by month
+      for (const type in groupedAndSorted) {
+        groupedAndSorted[type].sort((a:any, b:any) => b.month - a.month);
+      }
+     
+      Object.entries(groupedAndSorted).forEach(([type, items]) => {       
+        expenseObj.push({
+          name: type,
+          type: 'bar',
+          stack: 'total',
+          barHeight: '20%',
+          label: {
+            show: true
+          },
+          emphasis: {
+            focus: 'series'
+          },
+          data: (items as Array<any>).map((item:any) => item.totalamount)
+        });     
+      });
+      console.log(expenseObj);
+      this.expenseoption['series']=expenseObj;
+    });
+  }
+  addSeries() {
+    if (this.chartInstance) {
+      const newSeries = {
+        name: 'New Line',
+        type: 'line',
+        data: [15, 25, 16, 30]
+      };
+
+      this.chartInstance.setOption({
+        series: [
+          // Keep existing series
+          { name: 'Initial', type: 'bar', data: [5, 20, 36, 10] },
+          newSeries
+        ]
+      });
+    }
+  }
+
+  getLastThreeMonths(): { month: number, year: number }[] {
+    const today = new Date();
+    const result = [];
+  
+    for (let i = 1; i <= 3; i++) {
+      const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      result.push({
+        month: date.getMonth() + 1, // +1 because getMonth() is zero-based
+        year: date.getFullYear()
+      });
+    }
+  
+    return result;
+  }
+
+  getPercentageChange(current: number, previous: number): { status: string, percent: number } {
+    if (!previous || previous === 0) {
+      return { status: 'N/A', percent: 0 }; // Avoid division by 0
+    }
+  
+    const diff = current - previous;
+    const percent = Math.abs((diff / previous) * 100);
+    const status = diff > 0 ? 'up' : diff < 0 ? 'down' : 'nc';
+  
+    return { status, percent: +percent.toFixed(2) };
+  }
+
   //letters
   labelOption = {
     show: true,
@@ -149,449 +1399,97 @@ export class DashboardComponent {
     }
   };
 
-  //income and expense
-  incomeoptions: EChartsCoreOption  = {
-    title: {
-      text: `Finances`,
-      left: 'center',        // center the title
-      top: 0,               // distance from top (you can adjust)
-      textStyle: {
-        fontSize: 18,
-        fontWeight: 'bold'
-      }
-    },
-    color:this.ECHART_COLORS,
-    grid: {
-    bottom: '20%', // Give enough space for the legend
-    top: '15%',
-    left: '0%',
-    right: '4%',
-    containLabel: true
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: { type: 'shadow' }
-    },
-    legend: {
-      data: ['Income','Expense'],
-      orient:'horizontal',
-      bottom:0
-    },
-    xAxis: {
-      type: 'category',
-      data: [''],
-      
-    },
-    yAxis: {
-      type: 'value',
-      axisLabel: {
-        formatter: function (value: number) {
-          if (value >= 10000000) return value / 10000000 + 'Cr.';
-          if (value >= 1000000) return value / 1000000 + 'M';
-          if (value >= 1000) return value / 1000 + 'K';
-          return value;
-        }
-      }
-    },
-    series: [
-      {
-        name: 'Income',
-        type: 'bar',
-        //color:'#000',
-        data: [1342323003],
-        center:['50%','50%'],
-        emphasis: {
-          focus: 'series'
-        },
-      },
-      {
-        name: 'Expense',
-        type: 'bar',
-        emphasis: {
-          focus: 'series'
-        },
-        data: [
-          { value: 342333, name: 'Mon', id: 'a1' },         
-        ]
-      }
-    ]
-  };
 
-  options: EChartsCoreOption  = {
-    title: {
-      text: `Total Letter(s) : 120`,
-      left: 'center',        // center the title
-      top: 10,               // distance from top (you can adjust)
-      textStyle: {
-        fontSize: 18,
-        fontWeight: 'bold'
-      }
-    },
-    color:this.ECHART_COLORS,
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: { type: 'shadow' }
-    },
-    legend: {
-      data: ['Consultant', 'Contractor'],
-      orient:'horizontal',
-      bottom:'bottom',
-      
-    },
-    xAxis: {
-      type: 'category',
-      data: ['EOT', 'COS', 'MileStone','SiteProgress','Billing','Road Safety','Informative','Design','Contractual','MoM','Reports'],
-      axisLabel:{rotate:30}
-    },
-    yAxis: {
-      type: 'value',
-     
-    },
-   grid: {
-    bottom: '10%', // Give enough space for the legend
-    top: '15%',
-    left: '3%',
-    right: '4%',
-    containLabel: true
-  },
-    series: [
-      {
-        name: 'Consultant',
-        type: 'bar',
-        //color:'#000',
-        label: this.labelOption,
-        data: [10,4,2,12,13,4,1,6,8,10,4],
-        emphasis: {
-          focus: 'series'
-        },
-      },
-      {
-        name: 'Contractor',
-        type: 'bar',
-        label: this.labelOption,
-        emphasis: {
-          focus: 'series'
-        },
-        //data: [5,11,4,2,6,1,9]
-        data: [
-          { value: 5, name: 'Mon', id: 'a1' },
-          { value: 11, name: 'Tue', id: 'a2' },
-          { value: 4, name: 'Wed', id: 'a3' },
-          { value: 2, name: 'Mon', id: 'a1' },
-          { value: 8, name: 'Tue', id: 'a2' },
-          { value: 15, name: 'Wed', id: 'a3' },
-          { value: 20, name: 'Wed', id: 'a3' },
-          { value: 2, name: 'Mon', id: 'a1' },
-          { value: 8, name: 'Tue', id: 'a2' },
-          { value: 15, name: 'Wed', id: 'a3' },
-          { value: 20, name: 'Wed', id: 'a3' }
-        ]
-      }
-    ]
-  };
+
+
   
   onSelect(event:any) {
     console.log(event);
   }
-
+  projectSearchObj:any={};
+  letterSearchObj:any={};
+  eotSearchObj:any={};
+  cosSearchObj:any={};
+  empSerachObj:any={};
   onChartClick(event: any): void {
     console.log('Bar clicked:', event);
     console.log('Clicked value:', event.value);     // value (e.g. 120)
     console.log('Clicked name:', event.name);       // category name (e.g. Mon)
   }
+  onProjectCountClick(event:any){
+    this.projectSearchObj.projectid=this.activeProjectId;
+    this.projectSearchObj.typeid=event.data.id;
+    this.getProjectList();
+  }
+  onOurRoleClick(event:any){
+    this.projectSearchObj.projectid=this.activeProjectId;
+    this.projectSearchObj.typeid='';
+    this.projectSearchObj.roleid=event.data.id;
+    this.getProjectList();
+  }
+  getProjectList(){
+    //this.projectService.getProjectInfoSummary(this.projectSearchObj,'').pipe(finalize(()=> this.isLoading=false))
+    console.log(this.projectSearchObj);
+     this.defaultdialogoptions.data = {     
+          element:this.projectSearchObj
+        };
+        this.defaultdialogoptions.minWidth='90vw';
+        const dialogRef = this.dialog.open(ConsultentListSummaryComponent, this.defaultdialogoptions);
+  }
+  onLetterTypeClick(event:any){
 
-  //status
-  letterStatusOption: EChartsCoreOption = {
-    title: {
-      text: 'Letter Status',
-      left: 'center',        // center the title
-      top: 0,               // distance from top (you can adjust)
-      textStyle: {
-        fontSize: 18,
-        fontWeight: 'bold'
-      }
-    },
-    tooltip: {
-      trigger: 'item'
-    },
-   legend:{
-    bottom:0
-   },
-    series: [
-      {
-        name: 'status',
-        type: 'pie',
-        radius: ['50%', '70%'],
-        center: ['50%', '50%'],
-        avoidLabelOverlap: false,
-        itemStyle: {
-          borderRadius: 3,
-          borderColor: '#fff',
-          borderWidth: 2
-        },
-        label: {
-          show: true,
-          position: 'outside',
-          fontWeight: 'bold',
-          fontSize: 15,
-          formatter: '{c}',
-        },
-        
-        labelLine: {
-          show: true
-        },
-        data: [
-          { value: 3, name: 'Pending' },
-          { value: 2, name: 'Close' }
-        ],
-      }
-    ],
-    graphic: [
-      {
-        type: 'text',
-        left: 'center',
-        top: 'center',
-        style: {
-          text: `Total: 3 `,
-          textAlign: 'center',
-          fill: '#000',
-          fontSize: 20,
-          fontWeight: 'bold'
-        }
-      }
-    ]
-  };
-
-  eotoption = {
-    
-    tooltip: {
-      trigger: 'item'
-    },
-    legend: {
-      orient: 'horizontal',
-     bottom:'bottom'
-    },
-    color:this.ECHART_COLORS,
-    series: [
-      {
-        name: 'Access From',
-        type: 'pie',
-        radius: '60%',
-        center: ['50%', '50%'],
-        data: [
-          { value: 1048, name: 'Pending' },
-          { value: 735, name: 'Approved' },
-          { value: 580, name: 'Rejected' },
-          
-        ],
-        label: {
-            show: true,
-            position: 'inside',
-            fontWeight: 'bold',
-            fontSize: 15,
-            formatter: ' {c}',
-          },
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
-          }
-        }
-      }
-    ]
-  };
-  cosoption = {
-   
-    tooltip: {
-      trigger: 'item'
-    },
-    legend: {
-      orient: 'horizontal',
-     bottom:'bottom'
-    },
-    color:this.ECHART_COLORS,
-    series: [
-      {
-        name: 'Access From',
-        type: 'pie',
-        radius: '60%',
-        center: ['50%', '50%'],
-        data: [
-          { value: 1048, name: 'Pending' },
-          { value: 735, name: 'Approved' },
-          { value: 580, name: 'Rejected' },
-          
-        ],
-        label: {
-            show: true,
-            position: 'inside',
-            fontWeight: 'bold',
-            fontSize: 15,
-            formatter: '{c}',
-          },
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
-          }
-        }
-      }
-    ]
-  };
+    this.sessionService.workOwnerSubject$.subscribe((response:any)=>{
+      if(response){
+        let relatedTo;
+        if(event.seriesName.toLowerCase()=='contractor')
+          relatedTo=  response.find((x:any)=>x.name.toLowerCase()=='contractor')?.id;
+        else
+         relatedTo=  response.find((x:any)=>x.name.toLowerCase()!='contractor')?.id;
+        console.log(relatedTo);
+        this.letterSearchObj.relatedtoid= relatedTo;
+        this.letterSearchObj.lettertypeid=event.data.id;
+        this.letterSearchObj.ownername= event.seriesName;
+        this.letterSearchObj.letterType= this.letterTypeCountData.find((x:any)=> x.id==event.data.id)?.name;
+        this.defaultdialogoptions.data = {     
+          element:this.letterSearchObj
+        };
+        this.defaultdialogoptions.minWidth='90vw';
+        const dialogRef = this.dialog.open(LetterInfoSummaryComponent, this.defaultdialogoptions);
+      }      
+    });
+  }
+  onEOTClick(event:any){
+    this.eotSearchObj.projectid=this.activeProjectId;
+    this.eotSearchObj.statusid= event.data.id;
+    this.defaultdialogoptions.data = {     
+      element:this.eotSearchObj
+    };
+    this.defaultdialogoptions.minWidth='80vw';
+    const dialogRef = this.dialog.open(EotInfoSummaryComponent, this.defaultdialogoptions);
+  }
+  onCOSClick(event:any){
+    this.cosSearchObj.projectid=this.activeProjectId;
+    this.cosSearchObj.statusid= event.data.id;
+  
+    this.defaultdialogoptions.data = {     
+      element:this.cosSearchObj
+    };
+    this.defaultdialogoptions.minWidth='80vw';
+    const dialogRef = this.dialog.open(CosInfoSummaryComponent, this.defaultdialogoptions);
+  }
+  onemptypeClick(event:any){
+    this.empSerachObj.projectid=this.activeProjectId;
+    this.empSerachObj.id= event.data.id;
+    this.empSerachObj.name= event.data.name;
+  
+    this.defaultdialogoptions.data = {     
+      element:this.empSerachObj
+    };
+    this.defaultdialogoptions.minWidth='80vw';
+    const dialogRef = this.dialog.open(EmployeeInfoSummaryComponent, this.defaultdialogoptions);
+  }
   // This example requires ECharts v5.5.0 or later
-  roleoption = {
-    title: {
-      text: 'Our Role',
-      subtext: 'Status',
-      left: 'center'
-    },
-    color:this.ECHART_COLORS,
-    tooltip: {
-      trigger: 'item'
-    },
-    legend: {
-      orient: 'horizontal',
-     bottom:'bottom'
-    },
-    series: [
-      {
-        name: 'Access From',
-        type: 'pie',
-        radius: '75%',
-        //radius: ['50%', '70%'],
-        data: [
-          { value: 20, name: 'Active' },
-          { value: 4, name: 'Partial' },
-          { value: 10, name: 'Silent' },
-          
-        ],
-        label: {
-            show: true,
-            position: 'inside',
-            fontWeight: 'bold',
-            fontSize: 15,
-            formatter: ' {c}',
-          },
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
-          }
-        }
-      }
-    ]
-  };
-  expenseoption = {
-    title: {
-      text: 'Expense(s)',
-      subtext: '',
-      left: 'center'
-    },
-    color:this.ECHART_COLORS,
-    legend: {
-      orient: 'horizontal',
-     bottom:'5%'
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        // Use axis to trigger tooltip
-        type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
-      }
-    },
-   
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '20%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'value'
-    },
-    yAxis: {
-      type: 'category',
-      data: ['April', 'May', 'June']
-    },
-    series: [
-      {
-        name: 'Salary',
-        type: 'bar',
-        stack: 'total',
-        barHeight: '20%',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [320, 302, 301, 334, 390, 330, 320]
-      },
-      {
-        name: 'Office Rent',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [120, 132, 101, 134, 90, 230, 210]
-      },
-      {
-        name: 'Vehilce',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [220, 182, 191, 234, 290, 330, 310]
-      },
-      {
-        name: 'Imprest',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [150, 212, 201, 154, 190, 330, 410]
-      },
-      {
-        name: 'Travel',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [820, 832, 901, 934, 1290, 1330, 1320]
-      },
-      {
-        name: 'Misc.',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [820, 832, 901, 934, 1290, 1330, 1320]
-      }
-    ]
-  };
+
   progressoption = {
     title: {
       text: 'Stacked Line'
@@ -637,66 +1535,5 @@ export class DashboardComponent {
       }
     ]
   };
-  employeeOption: EChartsCoreOption = {
-    title: {
-      text: '',
-      left: 'center',        // center the title
-      top: 0,               // distance from top (you can adjust)
-      textStyle: {
-        fontSize: 18,
-        fontWeight: 'bold'
-      }
-    },
-    color:this.ECHART_COLORS,
-    tooltip: {
-      trigger: 'item'
-    },
-   legend:{
-    bottom:0
-   },
-    series: [
-      {
-        name: 'status',
-        type: 'pie',
-        radius: ['40%', '60%'],
-        center: ['50%', '50%'],
-        avoidLabelOverlap: false,
-        itemStyle: {
-          borderRadius: 3,
-          borderColor: '#fff',
-          borderWidth: 2
-        },
-        label: {
-          show: true,
-          position: 'outside',
-          fontWeight: 'bold',
-          fontSize: 15,
-          formatter: '{c}',
-        },
-        
-        labelLine: {
-          show: true
-        },
-        data: [
-          { value: 3, name: 'Key Professional' },
-          { value: 2, name: 'Support Satff' },
-          { value: 1, name: 'Sub Professional' }
-        ],
-      }
-    ],
-    graphic: [
-      {
-        type: 'text',
-        left: 'center',
-        top: 'center',
-        style: {
-          text: `Total: 3 `,
-          textAlign: 'center',
-          fill: '#000',
-          fontSize: 20,
-          fontWeight: 'bold'
-        }
-      }
-    ]
-  };
+ 
 }

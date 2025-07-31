@@ -1,0 +1,64 @@
+<div class="dialog">
+    <mat-card>
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> Profit & Loss
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3>
+        <mat-dialog-content class="mat-typography">
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div  *ngIf="!isLoading">                
+              <div class="row content-center">
+                <div class="col-md-8">
+                  <span class="sub-heading">{{title}}</span>                  
+                </div>       
+                <div class="col-md-4 d-flex justify-content-end">
+                    <mat-form-field>
+                        <mat-icon matPrefix>search</mat-icon>
+                        <mat-label>Month / Year</mat-label>
+                        <input matInput (keyup)="filterChange($event)"  #input>
+                      </mat-form-field>  
+                </div>
+            </div>
+                <div class=" mat-elevation-z8">  
+                    
+                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+                      
+                          <ng-container matColumnDef="serial">
+                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                          </ng-container>
+                            <ng-container matColumnDef="name">
+                              <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+                              <td mat-cell *matCellDef="let row"> {{row.monthandyear | date:'MMMM yyyy'}} </td>
+                            </ng-container>
+                                
+                          <ng-container matColumnDef="monthly">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> View </th>
+                            <td mat-cell *matCellDef="let row"> 
+                                <app-view-btn (clickEvent)="viewClick(row)" ></app-view-btn>  
+                             </td>
+                          </ng-container>
+                         
+                        <ng-container matColumnDef="action">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                            <td mat-cell *matCellDef="let row"> 
+                                <app-delete-btn (clickEvent)="deleteClick(row)" ></app-delete-btn>  
+                             </td>
+                          </ng-container>
+                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+                          <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                              No detail(s) found at this moment.</td>
+                          </tr>
+                        </table>
+                </div>
+            </div>
+        </mat-card-content>
+        </mat-dialog-content>
+    </mat-card>
+</div>

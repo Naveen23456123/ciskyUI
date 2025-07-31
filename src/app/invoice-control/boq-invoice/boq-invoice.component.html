@@ -30,9 +30,20 @@
                
                 </div>
                 <mat-card>
-                    <mat-card-title>
-                        <h6>Summary of Costs</h6>
-                    </mat-card-title>
+                    
+                    <div class="wrapper report-head mx-3">
+                        <h5 class="sub-heading content-center">BOQ (Summary of Costs) </h5>
+                        <hr>
+                        <div class="control-div pd-1">
+                            <span class="report-heading">Project Code : {{projectObject.projectcode}} </span>
+                            <span class="report-heading float-end" > Date : {{today | formatDate}}</span>
+                        </div>
+                        
+                        <div class="control-div">
+                            <span class="report-heading"> Project : {{projectObject.projectshortname}}  </span>
+                            <span class="report-heading float-end" >  </span>   
+                        </div>
+                      </div>
                     <mat-card-content>
                         <table mat-table [dataSource]="dataSource" >
                         

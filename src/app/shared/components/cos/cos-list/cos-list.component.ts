@@ -15,6 +15,7 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { DialogOperation } from '@app/shared/models/constant.config';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { ViewLetterDetailsComponent } from '../../letters/view-letter-details/view-letter-details.component';
+import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 
 @Component({
   selector: 'app-cos-list',
@@ -42,7 +43,7 @@ cosList:any[]= [];
 
   constructor(private sessionService : SessionService,private cosService:CosInterfaceService,
     private router: Router,private route: ActivatedRoute,private helperService:HelperService,
-    private notifyBarService : NotifyBarService) {     
+    private notifyBarService : NotifyBarService,private csvService:GenerateCsvService) {     
     this.dataSource = new MatTableDataSource(this.cosList);
   }
 
@@ -88,21 +89,10 @@ cosList:any[]= [];
     this.pagination = this.helperService.paginationOptionGeneration(info, 10);
     this.pageSize = this.helperService.getPageSize();
   }
-
-  import() {
-    const config = this.defaultdialogoptions;
-      config.minWidth='75vw';
-        config.data = {
-          pageGuid: this.route.snapshot.data['pageGuid'],
-          type: this.route.snapshot.data['type'], 
-          template_type: TemplateType.COS   
-        };
-      this.dialog.open(UploadFileComponent,config);    
-    }
-
-    export() {
-      
-    }  
+  export(){
+    if(this.cosList && this.cosList.length>0)
+      this.csvService.downloadFile(this.cosList,this.cosService.getCSVTemplateColumnList(),'COS');
+  }   
 
   add_cos(){
     const config = this.defaultdialogoptions;

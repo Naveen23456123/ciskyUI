@@ -14,37 +14,58 @@ export class ProjectInterfaceService {
 
   getTemplateColumnList() {
     let columns = [
-      { label: 'Month', value: 'siteprcode' },
-      { label: 'Year', value: 'projectname' },
-      { label: 'Physical_Progress', value: 'projectshortname' },
-      { label: 'Financial_Progress', value: 'location' },
-      { label: 'Month', value: 'subcompany' },
-      { label: 'Year', value: 'worktype' },
-      { label: 'Physical_Progress', value: 'bidduedate' },
-      { label: 'Financial_Progress', value: 'loaawarddate' },
-      { label: 'Month', value: 'actualconstructioncompletiondate' },
-      { label: 'Year', value: 'scheduleconstructioncompletiondate' },
-      { label: 'Physical_Progress', value: 'agreementdate' },
-      { label: 'Financial_Progress', value: 'concernpersonname' },
-      { label: 'Month', value: 'tenderid' },
-      { label: 'Year', value: 'actualcompletiondate' },
-      { label: 'Physical_Progress', value: 'schedulecompletiondate' },
-      { label: 'Financial_Progress', value: 'remark' },
-      { label: 'Month', value: 'projectlength' },
-      { label: 'Year', value: 'consultancyfees' },
-      { label: 'Physical_Progress', value: 'contractmode' },
-      { label: 'Financial_Progress', value: 'jv' },
-      { label: 'Month', value: 'lead' },
-      { label: 'Year', value: 'ourshare' },
-      { label: 'Physical_Progress', value: 'association' },
-      { label: 'Financial_Progress', value: 'clientname' },
-      { label: 'Financial_Progress', value: 'projectkeypoint' },
-      { label: 'Month', value: 'ro' },
-      { label: 'Year', value: 'roaddress' },
-      { label: 'Physical_Progress', value: 'piuaddress' },
-      { label: 'Financial_Progress', value: 'projectduration' },
-      { label: 'Physical_Progress', value: 'ourrole' },
-      { label: 'Financial_Progress', value: 'siteofficeaddress' },
+      { label: 'Tender_Id', value: 'tenderId' },
+      { label: 'Project_Code', value: 'projectCode' },
+      { label: 'Short_Name', value: 'projectShortName' },
+      { label: 'Location', value: 'projectLocation' },
+      { label: 'Project Name', value: 'projectName' },
+      { label: 'Key_Points', value: 'keyPoints' },
+      { label: 'Company', value: 'companyId' },
+      { label: 'Work_Type', value: 'workTypeId' },
+      { label: 'Our_Role', value: 'ourRoleId' },
+      { label: 'Project_Length', value: 'projectLength' },
+      { label: 'Bid_Due_Date', value: 'bidDueDate' },
+      { label: 'LOA_Date', value: 'loaDate' },
+      { label: 'Agreement_date', value: 'agreementDate' },
+      { label: 'Commencement_Date', value: 'commencementDate' },
+      { label: 'Schedule_Construction_Complete_Date', value: 'scheduleConstructionCompleteDate' },
+      { label: 'Construction_Duration', value: 'constructionduration' },
+      { label: 'O&M_Duration', value: 'oandmduration' },
+      { label: 'Auth_Engineer', value: 'authengineer' },
+      { label: 'Cordinator', value: 'cordinator' },
+      { label: 'Remark', value: 'remark' },
+      { label: 'Consultancy_Fees', value: 'consultancyFees' },
+      { label: 'Contract_Mode', value: 'contractmodeid' },
+      { label: 'Lead', value: 'lead' },
+      { label: 'JV', value: 'jv' },
+      { label: 'Our_Share', value: 'ourshare' },
+      { label: 'JV_Share', value: 'jvshare' },
+      { label: 'Association', value: 'association' },
+      { label: 'Client', value: 'client' },
+      { label: 'Regional_Office_Name', value: 'regionalofficename' },
+      { label: 'Regional_Office_Address', value: 'regionalofficeaddress' },
+      { label: 'Member_Name', value: 'membername' },
+      { label: 'Member_Location', value: 'memberlocation' },
+      { label: 'Director_Name', value: 'directorname' },
+      { label: 'Director_Location', value: 'directorlocation' },
+      { label: 'PIU_Address', value: 'piuaddress' },
+      { label: 'Site_Address', value: 'siteaddress' },
+      { label: 'Client_Address', value: 'clientaddress' }
+    ];
+  return columns;
+  }
+  getCSVTemplateColumnList() {
+    let columns = [
+      { label: 'Project_Code', value: 'projectcode' },
+      { label: 'Short_Name', value: 'projectshortname' },
+      { label: 'Location', value: 'projectlocation' },
+      { label: 'Project Name', value: 'projectname' },
+      { label: 'Project_Length', value: 'projectlength' },
+      { label: 'Agreement_date', value: 'agreementdate' },
+      { label: 'Commencement_Date', value: 'commencementdate' },
+      { label: 'Our_Share', value: 'ourshare' },
+      { label: 'JV_Share', value: 'jvshare' },
+      { label: 'Client', value: 'client' }
     ];
   return columns;
   }
@@ -58,8 +79,52 @@ export class ProjectInterfaceService {
       action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
+  } 
+  createBulkConsultants(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Consultant/Bulk',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
   }
+  getProjectIncome(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Consultant/Income',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  } 
 
+  getProjectIncomeSummary(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Consultant/IncomeSummary',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  getProjectExpenseSummary(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Consultant/ExpenseSummary',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   updateProject(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Consultant',
@@ -83,14 +148,14 @@ export class ProjectInterfaceService {
     return this.coreApi.standardService(standardAttribute);
   }
 
-  getAllProjectDetailsByOrdIg(params: any, guid: string) {
+  getAllProjectDetailsByOrdIg(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'Consultant',
-      params: params,
+      url: 'Consultant/Search',
+      params: {},
       headers: true,
       guid: '',
-      request: {},
-      action: Operation.GET
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   //  return of([  
@@ -150,6 +215,53 @@ export class ProjectInterfaceService {
   getAllProjectPartialDetailsByOrdIg(params: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Consultant/Partial',
+      params: params,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  
+  }
+
+  getProjectCountSummary(params: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Consultant/Summary',
+      params: params,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  
+  }
+  getProjectRoleCountSummary(params: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Consultant/RoleSummary',
+      params: params,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);  
+  }
+  getProjectListSummary(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Consultant/ListSummary',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  getProjectInfoSummary(params: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Consultant/InfoSummary',
       params: params,
       headers: true,
       guid: '',

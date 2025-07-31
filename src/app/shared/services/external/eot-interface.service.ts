@@ -12,14 +12,15 @@ export class EotInterfaceService {
 
   constructor(private coreApi:CoreAPIService) { }
 
-  getTemplateColumnList() {
+  getCSVTemplateColumnList() {
     let columns = [
-      { label: 'eotcode', value: 'eotcode' },
-      { label: 'processinitiatedate', value: 'processinitiatedate' },
-      { label: 'approveddate', value: 'approveddate' },
-      { label: 'approveddays', value: 'approveddays' },
-      { label: 'letter', value: 'letter' },
-      { label: 'eotstatus', value: 'eotstatus' },
+      { label: 'Code', value: 'code' },
+      { label: 'Project', value: 'project' },
+      { label: 'Submitted_Date', value: 'initiatedate' },
+      { label: 'Submitted_Days', value: 'days' },
+      { label: 'Approved_Date', value: 'approveddate' },
+      { label: 'Approved_Days', value: 'approveddays' },
+      { label: 'Status', value: 'status' },
     
     ];
   return columns;
@@ -34,15 +35,25 @@ export class EotInterfaceService {
             }
       } as {component: Type<any>, inputs: Record<string, unknown>}
   }
-
-  getAllEOTDetailsByOrdIdProjectId(param: any, guid: string) {
+  geEOTStatusCount(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'EOT',
+      url: 'EOT/StatusSummary',
       params: param,
       headers: true,
       guid: '',
       request: {},
       action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  getAllEOTDetailsByOrdIdProjectId(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'EOT/Search',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   //   return of([
@@ -67,37 +78,59 @@ export class EotInterfaceService {
   //     }
   // ]);
   }
-    createEOT(request: any, guid: string) {
-      const standardAttribute: ServiceAttributeModel = {
-        url: 'EOT',
-        params: {},
-        headers: true,
-        guid: '',
-        request: request,
-        action: Operation.CREATE
-      }
-      return this.coreApi.standardService(standardAttribute);
+  exploreEOTDetailsByOrdIdProjectId(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'EOT/SearchAll',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
     }
-    updateEOT(request: any, guid: string) {
-      const standardAttribute: ServiceAttributeModel = {
-        url: 'EOT',
-        params: {},
-        headers: true,
-        guid: '',
-        request: request,
-        action: Operation.UPDATE
-      }
-      return this.coreApi.standardService(standardAttribute);
+    return this.coreApi.standardService(standardAttribute);
+  }
+  createEOT(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'EOT',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
     }
-    deleteEOT(params: any, guid: string) {
-      const standardAttribute: ServiceAttributeModel = {
-        url: 'EOT',
-        params: params,
-        headers: true,
-        guid: '',
-        request: {},
-        action: Operation.DELETE
-      }
-      return this.coreApi.standardService(standardAttribute);
+    return this.coreApi.standardService(standardAttribute);
+  }
+  getEOTSummary(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'EOT/Summary',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
     }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  updateEOT(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'EOT',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.UPDATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  deleteEOT(params: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'EOT',
+      params: params,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.DELETE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
 }

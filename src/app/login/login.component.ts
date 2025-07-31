@@ -19,16 +19,16 @@ export class LoginComponent {
   ngOnInit(){
     this.loginform= this.formbuilder.group({ 
       id:[''],
-      username:['admin'],
+      username:['Naveen.kumar12@gmail.com'],
       password:['password']
     });
   }
   submit(){
     console.log(this.loginform.value);
     this.sessionService.setOrganization({id:'680dd39c3682904bdd6e9aff'});
+    this.sessionService.setUser({employeeid:'681f8c18b344c914ebfb58d7'});
     this.authService.login(this.loginform.value,'').subscribe((response:any)=>{
       if(response && response.success){
-        console.log(response.data);
         localStorage.setItem('auth_token', response.data.token);
         this.router.navigate(['/dashboard']);
       }

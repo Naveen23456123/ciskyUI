@@ -33,7 +33,7 @@ export class AddExpenseComponent {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type']
     };
-    config.minWidth= '60vw';
+    config.minWidth= '70vw';
     const dialogRef = this.dialog.open(ManageExpenseComponent, config);
     dialogRef.afterClosed().subscribe((data) => {
       if (data && data.valid) {

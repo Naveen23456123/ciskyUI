@@ -2,25 +2,30 @@
     
     <mat-card>       
         <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
+          <div class="table-title-row control-div">
+              <h4 class="sub-heading">Insurance</h4>      
+              <div class="button-row">              
+                <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
+
+                <button class="title-btn" type="button" (click)="add()"  mat-mini-fab color="primary">
+                    <mat-icon>add box</mat-icon> Insurance
+                </button> 
+                <app-download-csv (clickEvent)="export()" ></app-download-csv> 
             </div>
-            <div class="wrapper" *ngIf="!isLoading">                
-
+          </div> 
+            <ng-container *ngIf=" isLoading; else checkNoData">
+            <app-empty-table-skltn></app-empty-table-skltn>
+          </ng-container>
+          <ng-template #checkNoData>
+            <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+              <app-no-data message="No Insurance found at this moment !!"></app-no-data>
+            </ng-container>
+          </ng-template>
+          <ng-template #showTable>
+            <div class="wrapper" >   
                 <div class="mat-elevation-z8">                   
-                      <div class="table-title-row control-div">
-                        <h4 class="sub-heading">Insurance</h4>      
-                        <div class="button-row">              
-                          <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
-
-                          <button class="title-btn" type="button" (click)="add()"  mat-mini-fab color="primary">
-                              <mat-icon>add box</mat-icon> Insurance
-                          </button> 
-                          <app-download-csv (clickEvent)="export()" ></app-download-csv> 
-                      </div>
-                    </div> 
-                    <app-no-data *ngIf="dataSource?.data?.length==0" message="No Insurance found at this moment !!" ></app-no-data>
-                      <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">  
+                      
+                      <div  class="mat-elevation-z8">  
                         <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
                       
                           <ng-container matColumnDef="serial">
@@ -85,6 +90,7 @@
                       
                 </div>
             </div>
+            </ng-template>
         </mat-card-content>
     </mat-card>
 </div>

@@ -1,61 +1,120 @@
-<div class="mat-elevation-z8">  
-  <app-no-data *ngIf="dataSource?.data?.length==0" message="No COS found at this moment !!" ></app-no-data>
-  <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">     
-      <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
-    
-        <ng-container matColumnDef="serial">
-          <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-          <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
-        </ng-container>
-    
-        <!-- contractName Column -->
-        <ng-container matColumnDef="coscode">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> COS Code </th>
-          <td mat-cell *matCellDef="let row"> {{row.code}} </td>
-        </ng-container>
-    
-        <!-- Name Column -->
-        <ng-container matColumnDef="initiatedate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Initiate Date </th>
-          <td mat-cell *matCellDef="let row"> {{row.initiatedate | formatDate }} </td>
-        </ng-container>                      
-        <ng-container matColumnDef="amount">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
-          <td mat-cell *matCellDef="let row">Amount : {{row.amount | formatCurrency}} <br/> Approved : {{row.approvedamount | formatCurrency}} </td>
-        </ng-container>
-        <ng-container matColumnDef="approveddate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Approved Date </th>
-          <td mat-cell *matCellDef="let row">{{row.closedate | formatDate }} </td>
-        </ng-container>
+<mat-card>
+  <mat-card-content class="px-0">
+    <ng-container *ngIf=" isLoading; else checkNoData">
+      <app-empty-table-skltn></app-empty-table-skltn>
+    </ng-container>
+    <ng-template #checkNoData>
+      <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+        <app-no-data message="No COS found at this moment !!"></app-no-data>
+      </ng-container>
+    </ng-template>
+    <ng-template #showTable>  
+    <div class="mat-elevation-z8">
+      <div   class="mat-elevation-z8">  
+        <div class="row col-md-12 control-div">
+          <div class="col-md-3 ">
+            <mat-form-field>
+              <mat-icon matPrefix>search</mat-icon>
+              <mat-label>Code / Project / Status </mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+            </mat-form-field>
+          </div>
+          
+          <div class="col-md-9 d-flex justify-content-end">
+            <div class="col-md-2  sumry-div  content-center">
+              <span class="sumry-lbl">Total :</span>
+              <span class="sumry-val">{{dataSource.data.length}}</span>
+            </div>
+            <div class="col-md-2 sumry-div content-center ">
+              <mat-icon class="count-icon bi bi-person-fill fs-4  text-warning">pending</mat-icon>
+              <span class="sumry-lbl">Pending : </span>
+              <span class="sumry-val">{{statusCounts.pending}}</span>
+            </div>
+            <div class="col-md-2  sumry-div content-center ">
+              <mat-icon class="count-icon bi bi-person-fill fs-4  text-danger">cancel</mat-icon>
+              <span class="sumry-lbl">Rejected : </span>
+              <span class="sumry-val">{{statusCounts.rejected}}</span>
+            </div>
+            <div class="col-md-2  sumry-div content-center  me-0">
+              <mat-icon class="count-icon bi bi-person-fill fs-4   text-success">check_circle</mat-icon>
+              <span class="sumry-lbl">Approved : </span>
+              <span class="sumry-val">{{statusCounts.approved}}</span>
+            </div>
+          </div>
+  
+        </div>   
+          <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
         
-        <ng-container matColumnDef="cosstatus">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Status</th>
-          <td mat-cell *matCellDef="let row">{{row.status ??'-'}} </td>
-        </ng-container>
-        <ng-container matColumnDef="letters">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Letters</th>
-          <td mat-cell *matCellDef="let row">
-            <table style="width: auto;">
-              <tr *ngIf="row.initiateletterid">
-                <td> <span>Initiate </span></td>
-                <td> <app-view-btn (clickEvent)="viewletter(row.initiateletterid)" ></app-view-btn></td>
-              </tr>
-              <tr *ngIf="row.closeletterid">
-                <td> <span>Close </span></td>
-                <td><app-view-btn (clickEvent)="viewletter(row.closeletterid)"></app-view-btn></td>
-              </tr>
-            </table>                             
-          </td>
-        </ng-container>
+            <ng-container matColumnDef="serial">
+              <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+              <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+            </ng-container>
+            <ng-container matColumnDef="project">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
+              <td mat-cell *matCellDef="let row"> {{row.project}} </td>
+            </ng-container>
         
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>       
-      
-      </table>
-      <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
-      </mat-paginator>
-     
+            <ng-container matColumnDef="contractor">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Contractor </th>
+              <td mat-cell *matCellDef="let row"> {{row.contractor}} </td>
+            </ng-container>
+            <!-- contractName Column -->
+            <ng-container matColumnDef="coscode">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> COS Code </th>
+              <td mat-cell *matCellDef="let row"> {{row.code}} </td>
+            </ng-container>
+        
+            <!-- Name Column -->
+            <ng-container matColumnDef="initiatedate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Initiate Date </th>
+              <td mat-cell *matCellDef="let row"> {{row.initiatedate | formatDate }} </td>
+            </ng-container>                      
+            <ng-container matColumnDef="amount">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
+              <td mat-cell class="col-width" *matCellDef="let row">Amount : {{row.amount | formatCurrency}} <br/> Approved : {{row.approvedamount | formatCurrency}} </td>
+            </ng-container>
+            <ng-container matColumnDef="approveddate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Approved Date </th>
+              <td mat-cell *matCellDef="let row">{{row.closedate | formatDate }} </td>
+            </ng-container>
+            
+            <ng-container matColumnDef="cosstatus">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Status</th>
+              <td mat-cell *matCellDef="let row">
+                <app-status-badge  [value]="row.status" [label]="row.status"></app-status-badge>  
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="letters">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Letters</th>
+              <td mat-cell *matCellDef="let row">
+                <table style="width: auto;">
+                  <tr *ngIf="row.initiateletterid">
+                    <td> <span>Initiate </span></td>
+                    <td> <app-view-btn (clickEvent)="viewletter(row.initiateletterid)" ></app-view-btn></td>
+                  </tr>
+                  <tr *ngIf="row.closeletterid">
+                    <td> <span>Close </span></td>
+                    <td><app-view-btn (clickEvent)="viewletter(row.closeletterid)"></app-view-btn></td>
+                  </tr>
+                </table>                             
+              </td>
+            </ng-container>
+            
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>       
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+              No COS Detail found at this moment.</td>
+          </tr>
+          </table>
+          <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+          </mat-paginator>
+         
+        </div>
+        
+        
     </div>
-    
-    
-</div>
+    </ng-template>
+  </mat-card-content>
+</mat-card>
+

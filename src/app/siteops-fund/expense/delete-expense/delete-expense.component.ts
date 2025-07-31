@@ -35,7 +35,7 @@ ngOnInit(): void {
       type: this.route.snapshot.data['type'],
       element: window.history.state
     };
-    this.defaultdialogOptionConfig.minWidth='50vw';
+    this.defaultdialogOptionConfig.minWidth='45vw';
     const dialogRef = this.dialog.open(ManageExpenseComponent, this.defaultdialogOptionConfig);
     dialogRef.afterClosed().subscribe((data) => {
       if (data.valid) {

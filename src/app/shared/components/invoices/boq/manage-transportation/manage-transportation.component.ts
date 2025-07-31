@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angu
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { BoqTransportationInterfaceService } from '@app/shared/services/external/boq/boq-transportation-interface.service';
+import { InvTransportInterfaceService } from '@app/shared/services/external/invoice/inv-transport-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, take } from 'rxjs';
@@ -18,9 +19,11 @@ export class ManageTransportationComponent {
 public data: any;
   isLoading = true;
   isEdit: boolean = false;
+  isHeading: boolean = false;
   pageGuid: any;
   title: string='Add';
   tpForm: FormGroup = new FormGroup({});
+  headingForm: FormGroup = new FormGroup({});
   deletetp=false;
   readonly dialog = inject(MatDialog);
   isBtnClicked=false;
@@ -33,11 +36,14 @@ public data: any;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageTransportationComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService, private router: Router,private route: ActivatedRoute,
-    private notifibarservice: NotifyBarService, private transportService:BoqTransportationInterfaceService){
+    private notifibarservice: NotifyBarService, private transportService:InvTransportInterfaceService){
       this.data = data || {};
   }
   
   checkMode(type: string) {
+    if(type=='heading'){
+      this.isHeading=true;
+    }
     if (type === 'edit' && !this.data.separate)
       this.isEdit = true;
     else if (type == 'delete') {
@@ -73,7 +79,18 @@ public data: any;
       dlpoandmperiod:[,Validators.required],
       rate:[,Validators.required]
     });
-    
+    if(this.isHeading){
+      this.headingForm= this.formbuilder.group({ 
+        id: [''],
+        description:[this.data.element.description]
+      });
+      this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
+        if(response && response.projectId){
+          this.headingForm.patchValue({id:response.projectId});
+        }
+      });
+     
+    }
     if (this.isEdit || this.deletetp) {
       this.settpForm(this.data.element);
     }
@@ -112,13 +129,17 @@ public data: any;
               }
             });
         } else {
+          let formData= {
+            projectid:response.projectId,
+            scopes:[this.tpForm.value]
+          }
           this.tpForm.value.id=null;
-          this.transportService.createBoqTransportation(this.tpForm.value, '')
+          this.transportService.createBoqTransportation(formData, '')
             .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
-                this.tpForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
-                this.tpForm.controls["id"].setValue(response.data.id);
+                this.tpForm.addControl('totalamount', this.formbuilder.control(response.data.scopes[0].totalamount));
+                this.tpForm.controls["id"].setValue(response.data.scopes[0].id);
                 this.dialogRef.close({ value: this.tpForm.value, valid: true });
               } else {
                 this.dialogRef.close({ value: null, valid: false });
@@ -134,15 +155,28 @@ public data: any;
   }
 
   delete() {
-      this.transportService.deleteBoqTransportation({id:this.tpForm.value.id}, '')
-       .pipe(finalize(() => { this.isLoading = false; })).subscribe({
-        next:(response: any) => {
-          if (response && response.success) 
-           this.dialogRef.close({ value: this.tpForm.value, valid: true });
-      },
-      error: (err: any) => {
-          this.dialogRef.close(err);
-        }
-      });
+    this.transportService.deleteBoqTransportation({id:this.tpForm.value.id}, '')
+      .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+      next:(response: any) => {
+        if (response && response.success) 
+          this.dialogRef.close({ value: this.tpForm.value, valid: true });
+    },
+    error: (err: any) => {
+        this.dialogRef.close(err);
+      }
+    });
+  }
+  desc_submit(){
+    this.isBtnClicked=true;
+    this.transportService.UpdateBoqTransportationDescription(this.headingForm.value, '')
+    .pipe(finalize(() => { this.isBtnClicked = false; })).subscribe({
+    next:(response: any) => {
+      if (response && response.success) 
+        this.dialogRef.close({ value: this.headingForm.value, valid: true });
+    },
+    error: (err: any) => {
+        this.dialogRef.close(err);
+      }
+    });
   }
 }

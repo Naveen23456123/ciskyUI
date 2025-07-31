@@ -3,6 +3,7 @@
     <mat-card-title>
         <h6>VI-Office Supplies, Utilities and
             Communication (Fixed Costs)
+            <app-edit-icon-btn toolTip="Add Description" (clickEvent)="add_desc()" ></app-edit-icon-btn>
             <button  class="title-btn float-end no-print" routerLink="os-create"   type="button"  mat-mini-fab color="primary">
                 <mat-icon>add box</mat-icon> Office Supplies
             </button>
@@ -13,6 +14,7 @@
         <app-loader [IsLoading]="isLoading"></app-loader>
     </div>
     <div class="wrapper" *ngIf="!isLoading"> 
+      <span>{{description}}</span>
         <table mat-table [dataSource]="dataSource" >
           
             <ng-container matColumnDef="serial">

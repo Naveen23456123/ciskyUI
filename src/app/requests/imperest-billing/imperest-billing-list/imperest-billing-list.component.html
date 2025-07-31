@@ -1,0 +1,135 @@
+<div class="container">
+    <mat-card >
+      <mat-card-content>
+          <div class="load-wrap" *ngIf="isLoading">
+              <app-loader [IsLoading]="isLoading"></app-loader>
+          </div>
+          <div *ngIf="!isLoading">     
+              <div class="mat-elevation-z8"> 
+                <div class="row content-center">
+                  <div class="col-md-12">
+                    <app-search-bar-controls  [isSubCompany]="true" 
+                    [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Name"
+                    (OnProjectChange)="projectChange($event)"  
+                    (OnSubCompanyChange)="compChange($event)" 
+                    (OnAnyChange)="anyChange($event)" 
+                    ></app-search-bar-controls>                       
+                </div>       
+                
+              </div> 
+              </div>
+          </div>
+      </mat-card-content>
+  </mat-card>
+  <div class="wrapper">
+    <mat-card>
+        <mat-card-content>
+          <ng-container *ngIf=" isLoading || isSearching; else checkNoData">
+            <app-empty-table-skltn></app-empty-table-skltn>
+          </ng-container>
+          <ng-template #checkNoData>
+            <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+              <app-no-data message="No Imprest Request found at this moment !!"></app-no-data>
+            </ng-container>
+          </ng-template>
+          <ng-template #showTable>
+            <div class="mat-elevation-z8">                     
+              
+              <app-billing-info-summary [summary]="billingSummary" ></app-billing-info-summary>    
+                <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+              
+                  <ng-container matColumnDef="serial">
+                    <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                    <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="project">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
+                    <td mat-cell *matCellDef="let row"> {{row.project}} </td>
+                  </ng-container>   
+                  <ng-container matColumnDef="office">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Office </th>
+                    <td mat-cell *matCellDef="let row"> {{row.office}} </td>
+                  </ng-container>   
+                  <!-- contractName Column -->
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                  </ng-container>     
+                  <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Submitted Date </th>
+                    <td mat-cell *matCellDef="let row"> {{row.date | formatDate}} </td>
+                  </ng-container>                       
+                  
+                  <ng-container matColumnDef="gamount">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Submitted Amount </th>
+                    <td mat-cell *matCellDef="let row"> 
+                      <table class="child-table">
+                          <tr *ngFor="let item of row.details">
+                          <td>{{item.expensename}}</td>
+                          <td>:</td>
+                          <td>{{item.amount | formatCurrency}}</td>
+                          </tr>
+                      </table>
+                    </td>
+                  </ng-container>  
+                  <ng-container matColumnDef="apramount">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Approved Amount </th>
+                    <td mat-cell *matCellDef="let row"> 
+                      <table *ngIf="row.approveddetails && row.approveddetails.length>0" class="child-table">
+                        <tr  *ngFor="let item of row.approveddetails">
+                          <td>{{item.expensename}}</td>
+                          <td>:</td>
+                          <td>{{item.amount | formatCurrency}}</td>
+                        </tr>
+                      </table>  
+                      <span *ngIf="row.approveddetails==0">-</span>  
+                    </td>
+                  </ng-container>  
+                  <!-- con_personName Column -->
+                  <ng-container matColumnDef="view">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+                    <td mat-cell *matCellDef="let row"> 
+                      <table class="status-child-table" >
+                        <tr *ngFor="let level of row.levels">
+                            <td>
+                            <span  [matTooltip]="'Level : ' + level.name + '\nApproval Name : ' + level.employeename"
+                            matTooltipClass="multiline-tooltip">
+                            {{ level.rolename }} 
+                            </span>
+                          </td>
+                          <td *ngIf="level.name">:</td>
+                            <td>
+                            <app-status-badge  [value]="level.status" [label]="level.status"></app-status-badge> 
+                            </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </ng-container>
+                  <!-- con_personName Column -->
+                  <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                    <td mat-cell *matCellDef="let row"> 
+                      <div class="button-row">                              
+                        <app-edit-btn (clickEvent)="edit(row)" ></app-edit-btn>                              
+                        <app-delete-btn (clickEvent)="delete_row(row)" ></app-delete-btn>
+                  </div>
+                    </td>
+                  </ng-container>
+                
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                      No Imprest Biiling(s) Details found at this moment.</td>
+                  </tr>
+                </table>
+                <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+                </mat-paginator>
+              </div> 
+            </ng-template>
+        </mat-card-content>
+    </mat-card>
+  </div>
+  </div>
+  <router-outlet></router-outlet>
+  

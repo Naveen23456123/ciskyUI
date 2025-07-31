@@ -1,5 +1,5 @@
 <div class="dialog" >
-    <mat-card *ngIf="!deleteProfitLoss">
+    <mat-card *ngIf="!deleteOfc">
         <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
             <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
             <mat-icon>close</mat-icon>
@@ -11,26 +11,36 @@
             </div>
             <div class="wrapper">
                 <form [formGroup]="profitLossForm" (submit)="submit()">
+                    <div class="row content-center">
+                        <div class="col-md-4 ">     
+                            <h5 >Generate Bill for the Month :  </h5>
+                        </div>
+                        <div class="col-md-4">                          
+                            <app-month-and-year-picker [defaultValue]="profitLossForm.get('monthandyear')?.value" (onValueChange)="dateChange($event)"  ></app-month-and-year-picker> 
+                        </div>
+                        <div class="col-md-4 ">  </div> 
+                    </div>
+                    <hr>
+                    <div class="row control-div content-center">
+                        <div class="col-md-4 ">
+                           <h5> Generate For All Project</h5>
+                        </div>
+                        <div class="col-md-2">
+                            <mat-slide-toggle [formControl]="isAllProject" (change)="onProjecttoggleChange($event)" labelPosition="before"></mat-slide-toggle>
+                        </div>
+                        <div class="col-md-6 ">
+                            <app-project-control  *ngIf="!isAllProject.value" (onValueChange)="projectChange($event)"
+                            [defaultValue]="profitLossForm.get('projectid')?.value" ></app-project-control>
+                        </div>
+                    </div>
                     <div class="row control-div">
-                        <div class="col-md-12">
-                            <mat-form-field>
-                                <mat-label>Name</mat-label>
-                                <input matInput formControlName="name">
-                                <mat-error>Please enter Name.</mat-error>
-                            </mat-form-field>
-                        </div> 
-
-                        <div class="col-md-12">
-                            <mat-form-field>
-                                <mat-label>Amount</mat-label>
-                                <input matInput formControlName="amount">
-                                <mat-error>Please enter amount.</mat-error>
-                            </mat-form-field>
-                        </div>                           
+                       
                         <div class="col-md-12 button-row" align="right">
                                 <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-                                <button [ngClass]="profitLossForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!profitLossForm.valid" color="primary">
-                                    {{isEdit?'Update':'Submit'}}</button>
+                               
+                                    <app-submit-load-btn  [isClicked]="isClicked" [isValid]="profitLossForm.valid || isClicked"
+                                         text=" {{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
+
                         </div>
                         
                     </div>
@@ -39,7 +49,7 @@
             </div>
         </mat-card-content>
     </mat-card>
-    <mat-card *ngIf="deleteProfitLoss">      
+    <mat-card *ngIf="deleteOfc">      
         <mat-card-title class="card-title d-flex justify-content-center" >
             <mat-icon>warning</mat-icon><span>{{title}}</span>
         </mat-card-title>
@@ -50,7 +60,7 @@
             <div class="wrapper">
                 <mat-dialog-content>
                     <span class="mat-typography alert-content">
-                        Are you sure you want to delete <span class="vw-lbl">{{profitLossForm.controls['name'].value}}</span> ?. This operation can
+                        Are you sure you want to delete Profit Loss Sheet for <span class="vw-lbl">{{projectName}}</span> (<span class="vw-lbl">{{this.profitLossForm.controls['monthandyear'].value | date: 'MMMM'}}</span> - <span class="vw-lbl">{{this.profitLossForm.controls['monthandyear'].value | date: 'yyyy'}}</span>)?. This operation can
                         not be un-done once performed sucessfully.
                     </span>
                 </mat-dialog-content>

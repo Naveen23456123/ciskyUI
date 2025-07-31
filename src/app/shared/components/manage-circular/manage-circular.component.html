@@ -1,11 +1,10 @@
 <div class="dialog" >
     <mat-card *ngIf="!deleteCircular">
-        <mat-card-title class="card-title">{{title}}
-          
-            <button mat-mini-fab class="popup-close-btn" mat-dialog-close>
-                <mat-icon>close</mat-icon>
-              </button>
-        </mat-card-title>
+         <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3>
         <mat-card-content>
             <div class="load-wrap" *ngIf="isLoading">
                 <app-loader [IsLoading]="isLoading"></app-loader>
@@ -13,37 +12,48 @@
             <div class="wrapper">
                 <form [formGroup]="circularForm" (submit)="submit()">
                     <div class="row control-div">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>Circular From</mat-label>
+                                <mat-select formControlName="type">
+                                    <mat-option  *ngFor="let field of typeList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select Sub company.</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-6">
                             <mat-form-field>
                                 <mat-label>Title</mat-label>
                                 <input matInput formControlName="title">
                                 <mat-error>Please enter First Name.</mat-error>
                             </mat-form-field>
                         </div>    
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <mat-form-field class="example-full-width">
                                 <mat-label>Publish Date</mat-label>
-                                <input matInput  formControlName="publishDate" [matDatepicker]="publishDate">
+                                <input matInput  formControlName="date" [matDatepicker]="publishDate">
                                 
                                 <mat-datepicker-toggle matIconSuffix [for]="publishDate"></mat-datepicker-toggle>
                                 <mat-datepicker #publishDate></mat-datepicker>
                               </mat-form-field>
                         </div>  
-                                        
-                        <div class="col-md-4">
-                            <app-file-uploader title="Attachment"></app-file-uploader>
-                        </div>
-                        <div class="col-md-12">                           
+                        <div class="col-md-6">                           
                               <mat-form-field>
                                 <mat-label>Description</mat-label>
                                 <textarea formControlName="description" matInput></textarea>
                               </mat-form-field>
-                        </div> 
-                        <div class="col-md-12 button-row" align="right">
-                                <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-                                <button class="submit-btn" mat-flat-button [disabled]="!circularForm.valid" color="primary">
-                                    {{isEdit?'Update':'Submit'}}</button>
+                        </div>                  
+                        <div class="col-md-8">
+                            <app-file-uploader (onfileUpload)="fileUploded($event)" title="Attachment"></app-file-uploader>
                         </div>
+                        
+                       <div class="col-md-12 button-row" align="right">
+                            <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>                            
+                                <app-submit-load-btn  [isClicked]="isBtnClicked" [isValid]="circularForm.valid || isBtnClicked"
+                               text=" {{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
+                       </div>
                         
                     </div>
                     
@@ -62,7 +72,7 @@
             <div class="wrapper">
                 <mat-dialog-content>
                     <span class="mat-typography alert-content">
-                        Are you sure you want to delete <span class="vw-lbl">{{circularForm.controls['name'].value}}</span> ?. This operation can
+                        Are you sure you want to delete <span class="vw-lbl">{{circularForm.controls['title'].value}}</span> ?. This operation can
                         not be un-done once performed sucessfully.
                     </span>
                 </mat-dialog-content>

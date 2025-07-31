@@ -20,6 +20,17 @@ export class ImperestInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
+  searchImperestListByOrgId(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Imperest/Search',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   createImperest(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Imperest',
@@ -42,14 +53,47 @@ export class ImperestInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
-  deleteImperest(params: any, guid: string) {
+  deleteImperest(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'Imperest',
-      params: params,
+      url: 'Imperest/Delete/'+request.id,
+      params: {},
       headers: true,
       guid: '',
-      request: {},
-      action: Operation.DELETE
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  searchImperestBillingRequests(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Imperest/Requests',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  actImperestBillingRequest(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Imperest/Action',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  getImperestDetails(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Imperest/Details',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   }

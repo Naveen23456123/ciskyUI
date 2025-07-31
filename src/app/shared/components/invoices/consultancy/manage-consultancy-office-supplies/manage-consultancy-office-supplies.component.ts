@@ -1,5 +1,5 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
@@ -76,7 +76,7 @@ public data: any;
       this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((projectEntity:any)=>{
         if(projectEntity && projectEntity.projectId){
           if(!this.isEdit){  
-            this.boqService.getBoqOfficeSupplyListForInsertByProjectId({id:projectEntity.projectId }, '')
+            this.boqService.getBoqOfficeSupplyListForInsertByProjectId({invid:projectEntity.invoiceId,id:projectEntity.projectId }, '')
                 .pipe(finalize(() => this.isLoading = false))
                 .subscribe((response: any) => {
                   if(response && response.success){
@@ -85,10 +85,13 @@ public data: any;
                       this.addControls(element,projectEntity.invoiceId);
                     });
                   }
+                  this.subscribeChange();
                   this.empty_message= BOQ_INVOICE.ALL_RECORD_INSERTED_MESSAGE;
             });
           } else {
             this.addControls(this.data.element,projectEntity.invoiceId);
+            this.boqList=[this.data.element];
+            this.subscribeChange();
               this.isLoading=false;
           }
         }
@@ -104,11 +107,21 @@ public data: any;
       boqid:[data.id],
       invoiceid:[invId],
       description: [data.description], 
-      currentbillmonths: [data.currentbillmonths,Validators.required]
+      currentbillmonths: [data.currentbillmonths,Validators.required],
+      currentbillamount:[data.currentbill]
     });
     this.controls.push(group);
   }
-
+  subscribeChange(){   
+    (this.osForm.get('controls') as FormArray).controls.forEach((group: AbstractControl, index: number) => {
+      const quantityControl = group.get('currentbillmonths');
+      if (quantityControl) {
+        quantityControl.valueChanges.subscribe(value => {
+           group.get('currentbillamount')?.setValue(value*(this.boqList.find(x=>x.id==group.get('boqid')?.value).ratepermonth));
+        });
+      }
+    });
+  }
   get controls() {
     return this.osForm.get('controls') as FormArray;
   }
@@ -158,7 +171,7 @@ public data: any;
                     description:this.boqList.find((x:any)=>x.id==element.boqid)?.description,
                     rate:this.boqList.find((x:any)=>x.id==element.boqid)?.ratepermonth,
                     months:this.boqList.find((x:any)=>x.id==element.boqid)?.numberofmonths,
-                    previousbillmonths:0
+                    previousbillmonths:this.boqList.find((x:any)=>x.id==element.boqid)?.uptolastbill
                   })
                 });
                 this.dialogRef.close({ value: responseData, valid: true });

@@ -1,63 +1,217 @@
 <div class="container">
-    <mat-card>
-        <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
-            </div>
-            <div  *ngIf="!isLoading">    
-                <div class="mat-elevation-z8">
-                      <div class="table-title-row">
-                        <mat-form-field>
-                          <mat-label>Filter</mat-label>
-                          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
-                        </mat-form-field>
-                       
-                    </div> 
-                      <div class="mat-elevation-z8">
-                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
-                      
-                          <ng-container matColumnDef="serial">
-                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
-                          </ng-container>
-                      
-                          <!-- contractName Column -->
-                          <ng-container matColumnDef="projectid">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Code </th>
-                            <td mat-cell *matCellDef="let row"> {{row.projectcode}} </td>
-                          </ng-container>                      
-                          <ng-container matColumnDef="name">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Name </th>
-                            <td mat-cell *matCellDef="let row"> {{row.projectshortname}} </td>
-                          </ng-container>  
-                          <!-- con_personName Column -->
-                          <ng-container matColumnDef="view">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> View </th>
-                            <td mat-cell *matCellDef="let row">                           
-                             <app-view-btn [state]="row"  [routerLink]="['/profit-loss-details']" ></app-view-btn>  
-                           </td>
-                          </ng-container>
-                          <!-- con_personName Column -->
-                          <ng-container matColumnDef="action">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                            <td mat-cell *matCellDef="let row">                                                                    
-                                <app-delete-btn [state]="row" [routerLink]="['/boq-list/delete',row.id]" ></app-delete-btn>  
-                           </td>
-                          </ng-container>
+  <mat-card>
+    <mat-card-content> 
+        <mat-tab-group mat-stretch-tabs="false" animationDuration="0ms">
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="example-tab-icon no-print">currency_rupee</mat-icon>
+              <span class=" no-print"> Project </span>    
+            </ng-template>
+            <mat-card>
+              <mat-card-content>
+            <ng-container *ngIf=" isLoading ; else checkNoData">
+              <app-empty-table-skltn></app-empty-table-skltn>
+            </ng-container>
+            <ng-template #checkNoData>
+              <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+                <app-no-data message="No Project(s) found at this moment !!"></app-no-data>
+              </ng-container>
+            </ng-template>
+            <ng-template #showTable> 
+              <div  *ngIf="!isLoading">    
+                  <div class="mat-elevation-z8">
+                    <div class="table-title-row">
+                      <div class="row col-md-12 content-center">
+                        <div class="col-md-4">
+                          <mat-form-field>
+                            <mat-icon matPrefix>search</mat-icon>
+                            <mat-label>Project Name / Code</mat-label>
+                            <input matInput (keyup)="applyFilter($event)"  #input>
+                          </mat-form-field>
+                        </div>         
+                        <div class="col-md-8 button-row main-btn-row d-flex justify-content-end"> 
+                          <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
+                            <mat-icon>add box</mat-icon> Generate
+                          </button>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="mat-elevation-z8">
+                    <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+                  
+                      <ng-container matColumnDef="serial">
+                        <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                        <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                      </ng-container>
+                  
+                      <!-- contractName Column -->
+                      <ng-container matColumnDef="projectid">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Code </th>
+                        <td mat-cell *matCellDef="let row"> {{row.projectcode}} </td>
+                      </ng-container>                      
+                      <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Name </th>
+                        <td mat-cell *matCellDef="let row"> {{row.projectshortname}} </td>
+                      </ng-container>  
+                      <!-- con_personName Column -->
+                      <ng-container matColumnDef="monthly">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Monthly </th>
+                        <td mat-cell *matCellDef="let row">                           
+                          <app-view-btn (clickEvent)="viewClick(row)" ></app-view-btn>  
+                        </td>
+                      </ng-container>
+                      <!-- con_personName Column -->
+                      <ng-container matColumnDef="commulative">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Commulative </th>
+                        <td mat-cell *matCellDef="let row">                                                                    
+                          <app-view-btn (clickEvent)="viewCommulative(row)" ></app-view-btn>  
+                        </td>
+                      </ng-container>
+                    
+                      <tr mat-header-row *matHeaderRowDef="pwdisplayedColumns"></tr>
+                      <tr mat-row *matRowDef="let row; columns: pwdisplayedColumns;"></tr> 
+                      <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell no-data-cell"  attr.colspan="{{ pwdisplayedColumns.length }}">
+                          No Project Detail found at this moment.</td>
+                      </tr>
+                    </table>
+                    <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+                    </mat-paginator>
+                  </div>                    
                         
-                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
-                          <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
-                          </tr>
-                        </table>
-                        <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
-                        </mat-paginator>
-                      </div>                    
-                      
+                  </div>
+              </div>
+            </ng-template>
+              </mat-card-content>
+          </mat-card>
+          </mat-tab>
+            <mat-tab>
+              <ng-template mat-tab-label >
+                <mat-icon  class="example-tab-icon no-print">currency_rupee</mat-icon>
+               <span class=" no-print"> Financial Year </span>  
+              </ng-template>
+              <ng-template matTabContent>
+                <div class="mat-elevation-z8 wrapper"> 
+                                
+                  <div class="row no-print" >
+                    <div class="col-md-4">
+                      <app-project-control [isAllLabel]="true" (onValueChange)="projectChange($event)" ></app-project-control>
+                    </div>
+                    <div class="col-md-4">
+                      <app-finanical-year (onValueChange)="yearChange($event)" ></app-finanical-year>
+                    </div>
+                  </div>
+                  <div  class="row heading">
+                    <div class="no-print content-center control-div container">
+                      <div class="button-row ">
+                      <button class="print-btn" onclick="window.print()"  mat-fab extended>
+                          <mat-icon>print</mat-icon>
+                          Print
+                      </button>   
+                      </div>                 
+                  </div>
+                  <div class="report-head">
+                    <h5 class="sub-heading content-center">Profit & Loss</h5>
+                    <hr>
+                    <div class="control-div pd-1">
+                      <span class="report-heading">Project : {{detailsObj.projectname??'All'}} </span>
+                      <span class="report-heading float-end" > Financial Year : {{ detailsObj.financialyear}}</span>
+                    </div>
+                    
+                    <div class="control-div">
+                        <span class="report-heading"> Income : {{detailsObj.totalincome | formatCurrency}} </span>
+                        <span class="report-heading float-end" > Date : {{ detailsObj.today | formatDate}}</span>    
+                    </div>
+                    <div class="control-div">
+                      <span class="report-heading">Expense : {{detailsObj.totalexpense | formatCurrency}}  </span>
+                      <span class="report-heading float-end" > </span>    
+                    </div>
+                    <div class="control-div">
+                      <span  class="report-heading">
+                        Net Gain/Loss :
+                        <span [ngClass]="{
+                          ' positive': (detailsObj.totalincome - detailsObj.totalexpense) > 0,
+                          ' negative': (detailsObj.totalincome - detailsObj.totalexpense) < 0
+                          }">{{(detailsObj.totalincome-detailsObj.totalexpense) | formatCurrency}} ({{detailsObj.percentage}})</span>  
+                      </span>
+                      <span class="report-heading float-end" > </span>    
+                  </div>
+                  </div>
+                  </div>   
+                  <div  class="col-md-12">
+                    <div class="load-wrap" *ngIf="isfinancialLoading">
+                      <app-loader [IsLoading]="isfinancialLoading"></app-loader>
+                    </div>
+                    <app-no-data *ngIf="isNoRecordForFY" icon="find_in_page" message="No details found at this moment!!.">
+                      </app-no-data>
+
+                    <table mat-table *ngIf="!isNoRecordForFY" [dataSource]="scopeRows" class="report-table">
+                      <!-- Row Number -->
+                      <ng-container matColumnDef="srno">
+                        <th mat-header-cell *matHeaderCellDef>#</th>
+                        <td class="report-cell" mat-cell *matCellDef="let row">{{ row.srno }}</td>
+                      </ng-container>
+                      <ng-container matColumnDef="groupHeader">
+                        <td mat-cell *matCellDef="let row; let i = index" [attr.colspan]="totaldisplayedColumns.length">
+                            <div class="item-center">
+                                <strong>{{ row.label }}</strong>
+                            </div>
+                        </td>
+                        </ng-container>
+                      <!-- Name -->
+                      <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef>Name</th>
+                        <td class="report-cell" mat-cell *matCellDef="let row">{{ row.name }}</td>
+                      </ng-container>
+                    
+                      <!-- Month Columns -->
+                      <ng-container *ngFor="let month of months" [matColumnDef]="month">
+                        <th mat-header-cell *matHeaderCellDef>{{ month }}</th>
+                        <td class="report-cell" mat-cell *matCellDef="let row">{{ row[month] || '-' }}</td>
+                      </ng-container>
+                      <ng-container matColumnDef="total">
+                        <th mat-header-cell *matHeaderCellDef> Total </th>
+                        <td mat-cell *matCellDef="let row"> 
+                          {{ row.total || '-' }} 
+                        </td>
+                      </ng-container>
+                      <ng-container matColumnDef="totalHeader">
+                        <td class="report-cell" mat-cell class="pd-4" *matCellDef="let row" [attr.colspan]="12">
+                            <strong>{{ row.name }}</strong>
+                        </td>
+                     </ng-container>
+                     <ng-container matColumnDef="totalcurrent">                                
+                        <td mat-cell *matCellDef="let row" >
+                            <!-- <strong> {{(row.isincome ? ' (+) ':' (-) ')+(row.actualamount |formatCurrency) }}</strong> -->
+                        </td>  
+                    </ng-container>
+                      <!-- Header and Data Rows -->
+                      <tr mat-header-row *matHeaderRowDef="totaldisplayedColumns"></tr>
+                      <tr mat-row *matRowDef="let row; columns: totaldisplayedColumns;" 
+                      [ngClass]="{
+                        'group-row': row.type === 'group',
+                        'group-summary-row': row.type === 'summary',
+                        'group-total-row': row.type === 'totalinfo'
+                      }"
+                      ></tr>
+                      <tr mat-row *matRowDef="let row; columns: ['groupHeader']; when: isGroup" class="group-header-row"></tr>
+                      <tr mat-row *matRowDef="let row; columns: totaldisplayedColumns; when: isTotalInfo" class="group-total-row"></tr>                     
+                      <tr mat-row *matRowDef="let row; columns: ['totalHeader','totalcurrent']; when: isGroup" class="group-header-row"></tr>
+                    </table>
                 </div>
-            </div>
-        </mat-card-content>
-    </mat-card>
+                  
+              
+                </div>
+              </ng-template>
+            </mat-tab>
+           
+        </mat-tab-group>
+              
+
+          
+    
+    </mat-card-content>
+</mat-card>
+    
 </div>
 <router-outlet></router-outlet>

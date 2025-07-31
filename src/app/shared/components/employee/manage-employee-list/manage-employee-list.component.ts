@@ -239,9 +239,10 @@ export class ManageEmployeeListComponent {
       this.addRowData(element);
     });
   }
+  
   export(){
-    console.log(this.employees);
-  this.csvService.downloadFile(this.employees,this.employeeService.getTemplateColumnList());
+    if(this.employees && this.employees.length>0)
+      this.csvService.downloadFile(this.employees,this.employeeService.getCSVTemplateColumnList(),'Employees');
   }
   view_emp(data:any){
     this.defaultdialogoptions.data = {
@@ -307,6 +308,7 @@ export class ManageEmployeeListComponent {
           this.employees = response.data;
           this.dataSource = new MatTableDataSource(this.employees);
           this.pageSize= this.helperService.getPageSize();
+          this.updateTable(response.data);        
         }
     }});
   }

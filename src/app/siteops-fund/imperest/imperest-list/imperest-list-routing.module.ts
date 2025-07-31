@@ -16,7 +16,7 @@ const routes: Routes = [
         path: 'create',
         component: AddImperestComponent,
         loadChildren:()=>import('app/siteops-fund/imperest/add-imperest/add-imperest.module').then(x=>x.AddImperestModule),
-        data:{pageGuid:'',type:'add'}
+        data:{pageGuid:'680dd2733682904bdd6e9afb',type:'add'}
       },
       {
         path: 'edit/:impId',

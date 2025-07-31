@@ -16,6 +16,7 @@ import { DialogOperation } from '@app/shared/models/constant.config';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { ViewLetterDetailsComponent } from '../../letters/view-letter-details/view-letter-details.component';
+import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 
 @Component({
   selector: 'app-eot-list',
@@ -43,7 +44,7 @@ eotList:any[]= [];
 
   constructor(private sessionService : SessionService,private eotService:EotInterfaceService,
     private router: Router,private route: ActivatedRoute,private helperService:HelperService,
-    private notifyBarService : NotifyBarService) {     
+    private notifyBarService : NotifyBarService,private csvService:GenerateCsvService) {     
     this.dataSource = new MatTableDataSource(this.eotList);
   }
 
@@ -91,20 +92,11 @@ eotList:any[]= [];
     this.pageSize = this.helperService.getPageSize();
   }
 
-  import() {
-    const config = this.defaultdialogoptions;
-      config.minWidth='75vw';
-        config.data = {
-          pageGuid: this.route.snapshot.data['pageGuid'],
-          type: this.route.snapshot.data['type'], 
-          template_type: TemplateType.EOT   
-        };
-      this.dialog.open(UploadFileComponent,config);    
-    }
 
-    export() {
-      
-    }  
+  export(){
+    if(this.eotList && this.eotList.length>0)
+      this.csvService.downloadFile(this.eotList,this.eotService.getCSVTemplateColumnList(),'EOT');
+  }  
 
   add_eot(){
     const config = this.defaultdialogoptions;

@@ -10,13 +10,14 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CosInterfaceService } from '@app/shared/services/external/cos-interface.service';
 import { EotInterfaceService } from '@app/shared/services/external/eot-interface.service';
 import { LetterInterfaceService } from '@app/shared/services/external/letter-interface.service';
-import { LetterType } from '@app/shared/models/constant.config';
+import { ApprovalStatus, LetterType } from '@app/shared/models/constant.config';
 import { TemplateType } from '@app/shared/models/CSVTemplate';
 import { AttachLetterComponent } from '@app/shared/components/letters/attach-letter/attach-letter.component';
 import { UploadFileComponent } from '@app/shared/components/upload-file/upload-file.component';
 import { StateDataService } from '@app/shared/services/state-data.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { ManageLetterDocComponent } from '@app/shared/components/letters/manage-letter-doc/manage-letter-doc.component';
+import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 
 @Component({
   selector: 'app-letter-list',
@@ -35,6 +36,7 @@ export class LetterListComponent {
   pagination: any;
   pageSize!: number;
   projectEntity:any;
+  letterCount:any={pending:0,close:0};
   isSearchLoading=false;
   isConsultantLetter:boolean=true;
   subscription:Subscription = new Subscription();
@@ -48,7 +50,8 @@ export class LetterListComponent {
   
   constructor(private sessionService : SessionService,private letterService:LetterInterfaceService,
     private router: Router,private route: ActivatedRoute,private helperService:HelperService,
-    private stateDataService:StateDataService, private notifyBarService: NotifyBarService){     
+    private stateDataService:StateDataService, private notifyBarService: NotifyBarService,
+  private csvService:GenerateCsvService){     
       this.dataSource = new MatTableDataSource(this.lettersList);
   }
   
@@ -72,16 +75,8 @@ export class LetterListComponent {
         this.stateDataService.stateDataSubject.next({});
       }
     });
+    this.filterLetter();
 
-    this.letterService.getAllLetters({ }, '')
-      .pipe(finalize(() => this.isLoading = false))
-      .subscribe((response: any) => {
-        if (response && response.success) {
-          this.lettersList = response.data;
-          this.dataSource = new MatTableDataSource(this.lettersList);               
-          this.updateTable(this.lettersList);                
-        }
-    }); 
   }
   
   ngOnDestroy(){
@@ -164,7 +159,10 @@ export class LetterListComponent {
       if (response && response.success) {
         this.lettersList = response.data;
         this.dataSource = new MatTableDataSource(this.lettersList);               
-        this.updateTable(this.lettersList);                
+        this.updateTable(this.lettersList);
+        this.letterCount.pending = this.lettersList.filter(x => x.status.toLowerCase() === ApprovalStatus.PENDING).length;
+        this.letterCount.close = this.lettersList.filter(x => x.status.toLowerCase() === ApprovalStatus.CLOSE).length;                
+        
       }
   }); 
   }
@@ -185,8 +183,10 @@ export class LetterListComponent {
     this.dialog.open(UploadFileComponent,config);
       
   }
-  export() {
-        
+
+  export(){
+    if(this.lettersList && this.lettersList.length>0)
+      this.csvService.downloadFile(this.lettersList,this.letterService.getCSVTemplateColumnList(),'Letters');
   }
       
   letter_attach() {

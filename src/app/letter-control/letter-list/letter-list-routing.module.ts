@@ -12,7 +12,7 @@ const routes: Routes = [
   {
     path:'',
     component:LetterListComponent,
-    data:{title:extractTitle('Letters')},
+    data:{title:extractTitle('Letter(s)')},
     children: [
       {
         path: 'create',

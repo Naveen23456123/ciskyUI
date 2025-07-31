@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ViewChild, inject} from '@angular/core';
+import {AfterViewInit, EventEmitter, Input, Output,Component, ViewChild, inject, SimpleChanges} from '@angular/core';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
@@ -11,7 +11,7 @@ import { CosInterfaceService } from '@app/shared/services/external/cos-interface
 import { TemplateType } from '@app/shared/models/CSVTemplate';
 import { UploadFileComponent } from '../../upload-file/upload-file.component';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
-import { DialogOperation } from '@app/shared/models/constant.config';
+import { ApprovalStatus, DialogOperation } from '@app/shared/models/constant.config';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { ViewLetterDetailsComponent } from '../../letters/view-letter-details/view-letter-details.component';
 
@@ -25,15 +25,17 @@ import { ViewLetterDetailsComponent } from '../../letters/view-letter-details/vi
 export class ExploreCosComponent {
 cosList:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','coscode', 'initiatedate','amount',  'approveddate','cosstatus','letters'];
+  displayedColumns: string[] = ['serial','project','contractor','coscode', 'initiatedate','amount',  'approveddate','cosstatus','letters'];
   dataSource!: MatTableDataSource<any[]>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  @Input() filters:any={};
   readonly dialog = inject(MatDialog);
+  statusCounts = { approved: 0, rejected: 0, pending: 0 };
   private subscription: Subscription = new Subscription();
-
+  @Output() OnControlFilter:EventEmitter<any> = new EventEmitter();
    private defaultdialogoptions:  MatDialogConfig = {
     minWidth: '700px', 
     disableClose: false,
@@ -46,22 +48,44 @@ cosList:any[]= [];
     this.dataSource = new MatTableDataSource(this.cosList);
   }
 
-  ngOnInit()  {  
-    this.subscription = this.cosService.getAllCOSDetailsByOrdIdProjectId({}, '')
-    .pipe(finalize(() => this.isLoading = false))
-    .subscribe((response: any) => {
-      if (response && response.success) {
-        this.cosList = response.data;
-        this.dataSource = new MatTableDataSource(this.cosList);               
-        this.updateTable(this.cosList);          
-      }
-    }); 
+  ngOnInit()  {     
+    this.OnControlFilter.emit({value:{
+      daterange:true,
+      isproject:true,
+      iscompany:true,
+      approvalstatus:true
+    }}); 
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
-  
+  ngOnChanges(changes: SimpleChanges) {   
+    if (changes['filters']) {
+      this.isLoading=true;    
+      const payload = {
+        ...changes['filters'].currentValue,
+        startdate: changes['filters'].currentValue.startdate || null,
+        enddate: changes['filters'].currentValue.enddate || null
+      }; 
+      this.statusCounts={ approved: 0, rejected: 0, pending: 0 };
+      this.subscription = this.cosService.exploreCOSDetailsByOrdIdProjectId(payload, '')
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe((response: any) => {
+        if (response && response.success) {
+          this.cosList = response.data;
+          this.dataSource = new MatTableDataSource(this.cosList);               
+          this.updateTable(this.cosList);          
+          this.cosList.forEach(item => {
+            const status = item.status?.toLowerCase();
+            if (status === ApprovalStatus.APPROVED) this.statusCounts.approved++;
+            else if (status === ApprovalStatus.REJECTED) this.statusCounts.rejected++;
+            else if (status === ApprovalStatus.PENDING) this.statusCounts.pending++;
+          });          
+        }
+      });
+    }
+  }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;

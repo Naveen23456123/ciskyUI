@@ -12,8 +12,14 @@
             </div>                 
         </div>
         <mat-card>
-            <mat-card-content>             
-                    <div class="mat-elevation-z8"> 
+            <mat-card-content> 
+                <mat-tab-group mat-stretch-tabs="false" animationDuration="0ms">
+                    <mat-tab>
+                      <ng-template mat-tab-label>
+                        <mat-icon class="example-tab-icon">currency_rupee</mat-icon>
+                        Total Profit & Loss
+                      </ng-template>
+                      <div class="mat-elevation-z8"> 
                         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" multiTemplateDataRows>
 
                             <!-- Group Header Row -->
@@ -92,6 +98,17 @@
                             <tr mat-row *matRowDef="let row; columns: displayedColumns ; when: isData"></tr>
                         </table>
                     </div>
+                    </mat-tab>
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                          <mat-icon class="example-tab-icon">currency_rupee</mat-icon>
+                          Project Wise Profit & Loss
+                        </ng-template>
+                      </mat-tab>
+                </mat-tab-group>
+                      
+
+                  
             
             </mat-card-content>
         </mat-card>
@@ -101,5 +118,5 @@
         <app-finance-cost-list class="no-print"  *ngIf="scopeLoaded" (onDataLoad)="addDatatoSheet($event)"></app-finance-cost-list>
    </div>
 </div>
-<router-outlet></router-outlet>
+<!-- <router-outlet></router-outlet> -->
   

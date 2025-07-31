@@ -1,27 +1,37 @@
 <div class="container">
-    <mat-card>
+  <mat-card>
+      <mat-card-content>
+        <div class="table-title-row">
+          <div class="row col-md-12 content-center">
+
+            <div class="col-md-4">
+             <mat-form-field>
+                <mat-icon matPrefix>search</mat-icon>
+                <mat-label>Sub Compnay Name</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+              </mat-form-field>
+            </div>         
+          <div class="col-md-8 button-row main-btn-row d-flex justify-content-end">         
+             <button class="title-btn" align="right"  type="button" routerLink="create"  mat-mini-fab color="primary">
+                <mat-icon>add box</mat-icon> Sub Company
+              </button>  
+          </div>
+        </div>
+      </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="wrapper">
         <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
-            </div>
-            <div  *ngIf="!isLoading">                
-             
-                <div class="mat-elevation-z8">
-                  <div class="table-title-row">
-                      <mat-form-field>
-                        <mat-icon matPrefix>search</mat-icon>
-                        <mat-label>Sub Compnay Name</mat-label>
-                        <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
-                      </mat-form-field>
-                      <div class="button-row">              
-                        <button class="title-btn" align="right"  type="button" routerLink="create"  mat-mini-fab color="primary">
-                          <mat-icon>add box</mat-icon> Sub Company
-                        </button>     
-                     
-                      </div>
-                  </div>
-                  <app-no-data *ngIf="dataSource?.data?.length==0"  message="No Sub Company details found at this moment !!" ></app-no-data>
-                  <div *ngIf="dataSource?.data?.length!=0"   class="mat-elevation-z8">
+            <ng-container *ngIf="isLoading; else checkNoData">
+              <app-empty-table-skltn></app-empty-table-skltn>
+            </ng-container>
+            <ng-template #checkNoData>
+              <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+                <app-no-data message="No Sub Company details found at this moment !!"></app-no-data>
+              </ng-container>
+            </ng-template>
+             <ng-template #showTable>            
+                <div  class="mat-elevation-z8">
                         <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
                       
                           <ng-container matColumnDef="serial">
@@ -69,10 +79,9 @@
                         </table>
                         <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
                         </mat-paginator>
-                      </div>                    
-                      
+                    
                 </div>
-            </div>
+            </ng-template>
         </mat-card-content>
     </mat-card>
 </div>

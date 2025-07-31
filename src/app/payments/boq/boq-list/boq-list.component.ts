@@ -16,7 +16,7 @@ import { finalize } from 'rxjs';
 export class BoqListComponent {
   itemsList:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','projectid','name', 'view','action'];
+  displayedColumns: string[] = ['serial','projectid','name', 'view'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
   @ViewChild(MatPaginator) paginator!: MatPaginator;

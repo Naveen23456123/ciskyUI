@@ -1,10 +1,11 @@
 <mat-card>
     <mat-card-title>
         <h6>X-Contingencies
-            <button  class="title-btn float-end no-print"  routerLink="cont-create"   type="button"  mat-mini-fab color="primary">
+           
+            <app-edit-icon-btn toolTip="Add Description" (clickEvent)="add_desc()" ></app-edit-icon-btn>
+            <button  class="title-btn float-end no-print" routerLink="cont-create"  type="button"  mat-mini-fab color="primary">
                 <mat-icon>add box</mat-icon> Contingencies
             </button>
-
           </h6>
     </mat-card-title>
     <mat-card-content>
@@ -12,6 +13,7 @@
         <app-loader [IsLoading]="isLoading"></app-loader>
     </div>
     <div class="wrapper" *ngIf="!isLoading"> 
+      <span>{{description}}</span>
         <table mat-table [dataSource]="dataSource" >
           
             <ng-container matColumnDef="serial">

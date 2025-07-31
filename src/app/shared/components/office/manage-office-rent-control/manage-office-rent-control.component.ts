@@ -2,6 +2,7 @@ import { Component, Inject, Optional } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { CommonService } from '@app/shared/services/common.service';
 import { CommonInterfaceService } from '@app/shared/services/external/common-interface.service';
 import { OfficeInterfaceService } from '@app/shared/services/external/office-interface.service';
 import { ProjectInterfaceService } from '@app/shared/services/external/project-interface.service';
@@ -26,13 +27,14 @@ export class ManageOfficeRentControlComponent {
   deleteRent=false;
   showTDS=false;
   tdsAmount=0;
+  tdsPercentage=10;
   totalAmount=0;
   projectName='';
   isBtnClicked=false;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageOfficeRentControlComponent>, private formbuilder: FormBuilder,
     private sessionservice: SessionService,  private router: Router,
-    private notifibarservice: NotifyBarService, private commonService:CommonInterfaceService,
+    private notifibarservice: NotifyBarService, private commonService:CommonService,
   private projectService:ProjectInterfaceService, private officeRentService:OfficeInterfaceService){
       this.data = data || {};
   }
@@ -62,14 +64,18 @@ export class ManageOfficeRentControlComponent {
     }
   }
   
-  ngOnInit(){      
+  ngOnInit(){    
+   
     this.checkMode(this.data.type);
     this.getTitle(this.data.type);
     this.rentForm = this.formbuilder.group({ 
       id: [''],
+      companyid:[],
       projectid :[],
+      officename:[],
+      officelocation :[],
       basicamount:[],
-      tdspercentage:[10],
+      tdspercentage:[this.tdsPercentage],
       agreementduration:[''],
       agreementstartdate:[''],
       agreementenddate:[],
@@ -83,6 +89,10 @@ export class ManageOfficeRentControlComponent {
       phoneno:[],
       address:[],
       files: this.formbuilder.array([])
+    });
+    this.rentForm.valueChanges.subscribe(values => {
+      const { agreementstartdate, agreementenddate } = values;      
+      this.rentForm.get('agreementduration')?.setValue(this.commonService.getMonthsDifference(agreementstartdate,agreementenddate), { emitEvent: false });
     });
     if(!this.deleteRent){
       let apiCalls: any = {};
@@ -143,9 +153,15 @@ export class ManageOfficeRentControlComponent {
     var amount= +this.rentForm.get('basicamount')?.value;
     this.showTDS=amount>19999;
     if(this.showTDS){
+      this.rentForm.patchValue({tdspercentage:this.tdsPercentage});
      var percent= +this.rentForm.get('tdspercentage')?.value;
      this.tdsAmount= (amount*percent)/100;
-     this.totalAmount= amount - this.tdsAmount;
+     this.totalAmount= amount + this.tdsAmount;
+    }
+    else{
+      this.rentForm.patchValue({tdspercentage:0});
+     this.tdsAmount= 0;
+     this.totalAmount= amount ;
     }
   }
 
@@ -154,6 +170,8 @@ export class ManageOfficeRentControlComponent {
       id: data.id,
       projectid :data.projectid,
       basicamount:data.basicamount,
+      officename :data.officename,
+      officelocation:data.officelocation,
       tdspercentage:data.tdspercentage,
       agreementduration:data.agreementduration,
       agreementstartdate:data.agreementstartdate,
@@ -173,7 +191,10 @@ export class ManageOfficeRentControlComponent {
 
   projectChange(data:any=null){
     if(data && data.value){
-      this.rentForm.patchValue({projectid:data.value.id});
+      this.rentForm.patchValue({
+        projectid:data.value.id,
+        companyid:data.value.companyid
+    });
       this.projectName= data.value.projectshortname;
     } 
   }
@@ -190,8 +211,7 @@ export class ManageOfficeRentControlComponent {
         }
       }
     });
-    formData.append('agreementstartdate', this.rentForm.controls['agreementstartdate']?.value.toISOString());
-    formData.append('agreementenddate', this.rentForm.controls['agreementenddate']?.value?.toISOString()); 
+    
     let formsValue= this.rentForm.value;
     formsValue.projectname= this.projectName;  
     if (this.isEdit) {
@@ -206,6 +226,8 @@ export class ManageOfficeRentControlComponent {
           }
         });
     } else {
+      formData.append('agreementstartdate', this.rentForm.controls['agreementstartdate']?.value.toISOString());
+      formData.append('agreementenddate', this.rentForm.controls['agreementenddate']?.value?.toISOString()); 
       this.rentForm.value.id=null;
       this.rentForm.controls['files']?.value?.forEach((item:any, index:any) => {                
         formData.append(`files[${index}].name`, item.name);

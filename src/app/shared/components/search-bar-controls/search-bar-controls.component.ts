@@ -1,10 +1,12 @@
-import { Component, EventEmitter, input, Input, Output } from '@angular/core';
+import { Component, EventEmitter, input, Input, Output, SimpleChanges } from '@angular/core';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { CommonService } from '@app/shared/services/common.service';
 import { DesignationInterfaceService } from '@app/shared/services/external/designation-interface.service';
 import { ProjectInterfaceService } from '@app/shared/services/external/project-interface.service';
 import { SubCompanyInterfaceService } from '@app/shared/services/external/sub-company-interface.service';
 import { VehicleInterfaceService } from '@app/shared/services/external/vehicle-interface.service';
 import { SessionService } from '@app/shared/services/session.service';
+import { toPairs } from 'lodash';
 
 import { finalize, forkJoin,take } from 'rxjs';
 
@@ -33,7 +35,10 @@ export class SearchBarControlsComponent {
   @Input() isStartTime=false;
   @Input() isEndTime=false;
   @Input() isVehicle=false; 
+  @Input() isStartDate=false;
+  @Input() isEndDate=false;
   @Input() isMonthAndYear=false;
+  @Input() isApprovalStatus=false;
 
   @Output() OnProjectChange:EventEmitter<any> = new EventEmitter();
   @Output() OnDesignationChange:EventEmitter<any> = new EventEmitter();
@@ -49,6 +54,9 @@ export class SearchBarControlsComponent {
   @Output() OnStartTimeChange:EventEmitter<any> = new EventEmitter();
   @Output() OnEndTimeChange:EventEmitter<any> = new EventEmitter();
   @Output() OnMonthYearChange:EventEmitter<any> = new EventEmitter();
+  @Output() OnApprovalStatusChange:EventEmitter<any> = new EventEmitter();
+  @Output() OnEndDateChange:EventEmitter<any> = new EventEmitter();
+  @Output() OnStartDateChange:EventEmitter<any> = new EventEmitter();
 
   isProjectLoaded=false;
   isDesgLoaded=false;
@@ -59,6 +67,7 @@ export class SearchBarControlsComponent {
   designations:any=[];
   statuses:any=[];
   generalStatus:any=[];
+  approvalStatus:any=[];
   projects:any=[];
   relatedTo:any=[];
   letterTypes:any=[];
@@ -74,10 +83,24 @@ export class SearchBarControlsComponent {
 
   ngOnInit(){
     let apiCalls: any = {};
-    if (this.isSubCompany)
-      apiCalls.subCompanyAPI = this.subCompanyService.getSubCompanyListByOrgId({},'');
-    if (this.isProjects)
-      apiCalls.projectAPI = this.projectService.getAllProjectPartialDetailsByOrdIg({  }, '');
+    let token= this.sessionservice.getTokenData();
+    console.log(token);
+    console.log(JSON.parse(token.c_ids));
+    if(token && token.c){
+      if (this.isSubCompany)
+        apiCalls.subCompanyAPI = this.subCompanyService.getSubCompanyListByOrgId({},'');
+      if (this.isProjects)
+        apiCalls.projectAPI = this.projectService.getAllProjectPartialDetailsByOrdIg({  }, '');
+    } else {      
+      this.isSubCompany=false;
+      let ids= JSON.parse(token.c_ids);
+      const companyId = ids?.[0] ?? null;
+      if (this.isProjects)
+        apiCalls.projectAPI = this.projectService.getAllProjectPartialDetailsByOrdIg({compid:companyId  }, '');
+    }
+   
+   
+    
     if (this.designations)
       apiCalls.designationAPI = this.designationService.getDesignationList({  }, '');
     
@@ -128,6 +151,11 @@ export class SearchBarControlsComponent {
           this.generalStatus= response;
         })
       }
+      if(this.isApprovalStatus){
+        this.sessionservice.approvalStatusSubject$.pipe(take(1)).subscribe((response:any)=>{
+          this.approvalStatus= response;
+        })
+      }
       if(this.isRelatedTo){
         this.sessionservice.workOwnerSubject$.pipe(take(1)).subscribe((response:any)=>{
           this.relatedTo= response;
@@ -136,7 +164,18 @@ export class SearchBarControlsComponent {
       
    });
   }
-
+  ngOnChanges(data:SimpleChanges){
+    if(data["isApprovalStatus"] && this.approvalStatus && this.approvalStatus.length==0){
+      this.sessionservice.approvalStatusSubject$.pipe(take(1)).subscribe((response:any)=>{
+        this.approvalStatus= response;
+      })
+    }
+    if(data["isRelatedTo"] && this.relatedTo && this.relatedTo.length==0){
+      this.sessionservice.workOwnerSubject$.pipe(take(1)).subscribe((response:any)=>{
+        this.relatedTo= response;
+      })
+    }
+  }
   projectChange(data:any){
     if(data && data.value){
       if(this.isVehicle){
@@ -214,6 +253,15 @@ export class SearchBarControlsComponent {
   generalStatusChange(data:any){
     this.OnGeneralStatusChange.emit({value:data.value});
   }
+  approvalStatusChange(data:any){
+    this.OnApprovalStatusChange.emit({value:data.value});
+  }
+  endDateChange(event: MatDatepickerInputEvent<Date>) {
+    this.OnEndDateChange.emit({value:event.value});
+  }
+  startDateChange(event: MatDatepickerInputEvent<Date>) {
+    this.OnStartDateChange.emit({value:event.value});
+  }
   dateRangeChange(dateRangeStart: HTMLInputElement, dateRangeEnd: HTMLInputElement) {
     if(dateRangeEnd.value!='' && dateRangeStart.value!=''){      
       let startParts= dateRangeStart.value.split('/');
@@ -225,7 +273,8 @@ export class SearchBarControlsComponent {
     }
   }  
   monthYearChange(data:any){
-    this.OnMonthYearChange.emit({value:data.format()})
+    if(data)
+    this.OnMonthYearChange.emit({value:data})
   }
   openFromIcon(timepicker: { open: () => void }) {    
     timepicker.open();

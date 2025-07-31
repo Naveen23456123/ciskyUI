@@ -12,6 +12,7 @@ export interface AppConstants {
     userStorage: string;
     workingProjectStorage: string;
     projectEntityStorage:string;
+    invoiceEntityStorage:string;
     IsEditableTrue: number;
     Active: number;
     InActive: number;
@@ -27,6 +28,7 @@ export const Constants: AppConstants = {
     userStorage: 'User',
     workingProjectStorage: 'project',
     projectEntityStorage: 'project-entity',
+    invoiceEntityStorage:'invoice-entity',
     IsEditableTrue: 1,
     Active: 1,
     InActive: 2
@@ -68,7 +70,9 @@ export enum DialogOperation{
 export enum ApprovalStatus{
     PENDING='pending',
     APPROVED='approved',
-    REJECTED='rejected'
+    REJECTED='rejected',
+    INPROCESS='inprocess',
+    CLOSE='close'
 }
 export enum WorkTypeStatus{
     ACHIEVED='achieved',
@@ -91,3 +95,10 @@ export enum ProfitLossScope{
 export enum BOQ_INVOICE{
     ALL_RECORD_INSERTED_MESSAGE="As per BOQ , All record have been successfully added. Kindly update the record if want to change or delete the existing record and add a new one."
 }
+
+export const TOTAL_PROFIT_LOSS_HEADING = [
+    { Name: "Revenue", ispersonal: false,isadmin: false, isincome:true },
+    { Name: "Personal expense", ispersonal: true,isadmin: false,isincome:false  },
+    { Name: "Admin expense", isadmin: true,ispersonal: false,isincome:false  }   
+   
+  ];

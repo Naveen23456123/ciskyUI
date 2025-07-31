@@ -15,6 +15,7 @@ import { UploadFileComponent } from '../../upload-file/upload-file.component';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { ViewLetterDetailsComponent } from '../view-letter-details/view-letter-details.component';
+import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 
 
 @Component({
@@ -45,7 +46,7 @@ export class ManageLettersListComponent {
 
   constructor(private sessionService : SessionService,private letterService:LetterInterfaceService,
       private router: Router,private route: ActivatedRoute,private helperService:HelperService,
-    private notifyBarService:NotifyBarService){     
+    private notifyBarService:NotifyBarService, private csvService:GenerateCsvService){     
        this.dataSource = new MatTableDataSource(this.lettersList);
     }
 
@@ -107,9 +108,10 @@ export class ManageLettersListComponent {
               this.dialog.open(UploadFileComponent,config);
     
     }
-    export() {
-      
-    }
+  export(){
+    if(this.lettersList && this.lettersList.length>0)
+      this.csvService.downloadFile(this.lettersList,this.letterService.getCSVTemplateColumnList(),'Letters');
+  }
     
   add_letter() {
     const config = this.defaultdialogoptions;
@@ -215,7 +217,7 @@ export class ManageLettersListComponent {
   viewletter(data:any){
     const config = this.defaultdialogoptions;
     config.minWidth='1200px';
-    config.minHeight= '90vh',
+    //config.minHeight= '90vh',
     config.data = {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type'],

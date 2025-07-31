@@ -2,7 +2,7 @@
 <mat-card>
     <mat-card-title>
         <h6 class="justify-content-center">III - Transportation (Fixed rate on rental basis)          
-          <app-add-icon-btn toolTip="Add Description" (clickEvent)="add_desc()" ></app-add-icon-btn>
+          <app-edit-icon-btn toolTip="Add Description" (clickEvent)="add_desc()" ></app-edit-icon-btn>
           <button  class="title-btn float-end no-print" type="button" routerLink="tp-create"  mat-mini-fab color="primary">
             <mat-icon>add box</mat-icon> Transportation
         </button>
@@ -13,7 +13,7 @@
         <app-loader [IsLoading]="isLoading"></app-loader>
     </div>
     <div class="wrapper" *ngIf="!isLoading">
-      <span>Data</span>
+      <span>{{description}}</span>
         <table mat-table [dataSource]="dataSource" >
         
           <ng-container matColumnDef="serial">

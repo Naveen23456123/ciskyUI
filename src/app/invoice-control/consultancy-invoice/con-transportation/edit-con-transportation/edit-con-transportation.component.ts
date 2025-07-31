@@ -41,7 +41,9 @@ readonly dialog = inject(MatDialog);
         pid:window.history.state.invoiceid,
         description:window.history.state.description,
         id:window.history.state.id,
-        currentmonth:window.history.state.currentbillmonths
+        currentmonth:window.history.state.currentbillmonths,
+        currentbill:window.history.state.currentbill,
+        rate:window.history.state.rate,
       }
     };
     const dialogRef = this.dialog.open(ManageConsultancyTransportationComponent, config);

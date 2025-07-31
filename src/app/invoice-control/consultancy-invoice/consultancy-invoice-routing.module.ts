@@ -26,6 +26,9 @@ import { EditConOfcFurnitureComponent } from './con-ofc-furniture/edit-con-ofc-f
 import { AddConDutyTravelComponent } from './con-duty-travel/add-con-duty-travel/add-con-duty-travel.component';
 import { EditConDutyTravelComponent } from './con-duty-travel/edit-con-duty-travel/edit-con-duty-travel.component';
 import { DeleteConDutyTravelComponent } from './con-duty-travel/delete-con-duty-travel/delete-con-duty-travel.component';
+import { AddConContingencyComponent } from './con-contigency/add-con-contingency/add-con-contingency.component';
+import { EditConContingencyComponent } from './con-contigency/edit-con-contingency/edit-con-contingency.component';
+import { DeleteConContingencyComponent } from './con-contigency/delete-con-contingency/delete-con-contingency.component';
 
 const routes: Routes = [
   {
@@ -175,6 +178,24 @@ const routes: Routes = [
                path: 'dt-delete/:dtId',
                component: DeleteConDutyTravelComponent,
                loadChildren:()=>import('app/invoice-control/consultancy-invoice/con-duty-travel/delete-con-duty-travel/delete-con-duty-travel.module').then(x=>x.DeleteConDutyTravelModule),
+               data:{pageGuid:'',type:'delete'}
+             },
+             {
+               path:'cont-create',
+               component: AddConContingencyComponent,
+               loadChildren:()=>import('app/invoice-control/consultancy-invoice/con-contigency/add-con-contingency/add-con-contingency.module').then(x=>x.AddConContingencyModule),
+               data:{pageGuid:'',type:'add'}
+             },
+             {
+               path: 'cont-edit/:contId',
+               component: EditConContingencyComponent,
+               loadChildren:()=>import('app/invoice-control/consultancy-invoice/con-contigency/edit-con-contingency/edit-con-contingency.module').then(x=>x.EditConContingencyModule),
+               data:{pageGuid:'',type:'edit'}
+             },
+             {
+               path: 'cont-delete/:contId',
+               component: DeleteConContingencyComponent,
+               loadChildren:()=>import('app/invoice-control/consultancy-invoice/con-contigency/delete-con-contingency/delete-con-contingency.module').then(x=>x.DeleteConContingencyModule),
                data:{pageGuid:'',type:'delete'}
              }
            ]   

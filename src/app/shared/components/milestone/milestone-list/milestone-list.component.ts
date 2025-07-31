@@ -17,6 +17,7 @@ import { DialogOperation } from '@app/shared/models/constant.config';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { ViewLetterDetailsComponent } from '../../letters/view-letter-details/view-letter-details.component';
 import { CommonService } from '@app/shared/services/common.service';
+import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 
 @Component({
   selector: 'app-milestone-list',
@@ -42,7 +43,8 @@ export class MilestoneListComponent {
 
   constructor(private sessionService : SessionService,private milestoneService:MilestoneInterfaceService,
       private router: Router,private route: ActivatedRoute,private helperService:HelperService,
-    private notifyBarService:NotifyBarService, private commonService:CommonService){     
+    private notifyBarService:NotifyBarService, private commonService:CommonService,
+  private csvService:GenerateCsvService){     
        this.dataSource = new MatTableDataSource(this.milestones);
     }
 
@@ -105,9 +107,11 @@ export class MilestoneListComponent {
                 };
       this.dialog.open(UploadFileComponent,config);
     }
-    export() {
-      
-    }
+
+ export(){
+    if(this.milestones && this.milestones.length>0)
+      this.csvService.downloadFile(this.milestones,this.milestoneService.getCSVTemplateColumnList(),'MileStone');
+  } 
     
   milestone(){
     const config = this.defaultdialogoptions;

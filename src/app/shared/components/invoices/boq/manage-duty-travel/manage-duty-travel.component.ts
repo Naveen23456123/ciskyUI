@@ -5,6 +5,7 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { LetterType } from '@app/shared/models/constant.config';
 import { BoqDutyTravelInterfaceService } from '@app/shared/services/external/boq/boq-duty-travel-interface.service';
+import { InvDutyTravelInterfaceService } from '@app/shared/services/external/invoice/inv-duty-travel-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, take } from 'rxjs';
@@ -20,9 +21,11 @@ public data: any;
   isLoading = true;
   isEdit: boolean = false;
   pageGuid: any;
+  isHeading: boolean = false;
   title: string='Add';
   dtForm: FormGroup = new FormGroup({});
   deletedt=false;
+  headingForm: FormGroup = new FormGroup({});
   readonly dialog = inject(MatDialog);
   isBtnClicked=false;
    private defaultdialogoptions:  MatDialogConfig = {
@@ -34,11 +37,14 @@ public data: any;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageDutyTravelComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService, private router: Router,private route: ActivatedRoute,
-    private notifibarservice: NotifyBarService,private dutyTravelService:BoqDutyTravelInterfaceService){
+    private notifibarservice: NotifyBarService,private dutyTravelService:InvDutyTravelInterfaceService){
       this.data = data || {};
   }
   
   checkMode(type: string) {
+    if(type=='heading'){
+      this.isHeading=true;
+    }
     if (type === 'edit' && !this.data.separate)
       this.isEdit = true;
     else if (type == 'delete') {
@@ -73,7 +79,18 @@ public data: any;
       numberofminimumtrips:[,Validators.required],
       ratepertrip:[,Validators.required]
     });
-    
+    if(this.isHeading){
+      this.headingForm= this.formbuilder.group({ 
+        id: [''],
+        description:[this.data.element.description]
+      });
+      this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
+        if(response && response.projectId){
+          this.headingForm.patchValue({id:response.projectId});
+        }
+      });
+     
+    } 
     if (this.isEdit || this.deletedt) {
       this.setdtForm(this.data.element);
     }
@@ -111,12 +128,16 @@ public data: any;
             });
         } else {          
           this.dtForm.value.id=null;
-          this.dutyTravelService.createBoqDutyTravel(this.dtForm.value, '')
+          let formData= {
+            projectid:response.projectId,
+            scopes:[this.dtForm.value]
+          }
+          this.dutyTravelService.createBoqDutyTravel(formData, '')
             .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
-                this.dtForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
-                this.dtForm.controls["id"].setValue(response.data.id);
+                this.dtForm.addControl('totalamount', this.formbuilder.control(response.data.scopes[0].totalamount));
+                this.dtForm.controls["id"].setValue(response.data.scopes[0].id);
                 this.dialogRef.close({ value: this.dtForm.value, valid: true });
               } else {
                 this.dialogRef.close({ value: null, valid: false });
@@ -132,16 +153,28 @@ public data: any;
   }
 
   delete() {
-      this.dutyTravelService.deleteBoqDutyTravel({id:this.dtForm.value.id}, '')
-       .pipe(finalize(() => { this.isLoading = false; })).subscribe({
-        next:(response: any) => {
-          if (response && response.success) 
-           this.dialogRef.close({ value: this.dtForm.value, valid: true });
-      },
-      error: (err: any) => {
-          this.dialogRef.close(err);
-        }
-      });
+    this.dutyTravelService.deleteBoqDutyTravel({id:this.dtForm.value.id}, '')
+      .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+      next:(response: any) => {
+        if (response && response.success) 
+          this.dialogRef.close({ value: this.dtForm.value, valid: true });
+    },
+    error: (err: any) => {
+        this.dialogRef.close(err);
+      }
+    });
   }
-
+  desc_submit(){
+    this.isBtnClicked=true;
+    this.dutyTravelService.UpdateBoqDutyTravelDescription(this.headingForm.value, '')
+    .pipe(finalize(() => { this.isBtnClicked = false; })).subscribe({
+    next:(response: any) => {
+      if (response && response.success) 
+        this.dialogRef.close({ value: this.headingForm.value, valid: true });
+    },
+    error: (err: any) => {
+        this.dialogRef.close(err);
+      }
+    });
+  }
 }

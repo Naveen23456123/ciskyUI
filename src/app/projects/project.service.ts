@@ -26,8 +26,11 @@ export class ProjectService {
     private inventoryService: InventoryInterfaceService, private contactService:ContactInterfaceService
   ) { }
 
-  getAllProjectDetailsByOrdIg(param: any, guid: string){
-    return this.projectInterface.getAllProjectDetailsByOrdIg(param,guid);
+  getAllProjectDetailsByOrdIg(request: any, guid: string){
+    return this.projectInterface.getAllProjectDetailsByOrdIg(request,guid);
+  }
+  getProjectCSVTemplateColumnList(){
+    return this.projectInterface.getCSVTemplateColumnList();
   }
   getAllProjectDetailsById(param: any, guid: string){
     return this.projectInterface.getAllProjectDetailsById(param,guid);

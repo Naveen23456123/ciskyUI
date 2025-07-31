@@ -23,7 +23,7 @@ export class InvRoadSurveyInterfaceService {
   }
   getBoqRoadSurveyListForInsertByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'BoqRoadSurvey/Insert/'+param.id,
+      url: 'BoqRoadSurvey/Insert/'+param.id+'/'+param.invid,
        params: {},
       headers: true,
       guid: '',
@@ -35,6 +35,17 @@ export class InvRoadSurveyInterfaceService {
   createBoqRoadSurvey(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'BoqRoadSurvey',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  UpdateBoqRoadSurveyDescription(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqRoadSurvey/Description/',
       params: {},
       headers: true,
       guid: '',

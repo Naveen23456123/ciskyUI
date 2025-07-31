@@ -34,6 +34,13 @@ export class MenuService {
         roles: []
       },
       {
+        label: 'Dashboard Test',
+        icon: 'bxs-dashboard',
+        link: 'dashboard-test',
+        guid: '',
+        roles: []
+      },
+      {
         label: 'Projects',
         icon: 'bxs-network-chart',
         link: 'projects',
@@ -91,13 +98,13 @@ export class MenuService {
           link: 'boq-attendence',
           guid: '',
           roles: []
-        },
-        {
-          label: 'Actual Attendence',
-          link: 'global',
-          guid: '',
-          roles: []
         }
+        // {
+        //   label: 'Actual Attendence',
+        //   link: 'global',
+        //   guid: '',
+        //   roles: []
+        // }
       ],
       },
       {
@@ -173,13 +180,13 @@ export class MenuService {
         guid: '',
         roles: []
       },
-      {
-        label: 'Certification Access',
-        icon: 'bxs-certification',
-        link: 'invitation-list',
-        guid: '',
-        roles: []
-      },
+      // {
+      //   label: 'Certification Access',
+      //   icon: 'bxs-certification',
+      //   link: 'invitation-list',
+      //   guid: '',
+      //   roles: []
+      // },
       {
         label: 'Circular',
         icon: 'bxs-envelope-open',
@@ -193,7 +200,7 @@ export class MenuService {
         link: 'profit-loss',
         guid: '',
         roles: []
-      },
+      }, 
       {
         label: 'SiteOps Fund',
         icon: 'bx-rupee',
@@ -210,7 +217,43 @@ export class MenuService {
           link: 'expense',
           guid: '',
           roles: []
-        }],
+        },
+        {
+          label: 'Office Rent',
+          link: 'ofc-billing',
+          guid: '',
+          roles: []
+        }], 
+      },
+      {
+        label: 'Requests',
+        icon: 'bx-rupee',
+        link: '#',
+        items: [{
+          label: 'Office(es)',
+          link: 'ofc-billing-request',
+          guid: '',
+          roles: []
+          //Admin - Id, SuperAdmin -Id
+        },
+        {
+          label: 'Imperest(s)',
+          link: 'imperest-billing-request',
+          guid: '',
+          roles: []
+        },
+        {
+          label: 'Expens(es)',
+          link: 'exp-billing-request',
+          guid: '',
+          roles: []
+        },
+        {
+          label: 'Vehicle(s)',
+          link: 'veh-billing-request',
+          guid: '',
+          roles: []
+        }], 
       },
       {
         label: 'Ticket',
@@ -222,10 +265,10 @@ export class MenuService {
       {
         label: 'Miscellaneous',
         icon: 'bx-library',
-        link: 'invitation-list',
+        link: 'misc',
         guid: '',
         roles: []
-      },
+      }, 
       {
         label: 'Settings',
         icon: 'bxs-cog',
@@ -237,6 +280,13 @@ export class MenuService {
           roles: []
         }]
       },
+      {
+        label: 'Manage User',
+        icon: 'bx-money',
+        link: 'user-project',
+        guid: '',
+        roles: []
+      }, 
       
     ]
   }

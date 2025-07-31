@@ -16,7 +16,7 @@ const routes: Routes = [
         path: 'create',
         component: AddVehicleBillingComponent,
         loadChildren:()=>import('app/vehicle-control/vehicle-billing/add-vehicle-billing/add-vehicle-billing.module').then(x=>x.AddVehicleBillingModule),
-        data:{pageGuid:'',type:'add'}
+        data:{pageGuid:'680dd2933682904bdd6e9ab9',type:'add'}
       },
       {
         path: 'edit/:vehbilId',

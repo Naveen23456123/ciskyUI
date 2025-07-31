@@ -101,7 +101,7 @@ export class ManageEotComponent implements OnDestroy {
           });        
           this.sessionService.entityTypeSubject$.subscribe((response:any)=>{
             if(response) {
-            let letterTypeitem = response.find((x:any)=>x.name.toLowerCase()==LetterType.EOT.toLowerCase());
+            let letterTypeitem = response.find((x:any)=>x.name.toLowerCase().includes(LetterType.EOT.toLowerCase()));
             if(letterTypeitem) {
               this.letterService.getLettersPartial({
                 projectid:entityData.projectId,
@@ -214,21 +214,28 @@ export class ManageEotComponent implements OnDestroy {
           }
         });
     } else {
-      this.eotForm.value.id=null;
-      this.eotService.createEOT(this.eotForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
-          next:(response: any) => {
-          if (response && response.success) {           
-            formsValue.id=response.data.id;
-            this.dialogRef.close({ value: formsValue, valid: true });
-          } else {
-            this.dialogRef.close({ value: null, valid: false });
-          }
-        },
-         error: (err: any) => {
-            this.dialogRef.close(err);
-          }
-      });
+      this.eotForm.patchValue({id:null});
+      this.sessionService.approvalStatusSubject$.subscribe((response:any)=>{
+        if(response){
+         this.eotForm.patchValue({statusid: response.find((x:any)=>x.name.toLowerCase()==ApprovalStatus.PENDING)?.id});
+          formsValue.statusid = this.eotForm.get('statusid')?.value;
+          formsValue.status = this.approvalStatusList.find(x=>x.id== this.eotForm.get('statusid')?.value)?.name;
+          this.eotService.createEOT(this.eotForm.value, '')
+            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+              next:(response: any) => {
+              if (response && response.success) {           
+                formsValue.id=response.data.id;
+                this.dialogRef.close({ value: formsValue, valid: true });
+              } else {
+                this.dialogRef.close({ value: null, valid: false });
+              }
+            },
+            error: (err: any) => {
+                this.dialogRef.close(err);
+              }
+          });
+        }
+      })      
     }    
   }
 

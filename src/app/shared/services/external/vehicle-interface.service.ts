@@ -35,7 +35,19 @@ export class VehicleInterfaceService {
     ];
   return columns;
   }
-
+  getCSVTemplateColumnList() {
+    let columns = [
+        { label: 'Vehicle_Name', value: 'name' },
+        { label: 'Project_Code', value: 'project' },
+        { label: 'Vehicle_Number', value: 'number' },
+        { label: 'Fixed_KM', value: 'fixedkm' },
+        { label: 'Fixed_Bill_Amount', value: 'fixedbillamount' },
+        { label: 'Extra_Amt_After_Fixed_KM', value: 'extraamountafterfixedkm' },
+        { label: 'Address', value: 'address' },
+        { label: 'Mobile', value: 'mobilenumber' },
+    ];
+  return columns;
+  }
   getVehicleListComponent(){
         return {
           component: ManageVehicleListComponent,
@@ -642,6 +654,17 @@ export class VehicleInterfaceService {
   getVehiclePartialDetailsByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
         url: 'Vehicle/Partial',
+        params: param,
+        headers: true,
+        guid: '',
+        request: {},
+        action: Operation.GET
+      }
+      return this.coreApi.standardService(standardAttribute);
+  }
+  getVehicleInfoSummary(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+        url: 'Vehicle/InfoSummary',
         params: param,
         headers: true,
         guid: '',

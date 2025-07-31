@@ -158,7 +158,7 @@ export class ManageSiteProgressComponent {
   ngOnDestroy(){}
 
   dateChange(data:any){
-    this.siteProgressForm.patchValue({monthandyear:data.format()});   
+    this.siteProgressForm.patchValue({monthandyear:data});   
   }
   
   letterSelect(event:any){
@@ -228,6 +228,8 @@ export class ManageSiteProgressComponent {
           }
         });
     } else {
+      this.siteProgressForm.patchValue({statusid: this.approvalStatusList.find((x:any)=>x.name.toLowerCase()==ApprovalStatus.PENDING)?.id});
+      formValue.status= this.approvalStatusList.find(x=>x.id== this.siteProgressForm.get('statusid')?.value).name;
       this.siteProgressForm.value.id=null;
       this.siteProgressService.createSiteProgress(this.siteProgressForm.value, '')
         .pipe(finalize(() => { this.isLoading = false; })).subscribe({

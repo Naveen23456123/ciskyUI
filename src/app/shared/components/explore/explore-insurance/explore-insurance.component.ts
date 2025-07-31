@@ -1,8 +1,8 @@
-import {AfterViewInit, Component, ViewChild, inject} from '@angular/core';
+import {AfterViewInit,EventEmitter, Input, Output, Component, ViewChild, inject, SimpleChanges} from '@angular/core';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import { finalize, take } from 'rxjs';
+import { finalize, Subscription, take } from 'rxjs';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { SessionService } from '@app/shared/services/session.service';
 import { HelperService } from '@app/shared/services/helper.service';
@@ -28,8 +28,12 @@ export class ExploreInsuranceComponent {
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  today= new Date();
+  @Input() filters:any={};
+  financeCount:any={total:0,expired:0};
+  private subscription: Subscription = new Subscription();
   readonly dialog = inject(MatDialog);
-
+  @Output() OnControlFilter:EventEmitter<any> = new EventEmitter();
    private defaultdialogoptions:  MatDialogConfig = {
         disableClose: false,
         data: {},
@@ -41,42 +45,65 @@ export class ExploreInsuranceComponent {
        this.dataSource = new MatTableDataSource(this.insList);
     }
 
-    ngOnInit()  {     
-      this.insuranceService.getInsuranceListByProjectIdByOrgId({ }, '')
+  ngOnInit()  {  
+    this.OnControlFilter.emit({value:{
+      startdate:true,
+      isproject:true,
+      iscompany:true,
+      enddate:true
+    }});  
+  }
+  ngOnChanges(changes: SimpleChanges) {   
+    if (changes['filters']) {
+      this.isLoading=true;   
+      const payload = {
+        ...changes['filters'].currentValue,
+        startdate: changes['filters'].currentValue.startdate || null,
+        enddate: changes['filters'].currentValue.enddate || null
+      };   
+      this.subscription = this.insuranceService.getInsuranceListByProjectIdByOrgId(payload, '')
       .pipe(finalize(() => this.isLoading = false))
       .subscribe((insResponse: any) => {
         if (insResponse && insResponse.success) {
-         this.insList = insResponse.data;
-         this.dataSource = new MatTableDataSource(this.insList);               
-         this.updateTable(this.insList);
+          this.insList = insResponse.data;
+          this.dataSource = new MatTableDataSource(this.insList);               
+          this.updateTable(this.insList);      
+          this.financeCount.total = this.insList.reduce((sum, record) => {
+            return sum + (Number(record.amount) || 0);
+          }, 0);
         
+          this.financeCount.expired = this.insList.reduce((sum, record) => {           
+            return new Date(record.enddate) < this.today ? sum + (Number(record.amount) || 0) : sum;
+          }, 0); 
         }
-      });    
+      });
     }
-  
-    ngAfterViewInit() {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }
-  
-    applyFilter(event: Event) {
-      const filterValue = (event.target as HTMLInputElement).value;
-      this.dataSource.filter = filterValue.trim().toLowerCase();
-  
-      if (this.dataSource.paginator) {
-        this.dataSource.paginator.firstPage();
-      }
-    }
+  }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+  ngOnDestroy(){
+    this.subscription.unsubscribe();
+  }
 
-    private updateTable(info: any) {
-      this.dataSource = new MatTableDataSource<any>(info);
-      this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-      this.pageSize = this.helperService.getPageSize();
-    }
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-    openDoc(row:any){
-      window.open(row.docaddress, "_blank");
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
+  }
+  private updateTable(info: any) {
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
+    this.pageSize = this.helperService.getPageSize();
+  }
+
+  openDoc(row:any){
+    window.open(row.docaddress, "_blank");
+  }
 }
 
 

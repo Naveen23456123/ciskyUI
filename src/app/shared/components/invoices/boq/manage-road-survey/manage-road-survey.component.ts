@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angu
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { BoqRoadSurveyInterfaceService } from '@app/shared/services/external/boq/boq-road-survey-interface.service';
+import { InvRoadSurveyInterfaceService } from '@app/shared/services/external/invoice/inv-road-survey-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, take } from 'rxjs';
@@ -19,8 +20,10 @@ export class ManageRoadSurveyComponent {
   public data: any;
   isLoading = true;
   isEdit: boolean = false;
-  pageGuid: any;
+  pageGuid: any;  
+  isHeading: boolean = false;
   title: string='Add';
+  headingForm: FormGroup = new FormGroup({});
   rsForm: FormGroup = new FormGroup({});
   deleters=false;
   readonly dialog = inject(MatDialog);
@@ -34,11 +37,14 @@ export class ManageRoadSurveyComponent {
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageRoadSurveyComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService, private router: Router,private route: ActivatedRoute,
-    private notifibarservice: NotifyBarService, private roadSurveyService:BoqRoadSurveyInterfaceService){
+    private notifibarservice: NotifyBarService, private roadSurveyService:InvRoadSurveyInterfaceService){
       this.data = data || {};
   }
   
   checkMode(type: string) {
+    if(type=='heading'){
+      this.isHeading=true;
+    }
     if (type === 'edit' && !this.data.separate)
       this.isEdit = true;
     else if (type == 'delete') {
@@ -74,7 +80,18 @@ export class ManageRoadSurveyComponent {
       ratepersurvey:[,Validators.required],
       description:[,Validators.required]
     });
-    
+    if(this.isHeading){
+      this.headingForm= this.formbuilder.group({ 
+        id: [''],
+        description:[this.data.element.description]
+      });
+      this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
+        if(response && response.projectId){
+          this.headingForm.patchValue({id:response.projectId});
+        }
+      });
+     
+    }
     if (this.isEdit || this.deleters) {
       this.setrsForm(this.data.element);
     }
@@ -114,12 +131,16 @@ export class ManageRoadSurveyComponent {
             });
         } else {
           this.rsForm.value.id=null;
-          this.roadSurveyService.createBoqRoadSurvey(this.rsForm.value, '')
+          let formData= {
+            projectid:response.projectId,
+            scopes:[this.rsForm.value]
+          }
+          this.roadSurveyService.createBoqRoadSurvey(formData, '')
             .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) { 
-                this.rsForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
-                this.rsForm.controls["id"].setValue(response.data.id);
+                this.rsForm.addControl('totalamount', this.formbuilder.control(response.data.scopes[0].totalamount));
+                this.rsForm.controls["id"].setValue(response.data.scopes[0].id);
                 this.dialogRef.close({ value: this.rsForm.value, valid: true });
               } else {
                 this.dialogRef.close({ value: null, valid: false });
@@ -146,5 +167,17 @@ export class ManageRoadSurveyComponent {
         }
       });
   }
-
+  desc_submit(){
+    this.isBtnClicked=true;
+    this.roadSurveyService.UpdateBoqRoadSurveyDescription(this.headingForm.value, '')
+    .pipe(finalize(() => { this.isBtnClicked = false; })).subscribe({
+    next:(response: any) => {
+      if (response && response.success) 
+        this.dialogRef.close({ value: this.headingForm.value, valid: true });
+    },
+    error: (err: any) => {
+        this.dialogRef.close(err);
+      }
+    });
+  }
 }

@@ -13,7 +13,7 @@
                 <form [formGroup]="siteProgressForm" (submit)="submit()">
                     <div class="row control-div">
                         <div class="col-md-6">
-                            <app-month-and-year-picker (onValueChange)="dateChange($event)" ></app-month-and-year-picker>
+                            <app-month-and-year-picker [defaultValue]="siteProgressForm.get('monthandyear')?.value" (onValueChange)="dateChange($event)" ></app-month-and-year-picker>
                            
                         </div>
                      

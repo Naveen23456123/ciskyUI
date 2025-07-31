@@ -39,7 +39,7 @@ export class ConRoadSurveyListComponent {
   
    ngOnInit()  {
     this.stateDataService.stateDataSubject.subscribe((data) => {   
-      if (data.event == 'conrsedit'  && data.valid && data.value) {      
+      if (data.event == 'conrsedit'  && data.valid && data.value) { 
         this.updateRowData(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});

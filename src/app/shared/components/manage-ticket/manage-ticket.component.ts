@@ -1,10 +1,11 @@
-import { Component, Inject, Optional } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
 import { TicketInterfaceService } from '@app/shared/services/external/ticket-interface.service';
 import { ValidatorService } from '@app/shared/services/validator.service';
+import moment from 'moment';
 import { finalize, forkJoin } from 'rxjs';
 
 
@@ -29,7 +30,8 @@ export class ManageTicketComponent {
   isBtnClicked=false;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageTicketComponent>, private formbuilder: FormBuilder,
-    private employeeService: EmployeeInterfaceService, private ticketService:TicketInterfaceService){
+    private employeeService: EmployeeInterfaceService, private ticketService:TicketInterfaceService,
+  private cdr:ChangeDetectorRef){
       this.data = data || {};
   }
   
@@ -100,18 +102,17 @@ export class ManageTicketComponent {
   ngOnDestroy(){
 
   }
-
+  ngAfterViewInit(){
+    this.cdr.detectChanges();
+  }
   projectChange(data:any=null){
     this.empInit=false;
-    console.log(data);
     if(data && data.value){
       this.ticketForm.patchValue({projectid:data.value.id});
       this.projectName= data.value.projectshortname;
     }
-    let projectId = this.ticketForm.controls['projectid'].value;
-    console.log(projectId);
-    if(projectId){
-      console.log('inside');
+    let projectId = this.ticketForm.controls['projectid'].value;   
+    if(projectId){     
       forkJoin({       
         empAPI:this.employeeService.getSiteEmployeeParital({projectId: projectId},'')
       }).pipe(untilDestroyed(this), finalize(()=> this.isLoading=false))
@@ -125,6 +126,7 @@ export class ManageTicketComponent {
        }
       })
     }
+    this.cdr.detectChanges();
   }
 
   setTicketForm(data: any) {    
@@ -165,9 +167,14 @@ export class ManageTicketComponent {
         } else {
           formData.delete(key);
         }
-      }    
+      }  
+      if(key=='employeeids'){   
+        formData.delete(key);     
+        this.ticketForm.get('employeeids')?.value.forEach((id:any) => formData.append('employeeids', id));
+      }   
     });    
-    formData.append('bookingdate', this.ticketForm.controls['bookingdate']?.value?.toISOString());
+    formData.append('bookingdate', moment(this.ticketForm.controls['bookingdate']?.value).toISOString());
+
     formsValue.projectname= this.projectName;
     if (this.isEdit) { 
       this.ticketService.updateTicket(formData, '')

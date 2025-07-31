@@ -23,6 +23,9 @@ export class SessionService {
   private orgSubject: ReplaySubject<any> = new ReplaySubject<any>(1);
   public orgSubject$ = this.orgSubject.asObservable();
 
+  private dashBoardProjectSubject: ReplaySubject<any> = new ReplaySubject<any>(1);
+  public dashBoardProjectSubject$ = this.dashBoardProjectSubject.asObservable();
+
   //working location Subject selected by the user
   private workingProjectSubject: ReplaySubject<any> = new ReplaySubject<any>(1);
   public workingProjectSubject$ = this.workingProjectSubject.asObservable();
@@ -78,7 +81,23 @@ export class SessionService {
   constructor(
     private _helperservice: HelperService,
     private _storageService: StorageService,
-    private commonService:CommonInterfaceService) { }
+    private commonService:CommonInterfaceService) { 
+    const savedUser = _storageService.get(Constants.userStorage);
+    if (savedUser)
+      this.userSubject.next(savedUser);
+
+    const projectEntityObj =_storageService.get(Constants.projectEntityStorage); 
+    if(projectEntityObj)     
+      this.projectEntitySubject.next(projectEntityObj);
+
+    const projectObj = _storageService.get(Constants.workingProjectStorage);
+    if(projectObj)
+      this.workingProjectSubject.next(projectObj);
+
+    const invObj =_storageService.get(Constants.invoiceEntityStorage);
+    if(invObj)
+      this.invoiceEntitySubject.next(invObj);
+  }
 
   public getRunTimeConfig(config: any) {
     return this._helperservice.getRunTimeConfigFile(config);
@@ -86,6 +105,10 @@ export class SessionService {
 
   public setOrganization(orgObj: any) {
     this.orgSubject.next({ organization: orgObj });
+  }
+
+  public setDashBoardProject(projectObj: any) {
+    this.dashBoardProjectSubject.next(projectObj);
   }
 
   public setAllLocation(locationsObj: any) {
@@ -109,7 +132,7 @@ export class SessionService {
   }
 
   public setInvoiceEntity(projectObj: any) {
-    //this._storageService.set(Constants.workingProjectStorage, projectObj);
+    this._storageService.set(Constants.invoiceEntityStorage, projectObj);
     this.invoiceEntitySubject.next(projectObj);
   }
   public setProfileLossScope(scopesObj: any) {
@@ -136,10 +159,30 @@ export class SessionService {
     this.userPriviligesSubject.next(priviligies);
   }
   public setUser(user: any) {
-    this._storageService.set(Constants.userStorage, {});
-    this.userSubject.next(user);
+    this._storageService.set(Constants.userStorage, user);
+    this.userSubject.next(this._storageService.get(Constants.userStorage));
   }
+  public getTokenData(){
+    try {
+      let token = localStorage.getItem('auth_token');
+      if(token!=null){
+        const base64Payload = token.split('.')[1];
+        let payload = atob(base64Payload);
+        if (payload) {
+          let payloadObj = JSON.parse(payload);
 
+          payloadObj.p = payloadObj.p.toLowerCase() === "true";
+          payloadObj.c = payloadObj.c.toLowerCase() === "true";
+
+          return payloadObj;
+        } else {
+          return null;
+        }
+      }     
+    } catch (e) {
+      return null;
+    }
+  }
   public getTrackingId() {
     if (this.trackingId) {
       return this.trackingId;

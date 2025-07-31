@@ -1,4 +1,4 @@
-import { Component,ViewChild,inject} from '@angular/core';
+import { Component,Input,ViewChild,inject} from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -17,6 +17,7 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { ManageUploadInventoryComponent } from '../manage-upload-inventory/manage-upload-inventory.component';
+import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 
 @Component({
   selector: 'app-manage-inventory-list',
@@ -25,6 +26,7 @@ import { ManageUploadInventoryComponent } from '../manage-upload-inventory/manag
   styleUrl: './manage-inventory-list.component.scss'
 })
 export class ManageInventoryListComponent {
+  @Input() showFilters=true;
 inventories:any[]= [];
   isLoading = true;
   displayedColumns: string[] = ['serial','projectshortname', 'name', 'employeename','description','quantity','rateperitem','purchasedate','action'];
@@ -47,7 +49,7 @@ inventories:any[]= [];
 
  constructor(private inventoryService:InventoryControlService,private helperService:HelperService,
   private route: ActivatedRoute, private notifyBarService:NotifyBarService,
-  private sessionService:SessionService
+  private sessionService:SessionService,private csvService:GenerateCsvService
  ){
   this.dataSource = new MatTableDataSource(this.inventories);
  }
@@ -119,9 +121,10 @@ inventories:any[]= [];
       this.addRowData(element);
     });
   }
-  export(){
-  
-  }
+ export(){
+    if(this.inventories && this.inventories.length>0)
+      this.csvService.downloadFile(this.inventories,this.inventoryService.getCSVTemplateColumnList(),'Inventory');
+  } 
   getInventoryData(obj:any){
     this.isSearching=true;
     this.inventoryService.getSiteInventoryListByOrgId(obj, '').pipe(finalize(() => {this.isLoading = false; this.isSearching=false;}))

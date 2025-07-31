@@ -20,6 +20,7 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import moment from 'moment';
 import { ViewLetterDetailsComponent } from '../../letters/view-letter-details/view-letter-details.component';
+import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 @Component({
   selector: 'app-site-progress-list',
   standalone: false,
@@ -46,7 +47,7 @@ export class SiteProgressListComponent {
 
   constructor(private sessionService : SessionService,private siteProgressService:SiteProgressInterfaceService,
     private router: Router,private route: ActivatedRoute,private helperService:HelperService,
-    private notifyBarService:NotifyBarService){     
+    private notifyBarService:NotifyBarService, private csvService:GenerateCsvService){     
        this.dataSource = new MatTableDataSource(this.siteProgressList);
     }
 
@@ -104,9 +105,10 @@ export class SiteProgressListComponent {
           this.dialog.open(UploadFileComponent,config);
 
     }
-    export() {
-      
-    }   
+ export(){
+    if(this.siteProgressList && this.siteProgressList.length>0)
+      this.csvService.downloadFile(this.siteProgressList,this.siteProgressService.getCSVTemplateColumnList(),'SiteProgress');
+  }   
 
   add_sp(){
     const config = this.defaultdialogoptions;

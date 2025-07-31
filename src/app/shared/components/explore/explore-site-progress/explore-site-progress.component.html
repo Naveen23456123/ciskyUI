@@ -1,90 +1,149 @@
-<div class="mat-elevation-z8">
-    <app-no-data *ngIf="dataSource?.data?.length==0" message="No SiteProgres found at this moment !!" ></app-no-data>
-    <table *ngIf="dataSource?.data?.length!=0" mat-table [dataSource]="dataSource" matSort >
-  
-      <ng-container matColumnDef="serial">
-        <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-        <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+<mat-card>
+  <mat-card-content class="px-0">
+    <ng-container *ngIf=" isLoading; else checkNoData">
+      <app-empty-table-skltn></app-empty-table-skltn>
+    </ng-container>
+    <ng-template #checkNoData>
+      <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+        <app-no-data message="No SiteProgres found at this moment !!"></app-no-data>
       </ng-container>
-  
-      <!-- contractName Column -->
-      <ng-container matColumnDef="month">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Month </th>
-        <td mat-cell *matCellDef="let row"> {{getMonthandYear(row.monthandyear).month}} </td>
-      </ng-container>
-  
-      <!-- Name Column -->
-      <ng-container matColumnDef="year">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Year </th>
-        <td mat-cell *matCellDef="let row"> {{getMonthandYear(row.monthandyear).year}} </td>
-      </ng-container> 
-      <ng-container matColumnDef="submitted">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Submitted </th>
-        <td mat-cell *matCellDef="let row">                               
-           <table class="child-table">
-            <tr>
-              <td>Financial</td>
-              <td class="pad-right-1 pad-left-1">:</td>
-              <td>{{row.submittedfinancialprogress}} % </td>
-            </tr>
+    </ng-template>
+    <ng-template #showTable>
+      <div class="mat-elevation-z8">
+          <div class="row col-md-12 control-div">
+            <div class="col-md-3 ">
+              <mat-form-field>
+                <mat-icon matPrefix>search</mat-icon>
+                <mat-label>Name / Project / Status </mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+              </mat-form-field>
+            </div>
             
-            <tr>
-              <td>Physical </td>
-              <td class="pad-right-1 pad-left-1">:</td>
-              <td>{{row.submittedphysicalprogress}} %  </td>
-            </tr>
-           </table>
-          </td>
-      </ng-container>
-      <ng-container matColumnDef="acted">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Approved </th>
-        <td mat-cell *matCellDef="let row"> 
-          <table class="child-table">
-            <tr>
-              <td>Financial </td>
-              <td class="pad-right-1 pad-left-1">:</td>
-              <td>{{row.financialprogress}} %  </td>
-            </tr>
-            <tr>
-              <td>Physical </td>
-              <td class="pad-right-1 pad-left-1">:</td>
-              <td>{{row.physicalprogress}} %  </td>
-            </tr>
-           </table>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-        <td mat-cell *matCellDef="let row"> {{row.status}} </td>
-      </ng-container>
-      <ng-container matColumnDef="letters">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Letters </th>
-        <td mat-cell *matCellDef="let row"> 
-          <table class="child-table">                                
-            <tr>
-              <td>Initial</td>
-              <td class="pad-right-1 pad-left-1">:</td>
-              <td>
-                <span *ngIf="!row.submittedletterid">-</span>
-                <app-view-btn *ngIf="row.submittedletterid" (clickEvent)="viewletter(row.submittedletterid)"></app-view-btn>
+            <div class="col-md-9 d-flex justify-content-end">
+              <div class="col-md-2  sumry-div  content-center">
+                <span class="sumry-lbl">Total :</span>
+                <span class="sumry-val">{{dataSource.data.length}}</span>
+              </div>
+              <div class="col-md-2 sumry-div content-center ">
+                <mat-icon class="count-icon bi bi-person-fill fs-4  text-warning">pending</mat-icon>
+                <span class="sumry-lbl">Pending : </span>
+                <span class="sumry-val">{{statusCounts.pending}}</span>
+              </div>
+              <div class="col-md-2  sumry-div content-center ">
+                <mat-icon class="count-icon bi bi-person-fill fs-4  text-danger">cancel</mat-icon>
+                <span class="sumry-lbl">Rejected : </span>
+                <span class="sumry-val">{{statusCounts.rejected}}</span>
+              </div>
+              <div class="col-md-2  sumry-div content-center  me-0">
+                <mat-icon class="count-icon bi bi-person-fill fs-4   text-success">check_circle</mat-icon>
+                <span class="sumry-lbl">Approved : </span>
+                <span class="sumry-val">{{statusCounts.approved}}</span>
+              </div>
+            </div>
+
+          </div>
+          <table  mat-table [dataSource]="dataSource" matSort >
+      
+            <ng-container matColumnDef="serial">
+              <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+              <td mat-cell *matCellDef="let i = index"> {{i+1}} </td>
+            </ng-container>
+            <ng-container matColumnDef="project">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
+              <td mat-cell *matCellDef="let row"> {{row.project}} </td>
+            </ng-container>
+        
+            <ng-container matColumnDef="contractor">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Contractor </th>
+              <td mat-cell *matCellDef="let row"> {{row.contractor}} </td>
+            </ng-container>
+            <!-- contractName Column -->
+            <ng-container matColumnDef="month">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Month </th>
+              <td mat-cell *matCellDef="let row"> {{getMonthandYear(row.monthandyear).month}} </td>
+            </ng-container>
+        
+            <!-- Name Column -->
+            <ng-container matColumnDef="year">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Year </th>
+              <td mat-cell *matCellDef="let row"> {{getMonthandYear(row.monthandyear).year}} </td>
+            </ng-container> 
+            <ng-container matColumnDef="submitted">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Submitted </th>
+              <td mat-cell *matCellDef="let row">                               
+                <table class="child-table table-width">
+                  <tr>
+                    <td>Financial</td>
+                    <td class="pad-right-1 pad-left-1">:</td>
+                    <td>{{row.submittedfinancialprogress}} % </td>
+                  </tr>
+                  
+                  <tr>
+                    <td>Physical </td>
+                    <td class="pad-right-1 pad-left-1">:</td>
+                    <td>{{row.submittedphysicalprogress}} %  </td>
+                  </tr>
+                </table>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="acted">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Approved </th>
+              <td mat-cell *matCellDef="let row"> 
+                <table class="child-table table-width">
+                  <tr>
+                    <td>Financial </td>
+                    <td class="pad-right-1 pad-left-1">:</td>
+                    <td>{{row.financialprogress}} %  </td>
+                  </tr>
+                  <tr>
+                    <td>Physical </td>
+                    <td class="pad-right-1 pad-left-1">:</td>
+                    <td>{{row.physicalprogress}} %  </td>
+                  </tr>
+                </table>
               </td>
-            </tr>
-            <tr>
-              <td>Close</td>
-              <td class="pad-right-1 pad-left-1">:</td>
-              <td>
-                <span *ngIf="!row.approvedletterid">-</span>
-                <app-view-btn *ngIf="row.approvedletterid" (clickEvent)="viewletter(row.approvedletterid)"></app-view-btn>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+              <td mat-cell *matCellDef="let row"> 
+              
+                <app-status-badge [value]="row.status" [label]="row.status"></app-status-badge>
               </td>
-            </tr>
+            </ng-container>
+            <ng-container matColumnDef="letters">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Letters </th>
+              <td mat-cell *matCellDef="let row"> 
+                <table class="child-table">                                
+                  <tr>
+                    <td>Initial</td>
+                    <td class="pad-right-1 pad-left-1">:</td>
+                    <td>
+                      <span *ngIf="!row.submittedletterid">-</span>
+                      <app-view-btn *ngIf="row.submittedletterid" (clickEvent)="viewletter(row.submittedletterid)"></app-view-btn>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Close</td>
+                    <td class="pad-right-1 pad-left-1">:</td>
+                    <td>
+                      <span *ngIf="!row.approvedletterid">-</span>
+                      <app-view-btn *ngIf="row.approvedletterid" (clickEvent)="viewletter(row.approvedletterid)"></app-view-btn>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </ng-container>
+            
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>      
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+              No Site Progress Detail found at this moment.</td>
+          </tr>
           </table>
-        </td>
-      </ng-container>
-      
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>      
-      
-    </table>
-    <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
-    </mat-paginator>   
-  </div>
+          <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+          </mat-paginator> 
+        </div>
+    </ng-template>
+  </mat-card-content>
+</mat-card>

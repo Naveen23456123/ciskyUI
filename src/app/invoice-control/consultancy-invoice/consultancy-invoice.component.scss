@@ -33,6 +33,7 @@
   ::ng-deep .mat-mdc-table {
     box-shadow: none;
     margin-bottom: 10px;
+    overflow-x: scroll !important;  
 }
 ::ng-deep .mat-mdc-card {
     
@@ -74,4 +75,13 @@
 }
 .mat-mdc-footer-row td span{
   font-weight: 800 !important;   
+}
+
+.mat-mdc-table {
+
+  overflow-x: scroll !important;   
+}
+.report-head
+ {
+    padding: 8px 10px 10px 10px;   
 }

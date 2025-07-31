@@ -84,7 +84,7 @@ export class ManageConsultancyStaffComponent {
     this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((projectEntity:any)=>{
       if(projectEntity && projectEntity.projectId){
         if (!this.isEdit) {
-          this.staffervice.getBoqStaffListForInsertByProjectId({id:projectEntity.projectId }, '')
+          this.staffervice.getBoqStaffListForInsertByProjectId({invid:projectEntity.invoiceId,id:projectEntity.projectId }, '')
               .pipe(finalize(() => this.isLoading = false))
               .subscribe((response: any) => {
                 if(response && response.success){
@@ -116,10 +116,9 @@ export class ManageConsultancyStaffComponent {
     (this.staffForm.get('controls') as FormArray).controls.forEach((group: AbstractControl, index: number) => {
       const quantityControl = group.get('currentbillmonths');
       if (quantityControl) {
-        console.log(group);
         quantityControl.valueChanges.subscribe(value => {    
            group.get('currentbillamount')?.setValue(value*(this.boqList.find(x=>x.id==group.get('boqid')?.value).rate), { emitEvent: false });
-        });
+        });       
       }
     });
   }
@@ -150,7 +149,6 @@ export class ManageConsultancyStaffComponent {
 
   submit(){ 
     this.isBtnClicked=true;
-    this.isBtnClicked=true;
     this.sessionService.invoiceEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
       if(response && response.invoiceId){
         this.staffForm.patchValue({invoiceid:response.invoiceId});
@@ -161,6 +159,7 @@ export class ManageConsultancyStaffComponent {
               next: (response:any) => {
               if(response && response.success){                
                 form.professionalid= this.professionalid;
+                form.previousbillmonths=this.boqList.find((x:any)=>x.id==form.id)?.uptolastbill
                 this.dialogRef.close({ value:form,professionalData: this.professionaList, valid: true });
               }
             },
@@ -186,10 +185,10 @@ export class ManageConsultancyStaffComponent {
                     rate:this.boqList.find((x:any)=>x.id==element.boqid)?.rate,
                     constructionperiod:this.boqList.find((x:any)=>x.id==element.boqid)?.constructionperiod,
                     oandmperiod:this.boqList.find((x:any)=>x.id==element.boqid)?.oandmperiod,
-                    previousbillmonths:0,
-                    previousbillamount:0,
-                  })
+                    previousbillmonths:this.boqList.find((x:any)=>x.id==element.boqid)?.uptolastbill
+                  });                  
                 });
+                console.log(responseData);
                 this.dialogRef.close({ value: responseData,professionalData: this.professionaList, valid: true });
               } else {
                 this.dialogRef.close({ value: null, valid: false });

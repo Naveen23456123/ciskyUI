@@ -190,7 +190,7 @@ public data: any;
         } else {
           formData.delete(key);
         }
-      }    
+      }         
     });    
     formData.append('useddate', new Date(this.vehicleForm.controls['useddate']?.value).toISOString());
     if (this.isEdit) {

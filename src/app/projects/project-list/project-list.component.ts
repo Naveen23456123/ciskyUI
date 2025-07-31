@@ -4,7 +4,7 @@ import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { ProjectService } from '../project.service';
-import { finalize } from 'rxjs';
+import { finalize ,delay} from 'rxjs';
 import { SessionService } from '@app/shared/services/session.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TemplateType } from '@app/shared/models/CSVTemplate';
@@ -15,6 +15,8 @@ import { ManageProjectComponent } from '@app/shared/components/manage-project/ma
 import { StateDataService } from '@app/shared/services/state-data.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { stubFalse } from 'lodash';
+import { ManageUploadConsultantComponent } from '@app/shared/components/consultant/manage-upload-consultant/manage-upload-consultant.component';
+import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 
 @Component({
   selector: 'app-project-list',
@@ -53,7 +55,7 @@ gradient: boolean = false;
 showLegend: boolean = false;
 showXAxisLabel: boolean = true;
 showYAxisLabel: boolean = true;
-
+isSearchLoading=true;
   projects:any[]= [];
   isLoading = true;
   displayedColumns: string[] = ['serial','code', 'shortname', 'location','clientname', 'concernpersonname'];
@@ -74,10 +76,10 @@ showYAxisLabel: boolean = true;
 
   constructor(private projectService: ProjectService, private sessionService : SessionService,
     private router: Router,private route: ActivatedRoute,private stateDataService: StateDataService,
-    private notifyBarService:NotifyBarService
+    private notifyBarService:NotifyBarService, private csvService:GenerateCsvService
   )
   {
-    //Object.assign(this, { single : this.single1 });
+   
      this.dataSource = new MatTableDataSource(this.projects);
   }
 
@@ -91,24 +93,16 @@ showYAxisLabel: boolean = true;
         this.addRowData(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
-      } 
+      }else if (data.event == 'bulkproject' && data.valid && data.value) {
+        
+        this.addBulkData(data.value);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      }  
     });
 
     this.isLoading=true;
-    this.projectService.getAllProjectDetailsByOrdIg({ organizationId: this.activeOrgId }, '')
-          .pipe(finalize(() => this.isLoading = false))
-          .subscribe((response: any) => {
-            if (response && response.success) {
-             //this.projects = response.data;                 
-             this.projects = response.data.map((item:any) => ({
-              ...item,
-              selectedContractor:item.contractor!=null ? item.contractor.id : null
-            }));      
-             console.log(this.projects);
-             this.dataSource = new MatTableDataSource(this.projects);
-             this.isLoading=true;
-            }
-          });
+    this.filterProject();
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -129,21 +123,15 @@ showYAxisLabel: boolean = true;
     this.router.navigate(['project-view'], { relativeTo: this.route });
   }
 
-
-  import() {
-    const config = this.defaultdialogoptions;
-                  config.minWidth='1200px';
-                    config.data = {
-                      pageGuid: this.route.snapshot.data['pageGuid'],
-                      type: this.route.snapshot.data['type'], 
-                      template_type: TemplateType.PROJECT   
-                    };
-          this.dialog.open(UploadFileComponent,config);
+  export(){
+    if(this.projects && this.projects.length>0)
+      this.csvService.downloadFile(this.projects,this.projectService.getProjectCSVTemplateColumnList(),'Projects');
   }
-  export() {
-    
+  addBulkData(data:any){
+    data.forEach((element:any) => {
+      this.addRowData(element);
+    });
   }
-
   addRowData(data: any) { 
     const data1:any = {
       id:data.id,
@@ -202,5 +190,41 @@ showYAxisLabel: boolean = true;
         this.dataSource._updateChangeSubscription();
       }
     })
+  }
+  searchObj:any={
+    projectid:'',
+    companyid:''   
+  };
+  projectChange(data:any){ 
+    this.searchObj.projectid= data.value ?? '';
+    this.filterProject();
+  } 
+  compChange(data:any){
+    this.searchObj.companyid= data.value ?? '';
+    this.searchObj.projectid= data.projectid ?? '';
+    this.filterProject();
+  } 
+  anyChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
+    }
+  } 
+  filterProject(){
+    this.isSearchLoading=true;
+    this.projectService.getAllProjectDetailsByOrdIg(this.searchObj, '')
+    .pipe(finalize(() =>{ this.isLoading = false; this.isSearchLoading=false;}))
+    .subscribe((response: any) => {
+      if (response && response.success) {
+        this.projects = response.data.map((item:any, index: number) => ({
+          srno: index + 1, 
+          ...item,
+          selectedContractor:item.contractor!=null ? item.contractor.id : null
+        }));  
+         this.dataSource = new MatTableDataSource(this.projects);           
+      }
+  }); 
   }
 }

@@ -21,4 +21,7 @@ export class InventoryControlService {
   getInventoryListComponent() {
     return this.inventoryService.getInventoryListComponent();
   }
+  getCSVTemplateColumnList() {
+    return this.inventoryService.getCSVTemplateColumnList();
+  }
 }

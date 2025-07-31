@@ -20,3 +20,20 @@
     padding: 0.3em 0.7em 0.3em 0.7em;
     border-radius: 14px;
 }
+.mat-mdc-form-field-bottom-align{
+    min-height: 0  !important;
+}
+
+  
+  /* Push the right side content to the right */
+  .spacer {
+    flex: 1 1 auto;
+  }
+  :host ::ng-deep .mat-mdc-form-field-subscript-wrapper{
+    height: 3px !important;
+  }
+  .pr-rt{
+    margin-right: 10px;
+    width: 30%;
+  }
+

@@ -12,6 +12,8 @@ import { Subscription } from 'rxjs';
 export class ProjectControlComponent {
   @Input() isProjects=false;
   projectList:[]=[];
+  @Input() isAllLabel=false;
+  @Input() required=true;
   isProjectLoaded=false;
   private subscription: Subscription = new Subscription();
   /** Value to emit when selection Chage */

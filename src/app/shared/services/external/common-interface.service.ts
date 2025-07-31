@@ -54,6 +54,17 @@ export class CommonInterfaceService {
     }
      return this.coreApi.standardService(standardAttribute);
   }
+  getCircularTypes(){
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Common/CircularType',
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+     return this.coreApi.standardService(standardAttribute);
+  }
   getGeneralStatusList(param: any, guid: string){
     const standardAttribute: ServiceAttributeModel = {
       url: 'Common/GeneralStatus',
@@ -80,6 +91,17 @@ export class CommonInterfaceService {
   getEmployeeTypeList(param: any, guid: string){
     const standardAttribute: ServiceAttributeModel = {
       url: 'Common/StaffType',
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+     return this.coreApi.standardService(standardAttribute); 
+  }
+  getPReportList(param: any, guid: string){
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Common/PReportType',
       params: {},
       headers: true,
       guid: '',

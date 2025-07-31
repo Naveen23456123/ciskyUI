@@ -25,8 +25,7 @@ readonly dialog = inject(MatDialog);
   }
   
   private defaultdialogoptions:  MatDialogConfig = {
-    panelClass: 'custom-dialog-container',
-    minWidth: '700px',
+    minWidth: '55vw',
     disableClose: false,
     data: {},
   };
@@ -42,7 +41,7 @@ readonly dialog = inject(MatDialog);
       if (data && data.valid) {
         let navigationExtras: NavigationExtras = {
           relativeTo: this.route,
-          state: { value: data.value, event: 'vehadd', valid: true, msg: 'The Vehicle created successfully.' }
+          state: { value: data.value, event: 'circadd', valid: true, msg: 'The Circular created successfully.' }
         };
         this.router.navigate(['../'], navigationExtras);
       }

@@ -1,11 +1,12 @@
 import { Component, Inject, Optional } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AdminInterfaceService } from '@app/shared/services/external/admin-interface.service';
 import { CommonInterfaceService } from '@app/shared/services/external/common-interface.service';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
 import { SettingInterfaceService } from '@app/shared/services/external/setting-interface.service';
+import { SubCompanyInterfaceService } from '@app/shared/services/external/sub-company-interface.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, forkJoin } from 'rxjs';
 
@@ -26,13 +27,18 @@ export class ManageApprovalComponent {
   moduleList:any[] = [];
   roleList:any[] = [];
   empList:any[] = [];
+  companyList:any[]=[];
+  moduleName:any;
+  company:any;
+  compId:any='';
   empInit=false;
-
+  isClicked=false;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageApprovalComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService,  private router: Router,
     private adminService: AdminInterfaceService, private commomService:CommonInterfaceService,
-    private approvalService:SettingInterfaceService, private employeeService:EmployeeInterfaceService){
+    private approvalService:SettingInterfaceService, private employeeService:EmployeeInterfaceService,
+  private companyService:SubCompanyInterfaceService){
       this.data = data || {};
   }
   
@@ -60,25 +66,38 @@ export class ManageApprovalComponent {
         break;
     }
   }
-
+  oncompChange(data:any){
+    this.moduleList=[];
+    if(data && data.value){
+      this.approvalForm.patchValue({companyid:data.value});
+      this.adminService.getBillinModuleList(data.value).subscribe((response:any)=>{
+        if(response && response.success){
+           this.moduleList= response.data;
+        }
+      })
+    }
+  }
   ngOnInit(){
     this.checkMode(this.data.type);
     this.getTitle(this.data.type);
     this.approvalForm = this.formbuilder.group({       
       levels: this.formbuilder.array([]),
       moduleid:[],
+      companyid:[],
       id :[]
     });
+    this.moduleName= this.data?.element?.modulename;
+    this.company= this.data?.element?.company;
     if(!this.deleteItem){
       forkJoin({
         roleAPI: this.commomService.getApprovalRoles(),
-        moduleAPI: this.adminService.getBillinModuleList()
+        companyAPI: this.companyService.getSubCompanyListByOrgId({},'')
       }).pipe(finalize(()=> this.isLoading=false)).subscribe((response:any)=>{
         if(response && response.roleAPI && response.roleAPI.success){
           this.roleList= response.roleAPI.data;
-        }
-        if(response && response.moduleAPI && response.moduleAPI.success){
-          this.moduleList= response.moduleAPI.data;
+        }       
+        if(response && response.companyAPI && response.companyAPI.success){
+          this.companyList= response.companyAPI.data;
         }
         if (this.isEdit) {
           this.setApprovalForm(this.data.element);
@@ -115,9 +134,12 @@ export class ManageApprovalComponent {
         empInit:false,
         rolename:this.roleList.find(x=>x.id==value).name
        })
-      this.employeeService.getSiteEmployeeParital({roleId:value},'').subscribe((response:any)=>{
+      this.employeeService.getSiteEmployeeParital({roleId:value,companyid:this.approvalForm.get('companyid')?.value},'').subscribe((response:any)=>{
         if(response && response.success){
-         let list= response.data.map((item:any)=>({
+         const employeeIds = this.levels.controls.map((group: AbstractControl) => {
+          return group.get('employeeid')?.value;
+        });
+         let list= response.data.filter((item: any) =>!employeeIds.includes(item.id)).map((item:any)=>({          
           id:item.id,
           name:item.code+ ' - '+item.name ,
           empname:item.name       
@@ -149,9 +171,10 @@ export class ManageApprovalComponent {
       group.patchValue({
         empInit:false
        })
-      this.employeeService.getSiteEmployeeParital({roleId:value},'').subscribe((response:any)=>{
+      this.employeeService.getSiteEmployeeParital({roleId:value,companyid:this.approvalForm.get('companyid')?.value},'').subscribe((response:any)=>{
         if(response && response.success){
-         let list= response.data.map((item:any)=>({
+         
+         let list= response.data.map((item:any)=>({ 
           id:item.id,
           name:item.code+ ' - '+item.name ,
           empname:item.name,       
@@ -188,6 +211,7 @@ export class ManageApprovalComponent {
   setApprovalForm(data: any) {    
     this.approvalForm.patchValue({
       moduleid:data.moduleid,
+      companyid:data.companyid,
       id:data.id
     });
     data.levels.forEach((element:any) => {
@@ -204,14 +228,13 @@ export class ManageApprovalComponent {
     }
   }
 
-  submit(){ 
-    this.approvalForm.value.modulename= this.moduleList.find(x=>x.id==this.approvalForm.get('moduleid')?.value).name;
+  submit(){   
+    this.isClicked=true;  
     this.approvalForm.value.employees= null;
     this.approvalForm.value.roles= null;
-    console.log(this.approvalForm.value);
     if (this.isEdit) {
       this.approvalService.updateApproval(this.approvalForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false; this.isClicked=false; })).subscribe({
           next:(response: any) => {
             if (response && response.success) 
               this.dialogRef.close({ value: this.approvalForm.value, valid: true });
@@ -222,8 +245,10 @@ export class ManageApprovalComponent {
         });
     } else {
       this.approvalForm.value.id=null;
+      this.approvalForm.value.modulename= this.moduleList.find(x=>x.id==this.approvalForm.get('moduleid')?.value).name;
+      this.approvalForm.value.company= this.companyList.find(x=>x.id==this.approvalForm.get('companyid')?.value).name;
       this.approvalService.createApproval(this.approvalForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false; this.isClicked=false; })).subscribe({
           next:(response: any) => {
             if (response && response.success)  {
               //this.approvalForm.controls["id"].setValue(response.data.id);

@@ -1,0 +1,114 @@
+<div class="dialog" >
+    <mat-card >
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> Projects
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3>      
+        <mat-dialog-content class="mat-typography"> 
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div  *ngIf="!isLoading">                
+
+                <div class="mat-elevation-z8">                   
+                      <div class="table-title-row control-div ">
+                        
+                        <div class="button-row"> 
+                      </div>
+                    </div> 
+                    <app-no-data *ngIf="dataSource?.data?.length==0" message="No Project(s) found at this moment !!" ></app-no-data>
+                    <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">     
+                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+                      
+                          <ng-container matColumnDef="serial">
+                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                          </ng-container>
+                      
+                          <!-- contractName Column -->
+                          <ng-container matColumnDef="project">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
+                            <td mat-cell *matCellDef="let row"> {{row.projectcode + ' - '+row.projectshortname}} </td>
+                          </ng-container>
+                      
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="engineer">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Authority Engg. </th>
+                            <td mat-cell *matCellDef="let row"> {{row.authengineer}} </td>
+                          </ng-container>                      
+                        
+                          <ng-container matColumnDef="role">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Role </th>
+                            <td mat-cell *matCellDef="let row">{{row.ourrole}} </td>
+                          </ng-container>
+                          
+                          <ng-container matColumnDef="lead">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Lead</th>
+                            <td mat-cell *matCellDef="let row">{{row.lead  }} </td>
+                          </ng-container> 
+                          <ng-container matColumnDef="jv">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> JV</th>
+                            <td mat-cell *matCellDef="let row">{{row.jv  }} </td>
+                          </ng-container>
+                          <ng-container matColumnDef="share">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Share</th>
+                            <td mat-cell class="w-85" *matCellDef="let row">
+                                <table >
+                                    <tr>
+                                        <td> Our : </td>
+                                        <td>{{row.ourshare}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>JV : </td>
+                                        <td>{{row.jvshare}}</td>
+                                    </tr>
+                                </table>
+                                
+                                 </td>
+                          </ng-container> 
+                        
+                          <ng-container matColumnDef="association">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Association</th>
+                            <td mat-cell *matCellDef="let row">{{row.association}} </td>
+                          </ng-container> 
+                          <ng-container matColumnDef="contact">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Names</th>
+                            <td mat-cell *matCellDef="let row">
+                                <table>
+                                    <tr>
+                                        <td> Regional Office : </td>
+                                        <td>{{row.regionalofficename}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Member : </td>
+                                        <td>{{row.membername}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Director : </td>
+                                        <td>{{row.directorname}}</td>
+                                    </tr>
+                                </table>
+                               
+                            </td>
+                          </ng-container> 
+                           
+                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                          
+                          <!-- Row shown when there is no matching data. -->
+                          <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                              No Bank Guarantee details are found at this moment.</td>
+                          </tr>
+                        </table>
+                        </div>
+                      
+                      
+                </div>
+            </div>
+        </mat-card-content>
+        </mat-dialog-content>
+    </mat-card>
+</div>

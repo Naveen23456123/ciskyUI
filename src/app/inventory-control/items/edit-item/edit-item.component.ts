@@ -35,7 +35,7 @@ constructor(private route: ActivatedRoute, private dialog: MatDialog,
       if (data.valid) {
         let navigationExtras: NavigationExtras = {
           relativeTo: this.route,
-          state: { value: data.value, event: 'itemedit', valid: true, msg: 'The Item created successfully.' }
+          state: { value: data.value, event: 'itemedit', valid: true, msg: 'The Item updated successfully.' }
         };
         this.router.navigate(['../../'], navigationExtras);
       }

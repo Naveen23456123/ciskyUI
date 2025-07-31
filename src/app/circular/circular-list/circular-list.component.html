@@ -1,89 +1,83 @@
 <div class="container">
     <mat-card>
-        <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
+        <mat-card-content>           
+          <div class="table-title-row">
+            <div class="row col-md-12 content-center">
+              <div class="col-md-9">
+                <app-search-bar-controls  [isAny]="true"
+                  (OnAnyChange)="filterChange($event)"
+                    searchByAnyPlaceholder="Title / Description" ></app-search-bar-controls> 
+              </div>         
+              <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">         
+                <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
+                      <mat-icon>add box</mat-icon> Circular
+                  </button>     
+              </div>
             </div>
-            <div  *ngIf="!isLoading">                
-
-                <div class="mat-elevation-z8">
-                   
-                      <div class="table-title-row">
-                        <mat-form-field>
-                          <mat-label>Filter</mat-label>
-                          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
-                        </mat-form-field>
-                        <div class="button-row">              
-                          <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
-                            <mat-icon>add box</mat-icon> Circular
-                        </button>  
+          </div>
+           <ng-container *ngIf="isLoading; else checkNoData">
+          <app-empty-table-skltn></app-empty-table-skltn>
+        </ng-container>
+        <ng-template #checkNoData>
+          <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+            <app-no-data message="No Circular found at this moment !!"></app-no-data>
+          </ng-container>
+        </ng-template>
+          <ng-template #showTable>
+              <div class="mat-elevation-z8">
+                <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+              
+                  <ng-container matColumnDef="serial">
+                    <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                    <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                  </ng-container>
+              
+                  <!-- contractName Column -->
+                  <ng-container matColumnDef="title">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Title </th>
+                    <td mat-cell *matCellDef="let row"> {{row.title}} </td>
+                  </ng-container>                      
+                  
+                  <!-- con_personName Column -->
+                  <ng-container matColumnDef="publishdate">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Publish Date </th>
+                    <td mat-cell *matCellDef="let row"> {{row.date | formatDate}} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
+                    <td mat-cell *matCellDef="let row"> {{row.description}} </td>
+                  </ng-container>   
+                  <ng-container matColumnDef="file">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Attachment </th>
+                    <td mat-cell *matCellDef="let row">  
+                      <app-file-icon [link]="row.attachmentaddress"></app-file-icon>
+                    </td>
+                  </ng-container>   
+               
+                  <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                    <td mat-cell  *matCellDef="let row">
+                      <div class="button-row">          
+                        <app-edit-btn [state]="row"
+                        [routerLink]="['/circular/edit',row.id]" ></app-edit-btn>                              
+                        <app-delete-btn [state]="row"
+                        [routerLink]="['/circular/delete',row.id]"></app-delete-btn>
                       </div>
-                    </div> 
-                      <div class="mat-elevation-z8">
-                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
-                      
-                          <ng-container matColumnDef="serial">
-                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
-                          </ng-container>
-                      
-                          <!-- contractName Column -->
-                          <ng-container matColumnDef="title">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Title </th>
-                            <td mat-cell *matCellDef="let row"> {{row.title}} </td>
-                          </ng-container>                      
-                         
-                          <!-- con_personName Column -->
-                          <ng-container matColumnDef="publishdate">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Publish Date </th>
-                            <td mat-cell *matCellDef="let row"> {{row.publishdate}} </td>
-                          </ng-container>
-                          <ng-container matColumnDef="description">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
-                            <td mat-cell *matCellDef="let row"> {{row.description}} </td>
-                          </ng-container>   
-                          <ng-container matColumnDef="file">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Attachment </th>
-                            <td mat-cell *matCellDef="let row">  
-                              <button mat-icon-button>
-                                <mat-icon>description</mat-icon>
-                              </button>
-                            </td>
-                          </ng-container>   
-                          <ng-container matColumnDef="action">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Approve/Reject </th>
-                            <td mat-cell *matCellDef="let row"> 
-                              <button mat-icon-button [matMenuTriggerFor]="menu">
-                                <mat-icon>more_vert</mat-icon></button>
-                                 <mat-menu #menu="matMenu">
-                                    <button mat-menu-item>Approve</button>
-                                    <button mat-menu-item>Reject</button>
-                                 </mat-menu> </td>
-                          </ng-container>   
-                          <!-- con_personName Column -->
-                          <ng-container matColumnDef="delete">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                            <td mat-cell  *matCellDef="let row"> 
-                              <button class="delete-table-btn" [state]="row"
-                              [routerLink]="['/circular/delete',row.id]" matTooltip="Delete" mat-mini-fab >
-                                <mat-icon>delete_forever</mat-icon> 
-                              </button>
-                         
-                           </td>
-                          </ng-container>
-                        
-                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
-                          <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
-                          </tr>
-                        </table>
-                        <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
-                        </mat-paginator>
-                      </div>                    
-                      
-                </div>
-            </div>
+                    </td>
+                  </ng-container>
+                
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+                  <tr class="mat-row" *matNoDataRow>
+                      <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                        No Circular found at this moment.</td>
+                    </tr>
+                </table>
+                <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+                </mat-paginator>
+              </div>                    
+              
+            </ng-template>
         </mat-card-content>
     </mat-card>
 </div>

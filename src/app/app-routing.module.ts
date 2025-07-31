@@ -12,9 +12,14 @@ const routes: Routes = [
       data: { pageGuid: '', roles: [] }
     },
     {
+      path: 'dashboard-test',
+      loadChildren: () => import('app/dashboard-test/dashboard-test.module').then(x => x.DashboardTestModule),
+      data: { pageGuid: '', roles: [] }
+    },
+    {
       path: 'projects',
       loadChildren: () => import('app/projects/project-list/project-list.module').then(x => x.ProjectListModule),
-      data: { pageGuid: '', roles: [] }
+      data: { pageGuid: '680dd1bd3682904bdd6e9ad2', roles: [] }
     },
     {
       path: 'explore',
@@ -141,6 +146,41 @@ const routes: Routes = [
       loadChildren:()=>import('app/settings/approval/approval-list/approval-list.module').then(x=>x.ApprovalListModule),
       data:{pageGuid:'',type:'view'}
     },
+    {
+      path: 'ofc-billing',
+      loadChildren:()=>import('app/siteops-fund/ofc-rent-billing/ofc-rent-billing-list/ofc-rent-billing-list.module').then(x=>x.OfcRentBillingListModule),
+      data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'ofc-billing-request',
+      loadChildren:()=>import('app/requests/office-billing/office-billing-list/office-billing-list.module').then(x=>x.OfficeBillingListModule),
+      data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'imperest-billing-request',
+      loadChildren:()=>import('app/requests/imperest-billing/imperest-billing-list/imperest-billing-list.module').then(x=>x.ImperestBillingListModule),
+      data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'veh-billing-request',
+      loadChildren:()=>import('app/requests/veh-billing-req/veh-billing-req-list/veh-billing-req-list.module').then(x=>x.VehBillingReqListModule),
+      data:{pageGuid:'',type:'view'}
+    },
+     {
+      path: 'exp-billing-request',
+      loadChildren:()=>import('app/requests/exp-billing-req/exp-req-billing-list/exp-req-billing-list.module').then(x=>x.ExpReqBillingListModule),
+      data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'user-project',
+      loadChildren:()=>import('app/user-project/user-project-list/user-project-list.module').then(x=>x.UserProjectListModule),
+      data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'misc',
+      loadChildren:()=>import('app/misc/misc-list/misc-list.module').then(x=>x.MiscListModule),
+      data:{pageGuid:'',type:'view'}
+    }
   ]),
   // { path: 'login', loadChildren: () => import('app/login/login.module').then(x => x.LoginModule) },
   { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }

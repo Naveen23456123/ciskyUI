@@ -11,4 +11,7 @@ export class OfficeService {
   getOfficeRentsByOrdIdProjectId(param: any, guid: string) {
     return this.officeSevice.getOfficeRentsByOrdIdProjectId(param,guid);
   }
+  searchOfficeRent(request: any, guid: string) {
+    return this.officeSevice.searchOfficeRent(request,guid);
+  }
 }

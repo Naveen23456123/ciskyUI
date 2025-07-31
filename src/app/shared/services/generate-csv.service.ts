@@ -26,22 +26,34 @@ export class GenerateCsvService {
   ConvertToCSV(objArray: any, headerList: any) {
     let array =
       typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+      console.log(array);
     let str = '';
     let row = '';
     for (let index in headerList) {
       row += headerList[index].label + ',';
     }
     row = row.slice(0, -1);
-    str += row + '\r\n';
+    str += row + '\r\n';    
     for (let i = 0; i < array.length; i++) {
-      let line = '';
-      for (let index in headerList) {
-        let head = headerList[index].value;
-        line += typeof(array[i][head])=='undefined'?'':array[i][head]+',';
-      }  
-      line = line.slice(0, -1);
-      str += line + '\r\n';
+    let line = '';
+    for (let index in headerList) {
+      let head = headerList[index].value;
+      let cell = array[i][head];
+
+      if (cell === undefined || cell === null) {
+        cell = '';
+      } else {
+        cell = String(cell).replace(/"/g, '""');
+        if (cell.includes(',') || cell.includes('\n') || cell.includes('"')) {
+          cell = `"${cell}"`;
+        }
+      }
+
+      line += cell + ',';
     }
+    line = line.slice(0, -1);
+    str += line + '\r\n';
+  }
     return str;
   }
 

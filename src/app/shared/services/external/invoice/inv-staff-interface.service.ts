@@ -23,7 +23,7 @@ export class InvStaffInterfaceService {
   }
   getBoqStaffListForInsertByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'BoqStaff/Insert/'+param.id,
+      url: 'BoqStaff/Insert/'+param.id+'/'+param.invid,
       params: {},
       headers: true,
       guid: '',
@@ -35,6 +35,17 @@ export class InvStaffInterfaceService {
   createBoqStaff(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'BoqStaff',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  UpdateBoqStaffDescription(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqStaff/Description/'+request.id,
       params: {},
       headers: true,
       guid: '',

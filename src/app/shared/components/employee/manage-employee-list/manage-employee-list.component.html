@@ -1,22 +1,20 @@
 <div class="container">
-    <mat-card>
+    <mat-card *ngIf="showFilters">
         <mat-card-content>
             <div class="load-wrap" *ngIf="isLoading">
                 <app-loader [IsLoading]="isLoading"></app-loader>
             </div>
             <div *ngIf="!isLoading">     
-                <div class="mat-elevation-z8">                
-                  <div class="table-title-row">
-                    <div class="row  content-center">
+                <div class="mat-elevation-z8"> 
+                    <div class="row content-center">
                       <div class="col-md-10">
-                        <div *ngIf="showFilters">
-                          <app-search-bar-controls [isSubCompany]="true" [isProfessional]="true" [isDesignation]="true"
+                      
+                          <app-search-bar-controls  [isSubCompany]="true" [isProfessional]="true" [isDesignation]="true"
                           [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Employee Code / Name"
                           (OnProjectChange)="projectChange($event)" (OnDesignationChange)="desgChange($event)" 
                           (OnSubCompanyChange)="compChange($event)" (OnProfessionalChange)="professionalChange($event)"
                            (OnAnyChange)="anyChange($event)" 
-                          ></app-search-bar-controls>
-                        </div>  
+                          ></app-search-bar-controls>  
                     </div>       
                     <div class="col-md-2 button-row main-btn-row d-flex justify-content-end">
                       <app-upload-btn (clickEvent)="import()" ></app-upload-btn>          
@@ -27,18 +25,39 @@
                     </div>
                   </div>
                 </div>
-                </div>
             </div>
         </mat-card-content>
     </mat-card>
     <div class="wrapper">
     <mat-card>
       <mat-card-content>
-        <div class="load-wrap" *ngIf="isSearching">
-          <app-loader [IsLoading]="isSearching"></app-loader>
-      </div>
-        <app-no-data *ngIf="!isLoading && dataSource?.data?.length==0 && !isSearching"  message="No Employee(s) Details found at this moment !!" ></app-no-data>
-        <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">        
+        <div *ngIf="!showFilters" >
+          <div class="row  content-center">
+            <div class="col-md-10">          
+                <app-search-bar-controls 
+                [isAny]="true" searchByAnyPlaceholder="Employee Code / Name"                          
+                (OnAnyChange)="anyChange($event)" 
+                ></app-search-bar-controls>
+            </div>       
+            <div class="col-md-2 button-row main-btn-row d-flex justify-content-end">
+              <app-upload-btn (clickEvent)="import()" ></app-upload-btn>          
+              <button class="title-btn" type="button" (click)="add_emp()"  mat-mini-fab color="primary">
+                <mat-icon>add box</mat-icon> Employee
+              </button> 
+              <app-download-csv (clickEvent)="export()" ></app-download-csv> 
+            </div>
+          </div>
+        </div>
+        <ng-container *ngIf="isLoading ||isSearching; else checkNoData">
+          <app-empty-table-skltn></app-empty-table-skltn>
+        </ng-container>
+        <ng-template #checkNoData>
+          <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+            <app-no-data message="No Employee(s) Details found at this moment !!"></app-no-data>
+          </ng-container>
+        </ng-template>
+        <ng-template #showTable>
+          <div   class="mat-elevation-z8">        
           <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
               
                   <ng-container matColumnDef="serial">
@@ -102,7 +121,12 @@
           </table>
           <mat-paginator [length]="resultsLength" [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
           </mat-paginator>
-        </div>   
+        </div> 
+        </ng-template>
+        
+        
+       
+          
       </mat-card-content>
     </mat-card>
     </div>

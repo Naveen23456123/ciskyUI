@@ -1,0 +1,54 @@
+<app-upload-data [isUploading]="isImporting"
+ [templateColumns]="allColumnsData"
+ [errorLoadingCSV]="errors"
+  (onImportClick)="importing($event)" >
+    <div metadata>
+        <div class="row ">
+            <div class="col-md-6">
+                <span class="msg-note">Information</span> 
+                <ul class="mt-2"> 
+                    <li>Project code should be unique.</li>
+                    <li>In Project Short name you can provide Project small Name.</li>
+                    <li>In Project Name you can provide the full Project Name.</li>
+                    <li>In Auth Engineer and Cordinator place the unique Employee Code present inside the SubCompany you will provide.</li>
+                </ul>
+            </div>
+            <div class="row col-md-6">
+                <div class="col-md-6">
+                    <span class="msg-note">Work Type</span> 
+                    <ul class="mt-2"> 
+                        <li *ngFor="let item of workTypes" >
+                            {{item.name}}
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <span class="msg-note">Our Role</span> 
+                    <ul class="mt-2"> 
+                        <li *ngFor="let item of ourRoles" >
+                            {{item.name}}
+                        </li>
+                    </ul>                    
+                </div>
+                <div class="col-md-6">
+                    <span class="msg-note">Sub Company</span> 
+                    <ul class="mt-2">
+                        <li *ngFor="let item of companies" >
+                            {{item.name}}
+                        </li>
+                    </ul>                    
+                </div>
+                <div class="col-md-6">
+                    <span class="msg-note">Contract Mode</span>
+                    <ul class="mt-2">  
+                        <li *ngFor="let item of contractorModes" >
+                            {{item.name}}
+                        </li>
+                    </ul>                    
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</app-upload-data>
+

@@ -1,1 +1,92 @@
-<p>manage-consultancy-contingencies works!</p>
+<div class="dialog" >
+    <mat-card *ngIf="!deletecont">
+        
+        <h3 mat-dialog-title> {{title}}             
+        </h3>
+        
+        <mat-dialog-content class="mat-typography">
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <!-- <form [formGroup]="organizationForm" > -->
+                <form [formGroup]="contForm" >
+                    <div class="row control-div">                       
+                        <div class="wrapper" formArrayName="controls">
+                            <div *ngFor="let item of controls.controls; let i = index" [formGroupName]="i">
+                                <div class="row content-center control-div">
+                                    <div class="col-md-1">                       
+                                     {{i+1}}
+                                    </div> 
+                                    <div class="col-md-7">                       
+                                        <mat-form-field>
+                                            <mat-label>Description</mat-label>
+                                            <textarea  matInput readonly formControlName="description"></textarea>
+                                           
+                                        </mat-form-field>
+                                    </div>  
+                                    
+                                    <div class="col-md-4">                       
+                                        <mat-form-field>
+                                            <mat-label>Amount</mat-label>
+                                            <input matInput type="number" formControlName="currentbillamount">
+                                            <mat-error *ngIf="controls.get('currentbillamount')?.errors?.['required']">Please provide amount</mat-error>
+                                            <mat-error *ngIf="controls.get('currentbillamount')?.errors?.['max']">
+                                                Value can not be greater then {{controls.get('currentbillamount')?.value}} 
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>                         
+                               </div>
+                            </div>
+                        </div>
+                    </div>   
+                    <h5 *ngIf="controls.length==0">
+                        {{empty_message}}
+                    </h5>
+                </form>
+            </div>
+        </mat-card-content>
+        </mat-dialog-content>
+    
+    <mat-dialog-actions align="end">
+     <div class="row control-div">
+        <div class=" button-row" align="right">
+              <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+              <app-submit-load-btn *ngIf="!isLoading && contForm.get('controls')?.value.length>0" (clickEvent)="submit()" [isClicked]="isBtnClicked"
+              [isValid]="contForm.valid || isBtnClicked"
+              [isClicked]="isBtnClicked"
+              text="{{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
+      </div>
+      </div>
+    </mat-dialog-actions>
+</mat-card>
+    <mat-card *ngIf="deletecont">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl"></span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -9,10 +9,10 @@ export class SiteopsService {
 
   constructor(private imperestService: ImperestInterfaceService, private expenseService:ExpenseInterfaceService) { }
 
-  getImperestListByOrgId(param: any, guid: string) {
-    return this.imperestService.getImperestListByOrgId(param,guid);
+  searchImperestListByOrgId(request: any, guid: string) {
+    return this.imperestService.searchImperestListByOrgId(request,guid);
   }
-  getExpenseListByOrgId(param: any, guid: string) {
-    return this.expenseService.getExpenseListByOrgId(param,guid);
+  searchExpenseListByOrgId(param: any, guid: string) {
+    return this.expenseService.searchExpenseListByOrgId(param,guid);
   }
 }

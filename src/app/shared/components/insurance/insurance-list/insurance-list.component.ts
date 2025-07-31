@@ -99,7 +99,7 @@ export class InsuranceListComponent {
         pageGuid: this.route.snapshot.data['pageGuid'],
         type: DialogOperation.ADD,    
       };
-      config.minWidth='55vw';    
+      config.minWidth='65vw';    
       const dialogRef = this.dialog.open(ManageInsuranceComponent, config);
       dialogRef.afterClosed().subscribe((data:any) => {
         if (data && data.valid) {
@@ -116,7 +116,7 @@ export class InsuranceListComponent {
            type: DialogOperation.EDIT,
            element: row
          };  
-         this.defaultdialogoptions.minWidth='55vw';    
+         this.defaultdialogoptions.minWidth='65vw';    
          const dialogRef = this.dialog.open(ManageInsuranceComponent, this.defaultdialogoptions);
          dialogRef.afterClosed().subscribe((data) => {       
            if (data.valid) {

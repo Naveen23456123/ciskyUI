@@ -1,0 +1,98 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteOfc">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3> 
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <form [formGroup]="ofcForm" (submit)="submit()">
+                    <div class="row content-center">
+                        <div class="col-md-4 ">     
+                            <h5 >Generate Bill for the Month :  </h5>
+                        </div>
+                        <div class="col-md-4">                          
+                            <app-month-and-year-picker [defaultValue]="ofcForm.get('monthandyear')?.value" (onValueChange)="dateChange($event)"  ></app-month-and-year-picker> 
+                        </div>
+                        <div class="col-md-4 ">  </div> 
+                    </div>
+                    <hr>
+                    <div class="row control-div content-center">
+                        <div class="col-md-4 ">
+                           <h5> Generate For All Project</h5>
+                        </div>
+                        <div class="col-md-2">
+                            <mat-slide-toggle [formControl]="isAllProject" (change)="onProjecttoggleChange($event)" labelPosition="before"></mat-slide-toggle>
+                        </div>
+                        <div class="col-md-6 ">
+                            <app-project-control  *ngIf="!isAllProject.value" (onValueChange)="projectChange($event)"
+                            [defaultValue]="ofcForm.get('projectid')?.value" ></app-project-control>
+                        </div>
+                        <div class="col-md-4 " *ngIf="!isAllProject.value">
+                            <h5> Generate For All Office Location</h5>
+                            
+                        </div>
+                        <div class="col-md-2 " *ngIf="!isAllProject.value">
+                            <mat-slide-toggle [formControl]="isAllOffice" (change)="onvehicletoggleChange($event)" labelPosition="before"></mat-slide-toggle>
+                        </div>
+                        <div class="col-md-6" >
+                            <mat-form-field *ngIf="!isAllProject.value && !isAllOffice.value">
+                                <mat-label>Office Name</mat-label>
+                                <mat-select (selectionChange)="ofcChange()" formControlName="officeid">
+                                    <mat-option  *ngFor="let field of ofcList" [value]="field.id">
+                                        {{field.name +' - '+field.location}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="!ofcForm.get('projectid')?.value">Please select Project first</mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row control-div">
+                       
+                        <div class="col-md-12 button-row" align="right">
+                                <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                               
+                                    <app-submit-load-btn  [isClicked]="isClicked" [isValid]="ofcForm.valid || isClicked"
+                                         text=" {{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
+
+                        </div>
+                        
+                    </div>
+                    
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card *ngIf="deleteOfc">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete Office Billing for <span class="vw-lbl">{{projectName}}</span> (<span class="vw-lbl">{{this.ofcForm.controls['monthandyear'].value | date: 'MMMM'}}</span> - <span class="vw-lbl">{{this.ofcForm.controls['monthandyear'].value | date: 'yyyy'}}</span>)?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

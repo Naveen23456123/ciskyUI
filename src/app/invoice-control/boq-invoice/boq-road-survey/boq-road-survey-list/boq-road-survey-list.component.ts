@@ -2,6 +2,7 @@ import { Component,EventEmitter,Output,ViewChild,inject} from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';;
 import { InvoiceService } from '@app/invoice-control/invoice.service';
+import { ManageRoadSurveyComponent } from '@app/shared/components/invoices/boq/manage-road-survey/manage-road-survey.component';
 import { HelperService } from '@app/shared/services/helper.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
@@ -17,7 +18,7 @@ import { finalize, take } from 'rxjs';
 export class BoqRoadSurveyListComponent {
   data:any[]=[];
   isLoading = true;
-
+  description='';
   dataColumn: string[] = ['serial','desc','km','rateperkm','noofsurvey','amount','action' ];
   footerColumns: string[] = ['serial', 'amount','action'];
   dataSource!: MatTableDataSource<any[]>;
@@ -58,10 +59,11 @@ export class BoqRoadSurveyListComponent {
         this.invoiceService.getBoqRoadSurveyListByProjectId({id:projectEntity.projectId }, '')
         .pipe(finalize(() => this.isLoading = false))
         .subscribe((response: any) => {
-          if (response && response.success) {
-           this.data = response.data;
-           this.dataSource = new MatTableDataSource(this.data);
-           this.getTotalAmount();              
+          if (response && response.success && response.data) {
+            this.description= response.data.description;
+            this.data = response.data.scopes;
+            this.dataSource = new MatTableDataSource(this.data);
+            this.getTotalAmount();              
           }
         });
       }
@@ -103,7 +105,29 @@ export class BoqRoadSurveyListComponent {
       this.onAmountChange.emit(total);
       return total;
     }
+  add_desc(){
+    this.sessionService.projectEntitySubject$.pipe(take(1)).subscribe((projectEntity:any)=>{
+      if(projectEntity && projectEntity.projectId){
+        const config = this.defaultdialogoptions;
+          config.minWidth='45vw';
+          config.data = {
+            type: 'heading',
+            element:{
+              invoiceId:projectEntity.invoiceId,
+              description: this.description
+            }
+          };
+          const dialogRef = this.dialog.open(ManageRoadSurveyComponent,config);
+        dialogRef.afterClosed().subscribe((data) => { 
+          if (data && data.valid) { 
+            this.description=data.value.description;        
+            this.notifyBarService.showsnackbar('The Description updated successfully.');
+          }
+        });
+      }
+    });
   }
+}
   
   
 

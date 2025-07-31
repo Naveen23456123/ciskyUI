@@ -3,269 +3,269 @@
     <mat-card>
         <mat-card-title>
           <div class="card-title-row">
-            <span class="sub-heading">Bill(s)</span>               
+            <span  class="sub-heading">Bill(s)</span>               
           </div>
         </mat-card-title>
         <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
+          <div class="table-title-row">
+              <mat-form-field>
+                <mat-label>Filter</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+              </mat-form-field>
+              <div class="button-row">              
+                <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
+
+                <button class="title-btn" type="button" (click)="billing()"  mat-mini-fab color="primary">
+                    <mat-icon>add box</mat-icon> Bill
+                </button> 
+                <app-download-csv (clickEvent)="export()" ></app-download-csv> 
             </div>
-            <div class="wrapper" *ngIf="!isLoading">                
-
-                <div class="mat-elevation-z8">                   
-                      <div class="table-title-row">
-                        <mat-form-field>
-                          <mat-label>Filter</mat-label>
-                          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
-                        </mat-form-field>
-                        <div class="button-row">              
-                          <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
-
-                          <button class="title-btn" type="button" (click)="billing()"  mat-mini-fab color="primary">
-                              <mat-icon>add box</mat-icon> Bill
-                          </button> 
-                          <app-download-csv (clickEvent)="export()" ></app-download-csv> 
-                      </div>
-                    </div> 
-                      <div class="mat-elevation-z8">
-                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+          </div> 
+          <ng-container *ngIf=" isLoading; else checkNoData">
+            <app-empty-table-skltn></app-empty-table-skltn>
+          </ng-container>
+          <ng-template #checkNoData>
+            <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+              <app-no-data message="No Billing found at this moment !!"></app-no-data>
+            </ng-container>
+          </ng-template>
+          <ng-template #showTable>
+              <div class="mat-elevation-z8">
+                <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+              
+                  <ng-container matColumnDef="serial">
+                    <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                    <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                  </ng-container>
+              
+                  <!-- contractName Column -->
+                  <ng-container matColumnDef="billstartDate">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Bill Start Date </th>
+                    <td mat-cell *matCellDef="let row"> {{row.billstartdate | formatDate }} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="billendDate">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Bill End Date </th>
+                    <td mat-cell *matCellDef="let row"> {{row.billenddate | formatDate }} </td>
+                  </ng-container>
+              
+                  <!-- Name Column -->
+                  <ng-container matColumnDef="billnumber">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Bill Number </th>
+                    <td mat-cell *matCellDef="let row"> {{row.billnumber}} </td>
+                  </ng-container>                      
+                
+                  <ng-container matColumnDef="billType">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>  Type </th>
+                    <td mat-cell *matCellDef="let row">{{row.billtype}} </td>
+                  </ng-container>                          
+                  
+                  <ng-container matColumnDef="category">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Category</th>
+                    <td mat-cell *matCellDef="let row">{{row.billcategory}} </td>
+                  </ng-container> 
+                  <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Status</th>
+                    <td mat-cell *matCellDef="let row">
+                      <div class="button-row">                               
+                          <app-edit-btn (clickEvent)="edit_billing(row)" ></app-edit-btn>                              
+                          <app-delete-btn (clickEvent)="delete_billing(row)"></app-delete-btn>
+                        </div>
+                        </td>
+                  </ng-container> 
+                    <!-- Secondary Column -->
+                  <ng-container matColumnDef="secondary">
+                    <td mat-cell [attr.colspan]="displayedColumns.length" *matCellDef="let element">
+                    <mat-card class="wrapper details-Data">
+                      <mat-card-content>
+                        <div class="row col-md-12">
                       
-                          <ng-container matColumnDef="serial">
-                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
-                          </ng-container>
-                      
-                          <!-- contractName Column -->
-                          <ng-container matColumnDef="billstartDate">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Bill Start Date </th>
-                            <td mat-cell *matCellDef="let row"> {{row.billstartdate | formatDate }} </td>
-                          </ng-container>
-                          <ng-container matColumnDef="billendDate">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Bill End Date </th>
-                            <td mat-cell *matCellDef="let row"> {{row.billenddate | formatDate }} </td>
-                          </ng-container>
-                      
-                          <!-- Name Column -->
-                          <ng-container matColumnDef="billnumber">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Bill Number </th>
-                            <td mat-cell *matCellDef="let row"> {{row.billnumber}} </td>
-                          </ng-container>                      
-                        
-                          <ng-container matColumnDef="billType">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>  Type </th>
-                            <td mat-cell *matCellDef="let row">{{row.billtype}} </td>
-                          </ng-container>                          
-                          
-                          <ng-container matColumnDef="category">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Category</th>
-                            <td mat-cell *matCellDef="let row">{{row.billcategory}} </td>
-                          </ng-container> 
-                          <ng-container matColumnDef="action">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Status</th>
-                            <td mat-cell *matCellDef="let row">
-                              <div class="button-row">                               
-                                  <app-edit-btn (clickEvent)="edit_billing(row)" ></app-edit-btn>                              
-                                  <app-delete-btn (clickEvent)="delete_billing(row)"></app-delete-btn>
+                          <div class=" col-md-2">
+                            <h6>Submited Details</h6>
+                            <div class="col-md-12">
+                              <span class="expand-lbl-text">Date</span>                                        
+                            </div>
+                            <div class="col-md-12">
+                              <span class="bill-val">{{element.billsubmitdate | formatDate }} </span>
+                              </div>
+                              <hr >
+                              <div class="col-md-12">
+                                <span class="expand-lbl-text">Amount</span>                                        
+                              </div>
+                              <div class="col-md-12">
+                                <span class="bill-val">{{element.submittedBillAmount | formatCurrency}}</span>
                                 </div>
-                               </td>
-                          </ng-container> 
-                           <!-- Secondary Column -->
-                          <ng-container matColumnDef="secondary">
-                           <td mat-cell [attr.colspan]="displayedColumns.length" *matCellDef="let element">
-                            <mat-card class="wrapper details-Data">
-                              <mat-card-content>
-                                <div class="row col-md-12">
-                             
-                                  <div class=" col-md-2">
-                                    <h6>Submited Details</h6>
-                                    <div class="col-md-12">
-                                      <span class="expand-lbl-text">Date</span>                                        
-                                    </div>
-                                    <div class="col-md-12">
-                                      <span class="bill-val">{{element.billsubmitdate | formatDate }} </span>
-                                      </div>
-                                      <hr >
-                                      <div class="col-md-12">
-                                        <span class="expand-lbl-text">Amount</span>                                        
-                                      </div>
-                                      <div class="col-md-12">
-                                        <span class="bill-val">{{element.submittedBillAmount | formatCurrency}}</span>
-                                        </div>
-                                        <hr >
-                                      <div class="col-md-12">
-                                        <span class="expand-lbl-text">Percentage</span>                                        
-                                      </div>
-                                      <div class="col-md-12">
-                                        <span class="bill-val">{{round(element.billsubmittedPercentage)}}</span>
-                                        </div>
-                                        <div class="col-md-12">
-                                          <span class="expand-lbl-text">Percentage Amount</span>                                        
-                                        </div><hr>
-                                        <div class="col-md-12">
-                                          <span class="bill-val">{{element.billsubmittedpercamount | formatCurrency}}</span>
-                                          </div>
-                                   </div>                          
-                                   <div class=" col-md-2">
-                                    <h6>AE/IE Recomm. Details</h6>
-                                    <div class="col-md-12">
-                                      <span class="expand-lbl-text">Date</span>                                        
-                                    </div>
-                                    <div class="col-md-12">
-                                      <span class="bill-val">{{element.sitebillrecommbilldate | formatDate }} </span>
-                                      </div>
-                                      <hr >
-                                      <div class="col-md-12">
-                                        <span class="expand-lbl-text">Amount</span>                                        
-                                      </div>
-                                      <div class="col-md-12">
-                                        <span class="bill-val">{{element.siterecommendedbillamount | formatCurrency}}</span>
-                                        </div>
-                                        <hr >
-                                      <div class="col-md-12">
-                                        <span class="expand-lbl-text">Percentage</span>                                        
-                                      </div>
-                                      <div class="col-md-12">
-                                        <span class="bill-val">{{round(element.siterecombillamountpercent)}}</span>
-                                        </div><hr>
-                                        <div class="col-md-12">
-                                          <span class="expand-lbl-text">Percentage Amount</span>                                        
-                                        </div>
-                                        <div class="col-md-12">
-                                          <span class="bill-val">{{element.sitebillrecommpercamount | formatCurrency}}</span>
-                                          </div>
-                                        
-                                   </div>   
-                                   <div class=" col-md-2">
-                                    <h6>AE/IE Deduction  Details</h6>
-                                    <div class="col-md-12">
-                                      <span class="expand-lbl-text">LD Amount</span>                                        
-                                    </div>
-                                    <div class="col-md-12">
-                                      <span class="bill-val">{{element.sitebillldamount | formatCurrency}} </span>
-                                      </div>
-                                      <hr >
-                                      <div class="col-md-12">
-                                        <span class="expand-lbl-text">Withheld Amount</span>                                        
-                                      </div>
-                                      <div class="col-md-12">
-                                        <span class="bill-val">{{element.sitebillwithheldamount | formatCurrency}}</span>
-                                        </div>
-                                        <hr >
-                                      <div class="col-md-12">
-                                        <span class="expand-lbl-text">Released Withheld Amount	</span>                                        
-                                      </div>
-                                      <div class="col-md-12">
-                                        <span class="bill-val">{{element.sitebillreleasedwithheldamount | formatCurrency}}</span>
-                                        </div>
-                                   </div> 
-                                   <div class=" col-md-2">
-                                    <h6>Authority Recomm. Details</h6>
-                                    <div class="col-md-12">
-                                      <span class="expand-lbl-text">Date</span>                                        
-                                    </div>
-                                    <div class="col-md-12">
-                                      <span class="bill-val">{{element.horecommbilldate | formatDate }} </span>
-                                      </div>
-                                      <hr >
-                                      <div class="col-md-12">
-                                        <span class="expand-lbl-text">Amount</span>                                        
-                                      </div>
-                                      <div class="col-md-12">
-                                        <span class="bill-val">{{element.horecommendedbillamount | formatCurrency}}</span>
-                                        </div>
-                                        <hr >
-                                      <div class="col-md-12">
-                                        <span class="expand-lbl-text">Percentage</span>                                        
-                                      </div>
-                                      <div class="col-md-12">
-                                        <span class="bill-val">{{round(element.horecombillamountpercent)}}</span>
-                                        </div><hr>
-                                        <div class="col-md-12">
-                                          <span class="expand-lbl-text">Percentage Amount</span>                                        
-                                        </div>
-                                        <div class="col-md-12">
-                                          <span class="bill-val">{{element.horecommpercentageamount | formatCurrency}}</span>
-                                          </div>
-                                   </div> 
-                                   <div class=" col-md-2">
-                                    <h6>Authority Deduction  Details</h6>
-                                    
-                                    <div class="col-md-12">
-                                      <span class="expand-lbl-text">LD Amount</span>                                        
-                                    </div>
-                                    <div class="col-md-12">
-                                      <span class="bill-val">{{element.holdamount | formatCurrency}} </span>
-                                      </div>
-                                      <hr >
-                                      <div class="col-md-12">
-                                        <span class="expand-lbl-text">Withheld Amount</span>                                        
-                                      </div>
-                                      <div class="col-md-12">
-                                        <span class="bill-val">{{element.howithheldamount | formatCurrency}}</span>
-                                        </div>
-                                        <hr >
-                                      <div class="col-md-12">
-                                        <span class="expand-lbl-text">Released Withheld Amount	</span>                                        
-                                      </div>
-                                      <div class="col-md-12">
-                                        <span class="bill-val">{{element.horeleasedwithheldamount | formatCurrency}}</span>
-                                        </div>
-                                   </div> 
-                                   <div class="col-md-2 pad-right-0">
-                                    <h6>Attachements</h6> 
-                                      <table>
-                                        <tr>
-                                          <td><span class="expand-lbl-text ">SO Attachment</span></td>
-                                          <td> 
-                                            <app-view-btn *ngIf="element.billsubmittedletterid" (clickEvent)="viewletter(element.billsubmittedletterid)" class="float-end"></app-view-btn>
-                                          </td>
-                                        </tr>
-                                      </table>
-                                      <hr class="hr-5">
-                                      <table>
-                                        <tr>
-                                          <td>  <span class="expand-lbl-text">Submitted Letter</span></td>
-                                          <td> 
-                                            <app-view-btn *ngIf="element.sitebillattachmentid" (clickEvent)="viewletter(element.sitebillattachmentid)"  class="float-end"></app-view-btn>
-                                          </td>
-                                        </tr>
-                                      </table>
-                                      <!-- <div class="col-md-12 letters-view">
-                                        <span class="expand-lbl-text">Submitted Letter</span>
-                                        <app-view-btn class="float-end"></app-view-btn>
-                                        </div> -->
-                                        <hr class="hr-5">
-                                        <table>
-                                          <tr>
-                                            <td><span class="expand-lbl-text">Recomm. Letter</span></td>
-                                            <td> 
-                                              <app-view-btn *ngIf="element.horecommletterid" (clickEvent)="viewletter(element.horecommletterid)" class="float-end"></app-view-btn>
-                                            </td>
-                                          </tr>
-                                        </table>                                      
-                                   </div> 
-                                 </div>
-                              </mat-card-content>
-                            </mat-card>
-                             
-                            </td>
-                          </ng-container>
-                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                          <tr mat-row *matRowDef="let row; columns: ['secondary'];"></tr>
-                          <!-- Row shown when there is no matching data. -->
-                          <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">No Bills Details found at this moment.</td>
-                          </tr>
-                        </table>
-                        <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
-                        </mat-paginator>
-                        <!-- <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
-                      </div>
+                                <hr >
+                              <div class="col-md-12">
+                                <span class="expand-lbl-text">Percentage</span>                                        
+                              </div>
+                              <div class="col-md-12">
+                                <span class="bill-val">{{round(element.billsubmittedPercentage)}}</span>
+                                </div>
+                                <div class="col-md-12">
+                                  <span class="expand-lbl-text">Percentage Amount</span>                                        
+                                </div><hr>
+                                <div class="col-md-12">
+                                  <span class="bill-val">{{element.billsubmittedpercamount | formatCurrency}}</span>
+                                  </div>
+                            </div>                          
+                            <div class=" col-md-2">
+                            <h6>AE/IE Recomm. Details</h6>
+                            <div class="col-md-12">
+                              <span class="expand-lbl-text">Date</span>                                        
+                            </div>
+                            <div class="col-md-12">
+                              <span class="bill-val">{{element.sitebillrecommbilldate | formatDate }} </span>
+                              </div>
+                              <hr >
+                              <div class="col-md-12">
+                                <span class="expand-lbl-text">Amount</span>                                        
+                              </div>
+                              <div class="col-md-12">
+                                <span class="bill-val">{{element.siterecommendedbillamount | formatCurrency}}</span>
+                                </div>
+                                <hr >
+                              <div class="col-md-12">
+                                <span class="expand-lbl-text">Percentage</span>                                        
+                              </div>
+                              <div class="col-md-12">
+                                <span class="bill-val">{{round(element.siterecombillamountpercent)}}</span>
+                                </div><hr>
+                                <div class="col-md-12">
+                                  <span class="expand-lbl-text">Percentage Amount</span>                                        
+                                </div>
+                                <div class="col-md-12">
+                                  <span class="bill-val">{{element.sitebillrecommpercamount | formatCurrency}}</span>
+                                  </div>
+                                
+                            </div>   
+                            <div class=" col-md-2">
+                            <h6>AE/IE Deduction  Details</h6>
+                            <div class="col-md-12">
+                              <span class="expand-lbl-text">LD Amount</span>                                        
+                            </div>
+                            <div class="col-md-12">
+                              <span class="bill-val">{{element.sitebillldamount | formatCurrency}} </span>
+                              </div>
+                              <hr >
+                              <div class="col-md-12">
+                                <span class="expand-lbl-text">Withheld Amount</span>                                        
+                              </div>
+                              <div class="col-md-12">
+                                <span class="bill-val">{{element.sitebillwithheldamount | formatCurrency}}</span>
+                                </div>
+                                <hr >
+                              <div class="col-md-12">
+                                <span class="expand-lbl-text">Released Withheld Amount	</span>                                        
+                              </div>
+                              <div class="col-md-12">
+                                <span class="bill-val">{{element.sitebillreleasedwithheldamount | formatCurrency}}</span>
+                                </div>
+                            </div> 
+                            <div class=" col-md-2">
+                            <h6>Authority Recomm. Details</h6>
+                            <div class="col-md-12">
+                              <span class="expand-lbl-text">Date</span>                                        
+                            </div>
+                            <div class="col-md-12">
+                              <span class="bill-val">{{element.horecommbilldate | formatDate }} </span>
+                              </div>
+                              <hr >
+                              <div class="col-md-12">
+                                <span class="expand-lbl-text">Amount</span>                                        
+                              </div>
+                              <div class="col-md-12">
+                                <span class="bill-val">{{element.horecommendedbillamount | formatCurrency}}</span>
+                                </div>
+                                <hr >
+                              <div class="col-md-12">
+                                <span class="expand-lbl-text">Percentage</span>                                        
+                              </div>
+                              <div class="col-md-12">
+                                <span class="bill-val">{{round(element.horecombillamountpercent)}}</span>
+                                </div><hr>
+                                <div class="col-md-12">
+                                  <span class="expand-lbl-text">Percentage Amount</span>                                        
+                                </div>
+                                <div class="col-md-12">
+                                  <span class="bill-val">{{element.horecommpercentageamount | formatCurrency}}</span>
+                                  </div>
+                            </div> 
+                            <div class=" col-md-2">
+                            <h6>Authority Deduction  Details</h6>
+                            
+                            <div class="col-md-12">
+                              <span class="expand-lbl-text">LD Amount</span>                                        
+                            </div>
+                            <div class="col-md-12">
+                              <span class="bill-val">{{element.holdamount | formatCurrency}} </span>
+                              </div>
+                              <hr >
+                              <div class="col-md-12">
+                                <span class="expand-lbl-text">Withheld Amount</span>                                        
+                              </div>
+                              <div class="col-md-12">
+                                <span class="bill-val">{{element.howithheldamount | formatCurrency}}</span>
+                                </div>
+                                <hr >
+                              <div class="col-md-12">
+                                <span class="expand-lbl-text">Released Withheld Amount	</span>                                        
+                              </div>
+                              <div class="col-md-12">
+                                <span class="bill-val">{{element.horeleasedwithheldamount | formatCurrency}}</span>
+                                </div>
+                            </div> 
+                            <div class="col-md-2 pad-right-0">
+                            <h6>Attachements</h6> 
+                              <table>
+                                <tr>
+                                  <td><span class="expand-lbl-text ">SO Attachment</span></td>
+                                  <td> 
+                                    <app-view-btn *ngIf="element.billsubmittedletterid" (clickEvent)="viewletter(element.billsubmittedletterid)" class="float-end"></app-view-btn>
+                                  </td>
+                                </tr>
+                              </table>
+                              <hr class="hr-5">
+                              <table>
+                                <tr>
+                                  <td>  <span class="expand-lbl-text">Submitted Letter</span></td>
+                                  <td> 
+                                    <app-view-btn *ngIf="element.sitebillattachmentid" (clickEvent)="viewletter(element.sitebillattachmentid)"  class="float-end"></app-view-btn>
+                                  </td>
+                                </tr>
+                              </table>
+                              <!-- <div class="col-md-12 letters-view">
+                                <span class="expand-lbl-text">Submitted Letter</span>
+                                <app-view-btn class="float-end"></app-view-btn>
+                                </div> -->
+                                <hr class="hr-5">
+                                <table>
+                                  <tr>
+                                    <td><span class="expand-lbl-text">Recomm. Letter</span></td>
+                                    <td> 
+                                      <app-view-btn *ngIf="element.horecommletterid" (clickEvent)="viewletter(element.horecommletterid)" class="float-end"></app-view-btn>
+                                    </td>
+                                  </tr>
+                                </table>                                      
+                            </div> 
+                          </div>
+                      </mat-card-content>
+                    </mat-card>
                       
-                      
-                </div>
-            </div>
+                    </td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                  <tr mat-row *matRowDef="let row; columns: ['secondary'];"></tr>
+                  <!-- Row shown when there is no matching data. -->
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">No Bills Details found at this moment.</td>
+                  </tr>
+                </table>
+                <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+                </mat-paginator>
+                <!-- <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
+              </div>
+            </ng-template>
         </mat-card-content>
     </mat-card>
 </div>

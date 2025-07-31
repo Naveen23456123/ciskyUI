@@ -10,8 +10,10 @@
                 <app-loader [IsLoading]="isLoading"></app-loader>
             </div>
             <div class="wrapper">
+                <app-alert-badge *ngIf="message" [isError]="true" [message]="message"></app-alert-badge>
+                
                 <!-- <form [formGroup]="organizationForm" > -->
-                <form [formGroup]="invoiceForm" (submit)="submit()">
+                <form [formGroup]="invoiceForm">
                     <div class="row control-div">
                         <div class="col-md-6">
                             <mat-form-field>

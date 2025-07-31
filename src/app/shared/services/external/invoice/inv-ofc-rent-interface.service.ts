@@ -23,12 +23,23 @@ export class InvOfcRentInterfaceService {
   }
   getBoqOfficeRentListForInsertByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'BoqOfficeRent/Insert/'+param.id,
+      url: 'BoqOfficeRent/Insert/'+param.id+'/'+param.invid,
        params: {},
       headers: true,
       guid: '',
       request: {},
       action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  UpdateBoqOfficeRentDescription(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqOfficeRent/Description/',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import moment from 'moment';
+import { ApprovalStatus } from '../models/constant.config';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,24 @@ export class CommonService {
     }
     else
      return 0;
+  }
+  getMonthsDifference(startDate: string | Date, endDate: string | Date): number {
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+  
+      let months = (end.getFullYear() - start.getFullYear()) * 12;
+      months += end.getMonth() - start.getMonth();
+  
+      // Optional: Count partial month if days differ
+      if (end.getDate() < start.getDate()) {
+        months -= 1;
+      }
+  
+      return months;
+    } else {
+      return 0;
+    }
   }
   toRoman(num: number): string {
     const romans: { [key: number]: string } = {
@@ -70,4 +89,69 @@ export class CommonService {
   isRowEmpty(row: any): boolean {
     return Object.values(row).every(value => value === null || value === undefined || value === '');
   }
+  getVehicleBillingInfo(data:any){
+    let currentKm= +data.currentkm;
+    let fixedkm= +data.fixedkm;
+     if(currentKm>fixedkm){
+      return {
+        extrakm:currentKm-fixedkm+(+data.extrakm), 
+        totalkm:fixedkm+currentKm, 
+        amount:data.fixedamount+(((currentKm-fixedkm)+(+data.extrakm))*data.extraamountperkmafterfixedkm)
+      };
+     }
+     else
+     return {
+      extrakm:0+(+data.extrakm),
+      totalkm:fixedkm, 
+      amount:data.fixedamount+((+data.extrakm)*data.extraamountperkmafterfixedkm)
+    };
+  }
+  getOverallStatus(levels:any) {
+    if (!levels || levels.length === 0) return ApprovalStatus.APPROVED.toString();
+  
+    const lastStatus = levels[levels.length - 1].status?.toLowerCase();
+  
+    if (lastStatus === ApprovalStatus.APPROVED.toLowerCase()) {
+      return ApprovalStatus.APPROVED.toString();
+    }
+  
+    const hasRejected = levels.some((level:any) => level.status?.toLowerCase() === ApprovalStatus.REJECTED.toLowerCase());
+    if (hasRejected) {
+      return ApprovalStatus.REJECTED.toString();
+    }
+  
+    const hasApproved = levels.some((level:any) => level.status?.toLowerCase() === ApprovalStatus.APPROVED.toLowerCase());
+    if (hasApproved) {
+      return ApprovalStatus.INPROCESS.toString();
+    }
+  
+    return ApprovalStatus.PENDING.toString();
+  }
+  capitalizeFirst(str: string): string {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+  updateBillingSummary(status:string,amount:any,data:any){
+    if (status) {
+      const match = data.find(
+        (s:any) => s.status.toLowerCase() === status?.toLowerCase()
+      );
+
+      if (match) {
+        match.totalamount -= amount;
+      }
+    }
+  }
+  netPercentage(income:number,expense:number,netGainLoss:number): string {
+    if (income === 0) {
+      if (expense > 0) {
+        return '-100%';
+      } else {
+        return '0%';
+      }
+    }
+    const percent = (netGainLoss / income) * 100;
+    return percent.toFixed(2) + '%';
+  }
+
 }

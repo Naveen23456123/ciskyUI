@@ -33,6 +33,28 @@ export class VehicleBillingInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
+  generateBulkVehicleBilling(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'VehicleBilling/GenearateBilling',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  actVehicleBilling(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'VehicleBilling/Action',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   updateVehicleBilling(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'VehicleBilling',
@@ -44,16 +66,26 @@ export class VehicleBillingInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
-  deleteVehicleBilling(params: any, guid: string) {
+  deleteVehicleBilling(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'VehicleBilling',
-      params: params,
+      url: 'VehicleBilling/Delete/'+request.id,
+      params: {},
       headers: true,
       guid: '',
-      request: {},
-      action: Operation.DELETE
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   }
-
+  searchVehicleBillingRequests(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'VehicleBilling/Requests',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
 }

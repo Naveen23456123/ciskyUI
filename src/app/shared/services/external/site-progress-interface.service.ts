@@ -12,12 +12,14 @@ export class SiteProgressInterfaceService {
 
   constructor(private coreApi :CoreAPIService) { }
   
-  getTemplateColumnList() {
+  getCSVTemplateColumnList() {
     let columns = [
-      { label: 'Month', value: 'Month' },
-      { label: 'Year', value: 'Year' },
-      { label: 'Physical_Progress', value: 'Physical_Progress' },
-      { label: 'Financial_Progress', value: 'Financial_Progress' },
+      { label: 'Month_Year', value: 'monthandyear' },
+      { label: 'Project', value: 'project' },
+      { label: 'Contractor', value: 'contractor' },
+      { label: 'Submitted_Physical_Progress', value: 'submittedphysicalprogress' },
+      { label: 'Submitted_Financial_Progress', value: 'submittedfinancialprogress' },
+      { label: 'Status', value: 'status' },
     
     ];
   return columns;
@@ -32,14 +34,14 @@ export class SiteProgressInterfaceService {
        } as {component: Type<any>, inputs: Record<string, unknown>}
       }
 
-  getAllSiteProgressByOrdIdProjectId(param: any, guid: string) {
+  getAllSiteProgressByOrdIdProjectId(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'SiteProgress',
-      params: param,
+      url: 'SiteProgress/Search',
+      params: {},
       headers: true,
       guid: '',
-      request: {},
-      action: Operation.GET
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   //   return of([

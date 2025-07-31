@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angu
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { BoqReportDocInterfaceService } from '@app/shared/services/external/boq/boq-report-doc-interface.service';
+import { InvReportDocInterfaceService } from '@app/shared/services/external/invoice/inv-report-doc-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, take } from 'rxjs';
@@ -20,7 +21,9 @@ public data: any;
   isLoading = true;
   isEdit: boolean = false;
   pageGuid: any;
+  isHeading: boolean = false;
   title: string='Add';
+  headingForm: FormGroup = new FormGroup({});
   rdForm: FormGroup = new FormGroup({});
   deleterd=false;
   readonly dialog = inject(MatDialog);
@@ -34,11 +37,14 @@ public data: any;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageReportDocComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService, private router: Router,private route: ActivatedRoute,
-    private notifibarservice: NotifyBarService, private reportService: BoqReportDocInterfaceService){
+    private notifibarservice: NotifyBarService, private reportService: InvReportDocInterfaceService){
       this.data = data || {};
   }
   
   checkMode(type: string) {
+    if(type=='heading'){
+      this.isHeading=true;
+    }
     if (type === 'edit' && !this.data.separate)
       this.isEdit = true;
     else if (type == 'delete') {
@@ -74,7 +80,18 @@ public data: any;
       ratepercopy:[,Validators.required],
       description:[,Validators.required]
     });
-    
+    if(this.isHeading){
+      this.headingForm= this.formbuilder.group({ 
+        id: [''],
+        description:[this.data.element.description]
+      });
+      this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
+        if(response && response.projectId){
+          this.headingForm.patchValue({id:response.projectId});
+        }
+      });
+     
+    } 
     if (this.isEdit || this.deleterd) {
       this.setrdForm(this.data.element);
     }
@@ -113,13 +130,17 @@ public data: any;
               }
             });
         } else {
+          let formData= {
+            projectid:response.projectId,
+            scopes:[this.rdForm.value]
+          }
           this.rdForm.value.id=null;
-          this.reportService.createBoqReportDoc(this.rdForm.value, '')
+          this.reportService.createBoqReportDoc(formData, '')
             .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
-                this.rdForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
-                this.rdForm.controls["id"].setValue(response.data.id);
+                this.rdForm.addControl('totalamount', this.formbuilder.control(response.data.scopes[0].totalamount));
+                this.rdForm.controls["id"].setValue(response.data.scopes[0].id);
                 this.dialogRef.close({ value: this.rdForm.value, valid: true });
               } else {
                 this.dialogRef.close({ value: null, valid: false });
@@ -146,5 +167,17 @@ public data: any;
         }
       });
   }
-
+  desc_submit(){
+    this.isBtnClicked=true;
+    this.reportService.UpdateBoqReportDocDescription(this.headingForm.value, '')
+    .pipe(finalize(() => { this.isBtnClicked = false; })).subscribe({
+    next:(response: any) => {
+      if (response && response.success) 
+        this.dialogRef.close({ value: this.headingForm.value, valid: true });
+    },
+    error: (err: any) => {
+        this.dialogRef.close(err);
+      }
+    });
+  }
 }

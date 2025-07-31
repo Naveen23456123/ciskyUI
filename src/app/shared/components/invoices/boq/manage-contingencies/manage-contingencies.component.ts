@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angu
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { BoqContingencyInterfaceService } from '@app/shared/services/external/boq/boq-contingency-interface.service';
+import { InvContingencyInterfaceService } from '@app/shared/services/external/invoice/inv-contingency-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, take } from 'rxjs';
@@ -20,9 +21,11 @@ public data: any;
   isLoading = true;
   isEdit: boolean = false;
   pageGuid: any;
+  isHeading: boolean = false;
   title: string='Add';
   conForm: FormGroup = new FormGroup({});
   deletecon=false;
+  headingForm: FormGroup = new FormGroup({});
   readonly dialog = inject(MatDialog);
   isBtnClicked=false;
    private defaultdialogoptions:  MatDialogConfig = {
@@ -34,11 +37,14 @@ public data: any;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageContingenciesComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService, private router: Router,private route: ActivatedRoute,
-    private contingencyService:BoqContingencyInterfaceService){
+    private contingencyService:InvContingencyInterfaceService){
       this.data = data || {};
   }
   
   checkMode(type: string) {
+    if(type=='heading'){
+      this.isHeading=true;
+    }
     if (type === 'edit' && !this.data.separate)
       this.isEdit = true;
     else if (type == 'delete') {
@@ -73,10 +79,23 @@ public data: any;
       amount:[,Validators.required],
       description:[,Validators.required]
     });
-    
+    if(this.isHeading){
+      console.log(this.data);
+      this.headingForm= this.formbuilder.group({ 
+        id: [''],
+        description:[this.data.element.description]
+      });
+      this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
+        if(response && response.projectId){
+          this.headingForm.patchValue({id:response.projectId});
+        }
+      });
+     
+    }
     if (this.isEdit || this.deletecon) {
       this.setconForm(this.data.element);
     }
+    console.log(this.data);
     this.isLoading=false;
   }
 
@@ -112,12 +131,16 @@ public data: any;
             });
         } else {
           this.conForm.value.id=null;
-          this.contingencyService.createBoqContingency(this.conForm.value, '')
+          let formData= {
+            projectid:response.projectId,
+            scopes:[this.conForm.value]
+          }          
+          this.contingencyService.createBoqContingency(formData, '')
             .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
-                this.conForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
-                this.conForm.controls["id"].setValue(response.data.id);
+                this.conForm.addControl('totalamount', this.formbuilder.control(response.data.scopes[0].totalamount));
+                this.conForm.controls["id"].setValue(response.data.scopes[0].id);               
                 this.dialogRef.close({ value: this.conForm.value, valid: true });
               } else {
                 this.dialogRef.close({ value: null, valid: false });
@@ -144,5 +167,17 @@ public data: any;
         }
       });
   }
-
+  desc_submit(){
+    this.isBtnClicked=true;
+    this.contingencyService.UpdateContingencyDescription(this.headingForm.value, '')
+    .pipe(finalize(() => { this.isBtnClicked = false; })).subscribe({
+    next:(response: any) => {
+      if (response && response.success) 
+        this.dialogRef.close({ value: this.headingForm.value, valid: true });
+    },
+    error: (err: any) => {
+        this.dialogRef.close(err);
+      }
+    });
+  }
 }

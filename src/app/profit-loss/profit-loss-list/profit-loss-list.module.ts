@@ -5,6 +5,7 @@ import { ProfitLossListRoutingModule } from './profit-loss-list-routing.module';
 import { ProfitLossListComponent } from './profit-loss-list.component';
 import { SharedModule } from '@app/shared/shared.module';
 import { MaterialModule } from '@app/shared/material/material.module';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -13,7 +14,7 @@ import { MaterialModule } from '@app/shared/material/material.module';
   ],
   imports: [
     CommonModule,
-    ProfitLossListRoutingModule, SharedModule, MaterialModule
+    ProfitLossListRoutingModule, SharedModule, MaterialModule, FormsModule
   ]
 })
 export class ProfitLossListModule { }

@@ -1,0 +1,47 @@
+
+  .full-width-table {
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .group-row th {
+    font-weight: bold;
+    background-color: #f0f0f0;
+    text-align: left;
+   
+  }
+  td {   
+    border: 1px solid #dcdcdc !important;
+}
+::ng-deep .mat-mdc-footer-cell{
+  border: 1px solid #dcdcdc !important;
+}
+::ng-deep .mat-mdc-cell{
+  border: 1px solid #dcdcdc !important;
+}
+
+.group-header-row{
+  font-size: 1.2em;
+  background-color: #f0f0f0;
+}
+.group-total-row{
+  background-color: #f7faff
+}
+.pd-4{
+  padding-left: 4% !important;
+}
+.mat-mdc-table tr {
+  height: 30px;
+}
+.mdc-data-table__cell, .mdc-data-table__header-cell {
+  padding: 0px 12px !important;
+}
+.item-center{
+  display: flex;
+  align-items: center;
+}
+.report-head{
+  padding: 10px;
+  font-weight: 500;
+  font-family: var(--bs-body-font-family);
+}

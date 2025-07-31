@@ -14,6 +14,7 @@ import { ManageContactComponent } from '../manage-contact/manage-contact.compone
 import { ContactInterfaceService } from '@app/shared/services/external/contact-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
+import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 
 @Component({
   selector: 'app-contact-list',
@@ -40,7 +41,7 @@ export class ContactListComponent {
 
   constructor(private sessionService : SessionService,private contactService: ContactInterfaceService,
       private router: Router,private route: ActivatedRoute,private helperService:HelperService,
-    private notifyBarService:NotifyBarService){     
+    private notifyBarService:NotifyBarService,private csvService:GenerateCsvService){     
        this.dataSource = new MatTableDataSource(this.contactList);
     }
 
@@ -94,9 +95,11 @@ export class ContactListComponent {
             };
               this.dialog.open(UploadFileComponent,config);
     }
-    export() {
-      
-    }
+
+ export(){
+    if(this.contactList && this.contactList.length>0)
+      this.csvService.downloadFile(this.contactList,this.contactService.getCSVTemplateColumnList(),'Contact');
+  }
     
     add(){
         const config = this.defaultdialogoptions;

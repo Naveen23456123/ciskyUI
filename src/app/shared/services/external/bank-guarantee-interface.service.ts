@@ -33,14 +33,14 @@ export class BankGuaranteeInterfaceService {
           }
     } as {component: Type<any>, inputs: Record<string, unknown>}
   }
-  getBankGuaranteeListByProjectIdByOrgId(param: any, guid: string) {
+  getBankGuaranteeListByProjectIdByOrgId(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-        url: 'BankGuarantee',
-        params: param,
+        url: 'BankGuarantee/Search',
+        params: {},
         headers: true,
         guid: '',
-        request: {},
-        action: Operation.GET
+        request: request,
+        action: Operation.CREATE
     }
       return this.coreApi.standardService(standardAttribute);
   }

@@ -10,7 +10,23 @@
                 <!-- <form [formGroup]="organizationForm" > -->
                 <form [formGroup]="imperestForm" (submit)="submit()">
                     <div class="row control-div">
-                       
+                        <div class="col-md-4" *ngIf="!isEdit">
+                            <app-project-control  (onValueChange)="projectChange($event)"
+                            [defaultValue]="imperestForm.get('projectid')?.value" ></app-project-control>
+                        </div>
+                        <div class="col-md-4" *ngIf="!isEdit">
+                            <mat-form-field>
+                                <mat-label>Select Office</mat-label>
+                                <mat-select formControlName="officeid">
+                               
+                                    @for (option of ofcList; track option) {
+                                      <mat-option [value]="option.id">{{ option.name +' '+ option.location }}</mat-option>
+                                    }
+                                </mat-select>
+                                <mat-error *ngIf="!imperestForm.get('projectid')?.value">Please select Project first</mat-error>
+                                <mat-error>Please select Office</mat-error>
+                              </mat-form-field>
+                        </div>
                         <div class="col-md-4">
                             <mat-form-field>
                                 <mat-label>Imperest Name</mat-label>

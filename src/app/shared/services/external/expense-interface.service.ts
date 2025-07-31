@@ -10,10 +10,21 @@ export class ExpenseInterfaceService {
 
 constructor(private coreApi:CoreAPIService) { }
 
-  getExpenseListByOrgId(param: any, guid: string) {
+  searchExpenseListByOrgId(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'Expense',
-      params: param,
+      url: 'ImpExpense/Search',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  getExpenseDetailsListById(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ImpExpense/'+request.id,
+      params: {},
       headers: true,
       guid: '',
       request: {},
@@ -23,7 +34,18 @@ constructor(private coreApi:CoreAPIService) { }
   }
   createExpense(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'Expense',
+      url: 'ImpExpense',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  searchExpenseBillingRequests(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ImpExpense/Requests',
       params: {},
       headers: true,
       guid: '',
@@ -34,7 +56,7 @@ constructor(private coreApi:CoreAPIService) { }
   }
   updateExpense(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'Expense',
+      url: 'ImpExpense',
       params: {},
       headers: true,
       guid: '',
@@ -43,14 +65,58 @@ constructor(private coreApi:CoreAPIService) { }
     }
     return this.coreApi.standardService(standardAttribute);
   }
+  updatePartialExpense(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ImpExpense/PartialUpdate',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.UPDATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  claimExpense(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ImpExpense/Claim',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  actImpExpenseBillingRequest(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ImpExpense/Action',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   deleteExpense(params: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'Expense',
+      url: 'ImpExpense',
       params: params,
       headers: true,
       guid: '',
       request: {},
       action: Operation.DELETE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  deleteExpenseById(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ImpExpense/DeleteExp',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   }

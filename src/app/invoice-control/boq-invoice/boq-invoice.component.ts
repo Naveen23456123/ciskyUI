@@ -18,6 +18,7 @@ import { SessionService } from '@app/shared/services/session.service';
 export class BoqInvoiceComponent {
   isLoading=false;
   projectObject:any;
+  today = new Date();
   displayedColumns: string[] = ['serial','value','amount', ];
   footerColumns: string[] = ['serial', 'amount']; 
   footerColumns1: string[] = ['serial', 'amount']; 
@@ -45,7 +46,7 @@ export class BoqInvoiceComponent {
     {srno:10,key:BOQInvoice.CONTINGENCIES_KEY, value:BOQInvoice.CONTINGENCIES, amount:0}
   ];
 
-   ngOnInit()  {
+   ngOnInit()  {    
     const projectEntity= {
       projectId:this.projectObject.id,
       isConsultant: true,

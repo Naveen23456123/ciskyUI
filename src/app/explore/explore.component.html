@@ -1,20 +1,125 @@
 <div class="container"> 
     <!-- <h3>Project Details - {{projectName}}</h3> -->  
-   <mat-card>
+    <mat-card>
+      <mat-card-content class="pb-0">
+          <div class="load-wrap" *ngIf="isLoading">
+              <app-loader [IsLoading]="isLoading"></app-loader>
+          </div>
+          <div  *ngIf="!isLoading">   
+                    <app-search-bar-controls [isSubCompany]="true" [isRelatedTo]="controlFilter?.relatedto"  
+                    [isDateRange]="controlFilter?.daterange"
+                    [isStartDate]="controlFilter?.startdate" [isEndDate]="controlFilter?.enddate"
+                    [isMonthAndYear]="controlFilter?.date"                  
+                    [isProjects]="true"  
+                    [isApprovalStatus]="controlFilter?.approvalstatus"
+                    (OnProjectChange)="projectChange($event)"
+                    (OnRelatedToChange)="relatedChange($event)"
+                    (OnSubCompanyChange)="compChange($event)"                    
+                    (OnDateRangeChange)="dateRangeChange($event)" 
+                    (OnApprovalStatusChange)="approvalStatusChange($event)"
+                    (OnStartDateChange)="startDateChange($event)"
+                    (onEndDateChange)="endDateChange($event)"
+                    (OnMonthYearChange)="dataChange($event)"
+                    ></app-search-bar-controls> 
+          </div>
+      </mat-card-content>
+  </mat-card>
+  <!-- <mat-card class="wrapper">
+    <mat-card-content>
+        <div class="load-wrap" *ngIf="isLoading">
+            <app-loader [IsLoading]="isLoading"></app-loader>
+        </div>
+        <div *ngIf="!isLoading">   
+             <div class="row">
+                <div class="col-md-3" >
+                  <div class="d-flex align-items-center"> 
+                  <mat-icon class="count-icon bi bi-person-fill fs-3 me-2">route</mat-icon>                    
+                    <div class="d-flex flex-column">
+                      <span class="count-lbl">11</span>
+                      <span>Total</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3" >
+                  <div class="d-flex align-items-center"> 
+                  <mat-icon class="count-icon bi bi-person-fill fs-3 me-2">check_circle</mat-icon>                    
+                    <div class="d-flex flex-column">
+                      <span class="count-lbl">6</span>
+                      <span>Achieved</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3" >
+                  <div class="d-flex align-items-center"> 
+                  <mat-icon class="count-icon bi bi-person-fill fs-3 me-2">cancel</mat-icon>                    
+                    <div class="d-flex flex-column">
+                      <span class="count-lbl">5</span>
+                      <span>Not Achieved</span>
+                    </div>
+                  </div>
+                </div>
+             </div>  
+        </div>
+    </mat-card-content>
+</mat-card> -->
+<!-- <div class="row">
+  <div class="col-md-2 wrapper" >
+    <mat-card class="wrapper">
+      <mat-card-content>
+        <div class="d-flex align-items-center"> 
+          <mat-icon class="count-icon bi bi-person-fill fs-3 me-2">route</mat-icon>                    
+            <div class="d-flex flex-column">
+              <span class="count-lbl">11</span>
+              <span>Total</span>
+            </div>
+          </div>
+      </mat-card-content>
+    </mat-card>
+    
+  </div>
+
+  <div class="col-md-2 wrapper" >
+    <mat-card class="wrapper">
+      <mat-card-content>
+        <div class="d-flex align-items-center"> 
+          <mat-icon class="count-icon bi bi-person-fill fs-3 me-2">check_circle</mat-icon>                    
+            <div class="d-flex flex-column">
+              <span class="count-lbl">6</span>
+              <span>Achieved</span>
+            </div>
+          </div>
+      </mat-card-content>
+    </mat-card>    
+  </div>
+  <div class="col-md-2 wrapper" >
+    <mat-card class="wrapper">
+      <mat-card-content>
+        <div class="d-flex align-items-center"> 
+          <mat-icon class="count-icon bi bi-person-fill fs-3 me-2">cancel</mat-icon>                    
+            <div class="d-flex flex-column">
+              <span class="count-lbl">5</span>
+              <span>Not Achieved</span>
+            </div>
+          </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div> -->
+   <mat-card class="wrapper">
        <mat-card-content>
            <div class="load-wrap" *ngIf="isLoading">
                <app-loader [IsLoading]="isLoading"></app-loader>
            </div>
            <div  *ngIf="!isLoading">
-            <mat-tab-group animationDuration="0ms">
+            <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)">
                 <mat-tab>
                     <ng-template mat-tab-label>
-                      <mat-icon class="example-tab-icon">receipt_long</mat-icon>
-                      Letters
+                      <mat-icon class="example-tab-icon">description</mat-icon>
+                      Reports
                     </ng-template>
                     <ng-template matTabContent>
-                      <app-explore-letters></app-explore-letters>
-                    </ng-template>                  
+                      <app-explore-project-reports  [filters]="filtersObj"  (OnControlFilter)="update_filter($event)"></app-explore-project-reports>
+                    </ng-template>                      
                   </mat-tab>
                   <mat-tab >
                     <ng-template mat-tab-label>
@@ -22,16 +127,21 @@
                       Mile Stone
                     </ng-template>
                     <ng-template matTabContent>
-                      <app-explore-milestone></app-explore-milestone>
+                      <app-explore-milestone 
+                      [filters]="filtersObj" 
+                      (OnControlFilter)="update_filter($event)" ></app-explore-milestone>
                     </ng-template>
                   </mat-tab>
                   <mat-tab >
                     <ng-template mat-tab-label>
-                      <mat-icon class="example-tab-icon">sync_arrow_up</mat-icon>
+                      <mat-icon class="example-tab-icon" >sync_arrow_up</mat-icon>
                       Site Progress
                     </ng-template>
                     <ng-template matTabContent>
-                      <app-explore-site-progress></app-explore-site-progress>
+                      <app-explore-site-progress 
+                      [filters]="filtersObj" 
+                      (OnControlFilter)="update_filter($event)"
+                      ></app-explore-site-progress>
                     </ng-template>
                     
                   </mat-tab>                    
@@ -41,7 +151,7 @@
                       EOT
                     </ng-template>
                     <ng-template matTabContent>
-                      <app-explore-eot></app-explore-eot>>
+                      <app-explore-eot  [filters]="filtersObj"  (OnControlFilter)="update_filter($event)"></app-explore-eot>
                     </ng-template>                      
                   </mat-tab>
                   <mat-tab>
@@ -50,7 +160,7 @@
                       COS
                     </ng-template>
                     <ng-template matTabContent>
-                      <app-explore-cos></app-explore-cos>
+                      <app-explore-cos [filters]="filtersObj" (OnControlFilter)="update_filter($event)"></app-explore-cos>
                     </ng-template>                        
                   </mat-tab> 
                   <mat-tab>
@@ -59,7 +169,7 @@
                       Bank Guarantee
                     </ng-template>
                     <ng-template matTabContent>
-                      <app-explore-bank-guarantee></app-explore-bank-guarantee>
+                      <app-explore-bank-guarantee [filters]="filtersObj" (OnControlFilter)="update_filter($event)"></app-explore-bank-guarantee>
                     </ng-template>                        
                   </mat-tab>
                   <mat-tab>
@@ -68,7 +178,7 @@
                       Insurance
                     </ng-template>
                     <ng-template matTabContent>
-                      <app-explore-insurance></app-explore-insurance>
+                      <app-explore-insurance [filters]="filtersObj"  (OnControlFilter)="update_filter($event)"></app-explore-insurance>
                     </ng-template>                        
                   </mat-tab>
             </mat-tab-group>

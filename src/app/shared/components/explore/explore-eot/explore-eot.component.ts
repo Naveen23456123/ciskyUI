@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, ViewChild, inject} from '@angular/core';
+import {AfterViewInit, EventEmitter, Input, Output,Component, OnDestroy, ViewChild, inject, SimpleChanges} from '@angular/core';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
@@ -11,7 +11,7 @@ import { CosInterfaceService } from '@app/shared/services/external/cos-interface
 import { EotInterfaceService } from '@app/shared/services/external/eot-interface.service';
 import { TemplateType } from '@app/shared/models/CSVTemplate';
 import { UploadFileComponent } from '../../upload-file/upload-file.component';
-import { DialogOperation } from '@app/shared/models/constant.config';
+import { ApprovalStatus, DialogOperation } from '@app/shared/models/constant.config';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { ViewLetterDetailsComponent } from '../../letters/view-letter-details/view-letter-details.component';
@@ -26,15 +26,17 @@ import { ViewLetterDetailsComponent } from '../../letters/view-letter-details/vi
 export class ExploreEotComponent {
 eotList:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','eotcode', 'initiatedate','days',  'approveddate','eotstatus','letters'];
+  displayedColumns: string[] = ['serial','project','contractor','eotcode', 'initiatedate','days',  'approveddate','eotstatus','letters'];
   dataSource!: MatTableDataSource<any[]>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  statusCounts = { approved: 0, rejected: 0, pending: 0 };
+  @Input() filters:any={};
   readonly dialog = inject(MatDialog);
   private subscription: Subscription = new Subscription();
-
+  @Output() OnControlFilter:EventEmitter<any> = new EventEmitter();
    private defaultdialogoptions:  MatDialogConfig = {
     minWidth: '700px', 
     disableClose: false,
@@ -48,16 +50,13 @@ eotList:any[]= [];
   }
 
 
-  ngOnInit()  {  
-    this.subscription = this.eotService.getAllEOTDetailsByOrdIdProjectId({ }, '')
-    .pipe(finalize(() => this.isLoading = false))
-    .subscribe((response: any) => {
-      if (response && response.success) {
-        this.eotList = response.data;
-        this.dataSource = new MatTableDataSource(this.eotList);               
-        this.updateTable(this.eotList);          
-      }
-    });  
+  ngOnInit()  {      
+    this.OnControlFilter.emit({value:{
+      daterange:true,
+      isproject:true,
+      iscompany:true,
+      approvalstatus:true,
+    }}); 
   }
 
   ngOnDestroy(): void {
@@ -68,7 +67,32 @@ eotList:any[]= [];
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
-  
+  ngOnChanges(changes: SimpleChanges) {   
+    if (changes['filters']) {
+      this.isLoading=true;    
+      const payload = {
+        ...changes['filters'].currentValue,
+        startdate: changes['filters'].currentValue.startdate || null,
+        enddate: changes['filters'].currentValue.enddate || null
+      }; 
+      this.statusCounts={ approved: 0, rejected: 0, pending: 0 };
+      this.subscription = this.eotService.exploreEOTDetailsByOrdIdProjectId(payload, '')
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe((response: any) => {
+        if (response && response.success) {
+          this.eotList = response.data;
+          this.dataSource = new MatTableDataSource(this.eotList);               
+          this.updateTable(this.eotList);           
+           this.eotList.forEach(item => {
+            const status = item.status?.toLowerCase();
+            if (status === ApprovalStatus.APPROVED) this.statusCounts.approved++;
+            else if (status === ApprovalStatus.REJECTED) this.statusCounts.rejected++;
+            else if (status === ApprovalStatus.PENDING) this.statusCounts.pending++;
+          });         
+        }
+      });
+    }
+  }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();

@@ -25,7 +25,7 @@ ngOnInit(): void {
   constructor(private route: ActivatedRoute, private dialog: MatDialog,
     private router: Router, private dialogservice: DialogService) { }
   defaultdialogOptionConfig: MatDialogConfig = {
-    minWidth: '700px',
+    minWidth: '45vw',
     disableClose: false,
     data: {}
   }
@@ -41,7 +41,7 @@ ngOnInit(): void {
       if (data && data.valid) {
         let navigationExtras: NavigationExtras = {
           relativeTo: this.route,
-          state: { value: data.value, event: 'vehdelete', valid: true, msg: 'Vehicle removed successfully.' }
+          state: { value: data.value, event: 'circdelete', valid: true, msg: 'The Circular removed successfully.' }
         };
         this.router.navigate(['../../'], navigationExtras);
       }

@@ -2,6 +2,7 @@ import { Component,EventEmitter,Output,ViewChild,inject} from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';;
 import { InvoiceService } from '@app/invoice-control/invoice.service';
+import { ManageDutyTravelComponent } from '@app/shared/components/invoices/boq/manage-duty-travel/manage-duty-travel.component';
 import { HelperService } from '@app/shared/services/helper.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
@@ -18,7 +19,7 @@ export class BoqDutyTravelListComponent {
 
   data:any[]=[];
   isLoading = true;
-
+  description='';
   dataColumn: string[] = ['serial','trips','nooftrip','rate','amount','action' ];
   footerColumns: string[] = ['serial', 'amount','action'];
   dataSource!: MatTableDataSource<any[]>;
@@ -35,7 +36,7 @@ export class BoqDutyTravelListComponent {
     private stateDataService :StateDataService, private notifyBarService :NotifyBarService,
     private sessionService:SessionService
    ){
-    
+    this.dataSource = new MatTableDataSource(this.data);
    }
   
    ngOnInit()  {
@@ -59,8 +60,9 @@ export class BoqDutyTravelListComponent {
         this.invoiceService.getBoqDutyTravelListByProjectId({id:projectEntity.projectId }, '')
         .pipe(finalize(() => this.isLoading = false))
         .subscribe((response: any) => {
-          if (response && response.success) {
-           this.data = response.data;
+          if (response && response.success && response.data) {
+            this.description= response.data.description;
+           this.data = response.data.scopes;
            this.dataSource = new MatTableDataSource(this.data);
            this.getTotalAmount();              
          }
@@ -100,6 +102,28 @@ export class BoqDutyTravelListComponent {
       let total= this.data.map(t => t.totalamount).reduce((acc, value) => acc + value, 0);
       this.onAmountChange.emit(total);
       return total;
+    }
+    add_desc(){
+      this.sessionService.projectEntitySubject$.pipe(take(1)).subscribe((projectEntity:any)=>{
+        if(projectEntity && projectEntity.projectId){
+          const config = this.defaultdialogoptions;
+            config.minWidth='45vw';
+            config.data = {
+              type: 'heading',
+              element:{
+                invoiceId:projectEntity.invoiceId,
+                description: this.description
+              }
+            };
+            const dialogRef = this.dialog.open(ManageDutyTravelComponent,config);
+          dialogRef.afterClosed().subscribe((data) => { 
+            if (data && data.valid) { 
+              this.description=data.value.description;        
+              this.notifyBarService.showsnackbar('The Description updated successfully.');
+            }
+          });
+        }
+      });
     }
   }
   

@@ -19,17 +19,24 @@
                                     <div class="col-md-1">                       
                                      {{i+1}}
                                     </div> 
-                                    <div class="col-md-7">                       
+                                    <div class="col-md-5">                       
                                         <mat-form-field>
                                             <mat-label>Description</mat-label>
                                             <textarea  matInput readonly formControlName="description"></textarea>
                                            
                                         </mat-form-field>
                                     </div>  
-                                    <div class="col-md-4">                       
+                                    <div class="col-md-3">                       
                                         <mat-form-field>
                                             <mat-label>Actual Month</mat-label>
                                             <input matInput type="number" formControlName="currentbillkm">
+                                            <mat-error>Please provide month</mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-md-3">                       
+                                        <mat-form-field>
+                                            <mat-label>Actual Month</mat-label>
+                                            <input matInput type="number" formControlName="currentbillamount">
                                             <mat-error>Please provide month</mat-error>
                                         </mat-form-field>
                                     </div>                           

@@ -22,7 +22,7 @@ import { finalize } from 'rxjs';
 export class InvoiceListComponent {
 invoiceList:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','projectname','invno','month','year', 'view','action'];
+  displayedColumns: string[] = ['serial','projectid','name', 'view'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -48,8 +48,7 @@ invoiceList:any[]= [];
 
  ngOnInit()  {
   this.stateDataService.stateDataSubject.subscribe((data) => {   
-    if (data.event == 'invadd' && data.valid && data.value) {
-      this.addRowData(data.value);
+    if (data.event == 'invadd' && data.valid && data.value) {      
       this.notifyBarService.showsnackbar(data.msg);
       this.stateDataService.stateDataSubject.next({});
     } else if(data.event == 'invdelete' && data.valid && data.value){
@@ -58,15 +57,15 @@ invoiceList:any[]= [];
       this.stateDataService.stateDataSubject.next({});
     }
   });
-  this.paymentService.getInvoiceListByOrgId({}, '')
-  .pipe(finalize(() => this.isLoading = false))
-  .subscribe((response: any) => {
-    if (response && response.success) {
-     this.invoiceList = response.data;
-     this.dataSource = new MatTableDataSource(this.invoiceList);
-     this.pageSize= this.helperService.getPageSize();
-    }
-  });
+  this.paymentService.getAllProjectPartialDetailsByOrdIg({ organizationId: this.activeOrgId }, '')
+           .pipe(finalize(() => this.isLoading = false))
+           .subscribe((response: any) => {
+            if (response && response.success) {
+              this.invoiceList = response.data;
+              this.dataSource = new MatTableDataSource(this.invoiceList);
+              this.pageSize= this.helperService.getPageSize();
+             }
+      });
   }
 
   ngAfterViewInit() {
@@ -88,24 +87,13 @@ invoiceList:any[]= [];
     this.pagination = this.helperService.paginationOptionGeneration(info, 10);
     this.pageSize = this.helperService.getPageSize();
   }
-  addRowData(newdata: any) {
-    const data1:any = {
-      id:newdata.id,
-      number : newdata.number,
-      projectid : newdata.projectid,
-      monthandyear:newdata.monthandyear
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
-  }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }
   projectChange(data:any){ 
-    console.log(data);
-   if(data && data.value){
+   if(data){
     this.projectId= data.value;
     this.paymentService.getInvoiceListByOrgId({ projectid: data.value }, '')
     .pipe(finalize(() => this.isLoading = false))

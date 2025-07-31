@@ -5,6 +5,7 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { LetterType } from '@app/shared/models/constant.config';
 import { BoqOfficeSupplyInterfaceService } from '@app/shared/services/external/boq/boq-office-supply-interface.service';
+import { InvOfcSupplyInterfaceService } from '@app/shared/services/external/invoice/inv-ofc-supply-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, take } from 'rxjs';
@@ -20,7 +21,9 @@ public data: any;
   isLoading = true;
   isEdit: boolean = false;
   pageGuid: any;
+  isHeading: boolean = false;
   title: string='Add';
+  headingForm: FormGroup = new FormGroup({});
   osForm: FormGroup = new FormGroup({});
   deleteos=false;
   readonly dialog = inject(MatDialog);
@@ -34,11 +37,14 @@ public data: any;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageOfficeSuppliesComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService, private router: Router,private route: ActivatedRoute,
-    private notifibarservice: NotifyBarService, private officeSupplyService: BoqOfficeSupplyInterfaceService){
+    private notifibarservice: NotifyBarService, private officeSupplyService: InvOfcSupplyInterfaceService){
       this.data = data || {};
   }
   
   checkMode(type: string) {
+    if(type=='heading'){
+      this.isHeading=true;
+    }
     if (type === 'edit' && !this.data.separate)
       this.isEdit = true;
     else if (type == 'delete') {
@@ -73,7 +79,18 @@ public data: any;
       numberofmonths:[,Validators.required],
       ratepermonth:[,Validators.required]
     });
-    
+    if(this.isHeading){
+      this.headingForm= this.formbuilder.group({ 
+        id: [''],
+        description:[this.data.element.description]
+      });
+      this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
+        if(response && response.projectId){
+          this.headingForm.patchValue({id:response.projectId});
+        }
+      });
+     
+    }
     if (this.isEdit || this.deleteos) {
       this.setosForm(this.data.element);
     }
@@ -111,13 +128,17 @@ public data: any;
               }
             });
         } else {
+          let formData= {
+            projectid:response.projectId,
+            scopes:[this.osForm.value]
+          }
           this.osForm.value.id=null;
-          this.officeSupplyService.createBoqOfficeSupply(this.osForm.value, '')
+          this.officeSupplyService.createBoqOfficeSupply(formData, '')
             .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
-                this.osForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
-                this.osForm.controls["id"].setValue(response.data.id);
+                this.osForm.addControl('totalamount', this.formbuilder.control(response.data.scopes[0].totalamount));
+                this.osForm.controls["id"].setValue(response.data.scopes[0].id);
                 this.dialogRef.close({ value: this.osForm.value, valid: true });
               } else {
                 this.dialogRef.close({ value: null, valid: false });
@@ -144,5 +165,17 @@ public data: any;
         }
       });
   }
-
+  desc_submit(){
+    this.isBtnClicked=true;
+    this.officeSupplyService.UpdateBoqOfficeSupplyDescription(this.headingForm.value, '')
+    .pipe(finalize(() => { this.isBtnClicked = false; })).subscribe({
+    next:(response: any) => {
+      if (response && response.success) 
+        this.dialogRef.close({ value: this.headingForm.value, valid: true });
+    },
+    error: (err: any) => {
+        this.dialogRef.close(err);
+      }
+    });
+  }
 }

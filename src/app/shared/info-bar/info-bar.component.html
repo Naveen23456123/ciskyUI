@@ -26,27 +26,69 @@
 
     </div>
 </div> -->
-<mat-toolbar>
-    <!-- <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
-        <mat-icon>menu</mat-icon>
-      </button> -->
-      <div>
-        <!-- <app-bread-crum></app-bread-crum> -->
-        <span class="page-title">{{pageTitle}}</span>
-        <span class="example-spacer"></span>
-      </div>
+<mat-toolbar >
+  <!-- <app-bread-crum></app-bread-crum> -->
+  <span class="page-title">{{pageTitle}}</span>
 
+  <span class="spacer"></span>
+
+  <!-- Controls on the right -->
+  <div *ngIf="showProject" class="wrapper pr-rt" >
+  <mat-card class="ht-100 pad-0" >        
+    <mat-card-content class="pad-0 ">
+      <app-project-control [defaultValue]="" [isAllLabel]="true" style="padding: 0px 0px 0px 0.7em;" (onValueChange)="projectChange($event)" [required]="false" ></app-project-control>
+    </mat-card-content>
+  </mat-card>
+  </div>
+  <div class="wrapper">
+  <mat-card class="ht-100">        
+    <mat-card-content class="pad-0">
+      <div class="row d-flex justify-content-center">
+        <button mat-icon-button class="example-icon float-end" aria-label="Example icon-button with share icon">
+          <mat-icon>notifications</mat-icon>
+        </button>
+        <button mat-icon-button (click)="logout()" class="example-icon favorite-icon float-end" aria-label="Example icon-button with heart icon">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>         
+    </mat-card-content>      
+  </mat-card>
+  </div>
+  <!-- <button mat-button>Login</button>
+  <button mat-icon-button>
+    <mat-icon>notifications</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>Settings</button>
+    <button mat-menu-item>Logout</button>
+  </mat-menu>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>menu</mat-icon>
+  </button> -->
+</mat-toolbar>
+
+<!-- <mat-toolbar>
+    
+      <div>
+        
+        <span class="page-title">{{pageTitle}}</span>
+        
+      </div>
+      <div class="float-end wrapper" style="width:30%">
+      
+              <mat-card class="ht-100 pad-0" >        
+                <mat-card-content class="pad-0 ">
+                  <app-project-control [defaultValue]="" [isAllLabel]="true" style="padding: 0px 0px 0px 0.7em;" (onValueChange)="projectChange($event)" [required]="false" ></app-project-control>
+                </mat-card-content>
+              </mat-card>
+           
+      </div>
     
     <div class="float-end wrapper">
       <mat-card class="ht-100">        
         <mat-card-content class="pad-0">
-          <div class="row justify-content-center">
-            <!-- <mat-form-field appearance="outline">
-              <mat-label>Outline form field</mat-label>
-              <input matInput placeholder="Placeholder">
-              <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
-             
-            </mat-form-field> -->
+          <div class="row d-flex justify-content-center">
+            
             <button mat-icon-button (click)="logout()" class="example-icon favorite-icon float-end" aria-label="Example icon-button with heart icon">
               <mat-icon>logout</mat-icon>
             </button>
@@ -57,4 +99,4 @@
         </mat-card-content>      
       </mat-card>      
     </div>  
-  </mat-toolbar>
+  </mat-toolbar> -->

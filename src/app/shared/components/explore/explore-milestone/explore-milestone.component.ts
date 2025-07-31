@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ViewChild, inject} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, Output, SimpleChanges, ViewChild, inject} from '@angular/core';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
@@ -10,7 +10,7 @@ import { MilestoneInterfaceService } from '@app/shared/services/external/milesto
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { TemplateType } from '@app/shared/models/CSVTemplate';
 import { UploadFileComponent } from '../../upload-file/upload-file.component';
-import { DialogOperation } from '@app/shared/models/constant.config';
+import { ApprovalStatus, DialogOperation, WorkTypeStatus } from '@app/shared/models/constant.config';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { ViewLetterDetailsComponent } from '../../letters/view-letter-details/view-letter-details.component';
 import { CommonService } from '@app/shared/services/common.service';
@@ -24,12 +24,15 @@ import { CommonService } from '@app/shared/services/common.service';
 export class ExploreMilestoneComponent {
   milestones:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','name', 'milestonedate', 'day','status','actual','reschd','letters'];
+  displayedColumns: string[] = ['serial','name','project','contractor', 'milestonedate', 'day','status','actual','reschd','letters'];
   dataSource!: MatTableDataSource<any[]>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  @Input() filters:any={};
+  statusCounts = { achieved: 0, notachieved: 0};
+  @Output() OnControlFilter:EventEmitter<any> = new EventEmitter();
   readonly dialog = inject(MatDialog);
 
    private defaultdialogoptions:  MatDialogConfig = {       
@@ -43,50 +46,74 @@ export class ExploreMilestoneComponent {
        this.dataSource = new MatTableDataSource(this.milestones);
     }
 
-    ngOnInit()  {
-      this.milestoneService.getAllMilestonesDetailsByOrdIdProjectId({ }, '')
+  ngOnInit()  {
+    // this.milestoneService.getAllMilestonesDetailsByOrdIdProjectId({ }, '')
+    // .pipe(finalize(() => this.isLoading = false))
+    // .subscribe((response: any) => {
+    //   if (response && response.success) {
+    //     this.milestones = response.data;
+    //     this.dataSource = new MatTableDataSource(this.milestones);               
+    //     this.updateTable(this.milestones);
+    //   }
+    // });
+    this.OnControlFilter.emit({value:{
+      relatedto:true,
+      isproject:true,
+      iscompany:true
+    }});     
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+  ngOnChanges(changes: SimpleChanges) {   
+    if (changes['filters']) {
+      this.isLoading=true;    
+      this.statusCounts={ achieved: 0, notachieved: 0}; 
+      this.milestoneService.getAllMilestonesDetailsByOrdIdProjectId(changes['filters'].currentValue, '')
       .pipe(finalize(() => this.isLoading = false))
       .subscribe((response: any) => {
         if (response && response.success) {
-         this.milestones = response.data;
-         this.dataSource = new MatTableDataSource(this.milestones);               
-         this.updateTable(this.milestones);
+          this.milestones = response.data;
+          this.dataSource = new MatTableDataSource(this.milestones);               
+          this.updateTable(this.milestones);
+          this.milestones.forEach(item => {
+            const status = item.status?.toLowerCase();
+            if (status === WorkTypeStatus.ACHIEVED) this.statusCounts.achieved++;
+            else if (status !== WorkTypeStatus.ACHIEVED) this.statusCounts.notachieved++;
+          }); 
         }
-      });     
+      });
     }
-  
-    ngAfterViewInit() {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }
-  
-    applyFilter(event: Event) {
-      const filterValue = (event.target as HTMLInputElement).value;
-      this.dataSource.filter = filterValue.trim().toLowerCase();
-  
-      if (this.dataSource.paginator) {
-        this.dataSource.paginator.firstPage();
-      }
-    }
+  }
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-    private updateTable(info: any) {
-      this.dataSource = new MatTableDataSource<any>(info);
-      this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-      this.pageSize = this.helperService.getPageSize();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
-    import() {
-      const config = this.defaultdialogoptions;
-              config.minWidth='75vw';
-                config.data = {
-                  pageGuid: this.route.snapshot.data['pageGuid'],
-                  type: this.route.snapshot.data['type'], 
-                  template_type: TemplateType.MILESTONE   
-                };
-      this.dialog.open(UploadFileComponent,config);
-    }
-    export() {
-      
-    }
+  }
+
+  private updateTable(info: any) {
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
+    this.pageSize = this.helperService.getPageSize();
+  }
+  import() {
+    const config = this.defaultdialogoptions;
+            config.minWidth='75vw';
+              config.data = {
+                pageGuid: this.route.snapshot.data['pageGuid'],
+                type: this.route.snapshot.data['type'], 
+                template_type: TemplateType.MILESTONE   
+              };
+    this.dialog.open(UploadFileComponent,config);
+  }
+  export() {
+    
+  }
   viewletter(data:any){
     const config = this.defaultdialogoptions;
     config.minWidth='75vw';

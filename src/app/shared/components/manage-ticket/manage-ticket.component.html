@@ -10,7 +10,7 @@
                 <app-loader [IsLoading]="isLoading"></app-loader>
             </div>
             <div class="wrapper">
-                <!-- <form [formGroup]="organizationForm" > -->
+              
                 <form [formGroup]="ticketForm" (submit)="submit()">
                     <div class="row control-div">
                         <div class="col-md-4">                            
@@ -75,8 +75,9 @@
                         </div>                        
                         <div class="col-md-12 button-row" align="right">
                             <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-                            <button [ngClass]="ticketForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!ticketForm.valid" color="primary">
-                                {{isEdit?'Update':'Submit'}}</button>
+                            
+                                <app-submit-load-btn  [isClicked]="isBtnClicked" [isValid]="ticketForm.valid || isBtnClicked"
+                               text=" {{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
                     </div>
                     </div>
                 </form>

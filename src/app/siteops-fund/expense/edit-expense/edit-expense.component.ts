@@ -25,6 +25,7 @@ constructor(private route: ActivatedRoute, private dialog: MatDialog,
     this.defaultdialogOptionConfig.data = {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type'],
+      operation:'medit',
       element: window.history.state
     };
     this.defaultdialogOptionConfig.minWidth='60vw';

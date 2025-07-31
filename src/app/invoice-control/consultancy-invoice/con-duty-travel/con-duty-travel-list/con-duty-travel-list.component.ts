@@ -101,7 +101,7 @@ data:any[]=[];
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.invoiceid == data.id);
     if(element){
-    element.currentbilltrips=data.currentbilltrips     
+    element.currentbilltrips=data.currentbilltrips;
     }
     this.bindBilling(element);
     this.dataSource._updateChangeSubscription();
@@ -136,6 +136,7 @@ data:any[]=[];
     data.remainingamount=((data.trips)*data.rate)-((data.previousbilltrips+data.currentbilltrips)*data.rate)   
   }
   addBulkData(data:any){
+    
     data.forEach((element:any) => {
       this.addRowData(element);
     });
@@ -153,6 +154,7 @@ data:any[]=[];
     this.onAmountChange.emit(this.amount);
     return this.amount;
   }
+  
 }  
   
 

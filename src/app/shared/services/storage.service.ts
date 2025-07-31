@@ -19,8 +19,8 @@ export class StorageService {
 
   };
 
-  private defaultDriver: DRIVERS = this.driver.local;
-  private sec = '{ng-vms-sec}';
+  private defaultDriver: DRIVERS = this.driver.session;
+  private sec = '{ng-pms}';
 
   constructor() {
 
@@ -44,14 +44,17 @@ export class StorageService {
         domain: window.location.hostname
       };
     }
+    sessionStorage.setItem(enckey,encval);
     //this.locker.set(driverOverride, enckey, encval, updateconfig);
   }
 
   public get(key: string, driverOverride: DRIVERS = this.defaultDriver): any {
     const enckey = this.sha(key);
+    console.log(enckey);
     if (this.has(key, driverOverride)) {
-      //return this.parse(this.locker.get(driverOverride, decodeURIComponent(enckey)));
-      return true;
+      console.log(this.parse(sessionStorage.getItem(enckey)));
+      return this.parse(sessionStorage.getItem(enckey));
+      //return this.parse(this.locker.get(driverOverride, decodeURIComponent(enckey)));     
     }
     else {
       return undefined;
@@ -60,8 +63,9 @@ export class StorageService {
 
   private has(key: string, driverOverride: DRIVERS = this.defaultDriver): boolean {
     const enckey = this.sha(key);
+    return sessionStorage.getItem(enckey) !== null
     //return this.locker.has(driverOverride, enckey);
-    return true;
+    //return true;
   }
 
   private hasEnc(key: string, driverOverride: DRIVERS = this.defaultDriver): boolean {

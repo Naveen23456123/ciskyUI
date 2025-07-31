@@ -51,6 +51,7 @@ export class ViewLetterDetailsComponent {
     }
   }
   letterSelect(data:any){
+    //this.letterInit=false;
     if(data && data.value){
       this.isLoading=true;
       this.letterService.getLetterDetailsById({id:data.value.id},'').pipe(take(1), finalize(()=>this.isLoading=false))
@@ -62,10 +63,10 @@ export class ViewLetterDetailsComponent {
             this.isSend= this.letterDetails.exchangetype.toLowerCase()=='send';
             this.typetitle = this.isSend ? 'Send' :'Recieve';
             this.dataSource = new MatTableDataSource(response.data.files);
-            this.letterList= response.data.associatedletters.map((item:any)=>({
-              id:item.id,
-              name:item.letternumber
-            }));
+            // this.letterList= response.data.associatedletters.map((item:any)=>({
+            //   id:item.id,
+            //   name:item.letternumber
+            // }));
             this.letterInit=true;
         }
         }

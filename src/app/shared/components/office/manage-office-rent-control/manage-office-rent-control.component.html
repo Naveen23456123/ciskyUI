@@ -5,6 +5,7 @@
             <mat-icon>close</mat-icon>
           </button> 
         </h3> 
+        <mat-dialog-content class="mat-typography">
         <mat-card-content>
             <div class="load-wrap" *ngIf="isLoading">
                 <app-loader [IsLoading]="isLoading"></app-loader>
@@ -13,8 +14,22 @@
                 <form [formGroup]="rentForm" >
                     <div class="row control-div">                       
                         <div class="col-md-3">
-                            <app-project-control (onValueChange)="projectChange($event)"
+                            <app-project-control  (onValueChange)="projectChange($event)"
                             [defaultValue]="rentForm.get('projectid')?.value" ></app-project-control>
+                        </div>
+                        <div class="col-md-3" >
+                            <mat-form-field>
+                                <mat-label>Office Name</mat-label>
+                                <input   matInput formControlName="officename">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-3" >
+                            <mat-form-field>
+                                <mat-label>Office Location</mat-label>
+                                <input   matInput formControlName="officelocation">
+                                <mat-error></mat-error>
+                            </mat-form-field>
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>
@@ -45,16 +60,10 @@
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div>
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Agreement Duration</mat-label>
-                                <input matInput formControlName="agreementduration">
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div>
+                       
                         <div class="col-md-3">                          
                             <mat-form-field class="example-full-width">
-                                <mat-label>Agreement Date</mat-label>
+                                <mat-label>Agreement Start Date</mat-label>
                                 <input matInput  formControlName="agreementstartdate" [matDatepicker]="agreementstartdate">
                                 
                                 <mat-datepicker-toggle matIconSuffix [for]="agreementstartdate"></mat-datepicker-toggle>
@@ -72,7 +81,13 @@
                                 <mat-datepicker #agreementenddate></mat-datepicker>
                               </mat-form-field>
                         </div>
-                       
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Agreement Duration (In Months)</mat-label>
+                                <input matInput formControlName="agreementduration">
+                                <mat-error></mat-error>
+                            </mat-form-field>
+                        </div>
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Owner Name</mat-label>
@@ -162,19 +177,22 @@
                        </div>
                         </div>
                     </div>
-                    
-                    <div class="row control-div">
-                        <div class="col-md-12 button-row" align="right">
-                            <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-                            <button [ngClass]="rentForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!rentForm.valid || isBtnClicked" (click)="submit()" color="primary">
-                                <span [hidden]="isBtnClicked">{{isEdit?'Update':'Submit'}}</span> 
-                                <app-btn-loader [IsLoading]="isBtnClicked"></app-btn-loader>
-                                </button>
-                        </div>
-                    </div>                    
+                                    
                 </form>
             </div>
         </mat-card-content>
+        </mat-dialog-content>
+         <mat-dialog-actions align="end">
+        <div class="row control-div">
+            <div class=" button-row" align="right">
+                <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                <button [ngClass]="rentForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!rentForm.valid || isBtnClicked" (click)="submit()" color="primary">
+                    <span [hidden]="isBtnClicked">{{isEdit?'Update':'Submit'}}</span> 
+                    <app-btn-loader [IsLoading]="isBtnClicked"></app-btn-loader>
+                </button>
+          </div>
+          </div>
+      </mat-dialog-actions>
     </mat-card>
     <mat-card *ngIf="deleteRent">      
         <mat-card-title class="card-title d-flex justify-content-center" >

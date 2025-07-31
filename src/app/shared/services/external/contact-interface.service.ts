@@ -25,7 +25,19 @@ export class ContactInterfaceService {
       ];
     return columns;
     }
-  
+  getCSVTemplateColumnList() {
+      let columns = [
+        { label: 'Contact_Type', value: 'type' },
+        { label: 'Contact_Name', value: 'name' },
+        { label: 'Designation', value: 'designation' },
+        { label: 'Contact_Number', value: 'phoneno' },
+        { label: 'Alternate_Contact_Number', value: 'alternatephnno' },
+        { label: 'Email', value: 'email' },
+        { label: 'Office_Branch', value: 'branch' },
+        { label: 'Office_Address', value: 'address' }
+      ];
+    return columns;
+    } 
     getContactListComponent(){
       return {
           component: ContactListComponent,

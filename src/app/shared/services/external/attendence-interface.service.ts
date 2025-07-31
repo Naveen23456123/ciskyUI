@@ -136,6 +136,17 @@ export class AttendenceInterfaceService {
       action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
+  } 
+  searchBoqAttendence(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqAttendence/Search',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
   }
   updateBoqAttendence(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {

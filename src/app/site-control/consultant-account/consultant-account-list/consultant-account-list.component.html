@@ -1,97 +1,103 @@
 <div class="container">
-    <mat-card>
+   <mat-card>
+      <mat-card-content>
+        <div class="table-title-row">
+          <div class="row col-md-12 content-center">
+            <div class="col-md-9">
+              <app-search-bar-controls [isSubCompany]="true" [isAny]="true"
+                (OnSubCompanyChange)="filterChange($event)"
+                (OnAnyChange)="filterChange($event)"
+                  searchByAnyPlaceholder="Account / PAN / GST No." ></app-search-bar-controls>  
+            </div>         
+          <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">         
+             <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
+                <mat-icon>add box</mat-icon> Account
+              </button>        
+          </div>
+        </div>
+      </div>
+      </mat-card-content>
+     </mat-card>
+    <mat-card class="wrapper">
         <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
-            </div>
-            <div class="wrapper" *ngIf="!isLoading">                
+            <ng-container *ngIf="isLoading; else checkNoData">
+              <app-empty-table-skltn></app-empty-table-skltn>
+            </ng-container>
 
-                <div class="mat-elevation-z8">  
-                  <div class="row content-center">
-                    <div class="col-md-9">
-                        <app-search-bar-controls [isSubCompany]="true" [isAny]="true"
-                        (OnSubCompanyChange)="filterChange($event)"
-                        (OnAnyChange)="filterChange($event)"
-                         searchByAnyPlaceholder="Account / PAN / GST No." ></app-search-bar-controls>                         
-                  </div>       
-                  <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">                   
-                    <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
-                      <mat-icon>add box</mat-icon> Account
-                  </button> 
-                  </div>                  
-                   
-                    <app-no-data *ngIf="dataSource?.data?.length==0"  message="No Consultant Account(s) details found at this moment !!" ></app-no-data>
-                    <div *ngIf="dataSource?.data?.length!=0"   class="mat-elevation-z8">
-                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>                     
-                        
-                          <ng-container matColumnDef="serial">
-                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
-                          </ng-container>                 
-                          <!-- contractName Column -->
-                          <ng-container matColumnDef="bankname">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Bank Name </th>
-                            <td mat-cell *matCellDef="let row"> {{row.bankname}} </td>
-                          </ng-container>
+            <ng-template #checkNoData>
+              <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+                <app-no-data message="No Consultant Account(s) details found at this moment !!"></app-no-data>
+              </ng-container>
+            </ng-template>
+             <ng-template #showTable>
+                <div class="mat-elevation-z8">
+                    <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>                     
+                    
+                      <ng-container matColumnDef="serial">
+                        <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                        <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                      </ng-container>                 
+                      <!-- contractName Column -->
+                      <ng-container matColumnDef="bankname">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Bank Name </th>
+                        <td mat-cell *matCellDef="let row"> {{row.bankname}} </td>
+                      </ng-container>
+                  
+                      <!-- Name Column -->
+                      <ng-container matColumnDef="accountno">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Account No. </th>
+                        <td mat-cell *matCellDef="let row"> {{row.accountno}} </td>
+                      </ng-container>    
+                      <!-- Name Column -->
+                      <ng-container matColumnDef="ifsccode">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> IFSC Code </th>
+                        <td mat-cell *matCellDef="let row"> {{row.ifsccode}} </td>
+                      </ng-container>    
+                      <!-- Name Column -->
+                      <ng-container matColumnDef="panno">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> PAN No. </th>
+                        <td mat-cell *matCellDef="let row"> {{row.panno}} </td>
+                      </ng-container>    
+                      <!-- Name Column -->
+                      <ng-container matColumnDef="gstno">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> GST No. </th>
+                        <td mat-cell *matCellDef="let row"> {{row.gstno}} </td>
+                      </ng-container> 
+                      <ng-container matColumnDef="bankaddress">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Bank Address </th>
+                        <td mat-cell *matCellDef="let row"> {{row.bankaddress}} </td>
+                      </ng-container>    
+                      <!-- Name Column -->
+                      <ng-container matColumnDef="docaddress">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> GST Cretificate </th>
+                        <td mat-cell *matCellDef="let row">
+                          <app-file-icon [link]="row.docaddress"></app-file-icon>
+                        </td>
+                      </ng-container>                     
                       
-                          <!-- Name Column -->
-                          <ng-container matColumnDef="accountno">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Account No. </th>
-                            <td mat-cell *matCellDef="let row"> {{row.accountno}} </td>
-                          </ng-container>    
-                          <!-- Name Column -->
-                          <ng-container matColumnDef="ifsccode">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> IFSC Code </th>
-                            <td mat-cell *matCellDef="let row"> {{row.ifsccode}} </td>
-                          </ng-container>    
-                          <!-- Name Column -->
-                          <ng-container matColumnDef="panno">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> PAN No. </th>
-                            <td mat-cell *matCellDef="let row"> {{row.panno}} </td>
-                          </ng-container>    
-                          <!-- Name Column -->
-                          <ng-container matColumnDef="gstno">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> GST No. </th>
-                            <td mat-cell *matCellDef="let row"> {{row.gstno}} </td>
-                          </ng-container> 
-                          <ng-container matColumnDef="bankaddress">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Bank Address </th>
-                            <td mat-cell *matCellDef="let row"> {{row.bankaddress}} </td>
-                          </ng-container>    
-                          <!-- Name Column -->
-                          <ng-container matColumnDef="docaddress">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> GST Cretificate </th>
-                            <td mat-cell *matCellDef="let row">
-                              <app-file-icon [link]="row.docaddress"></app-file-icon>
-                           </td>
-                          </ng-container>                     
-                          
-                          <!-- con_personName Column -->
-                          <ng-container  matColumnDef="action">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                            <td mat-cell class="action-col" *matCellDef="let row"> 
-                              <div class="button-row">                             
-                                <app-edit-btn [routerLink]="['/con-account/edit',row.id]" [state]="row" ></app-edit-btn>                              
-                                <app-delete-btn [state]="row" [routerLink]="['/con-account/delete',row.id]" ></app-delete-btn>
-                            
-                              </div>
-                           </td>
-                          </ng-container>
+                      <!-- con_personName Column -->
+                      <ng-container  matColumnDef="action">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                        <td mat-cell class="action-col" *matCellDef="let row"> 
+                          <div class="button-row">                             
+                            <app-edit-btn [routerLink]="['/con-account/edit',row.id]" [state]="row" ></app-edit-btn>                              
+                            <app-delete-btn [state]="row" [routerLink]="['/con-account/delete',row.id]" ></app-delete-btn>
                         
-                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
-                          <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
-                              No Account Detail(s) found at this moment.</td>
-                          </tr>
-                        </table>
-                        <mat-paginator [length]="resultsLength" [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
-                        </mat-paginator>
-                      </div>                    
-                      
+                          </div>
+                        </td>
+                      </ng-container>
+                    
+                      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+                      <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                          No Account Detail(s) found at this moment.</td>
+                      </tr>
+                    </table>
+                    <mat-paginator [length]="resultsLength" [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+                    </mat-paginator>
                 </div>
-            </div>
-            </div>
+            </ng-template>
         </mat-card-content>
     </mat-card>
 </div>

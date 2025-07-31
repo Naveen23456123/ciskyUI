@@ -56,6 +56,17 @@ export class ValidatorService {
       return null; // Validation passes
     };
   }
+  public lessThan(fieldToCompare: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const compareValue = control.parent?.get(fieldToCompare)?.value;
+      
+      if (compareValue !== null && control.value !== null && control.value > compareValue) {
+        return { lessThan: true }; // Validation fails
+      }
+      
+      return null; // Validation passes
+    };
+  }
   public timeGreaterThan(fieldToCompare: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const parent = control.parent;

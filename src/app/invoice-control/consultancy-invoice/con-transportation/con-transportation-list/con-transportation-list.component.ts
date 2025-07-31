@@ -100,6 +100,7 @@ export class ConTransportationListComponent {
   }
 
   bindBilling(element:any){
+    if(element){
     element.totalmonths=element.constructionperiod+element.dlpoandmperiod,
     element.contractamount=(element.constructionperiod+element.dlpoandmperiod)*element.rate,
     element.previousbill=element.uptolastbill*element.rate,
@@ -108,13 +109,14 @@ export class ConTransportationListComponent {
     element.commulativeAmount=(element.uptolastbill+element.currentbillmonths)*element.rate,
     element.remainingmonth=(element.constructionperiod+element.dlpoandmperiod)-(element.uptolastbill+element.currentbillmonths),
     element.remainingamount=((element.constructionperiod+element.dlpoandmperiod)*element.rate)-((element.uptolastbill+element.currentbillmonths)*element.rate) 
+    }
   }
 
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.invoiceid == data.id);
     
     if(element){
-    element.currentbillmonths=data.currentmonth 
+    element.currentbillmonths=data.currentmonth
     }
     this.bindBilling(element);
     this.dataSource._updateChangeSubscription();

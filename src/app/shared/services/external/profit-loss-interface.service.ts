@@ -10,10 +10,43 @@ export class ProfitLossInterfaceService {
 
   constructor(private coreApi:CoreAPIService) { }
 
+  getProfitLossSheetListByOrgId(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ProfitLoss/Sheet',
+      params: param,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   getProfitLossListByOrgId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'ProfitLoss',
       params: param,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  getProfitLossListById(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ProfitLoss/'+param.id,
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  getCommulativeProfitLossByProjectIdId(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ProfitLoss/Project/'+param.id,
+      params: {},
       headers: true,
       guid: '',
       request: {},
@@ -43,6 +76,39 @@ export class ProfitLossInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
+  getProfitLossFinancial(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ProfitLoss/Financial',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  updateProfitLossById(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ProfitLoss',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.UPDATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  createProfitLossSheet(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ProfitLoss/Sheet',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   createProfitLoss(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'ProfitLoss',
@@ -54,14 +120,25 @@ export class ProfitLossInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
-  updateProfitLoss(request: any, guid: string) {
+  updateProfitLossSymbol(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'ProfitLoss',
+      url: 'ProfitLoss/Sheet',
       params: {},
       headers: true,
       guid: '',
       request: request,
       action: Operation.UPDATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  deleteProfitLossSheet(params: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ProfitLoss/Sheet',
+      params: params,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.DELETE
     }
     return this.coreApi.standardService(standardAttribute);
   }

@@ -4,10 +4,14 @@
         <div class="table-title-row">
           <div class="row col-md-12 content-center">
             <div class="col-md-9">
-              <app-search-bar-controls [isSubCompany]="true" [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Project Code or Name" ></app-search-bar-controls>
+              <app-search-bar-controls [isSubCompany]="true" [isProjects]="true"
+              (OnSubCompanyChange)="compChange($event)" 
+              (OnProjectChange)="projectChange($event)"
+              (OnAnyChange)="anyChange($event)"
+              [isAny]="true" searchByAnyPlaceholder="Project Code or Name" ></app-search-bar-controls>
             </div>         
           <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">         
-            <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
+            <app-upload-btn routerLink="upload" ></app-upload-btn>
              <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
               <mat-icon>add box</mat-icon> Project
              </button>
@@ -17,267 +21,271 @@
       </div>
       </mat-card-content>
      </mat-card>
-    <mat-card class="wrapper">
+    <mat-card class="wrapper">        
         <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
-            </div>
-            <div class="wrapper" *ngIf="!isLoading">
+           
+            <ng-container *ngIf="isSearchLoading || isLoading; else checkNoData">
+              <app-empty-table-skltn></app-empty-table-skltn>
+            </ng-container>
 
-              <app-no-data *ngIf="dataSource?.data?.length==0" message="No Project(s) found at this moment !!" ></app-no-data>
-              <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">
+            <ng-template #checkNoData>
+              <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+                <app-no-data message="No Project(s) found at this moment !!"></app-no-data>
+              </ng-container>
+            </ng-template>
+             <ng-template #showTable>
+            <div class="wrapper" >  
+              <div  class="mat-elevation-z8">                     
+                <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
 
-                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+                  <ng-container matColumnDef="serial">
+                    <th mat-header-cell *matHeaderCellDef> Sr. No. </th>
+                    <td mat-cell *matCellDef="let row"> {{row.srno}} </td>
+                  </ng-container>
+                  <!-- contractName Column -->
+                  <ng-container matColumnDef="code">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Code </th>
+                    <td mat-cell *matCellDef="let row"> {{row.projectcode}} </td>
+                  </ng-container>
 
-                          <ng-container matColumnDef="serial">
-                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
-                          </ng-container>
-                          <!-- contractName Column -->
-                          <ng-container matColumnDef="code">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Code </th>
-                            <td mat-cell *matCellDef="let row"> {{row.projectcode}} </td>
-                          </ng-container>
+                  <!-- Name Column -->
+                  <ng-container matColumnDef="shortname">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Name </th>
+                    <td mat-cell *matCellDef="let row"> {{row.projectshortname}} </td>
+                  </ng-container>
 
-                          <!-- Name Column -->
-                          <ng-container matColumnDef="shortname">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Name </th>
-                            <td mat-cell *matCellDef="let row"> {{row.projectshortname}} </td>
-                          </ng-container>
+                  <!-- con_personName Column -->
+                  <ng-container matColumnDef="location">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Location </th>
+                    <td mat-cell *matCellDef="let row"> {{row.projectlocation}} </td>
+                  </ng-container>
+                  <!-- con_personName Column -->
+                  <ng-container matColumnDef="clientname">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Client Name </th>
+                    <td mat-cell *matCellDef="let row"> {{row.client}} </td>
+                  </ng-container>
+                  <!-- con_personName Column -->
+                  <ng-container matColumnDef="concernpersonname">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Concern Person </th>
+                    <td mat-cell *matCellDef="let row"> {{row.concernpersonname}} </td>
+                  </ng-container>
 
-                          <!-- con_personName Column -->
-                          <ng-container matColumnDef="location">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Location </th>
-                            <td mat-cell *matCellDef="let row"> {{row.projectlocation}} </td>
-                          </ng-container>
-                          <!-- con_personName Column -->
-                          <ng-container matColumnDef="clientname">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Client Name </th>
-                            <td mat-cell *matCellDef="let row"> {{row.client}} </td>
-                          </ng-container>
-                          <!-- con_personName Column -->
-                          <ng-container matColumnDef="concernpersonname">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Concern Person </th>
-                            <td mat-cell *matCellDef="let row"> {{row.concernpersonname}} </td>
-                          </ng-container>
+                  <ng-container matColumnDef="expand">
+                    <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+                    <td mat-cell *matCellDef="let element" >
 
-                          <ng-container matColumnDef="expand">
-                            <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
-                            <td mat-cell *matCellDef="let element" >
+                      <button mat-icon-button aria-label="expand row" (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+                        @if (expandedElement === element) {
+                          <mat-icon>keyboard_arrow_up</mat-icon>
+                        } @else {
+                          <mat-icon>keyboard_arrow_down</mat-icon>
+                        }
+                      </button>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="expandedDetail">
+                    <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+                      <div class="example-element-detail"
+                            [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
 
-                              <button mat-icon-button aria-label="expand row" (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
-                                @if (expandedElement === element) {
-                                  <mat-icon>keyboard_arrow_up</mat-icon>
-                                } @else {
-                                  <mat-icon>keyboard_arrow_down</mat-icon>
-                                }
+                      <div class="container">                              
+                        <mat-card class="details-Data" style=" min-height:20em;" >   
+                          <div class="load-wrap" *ngIf="isContLoading">
+                            <app-loader [IsLoading]="isContLoading"></app-loader>
+                          </div>                              
+                          <mat-card-content class="wrapper" *ngIf="!isContLoading" style="padding: 10px 10px 10px 10px;">
+                            <div class="row col-md-12">
+                              <div class=" col-md-3">
+                                <div class="col-md-12">
+                                  <span class="expand-lbl-text">Contractor Name</span>
+                                </div>
+                                <div class="col-md-12">
+                                  <mat-form-field  class="cont-list" *ngIf="element.contractors && element.contractors.length>0">                                            
+                                    <mat-select [(ngModel)]="element.selectedContractor" (selectionChange)="contractorChange(element,$event)">
+                                        <mat-option  *ngFor="let field of element.contractors" [value]="field.id">
+                                            {{field.contractorname}}
+                                        </mat-option>
+                                    </mat-select>                                            
+                                </mat-form-field>
+                                  <span *ngIf="element.contractors && element.contractors.length==0">No Contractor found!!.</span>
+                                  </div>
+                                  <hr style="margin: 8px 0px;">
+                                  <div class="col-md-12">
+                                    <span class="expand-lbl-text">Total Project Cost( In Cr.)</span>
+                                  </div>
+                                  <div class="col-md-12">
+                                    <span>{{element.contractor?.projectcost | formatCurrency}}</span>
+                                  </div>
+                              </div>
+                              <div class=" col-md-2">
+                                  <div class="col-md-12">
+                                    <span class="expand-lbl-text">Contractor Award</span>
+                                  </div>
+                                <div class="col-md-12">
+                                  <span>{{element.contractor?.loadate | formatDate}}</span>
+                                </div>
+                                  <hr style="margin: 4px 0px;">
+                                  <div class="col-md-12">
+                                    <span class="expand-lbl-text">Agreement Date</span>
+                                  </div>
+                                  <div class="col-md-12">
+                                    <span>{{element.contractor?.agreementdate | formatDate}}</span>
+                                  </div>
+                                  <hr style="margin: 4px 0px;">
+                                  <div class="col-md-12">
+                                    <span class="expand-lbl-text">Appointment Date</span>
+                                  </div>
+                                  <div class="col-md-12">
+                                    <span>{{element.contractor?.commencementdate | formatDate}}</span>
+                                  </div>
+                              </div>
+                              <div class=" col-md-3">
+                              <div class="col-md-12">
+                                <span class="expand-lbl-text">Bill Submitted By Contractor</span>
+
+                              </div>
+                              <div class="col-md-12">
+                                <span>	{{element.submittedbill | formatCurrency}}</span>
+                                </div>
+                                <hr style="margin: 4px 0px;">
+                                <div class="col-md-12">
+                                  <span class="expand-lbl-text">Bill Recommended By AE/IE</span>
+
+                                </div>
+                                <div class="col-md-12">
+                                  <span>{{element.recommendedbill | formatCurrency}}</span>
+                                  </div>
+                                  <hr style="margin: 4px 0px;">
+                                  <div class="col-md-12">
+                                    <span class="expand-lbl-text">Bill Approved By Authority</span>
+
+                                  </div>
+                                  <div class="col-md-12">
+                                    <span>{{element.authoritybill | formatCurrency}}</span>
+                                  </div>
+
+
+                              </div>
+                              <div  class="chart-container col-md-4">
+                                <ngx-charts-bar-horizontal *ngIf="element.progress"
+                                [view]="viewGraph"
+                                [results]="element.progress"
+                                [gradient]="gradient"
+                                [xAxis]="showXAxis"
+                                [yAxis]="showYAxis"
+                                [legend]="showLegend"
+                                [showXAxisLabel]="showXAxisLabel"
+                                [showYAxisLabel]="showYAxisLabel"
+                                xAxisLabel="Site Progress"
+                                yAxisLabel=""
+                                [xScaleMax]="xScaleMax"
+                                [xScaleMin]="xScaleMin"
+                                [showDataLabel]="true"
+                                [xAxis]="true"
+                                scheme="picnic"
+                                [dataLabelFormatting]="dataLabelFormat">                                   
+                                </ngx-charts-bar-horizontal>
+                                <app-no-data *ngIf="!element.progress" icon="insert_chart" message="No Site Progress Found."></app-no-data>
+                              </div>
+                            </div>
+                            <hr>
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                  <div class="col-md-12">
+                                    <span class="expand-lbl-text">Change Of Scope</span>
+
+                                  </div>
+                                  <div class="col-md-5">
+                                    <span> Number</span>
+                                  </div>
+                                  <div class="col-md-7">
+                                    <span>{{element.cos?.code}}</span>
+                                  </div>
+                                  <div class="col-md-5">
+                                    <span>COS For</span>
+                                  </div>
+                                  <div class="col-md-7">
+                                    <span>{{element.cos?.code}}</span>
+                                  </div>
+                                  <div class="col-md-5">
+                                    <span>Amount</span>
+                                  </div>
+                                  <div class="col-md-7">
+                                    <span>{{element.cos?.amount | formatCurrency}}</span>
+                                  </div>
+                                  <div class="col-md-5">
+                                    <span>Approved Date</span>
+                                  </div>
+                                  <div class="col-md-7">
+                                    <span>{{element.cos?.closedate | formatDate}}</span>
+                                  </div>
+                                </div>
+                                <div class="row col-md-5">
+                                  <div class="col-md-12">
+                                    <span class="expand-lbl-text">Extension of Time</span>
+
+                                  </div>
+                                  <div class="col-md-5">
+                                    <span> Number</span>
+                                  </div>
+                                  <div class="col-md-7">
+                                    <span>{{element.eot?.code}}</span>
+                                  </div>
+                                  <div class="col-md-5">
+                                    <span>EOT For</span>
+                                  </div>
+                                  <div class="col-md-7">
+                                    <span>{{element.eot?.closedate | formatDate}}</span>
+                                  </div>
+                                  <div class="col-md-5">
+                                    <span>Approved Days</span>
+                                  </div>
+                                  <div class="col-md-7">
+                                    <span>{{element.eot?.approveddays}}</span>
+                                  </div>
+                                  <div class="col-md-5">
+                                    <span>Approved Date</span>
+                                  </div>
+                                  <div class="col-md-7">
+                                    <span>{{element.eot?.closedate | formatDate}}</span>
+                                  </div>
+                                </div>
+                                <div class="col-md-1">
+                                <button  type="button" (click)="view(element)" mat-raised-button color="primary">
+                                  <mat-icon>visibility</mat-icon>View
                               </button>
-                            </td>
-                          </ng-container>
-                          <ng-container matColumnDef="expandedDetail">
-                            <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
-                              <div class="example-element-detail"
-                                   [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                                </div>
+                            </div>                                 
+                          </mat-card-content>
+                        </mat-card>
+                      </div>
+                        <!-- <div class="row col-md-12 example-element-description">
 
-                              <div class="container">                              
-                                <mat-card class="details-Data" style=" min-height:20em;" >   
-                                  <div class="load-wrap" *ngIf="isContLoading">
-                                    <app-loader [IsLoading]="isContLoading"></app-loader>
-                                  </div>                              
-                                  <mat-card-content class="wrapper" *ngIf="!isContLoading" style="padding: 10px 10px 10px 10px;">
-                                    <div class="row col-md-12">
-                                      <div class=" col-md-3">
-                                        <div class="col-md-12">
-                                          <span class="expand-lbl-text">Contractor Name</span>
-                                        </div>
-                                        <div class="col-md-12">
-                                          <mat-form-field  class="cont-list" *ngIf="element.contractors && element.contractors.length>0">                                            
-                                            <mat-select [(ngModel)]="element.selectedContractor" (selectionChange)="contractorChange(element,$event)">
-                                                <mat-option  *ngFor="let field of element.contractors" [value]="field.id">
-                                                    {{field.contractorname}}
-                                                </mat-option>
-                                            </mat-select>                                            
-                                        </mat-form-field>
-                                          <span *ngIf="element.contractors && element.contractors.length==0">No Contractor found!!.</span>
-                                          </div>
-                                          <hr style="margin: 8px 0px;">
-                                          <div class="col-md-12">
-                                            <span class="expand-lbl-text">Total Project Cost( In Cr.)</span>
-                                          </div>
-                                          <div class="col-md-12">
-                                            <span>{{element.contractor?.projectcost | formatCurrency}}</span>
-                                          </div>
-                                      </div>
-                                      <div class=" col-md-2">
-                                          <div class="col-md-12">
-                                            <span class="expand-lbl-text">Contractor Award</span>
-                                          </div>
-                                        <div class="col-md-12">
-                                          <span>{{element.contractor?.loadate | formatDate}}</span>
-                                        </div>
-                                          <hr style="margin: 4px 0px;">
-                                          <div class="col-md-12">
-                                            <span class="expand-lbl-text">Agreement Date</span>
-                                          </div>
-                                          <div class="col-md-12">
-                                            <span>{{element.contractor?.agreementdate | formatDate}}</span>
-                                          </div>
-                                          <hr style="margin: 4px 0px;">
-                                          <div class="col-md-12">
-                                            <span class="expand-lbl-text">Appointment Date</span>
-                                          </div>
-                                          <div class="col-md-12">
-                                            <span>{{element.contractor?.commencementdate | formatDate}}</span>
-                                          </div>
-                                     </div>
-                                     <div class=" col-md-3">
-                                      <div class="col-md-12">
-                                        <span class="expand-lbl-text">Bill Submitted By Contractor</span>
+                          <span class="example-element-description-attribution">  </span>
+                        </div> -->
 
-                                      </div>
-                                      <div class="col-md-12">
-                                        <span>	{{element.submittedbill | formatCurrency}}</span>
-                                        </div>
-                                        <hr style="margin: 4px 0px;">
-                                        <div class="col-md-12">
-                                          <span class="expand-lbl-text">Bill Recommended By AE/IE</span>
+                      </div>
+                    </td>
+                  </ng-container>
 
-                                        </div>
-                                        <div class="col-md-12">
-                                          <span>{{element.recommendedbill | formatCurrency}}</span>
-                                          </div>
-                                          <hr style="margin: 4px 0px;">
-                                          <div class="col-md-12">
-                                            <span class="expand-lbl-text">Bill Approved By Authority</span>
+                  <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+                  <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;"
+                      class="example-element-row"
+                      [class.example-expanded-row]="expandedElement === element"
+                      (click)="expandedElement = expandedElement === element ? null : element">
+                  </tr>
+                  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 
-                                          </div>
-                                          <div class="col-md-12">
-                                            <span>{{element.authoritybill | formatCurrency}}</span>
-                                          </div>
-
-
-                                     </div>
-                                      <div  class="chart-container col-md-4">
-                                        <ngx-charts-bar-horizontal *ngIf="element.progress"
-                                        [view]="viewGraph"
-                                        [results]="element.progress"
-                                        [gradient]="gradient"
-                                        [xAxis]="showXAxis"
-                                        [yAxis]="showYAxis"
-                                        [legend]="showLegend"
-                                        [showXAxisLabel]="showXAxisLabel"
-                                        [showYAxisLabel]="showYAxisLabel"
-                                        xAxisLabel="Site Progress"
-                                        yAxisLabel=""
-                                        [xScaleMax]="xScaleMax"
-                                        [xScaleMin]="xScaleMin"
-                                        [showDataLabel]="true"
-                                        [xAxis]="true"
-                                        scheme="picnic"
-                                        [dataLabelFormatting]="dataLabelFormat">                                   
-                                        </ngx-charts-bar-horizontal>
-                                        <app-no-data *ngIf="!element.progress" icon="insert_chart" message="No Site Progress Found."></app-no-data>
-                                      </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row col-md-12">
-                                        <div class="row col-md-6">
-                                          <div class="col-md-12">
-                                            <span class="expand-lbl-text">Change Of Scope</span>
-
-                                          </div>
-                                          <div class="col-md-5">
-                                            <span> Number</span>
-                                          </div>
-                                          <div class="col-md-7">
-                                            <span>{{element.cos?.code}}</span>
-                                          </div>
-                                          <div class="col-md-5">
-                                            <span>COS For</span>
-                                          </div>
-                                          <div class="col-md-7">
-                                            <span>{{element.cos?.code}}</span>
-                                          </div>
-                                          <div class="col-md-5">
-                                            <span>Amount</span>
-                                          </div>
-                                          <div class="col-md-7">
-                                            <span>{{element.cos?.amount | formatCurrency}}</span>
-                                          </div>
-                                          <div class="col-md-5">
-                                            <span>Approved Date</span>
-                                          </div>
-                                          <div class="col-md-7">
-                                            <span>{{element.cos?.closedate | formatDate}}</span>
-                                          </div>
-                                        </div>
-                                        <div class="row col-md-5">
-                                          <div class="col-md-12">
-                                            <span class="expand-lbl-text">Extension of Time</span>
-
-                                          </div>
-                                          <div class="col-md-5">
-                                            <span> Number</span>
-                                          </div>
-                                          <div class="col-md-7">
-                                            <span>{{element.eot?.code}}</span>
-                                          </div>
-                                          <div class="col-md-5">
-                                            <span>EOT For</span>
-                                          </div>
-                                          <div class="col-md-7">
-                                            <span>{{element.eot?.closedate | formatDate}}</span>
-                                          </div>
-                                          <div class="col-md-5">
-                                            <span>Approved Days</span>
-                                          </div>
-                                          <div class="col-md-7">
-                                            <span>{{element.eot?.approveddays}}</span>
-                                          </div>
-                                          <div class="col-md-5">
-                                            <span>Approved Date</span>
-                                          </div>
-                                          <div class="col-md-7">
-                                            <span>{{element.eot?.closedate | formatDate}}</span>
-                                          </div>
-                                        </div>
-                                       <div class="col-md-1">
-                                        <button  type="button" (click)="view(element)" mat-raised-button color="primary">
-                                          <mat-icon>visibility</mat-icon>View
-                                      </button>
-                                       </div>
-                                    </div>                                 
-                                  </mat-card-content>
-                                </mat-card>
-                              </div>
-                                <!-- <div class="row col-md-12 example-element-description">
-
-                                  <span class="example-element-description-attribution">  </span>
-                                </div> -->
-
-                              </div>
-                            </td>
-                          </ng-container>
-
-                          <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
-                          <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;"
-                              class="example-element-row"
-                              [class.example-expanded-row]="expandedElement === element"
-                              (click)="expandedElement = expandedElement === element ? null : element">
-                          </tr>
-                          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
-
-                          <!-- Row shown when there is no matching data. -->
-                          <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell" colspan="4">No data matching the filter </td>
-                          </tr>
-                        </table>
-
-                        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
-                     
-
-                </div>
+                  <!-- Row shown when there is no matching data. -->
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                      No Project(s) Detail found at this moment.</td>
+                  </tr>
+                </table>
+                <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>                   
+              </div>
             </div>
+            </ng-template>
         </mat-card-content>
     </mat-card>
 </div>

@@ -31,7 +31,20 @@ export class LetterInterfaceService {
     ];
   return columns;
   }
-
+  getCSVTemplateColumnList() {
+    let columns = [
+      { label: 'Project Code', value: 'project' },
+      { label: 'Letter_Number', value: 'letternumber' },
+      { label: 'Exchange_Type', value: 'exchangetype' },
+      { label: 'Letter_Type', value: 'lettertype' },
+      { label: 'Letter_Date', value: 'letterdate' },
+      { label: 'Subject', value: 'subject' },
+      { label: 'Letter_From', value: 'letterfrom' },
+      { label: 'Letter_To', value: 'letterto' },
+      { label: 'Status', value: 'status' }
+    ];
+  return columns;
+  }
   getContractorLettersListComponent(){
         return {
           component: ManageLettersListComponent,
@@ -192,7 +205,30 @@ export class LetterInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
-
+  getLetterStatusCountSummary(params: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Letter/StatusSummary',
+      params: params,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  
+  }
+  getLetterTypeCountSummary(params: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Letter/CountSummary',
+      params: params,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  
+  }
   getAllLetters(param: any, guid: string){
     const standardAttribute: ServiceAttributeModel = {
       url: 'Letter',

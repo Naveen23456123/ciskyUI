@@ -6,6 +6,7 @@ import { LetterType } from '@app/shared/models/constant.config';
 import { InvoiceInterfaceService } from '@app/shared/services/external/invoice-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
+import moment from 'moment';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -20,6 +21,7 @@ export class ManageConsultancyInvoiceComponent {
   isLoading = true;
   isEdit: boolean = false;
   pageGuid: any;
+  message=null;
   title: string='Add';
   invoiceForm: FormGroup = new FormGroup({});
   deleteInvoice=false;
@@ -31,7 +33,7 @@ export class ManageConsultancyInvoiceComponent {
         disableClose: false,
         data: {},
   };
-
+  projectName='';  
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageConsultancyInvoiceComponent>, private formbuilder: FormBuilder,
     private invoiceService:InvoiceInterfaceService){
@@ -88,9 +90,10 @@ export class ManageConsultancyInvoiceComponent {
     });
   }
   dateChange(data:any){
-    this.invoiceForm.patchValue({monthandyear:data.format()});   
+    this.invoiceForm.patchValue({monthandyear:data});   
   }
   submit(){   
+    this.message=null;
     this.isClicked=true;
     if (this.isEdit) {
       this.invoiceService.updateInvoice(this.invoiceForm.value, '')
@@ -110,9 +113,12 @@ export class ManageConsultancyInvoiceComponent {
           next:(response: any) => {
             if (response && response.success)  {             
               this.invoiceForm.value.id=response.data.id;
+              this.invoiceForm.value.projectname=this.projectName;
+              this.invoiceForm.value.monthandyear = moment(this.invoiceForm.value.monthandyear).toISOString();
+              console.log(this.invoiceForm.value);
               this.dialogRef.close({ value: this.invoiceForm.value, valid: true });
           } else {
-            this.dialogRef.close({ value: null, valid: false });
+            this.message= response.message;
           }
         },
          error: (err: any) => {
@@ -137,5 +143,6 @@ export class ManageConsultancyInvoiceComponent {
   projectChange(event:any){
     if(event && event.value)
       this.invoiceForm.patchValue({projectid:event.value.id});
+    this.projectName= event.value.projectshortname;
   }
 }

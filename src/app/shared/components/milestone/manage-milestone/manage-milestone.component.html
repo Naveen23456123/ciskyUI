@@ -22,8 +22,9 @@
                            
                             <mat-form-field class="example-full-width">
                                 <mat-label>Appointed Date</mat-label>
-                                <input matInput [readonly]="isEdit ? true : null" formControlName="appointeddate" [matDatepicker]="appointDate">
-                                
+                                <input matInput [readonly]="isEdit ? true : null"
+                                (dateChange)="onDateChanged($event)"
+                                formControlName="appointeddate" [matDatepicker]="appointDate">                                
                                 <mat-datepicker-toggle matIconSuffix [for]="appointDate"></mat-datepicker-toggle>
                                 <mat-datepicker #appointDate></mat-datepicker>
                               </mat-form-field>
@@ -41,9 +42,9 @@
                         <div class="col-md-6">                          
                             <mat-form-field class="example-full-width">
                                 <mat-label>Milestone Date</mat-label>
-                                <input matInput [readonly]="isEdit ? true : null"  formControlName="milestonedate" [matDatepicker]="date">
+                                <input matInput [disabled]="true" formControlName="milestonedate" [matDatepicker]="date">
                                 
-                                <mat-datepicker-toggle matIconSuffix [for]="date"></mat-datepicker-toggle>
+                                <mat-datepicker-toggle [disabled]="true" matIconSuffix [for]="date"></mat-datepicker-toggle>
                                 <mat-datepicker #date></mat-datepicker>
                               </mat-form-field>
                         </div> 

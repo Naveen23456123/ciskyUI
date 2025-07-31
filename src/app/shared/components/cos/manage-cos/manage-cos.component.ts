@@ -99,7 +99,7 @@ export class ManageCosComponent {
             });        
             this.sessionService.entityTypeSubject$.subscribe((response:any)=>{
               if(response) {
-              let letterTypeitem = response.find((x:any)=>x.name.toLowerCase()==LetterType.COS.toLowerCase());
+              let letterTypeitem = response.find((x:any)=>x.name.toLowerCase().includes(LetterType.COS.toLowerCase()));
               if(letterTypeitem) {
                 this.letterService.getLettersPartial({
                   projectid:entityData.projectId,
@@ -214,7 +214,15 @@ export class ManageCosComponent {
             }
           });
       } else {
-        this.cosForm.value.id=null;
+        this.cosForm.patchValue({id:null});
+        this.sessionService.approvalStatusSubject$.subscribe((response:any)=>{
+          if(response){
+            console.log(response);
+           this.cosForm.patchValue({statusid: response.find((x:any)=>x.name.toLowerCase()==ApprovalStatus.PENDING)?.id});
+          }
+        })
+        formsValue.statusid = this.cosForm.get('statusid')?.value;
+        formsValue.status = this.approvalStatusList.find(x=>x.id== this.cosForm.get('statusid')?.value)?.name;
         this.eotService.createCOS(this.cosForm.value, '')
           .pipe(finalize(() => { this.isLoading = false; })).subscribe({
             next:(response: any) => {

@@ -12,6 +12,7 @@ import  _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import { Moment } from 'moment';
 import { Logger } from '@app/core/logger.service';
+import { CommonService } from '@app/shared/services/common.service';
 
 
 let moment = _moment;
@@ -52,18 +53,21 @@ export class MonthAndYearPickerComponent implements OnInit {
   @Output() onValueChange: EventEmitter<any> = new EventEmitter();
   maxDate = new Date();
   @Input() defaultValue:any;
-  nextBtn: boolean = false;
-  constructor() { }
+  @Input() setValueDefault:any=true;
+  nextBtn: boolean = false;  
+  date = new FormControl();
+  constructor(private commonService:CommonService) { }
 
   ngOnInit(): void {   
     this.diabledNextBtn();
+    if(this.setValueDefault)
+      this.date.setValue(moment());
     if(this.defaultValue)
       this.date.setValue(moment(this.defaultValue));
    
     this.onValueChange.emit(this.date.value);
   }
 
-  date = new FormControl(moment());
 
   chosenYearHandler(normalizedYear: Moment) {
     const ctrlValue = this.date.value;
@@ -73,6 +77,7 @@ export class MonthAndYearPickerComponent implements OnInit {
   }
 
   chosenMonthHandler(normalizedMonth: Moment, datepicker: MatDatepicker<Moment>) {
+    this.date.setValue(moment(normalizedMonth));
     const ctrlValue = this.date.value;
     ctrlValue?.month(normalizedMonth.month());
     this.date.setValue(ctrlValue);
@@ -93,12 +98,13 @@ export class MonthAndYearPickerComponent implements OnInit {
     const ctrlValue = this.date.value;
     if(this.date.value){
     ctrlValue?.month(this.date.value.month() + 1);
-    this.date.setValue(ctrlValue);
+    this.date.setValue(ctrlValue); 
     this.diabledNextBtn();
     this.emitdate();
     }
   }
   emitdate() {
+    //this.date.value.add(1, 'day').format('YYYY-MM-DDTHH:mm:ss')   
     this.onValueChange.emit(this.date.value);
   }
   diabledNextBtn() {

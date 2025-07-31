@@ -7,7 +7,7 @@ const routes: Routes = [
   {
     path:'',
     component:BoqListComponent,
-    data:{title:extractTitle('BOQ List')},
+    data:{title:extractTitle('BOQ(s)')},
    
   }
 ];

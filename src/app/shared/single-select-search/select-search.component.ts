@@ -156,7 +156,8 @@ export class SelectSearchComponent implements OnInit, AfterViewInit, OnDestroy {
         // the form control (i.e. _initializeSelection())
         // this needs to be done after the filteredvalues are loaded initially
         // and after the mat-option elements are available
-        this.singleSelect.compareWith = (a: any, b: any) => a && b && a.id === b.id;
+        if(this.singleSelect)
+          this.singleSelect.compareWith = (a: any, b: any) => a && b && a.id === b.id;
       });
   }
 

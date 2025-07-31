@@ -19,7 +19,7 @@ import { finalize } from 'rxjs';
 export class ApprovalListComponent {
   approvals:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','name', 'view','action'];
+  displayedColumns: string[] = ['serial','cname','name', 'view','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -95,7 +95,6 @@ export class ApprovalListComponent {
     element.id = data.id;
     element.name = data.name;
     element.moduleid = data.moduleid;
-    element.modulename= data.modulename,
     element.levels=data.levels
     this.dataSource._updateChangeSubscription();
     }
@@ -104,6 +103,7 @@ export class ApprovalListComponent {
     const data1:any = {
       id:newdata.id,
       name : newdata.name,
+      company:newdata.company,
       moduleid: newdata.moduleid,
       modulename:newdata.modulename,
       levels:newdata.levels

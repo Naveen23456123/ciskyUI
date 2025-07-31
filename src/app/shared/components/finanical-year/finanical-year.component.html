@@ -1,0 +1,9 @@
+<mat-form-field appearance="fill">
+    <mat-label>Financial Year</mat-label>
+    <mat-select (selectionChange)="yearChange()" [(value)]="selectedYear">
+      <mat-option *ngFor="let year of financialYears" [value]="year.cyear">
+        {{ year.cyear+" - "+year.nyear }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  

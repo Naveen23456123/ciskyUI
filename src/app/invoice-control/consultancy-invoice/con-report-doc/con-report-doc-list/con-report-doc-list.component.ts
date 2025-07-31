@@ -102,7 +102,7 @@ export class ConReportDocListComponent {
     updateRowData(data: any) {
       const element:any = this.dataSource.data.find((x:any) => x.invoiceid == data.id);
       if(element){
-      element.currentbillmonths=data.currentbillmonths 
+      element.currentbillmonths=data.currentbillmonths;
       }
       this.bindBilling(element); 
       this.dataSource._updateChangeSubscription();

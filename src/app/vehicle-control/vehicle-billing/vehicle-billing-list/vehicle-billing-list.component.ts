@@ -3,8 +3,11 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ApprovalStatus } from '@app/shared/models/constant.config';
+import { CommonService } from '@app/shared/services/common.service';
 import { HelperService } from '@app/shared/services/helper.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
+import { SessionService } from '@app/shared/services/session.service';
 import { StateDataService } from '@app/shared/services/state-data.service';
 import { VehicleService } from '@app/vehicle-control/vehicle.service';
 import { finalize } from 'rxjs';
@@ -18,7 +21,7 @@ import { finalize } from 'rxjs';
 export class VehicleBillingListComponent {
   vehicleBilings:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','vehiclename', 'vehiclenum', 'extraamtkmabovefix', 'fixeddetails', 'extraDetails','totaldetails', 'action'];
+  displayedColumns: string[] = ['serial','vehiclename', 'vehiclenum', 'extraamtkmabovefix', 'fixeddetails', 'extraDetails','totaldetails','aaproved','status', 'action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -26,7 +29,7 @@ export class VehicleBillingListComponent {
   pagination: any;
   pageSize!: number;
   isSearchLoading=false;
-
+  statusList:any[]=[];
   readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
@@ -37,19 +40,23 @@ export class VehicleBillingListComponent {
 
  constructor(private vehicleService:VehicleService,private helperService:HelperService,
   private stateDataService:StateDataService, private notifyBarService:NotifyBarService,
-  private cdr : ChangeDetectorRef
+  private cdr : ChangeDetectorRef, private sessionService:SessionService, private commonService:CommonService
  ){
   this.dataSource = new MatTableDataSource(this.vehicleBilings);
  }
 
  ngOnInit()  {
+
   this.stateDataService.stateDataSubject.subscribe((data:any) => {   
     if (data.event == 'billingedit'  && data.valid && data.value) {      
       this.updateRowData(data.value);
       this.notifyBarService.showsnackbar(data.msg);
       this.stateDataService.stateDataSubject.next({});
     } else if (data.event == 'billingadd' && data.valid && data.value) {
-      this.addRowData(data.value);
+      if(data.bulk)
+        this.addBulkBilling(data.value);
+      else
+        this.addRowData(data.value);
       this.notifyBarService.showsnackbar(data.msg);
       this.stateDataService.stateDataSubject.next({});
     } else if(data.event == 'billingdelete' && data.valid && data.value){
@@ -58,16 +65,43 @@ export class VehicleBillingListComponent {
       this.stateDataService.stateDataSubject.next({});
     }
   });
-    this.vehicleService.getVehicleBillingDetailsByOrgId({}, '')
+  this.sessionService.approvalStatusSubject$.subscribe((statusresponse:any)=>{
+    if(statusresponse){
+     this.statusList= statusresponse;
+     this.vehicleService.getVehicleBillingDetailsByOrgId({}, '')
       .pipe(finalize(() => this.isLoading = false))
       .subscribe((response: any) => {
-        if (response && response.success) {
-        this.vehicleBilings = response.data;
+        if (response && response.success) {        
+        this.vehicleBilings = response.data.map((item:any) => ({
+          ...item,
+          //levels: this.setLevel(item.levels),
+          ...this.setLevelConfig(item.levels) 
+        }));
+        console.log(this.vehicleBilings);
         this.dataSource = new MatTableDataSource(this.vehicleBilings);
         }
     });
+    }
+  })
+    
   }
-
+  setLevel(items:any) {
+    if(items){ 
+    return  items.map((level:any) => ({
+        ...level,
+        status: this.statusList.find((x:any)=>x.id==level.statusid)?.name 
+      }))
+    }
+  }
+  setLevelConfig(levels:any){
+    const overallstatus=this.commonService.getOverallStatus(levels);
+    return {
+      levels:overallstatus==ApprovalStatus.REJECTED ? levels?.filter((x:any)=>x.status.toLowerCase()==ApprovalStatus.REJECTED.toLocaleLowerCase()):levels,
+      hasRejected:overallstatus==ApprovalStatus.REJECTED,
+      status:overallstatus, 
+      isedit:overallstatus==ApprovalStatus.PENDING
+    }
+  }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -107,7 +141,7 @@ export class VehicleBillingListComponent {
         this.dataSource._updateChangeSubscription();
       }
   }
-  addRowData(data: any) {    
+  addRowData(data: any) {
     const data1:any = {
       id: data.id,
       projectid :data.projectid,
@@ -116,17 +150,23 @@ export class VehicleBillingListComponent {
       monthandyear:data.monthandyear,
       enddate:data.enddate,
       extrakm:data.extrakm,
+      currentkm:data.currentkm,
       fixedkm:data.fixedkm,
       extraamountperkmafterfixedkm:data.extraamountperkmafterfixedkm,
       fixedamount:data.fixedamount,
       project:data.project,
       vehicleno:data.vehicleno,
       vehiclename:data.vehiclename,
+      levels: this.setLevel(data.levels)
     }      
     this.dataSource.data.unshift(data1);  
     this.dataSource._updateChangeSubscription(); 
   }
-
+  addBulkBilling(data:any){
+    data.forEach((element:any) => {
+      this.addRowData(element);
+    });
+  }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);
     this.dataSource.data.splice(index, 1);
@@ -173,6 +213,9 @@ export class VehicleBillingListComponent {
       this.cdr.detectChanges();
   });
    }
+   getVehicleBilling(data:any){
+    return this.commonService.getVehicleBillingInfo(data);
+  }
 }
 
 

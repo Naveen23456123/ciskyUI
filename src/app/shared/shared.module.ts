@@ -122,7 +122,6 @@ import { ManageOfficeDocComponent } from './components/office/manage-office-doc/
 import { DeleteOfficeDocComponent } from './components/office/delete-office-doc/delete-office-doc.component';
 import { ExploreBankGuaranteeComponent } from './components/explore/explore-bank-guarantee/explore-bank-guarantee.component';
 import { ExploreInsuranceComponent } from './components/explore/explore-insurance/explore-insurance.component';
-import { ExploreLettersComponent } from './components/explore/explore-letters/explore-letters.component';
 import { SubmitLoadBtnComponent } from './components/btn/submit-load-btn/submit-load-btn.component';
 import { FormatAmountPipe } from './pipes/format-amount.pipe';
 import { ManageUploadEmpComponent } from './components/employee/manage-upload-emp/manage-upload-emp.component';
@@ -135,6 +134,35 @@ import { ManageUploadVehicleComponent } from './components/vehicle/manage-upload
 import { ViewReadingImageComponent } from './components/vehicle/view-reading-image/view-reading-image.component';
 import { ManageLetterDocComponent } from './components/letters/manage-letter-doc/manage-letter-doc.component';
 import { DeleteLetterDocComponent } from './components/letters/delete-letter-doc/delete-letter-doc.component';
+import { AlertBadgeComponent } from './alert-badge/alert-badge.component';
+import { EditIconBtnComponent } from './components/btn/edit-icon-btn/edit-icon-btn.component';
+import { ConsultentListSummaryComponent } from './components/consultant/consultent-list-summary/consultent-list-summary.component';
+import { LetterInfoSummaryComponent } from './components/letters/letter-info-summary/letter-info-summary.component';
+import { EotInfoSummaryComponent } from './components/eot/eot-info-summary/eot-info-summary.component';
+import { CosInfoSummaryComponent } from './components/cos/cos-info-summary/cos-info-summary.component';
+import { EmployeeInfoSummaryComponent } from './components/employee/employee-info-summary/employee-info-summary.component';
+import { ManageOfcRentBillingComponent } from './components/siteops/manage-ofc-rent-billing/manage-ofc-rent-billing.component';
+import { ManageProfitLossSheetComponent } from './components/profit-and-loss/manage-profit-loss-sheet/manage-profit-loss-sheet.component';
+import { ProfitLossInvListComponent } from './components/profit-and-loss/profit-loss-inv-list/profit-loss-inv-list.component';
+import { ProfitLossInvDetailsComponent } from './components/profit-and-loss/profit-loss-inv-details/profit-loss-inv-details.component';
+import { ProfitLossCommulativeComponent } from './components/profit-and-loss/profit-loss-commulative/profit-loss-commulative.component';
+import { FinanicalYearComponent } from './components/finanical-year/finanical-year.component';
+import { StatusBadgeComponent } from './components/status-badge/status-badge.component';
+import { ManageUploadConsultantComponent } from './components/consultant/manage-upload-consultant/manage-upload-consultant.component';
+import { ManageOfcBillingReqComponent } from './components/siteops/manage-ofc-billing-req/manage-ofc-billing-req.component';
+import { ManageImperestBillingReqComponent } from './components/siteops/manage-imperest-billing-req/manage-imperest-billing-req.component';
+import { ManageVehBillingReqComponent } from './components/siteops/manage-veh-billing-req/manage-veh-billing-req.component';
+import { BillingInfoSummaryComponent } from './components/siteops/billing-info-summary/billing-info-summary.component';
+import { ManageExpBillingReqComponent } from './components/siteops/manage-exp-billing-req/manage-exp-billing-req.component';
+import { ViewExpDetailsInfoComponent } from './components/siteops/view-exp-details-info/view-exp-details-info.component';
+import { ProjectReportsListComponent } from './components/projects-report/project-reports-list/project-reports-list.component';
+import { ManageProjectReportsComponent } from './components/projects-report/manage-project-reports/manage-project-reports.component';
+import { ExploreProjectReportsComponent } from './components/explore/explore-project-reports/explore-project-reports.component';
+import { LetterCountSummaryComponent } from './components/letters/letter-count-summary/letter-count-summary.component';
+import { ManageProjectInvoiceListComponent } from './components/payment/manage-project-invoice-list/manage-project-invoice-list.component';
+import { EmptyTableSkltnComponent } from './components/empty-table-skltn/empty-table-skltn.component';
+import { DownloadPdfComponent } from './components/btn/download-pdf/download-pdf.component';
+import { ManageMiscComponent } from './components/manage-misc/manage-misc.component';
 
 @NgModule({
   declarations: [NotifyBarComponent, AlertComponent, LoaderComponent,  
@@ -151,7 +179,7 @@ import { DeleteLetterDocComponent } from './components/letters/delete-letter-doc
     ManageVehicleListComponent, ManageEmployeeListComponent, ManageInventoryListComponent, ManageConsultantComponent, ManageBoqAttendenceComponent, ContactListComponent, ManageContactComponent, ContractorBillingDetailsComponent, ManageCircularComponent, ManageBoqInvoiceComponent, ManageConsultancyInvoiceComponent,
      ManageSupportStaffComponent, ManageTransportationComponent, ManageDutyTravelComponent, 
      ManageOfficeRentComponent, ManageOfficeSuppliesComponent, ManageOfficeFurnitureComponent, ManageReportDocComponent, ManageRoadSurveyComponent, ManageContingenciesComponent, ManageConsultancyStaffComponent, ManageConsultancyContingenciesComponent, ManageConsultancyReportDocComponent, ManageConsultancyOfficeFurnitureComponent, ManageConsultancyOfficeSuppliesComponent, ManageConsultancyOfficeRentComponent, ManageConsultancyDutyTravelComponent, ManageConsultancyTransportationComponent, ManageOfficeRentControlComponent, 
-     FileIconComponent, BreadCrumComponent, SearchBarControlsComponent, ViewLetterDetailsComponent, ViewEmployeeListComponent, ViewBtnComponent, ProjectControlComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent, ManageVehicleDocComponent, DeleteVehicleDocComponent, NoDataComponent, ViewEmployeeDetailsComponent, ManageEmployeeDocComponent, DeleteEmployeeDocComponent, DocumentManageBtnComponent, DetailVehicleComponent, ManageProfitLossComponent, ManageTicketComponent, ManageImperestComponent, ManageExpenseComponent, ManageApprovalComponent, ExploreMilestoneComponent, ExploreSiteProgressComponent, ExploreEotComponent, ExploreCosComponent, ManageOfficeDocComponent, DeleteOfficeDocComponent, ExploreBankGuaranteeComponent, ExploreInsuranceComponent, ExploreLettersComponent, SubmitLoadBtnComponent, FormatAmountPipe, ManageUploadEmpComponent, UploadDataComponent, ManageUploadInventoryComponent, AddIconBtnComponent, ManageUploadLettersComponent, ItemEmployeesComponent, ManageUploadVehicleComponent, ViewReadingImageComponent, ManageLetterDocComponent, DeleteLetterDocComponent],
+     FileIconComponent, BreadCrumComponent, SearchBarControlsComponent, ViewLetterDetailsComponent, ViewEmployeeListComponent, ViewBtnComponent, ProjectControlComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent, ManageVehicleDocComponent, DeleteVehicleDocComponent, NoDataComponent, ViewEmployeeDetailsComponent, ManageEmployeeDocComponent, DeleteEmployeeDocComponent, DocumentManageBtnComponent, DetailVehicleComponent, ManageProfitLossComponent, ManageTicketComponent, ManageImperestComponent, ManageExpenseComponent, ManageApprovalComponent, ExploreMilestoneComponent, ExploreSiteProgressComponent, ExploreEotComponent, ExploreCosComponent, ManageOfficeDocComponent, DeleteOfficeDocComponent, ExploreBankGuaranteeComponent, ExploreInsuranceComponent, SubmitLoadBtnComponent, FormatAmountPipe, ManageUploadEmpComponent, UploadDataComponent, ManageUploadInventoryComponent, AddIconBtnComponent, ManageUploadLettersComponent, ItemEmployeesComponent, ManageUploadVehicleComponent, ViewReadingImageComponent, ManageLetterDocComponent, DeleteLetterDocComponent, AlertBadgeComponent, EditIconBtnComponent, ConsultentListSummaryComponent, LetterInfoSummaryComponent, EotInfoSummaryComponent, CosInfoSummaryComponent, EmployeeInfoSummaryComponent, ManageOfcRentBillingComponent, ManageProfitLossSheetComponent, ProfitLossInvListComponent, ProfitLossInvDetailsComponent, ProfitLossCommulativeComponent, FinanicalYearComponent, StatusBadgeComponent, ManageUploadConsultantComponent, ManageOfcBillingReqComponent, ManageImperestBillingReqComponent, ManageVehBillingReqComponent, BillingInfoSummaryComponent, ManageExpBillingReqComponent, ViewExpDetailsInfoComponent, ProjectReportsListComponent, ManageProjectReportsComponent, ExploreProjectReportsComponent, LetterCountSummaryComponent, ManageProjectInvoiceListComponent, EmptyTableSkltnComponent, DownloadPdfComponent, ManageMiscComponent],
   imports: [
     CommonModule, 
     //LockerModule, 
@@ -183,6 +211,7 @@ import { DeleteLetterDocComponent } from './components/letters/delete-letter-doc
 ContractorBillingListComponent,MilestoneListComponent, SiteProgressListComponent, ManageLettersListComponent,ContactListComponent,
 ViewBtnComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent,NoDataComponent, ViewEmployeeDetailsComponent, ExploreMilestoneComponent,
 ExploreSiteProgressComponent, ExploreEotComponent, ExploreCosComponent, DocumentManageBtnComponent, ExploreBankGuaranteeComponent,ExploreInsuranceComponent,
-ExploreLettersComponent,FormatAmountPipe,UploadFileComponent, AddIconBtnComponent]
+FormatAmountPipe,UploadFileComponent, AddIconBtnComponent,EditIconBtnComponent, FinanicalYearComponent, ProjectControlComponent, StatusBadgeComponent,
+BillingInfoSummaryComponent,ProjectReportsListComponent, ExploreProjectReportsComponent,LetterCountSummaryComponent,EmptyTableSkltnComponent]
 })
 export class SharedModule { }

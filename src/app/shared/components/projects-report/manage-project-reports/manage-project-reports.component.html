@@ -1,0 +1,108 @@
+<div class="dialog" >
+    <mat-card *ngIf="!deleteReport">
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> {{title}} 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <form [formGroup]="reportForm" >
+                    <div class="row control-div">
+                        <div class="col-md-6">
+                            <mat-form-field>
+                                <mat-label>Report Type</mat-label>
+                               <mat-select formControlName="typeid">
+                                    <mat-option  *ngFor="let field of typeList" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select EOT status</mat-error>
+                            </mat-form-field>
+                        </div>                        
+                        <div class="col-md-6">                           
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Report Date</mat-label>
+                                <input matInput  [readonly]="isEdit ? true : null" formControlName="date" [matDatepicker]="initiatedate">
+                                <mat-error>Please select Report Date</mat-error>
+                                <mat-datepicker-toggle matIconSuffix [disabled]="isEdit ? true : false" [for]="initiatedate"></mat-datepicker-toggle>
+                                <mat-datepicker #initiatedate></mat-datepicker>
+                                
+                              </mat-form-field>
+                        </div>
+                        <div class="col-md-6" >                           
+                             <mat-form-field>
+                                <mat-label>Name</mat-label>
+                                <input  matInput formControlName="name">
+                                <mat-error>Please provide report Name</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-6" >                           
+                             <mat-form-field>
+                                <mat-label>Number</mat-label>
+                                <input  matInput formControlName="no">
+                                <mat-error>Please provide report Number</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-6" >                           
+                             <mat-form-field>
+                                <mat-label>Letter Number</mat-label>
+                                <input  matInput formControlName="letterno">
+                                <mat-error>Please provide report Letter Number</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        
+                         <div class="col-md-4" *ngIf="!isEdit">
+                            <app-file-uploader [required]="true" title="Report" (onfileUpload)="filedata($event)" ></app-file-uploader>
+                        </div>
+                        <div class="col-md-12">
+                            <mat-form-field>
+                                <mat-label>Remarks</mat-label>
+                                 <textarea  matInput formControlName="remark"></textarea>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-12 button-row" align="right">
+                                <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                             
+                                <app-submit-load-btn  (clickEvent)="submit()"
+                                [isValid]="reportForm.valid || isClicked"
+                                [isClicked]="isClicked"
+                                text="{{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card *ngIf="deleteReport">      
+        <mat-card-title class="card-title d-flex justify-content-center" >
+            <mat-icon>warning</mat-icon><span>{{title}}</span>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <mat-dialog-content>
+                    <span class="mat-typography alert-content">
+                        Are you sure you want to delete <span class="vw-lbl">{{reportForm.controls['name'].value}}</span> ?. This operation can
+                        not be un-done once performed sucessfully.
+                    </span>
+                </mat-dialog-content>
+                <mat-dialog-actions align="center">
+                    <div class="control-div">
+                        <button class="delete-btn" mat-raised-button (click)="delete()" color="primary">
+                            Delete
+                        </button>
+                        <button class="cancel-btn" mat-stroked-button color="default" mat-dialog-close>
+                            Cancel
+                        </button>
+                    </div>
+                </mat-dialog-actions>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

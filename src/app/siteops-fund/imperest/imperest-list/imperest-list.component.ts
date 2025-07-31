@@ -4,8 +4,11 @@ import { MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { InventoryControlService } from '@app/inventory-control/inventory-control.service';
+import { ApprovalStatus } from '@app/shared/models/constant.config';
+import { CommonService } from '@app/shared/services/common.service';
 import { HelperService } from '@app/shared/services/helper.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
+import { SessionService } from '@app/shared/services/session.service';
 import { StateDataService } from '@app/shared/services/state-data.service';
 import { SiteControlService } from '@app/site-control/site-control.service';
 import { SiteopsService } from '@app/siteops-fund/siteops.service';
@@ -20,14 +23,15 @@ import { finalize } from 'rxjs';
 export class ImperestListComponent {
   imperestList:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','name','date','gamount','apramount', 'view','action'];
+  displayedColumns: string[] = ['serial','project','office','name','date','gamount','apramount', 'view','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-
+  isSearching=false;
+  statusList:any[]=[];
   readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
@@ -37,7 +41,8 @@ export class ImperestListComponent {
   };
 
  constructor(private siteopsService:SiteopsService,private helperService:HelperService,
-  private stateDataService:StateDataService, private notifyBarService:NotifyBarService
+  private stateDataService:StateDataService, private notifyBarService:NotifyBarService,
+  private sessionService:SessionService, private commonService:CommonService
  ){
   this.dataSource = new MatTableDataSource(this.imperestList);
  }
@@ -58,16 +63,13 @@ export class ImperestListComponent {
       this.stateDataService.stateDataSubject.next({});
     }
   });
+  this.sessionService.approvalStatusSubject$.subscribe((statusresponse:any)=>{
+    if(statusresponse){
+     this.statusList= statusresponse;
+     this.filterImprest();
+    }
+  })
 
-    this.siteopsService.getImperestListByOrgId({ organizationId: this.activeOrgId }, '')
-           .pipe(finalize(() => this.isLoading = false))
-           .subscribe((response: any) => {
-             if (response && response.success) {
-              this.imperestList = response.data;
-              this.dataSource = new MatTableDataSource(this.imperestList);
-              this.pageSize= this.helperService.getPageSize();
-             }
-      });
   }
 
   ngAfterViewInit() {
@@ -105,12 +107,18 @@ export class ImperestListComponent {
   addRowData(newdata: any) {
     const data1:any = {
       id:newdata.id,
+      companyid:newdata.companyid,
+      projectid:newdata.projectid,
+      officeid:newdata.officeid,
+      project:newdata.project,
+      office:newdata.office,
       name:newdata.name,
       date:newdata.date,
       days:newdata.days,
       remarks:newdata.remarks, 
-      details:newdata.details
-    }      
+      details:newdata.details,
+      ...this.setLevelConfig(newdata.levels) 
+    }     
     this.dataSource.data.unshift(data1);  
     this.dataSource._updateChangeSubscription();
   }
@@ -119,6 +127,53 @@ export class ImperestListComponent {
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }
-
+  searchObj:any={
+    projectid:'',   
+    companyid:''
+  };
+  projectChange(data:any){ 
+   this.searchObj.projectid= data.value ?? '';
+   this.filterImprest();
+  }
+  compChange(data:any){
+    this.searchObj.companyid= data.value ?? '';
+    this.searchObj.projectid= data.projectid ?? '';
+    this.filterImprest();
+  }
+  anyChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
+    }
+  }
+  filterImprest(){
+  this.isSearching=true;
+    this.siteopsService.searchImperestListByOrgId(this.searchObj, '')
+      .pipe(finalize(() => {this.isLoading = false;this.isSearching=false}))
+      .subscribe({next : (response: any) => {
+        if (response && response.success) {
+          this.imperestList = response.data.map((item:any) => {
+            return{
+            ...item,
+            ...this.setLevelConfig(item.levels)          
+            }          
+          });
+          console.log(this.imperestList);
+          this.dataSource = new MatTableDataSource(this.imperestList);
+          this.pageSize= this.helperService.getPageSize();
+        }
+    }});
+  }
+  setLevelConfig(levels:any){
+    const overallstatus=this.commonService.getOverallStatus(levels);
+    return {
+      levels:overallstatus==ApprovalStatus.REJECTED ? levels?.filter((x:any)=>x.status.toLowerCase()==ApprovalStatus.REJECTED.toLocaleLowerCase()):levels,
+      hasRejected:overallstatus==ApprovalStatus.REJECTED,
+      status:overallstatus, 
+      isedit:overallstatus==ApprovalStatus.PENDING
+    }
+  }
 }
 

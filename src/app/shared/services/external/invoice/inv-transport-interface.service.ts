@@ -23,7 +23,7 @@ export class InvTransportInterfaceService {
   }
   getBoqTransportationListForInsertByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'BoqTransportation/Insert/'+param.id,
+      url: 'BoqTransportation/Insert/'+param.id+'/'+param.invid,
       params: {},
       headers: true,
       guid: '',
@@ -35,6 +35,17 @@ export class InvTransportInterfaceService {
   createBoqTransportation(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'BoqTransportation',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  } 
+  UpdateBoqTransportationDescription(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqTransportation/Description',
       params: {},
       headers: true,
       guid: '',

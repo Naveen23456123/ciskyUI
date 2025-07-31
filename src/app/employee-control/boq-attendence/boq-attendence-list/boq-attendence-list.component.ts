@@ -20,14 +20,14 @@ import { finalize } from 'rxjs';
 export class BoqAttendenceListComponent {
   boqAttendences:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','compname','employeename','projectshortname', 'month', 'year','totaldays','action'];
+  displayedColumns: string[] = ['serial','employeename','projectshortname', 'month', 'year','totaldays','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-
+  isSearching=false;
   readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
@@ -58,7 +58,7 @@ export class BoqAttendenceListComponent {
       this.stateDataService.stateDataSubject.next({});
     }
   });
-    this.employeeService.getBOQAttendenceListByProjectIdByOrgId({ }, '')
+  this.employeeService.searchBoqAttendence({}, '')
            .pipe(finalize(() => this.isLoading = false))
            .subscribe((response: any) => {
              if (response && response.success) {
@@ -92,12 +92,11 @@ export class BoqAttendenceListComponent {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
       if(element){
         element.id=data.id,
-        element.companyid=data.companyid,
         element.employeeid=data.employeeid,
         element.monthandyear=data.monthandyear,
-        element.company=data.company,
         element.employee=data.employee,
         element.projectname=data.projectname,
+        element.projectid=data.projectid,
         element.totaldays=data.totaldays,
         element.manmonths=data.manmonths,
         this.dataSource._updateChangeSubscription();
@@ -106,8 +105,8 @@ export class BoqAttendenceListComponent {
   addRowData(data: any) {    
     const data1:any = {
       id:data.id,
-      companyid:data.companyid,
       employeeid:data.employeeid,
+      projectid:data.projectid,
       monthandyear:data.monthandyear,
       company:data.company,
       employee:data.employee,
@@ -131,5 +130,34 @@ export class BoqAttendenceListComponent {
     }
     return {month:'-',year:'-'};
   } 
+  searchObj:any={};
+  projectChange(data:any){ 
+    this.searchObj.projectid= data.value ?? '';
+    this.filterAttendences();
+   }
+   monthYearChange(data:any){
+    this.searchObj.monthandyear= data.value ?? '';
+    this.filterAttendences();
+   }
+   anyChange(data:any){
+     if(data && data.value){ 
+       this.dataSource.filter = data.value.trim().toLowerCase()
+     }
+     else{
+       this.dataSource.filter = '';
+     }
+   }
+   filterAttendences(){
+    this.isSearching=true;
+    this.employeeService.searchBoqAttendence(this.searchObj, '')
+    .pipe(finalize(() => this.isSearching = false))
+    .subscribe((response: any) => {
+      if (response && response.success) {
+       this.boqAttendences = response.data;
+       this.dataSource = new MatTableDataSource(this.boqAttendences);
+       this.pageSize= this.helperService.getPageSize();
+      }
+});
+   }
 }
 

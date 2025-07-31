@@ -8,6 +8,7 @@ import { BoqStaffInterfaceService } from '@app/shared/services/external/boq/boq-
 import { CommonInterfaceService } from '@app/shared/services/external/common-interface.service';
 import { DesignationInterfaceService } from '@app/shared/services/external/designation-interface.service';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
+import { InvStaffInterfaceService } from '@app/shared/services/external/invoice/inv-staff-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, forkJoin, Subscription, take } from 'rxjs';
@@ -24,12 +25,14 @@ export class ManageSupportStaffComponent {
   isLoading = true;
   isEdit: boolean = false;
   pageGuid: any;
+  isHeading: boolean = false;
   title: string='Add';
   renumerationForm: FormGroup = new FormGroup({});
   deleteRenumeration=false;
   designationList:any[] = [];
   professionaList:any[] = [];
   empList:any[] = [];
+  headingForm: FormGroup = new FormGroup({});
   designationLoad=false;
   employeeLoad=false;
   empName='';
@@ -47,12 +50,15 @@ export class ManageSupportStaffComponent {
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageSupportStaffComponent>, private formbuilder: FormBuilder,
     private router: Router,private route: ActivatedRoute,
-    private staffService: BoqStaffInterfaceService, private sessionService:SessionService,
+    private staffService: InvStaffInterfaceService, private sessionService:SessionService,
   private employeeService:EmployeeInterfaceService, private designationService:DesignationInterfaceService){
       this.data = data || {};
   }
   
   checkMode(type: string) {
+    if(type=='heading'){
+      this.isHeading=true;
+    }
     if (type === 'edit' && !this.data.separate)
       this.isEdit = true;
     else if (type == 'delete') {
@@ -90,6 +96,18 @@ export class ManageSupportStaffComponent {
       constructionperiod:[,Validators.required],
       oandmperiod:[,Validators.required]
     });
+    if(this.isHeading){
+      this.headingForm= this.formbuilder.group({ 
+        id: [''],
+        description:[this.data.element.description,Validators.required]
+      });
+      this.sessionService.projectEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
+        if(response && response.projectId){
+          this.headingForm.patchValue({id:response.projectId});
+        }
+      });
+     
+    }
     this.sessionService.staffTypeSubject$.subscribe((response:any)=>{
       if(response){        
         this.professionaList= response;
@@ -188,15 +206,19 @@ export class ManageSupportStaffComponent {
               }
             });
         } else {
+          let postFormData= {
+            projectid:response.projectId,
+            scopes:[this.renumerationForm.value]
+          }
           this.renumerationForm.value.id=null;
-          this.staffService.createBoqStaff(this.renumerationForm.value, '')
+          this.staffService.createBoqStaff(postFormData, '')
             .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
-                formData.totalamount=response.data.totalamount;
+                formData.totalamount=response.data.scopes[0].totalamount;
                 //this.renumerationForm.addControl('totalamount', this.formbuilder.control(response.data.totalamount));
                 //this.renumerationForm.controls["id"].setValue(response.data.id);
-                formData.id=response.data.id;
+                formData.id=response.data.scopes[0].id;
                 this.dialogRef.close({ value: formData,professionalData: this.professionaList, valid: true });
               } else {
                 this.dialogRef.close({ value: null, valid: false });
@@ -222,6 +244,19 @@ export class ManageSupportStaffComponent {
           this.dialogRef.close(err);
         }
       });
+  }
+  desc_submit(){
+    this.isBtnClicked=true;
+    this.staffService.UpdateBoqStaffDescription(this.headingForm.value, '')
+    .pipe(finalize(() => { this.isBtnClicked = false; })).subscribe({
+    next:(response: any) => {
+      if (response && response.success) 
+        this.dialogRef.close({ value: this.headingForm.value, valid: true });
+    },
+    error: (err: any) => {
+        this.dialogRef.close(err);
+      }
+    });
   }
 
 }

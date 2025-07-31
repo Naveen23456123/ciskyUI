@@ -1,4 +1,4 @@
-import { Component,ViewChild,inject} from '@angular/core';
+import { Component,Input,ViewChild,inject} from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -17,6 +17,7 @@ import { untilDestroyed } from '@app/core/until-destroyed';
 import { ManageVehicleDocComponent } from '../manage-vehicle-doc/manage-vehicle-doc.component';
 import { DetailVehicleComponent } from '../detail-vehicle/detail-vehicle.component';
 import { ManageUploadVehicleComponent } from '../manage-upload-vehicle/manage-upload-vehicle.component';
+import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 
 @Component({
   selector: 'app-manage-vehicle-list',
@@ -25,7 +26,8 @@ import { ManageUploadVehicleComponent } from '../manage-upload-vehicle/manage-up
   styleUrl: './manage-vehicle-list.component.scss'
 })
 export class ManageVehicleListComponent {
-vehicles:any[]= [];
+  @Input() showFilters=true;
+  vehicles:any[]= [];
   isLoading = true;
   displayedColumns: string[] = ['serial','projectshortname','name', 'vehiclenum', 'fixedkm', 'fixedbillamt', 'extraamtabovefixkm','log','docs', 'action'];
   dataSource!: MatTableDataSource<any[]>;
@@ -37,7 +39,7 @@ vehicles:any[]= [];
   private subscription: Subscription = new Subscription();
   isProject=false;
   readonly dialog = inject(MatDialog);
-  showFilters=true;
+
   private defaultdialogoptions:  MatDialogConfig = {
     disableClose: false,
     data: {},
@@ -46,7 +48,7 @@ vehicles:any[]= [];
   isSearchLoading=false;
  constructor(private vehicleService:VehicleService,private helperService:HelperService,
   private route: ActivatedRoute,private notifyBarService:NotifyBarService,
-  private sessionService:SessionService
+  private sessionService:SessionService,private csvService:GenerateCsvService
  ){
   this.dataSource = new MatTableDataSource(this.vehicles);
  }
@@ -187,9 +189,10 @@ vehicles:any[]= [];
     });
   }
 
-  export(){
-
-  }
+ export(){
+    if(this.vehicles && this.vehicles.length>0)
+      this.csvService.downloadFile(this.vehicles,this.vehicleService.getVehicleCSVTemplateColumnList(),'Vehicle');
+  } 
 
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);

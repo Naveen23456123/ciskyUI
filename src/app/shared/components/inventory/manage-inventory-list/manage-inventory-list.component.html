@@ -1,5 +1,5 @@
 <div class="container">
-  <mat-card>
+  <mat-card *ngIf="showFilters">
     <mat-card-content class="pb-0">
       <div class="load-wrap" *ngIf="isLoading">
         <app-loader [IsLoading]="isLoading"></app-loader>
@@ -9,7 +9,7 @@
             <app-search-bar-controls [isProjects]="true" [isAny]="true"
             (OnProjectChange)="projectChnage($event)"
             (OnAnyChange)="filterChange($event)"
-             searchByAnyPlaceholder="Project / Name" ></app-search-bar-controls>                         
+             searchByAnyPlaceholder="Name / Description" ></app-search-bar-controls>                         
       </div>       
       <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">
         <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
@@ -24,84 +24,102 @@
    <div class="wrapper">
     <mat-card>
         <mat-card-content>
-            <div class="load-wrap" *ngIf="isSearching">
-                <app-loader [IsLoading]="isSearching"></app-loader>
-            </div>
-            <div  *ngIf="!isSearching">                
-
-                <div class="mat-elevation-z8">  
-                    <app-no-data *ngIf="dataSource?.data?.length==0 && !isSearching" message="No Inventories found at this moment !!" ></app-no-data>
-                    <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">     
-                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+           <div *ngIf="!showFilters" class="row content-center">
+                <div class="col-md-9">
+                    <app-search-bar-controls [isAny]="true"                    
+                    (OnAnyChange)="filterChange($event)"
+                     searchByAnyPlaceholder="Name / Description" ></app-search-bar-controls>                         
+              </div>       
+              <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">
+                <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
+                <button class="title-btn" type="button" (click)="add_inv()"  mat-mini-fab color="primary">
+                    <mat-icon>add box</mat-icon> Inventory
+                </button> 
+                <app-download-csv (clickEvent)="export()" ></app-download-csv> 
+              </div>
+            </div>  
+            <ng-container *ngIf=" isLoading || isSearching; else checkNoData">
+            <app-empty-table-skltn></app-empty-table-skltn>
+            </ng-container>
+            <ng-template #checkNoData>
+              <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+                <app-no-data message="No Inventories found at this moment !!"></app-no-data>
+              </ng-container>
+            </ng-template>
+            <ng-template #showTable>  
+              <div class="mat-elevation-z8">  
+                  <app-no-data *ngIf="dataSource?.data?.length==0 && !isSearching" message="No Inventories found at this moment !!" ></app-no-data>
+                  <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">     
+                      <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+                    
+                        <ng-container matColumnDef="serial">
+                          <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                          <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                        </ng-container>
+                    
+                        <!-- contractName Column -->
+                        <ng-container matColumnDef="name">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+                          <td mat-cell *matCellDef="let row"> {{row.item}} </td>
+                        </ng-container>
+                    
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="projectshortname" >
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Name </th>
+                          <td mat-cell *matCellDef="let row"> {{row.project}} </td>
+                        </ng-container>
+                    
+                        <!-- con_personName Column -->
+                        <ng-container matColumnDef="description">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
+                          <td mat-cell *matCellDef="let row"> {{row.description}} </td>
+                        </ng-container>
+                        <!-- contractName Column -->
+                        <ng-container matColumnDef="employeename">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header> Employee </th>
+                          <td mat-cell *matCellDef="let row"> {{row.employee}} </td>
+                        </ng-container>                      
+                    
+                        <!-- con_personName Column -->
+                        <ng-container matColumnDef="quantity">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header> Quantity </th>
+                          <td mat-cell *matCellDef="let row"> {{row.quantity}} </td>
+                        </ng-container>
+                        <!-- contractName Column -->
+                        <ng-container matColumnDef="rateperitem">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header> Cost Per Item </th>
+                          <td mat-cell *matCellDef="let row"> {{row.costperitem | formatCurrency}} </td>
+                        </ng-container>
+                    
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="purchasedate">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header> Purchase Date </th>
+                          <td mat-cell *matCellDef="let row"> {{row.purchasedate  | formatDate}} </td>
+                        </ng-container>                      
+                        <!-- con_personName Column -->
+                        <ng-container matColumnDef="action">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                          <td  class="action-col" mat-cell *matCellDef="let row"> 
+                            <div class="button-row">                               
+                              <app-edit-btn (clickEvent)="edit_inv(row)" ></app-edit-btn>                              
+                              <app-delete-btn (clickEvent)="delete_inv(row)"></app-delete-btn>
+                            </div>
+                          </td>
+                        </ng-container>
                       
-                          <ng-container matColumnDef="serial">
-                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
-                          </ng-container>
-                      
-                          <!-- contractName Column -->
-                          <ng-container matColumnDef="name">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
-                            <td mat-cell *matCellDef="let row"> {{row.item}} </td>
-                          </ng-container>
-                      
-                          <!-- Name Column -->
-                          <ng-container matColumnDef="projectshortname" >
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Name </th>
-                            <td mat-cell *matCellDef="let row"> {{row.project}} </td>
-                          </ng-container>
-                      
-                          <!-- con_personName Column -->
-                          <ng-container matColumnDef="description">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
-                            <td mat-cell *matCellDef="let row"> {{row.description}} </td>
-                          </ng-container>
-                          <!-- contractName Column -->
-                          <ng-container matColumnDef="employeename">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Employee </th>
-                            <td mat-cell *matCellDef="let row"> {{row.employee}} </td>
-                          </ng-container>                      
-                      
-                          <!-- con_personName Column -->
-                          <ng-container matColumnDef="quantity">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Quantity </th>
-                            <td mat-cell *matCellDef="let row"> {{row.quantity}} </td>
-                          </ng-container>
-                          <!-- contractName Column -->
-                          <ng-container matColumnDef="rateperitem">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Cost Per Item </th>
-                            <td mat-cell *matCellDef="let row"> {{row.costperitem | formatCurrency}} </td>
-                          </ng-container>
-                      
-                          <!-- Name Column -->
-                          <ng-container matColumnDef="purchasedate">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Purchase Date </th>
-                            <td mat-cell *matCellDef="let row"> {{row.purchasedate  | formatDate}} </td>
-                          </ng-container>                      
-                          <!-- con_personName Column -->
-                          <ng-container matColumnDef="action">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                            <td  class="action-col" mat-cell *matCellDef="let row"> 
-                              <div class="button-row">                               
-                                <app-edit-btn (clickEvent)="edit_inv(row)" ></app-edit-btn>                              
-                                <app-delete-btn (clickEvent)="delete_inv(row)"></app-delete-btn>
-                              </div>
-                           </td>
-                          </ng-container>
-                        
-                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
-                          <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
-                              No Inventory Details found at this moment.</td>
-                          </tr>
-                        </table>
-                        <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
-                        </mat-paginator>
-                      </div>                    
-                      
-                </div>
-            </div>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+                        <tr class="mat-row" *matNoDataRow>
+                          <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                            No Inventory Details found at this moment.</td>
+                        </tr>
+                      </table>
+                      <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+                      </mat-paginator>
+                    </div>                    
+                    
+              </div>
+            </ng-template>
         </mat-card-content>
     </mat-card>
   </div>

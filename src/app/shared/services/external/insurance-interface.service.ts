@@ -25,26 +25,26 @@ export class InsuranceInterfaceService {
   return columns;
   }
 
-   getInsuranceListComponent(){
-          return {
-            component: InsuranceListComponent,
-            inputs: {
-              headline: 'All Insurance',             
-            }
-        } as {component: Type<any>, inputs: Record<string, unknown>}
-    }
+  getInsuranceListComponent(){
+        return {
+          component: InsuranceListComponent,
+          inputs: {
+            headline: 'All Insurance',             
+          }
+      } as {component: Type<any>, inputs: Record<string, unknown>}
+  }
 
-    getInsuranceListByProjectIdByOrgId(param: any, guid: string) {
-      const standardAttribute: ServiceAttributeModel = {
-        url: 'Insurance',
-        params: param,
-        headers: true,
-        guid: '',
-        request: {},
-        action: Operation.GET
-      }
-      return this.coreApi.standardService(standardAttribute);
+  getInsuranceListByProjectIdByOrgId(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Insurance/Search',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
     }
+    return this.coreApi.standardService(standardAttribute);
+  }
 
   createInsurance(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {

@@ -16,7 +16,9 @@ export class VehicleService {
    getVehileDetailsByOrgId(param: any, guid: string) {
      return this.vehicleService.getVehileDetailsByOrgId(param,guid);
    }
-
+   getVehicleCSVTemplateColumnList() {
+     return this.vehicleService.getCSVTemplateColumnList();
+   }
    getVehicleLogDetailsByOrgId(request: any, guid: string){
     return this.vehicleLogService.getVehicleLogDetails(request,guid);
    }

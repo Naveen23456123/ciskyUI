@@ -16,7 +16,7 @@ export class FormatCurrencyPipe implements PipeTransform {
       style: 'currency',
       currency: 'INR',
       minimumFractionDigits: 2,
-    }).format(Number(val));
+    }).format(Number(val===''?0:val));
   }
 }
 

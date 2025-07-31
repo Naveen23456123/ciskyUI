@@ -22,16 +22,18 @@ export class ManageBoqAttendenceComponent {
   isLoading = true;
   isEdit: boolean = false;
   pageGuid: any;
+  message:any='';
   title: string='Add';
   boqForm: FormGroup = new FormGroup({});
   deleteboq=false;
   employeeList:any[] = [];
   companyList:any[] = [];
   empInit=true;
+  projectName='';
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageBoqAttendenceComponent>, private formbuilder: FormBuilder,
     private sessionservice: SessionService,  private router: Router,private cdr:ChangeDetectorRef,
-    private notifibarservice: NotifyBarService, private attendenceService:AttendenceInterfaceService,
+     private attendenceService:AttendenceInterfaceService,
     private subCompanyService:SubCompanyInterfaceService, private employeeService:EmployeeInterfaceService){
       this.data = data || {};
   }
@@ -66,6 +68,7 @@ export class ManageBoqAttendenceComponent {
     this.getTitle(this.data.type);
     this.boqForm = this.formbuilder.group({
       companyid:[],
+      projectid:[],
       employeeid:[''],
       monthandyear:[],
       totaldays:[],
@@ -79,15 +82,15 @@ export class ManageBoqAttendenceComponent {
     })
     if (this.isEdit || this.deleteboq) {
       this.setBoqForm(this.data.element);
-      this.companyChange();
+      this.projectChange();
     }   
     this.isLoading=false;
   }
 
   setBoqForm(data: any) { 
-    this.boqForm.setValue({
-      companyid:data.companyid,
+    this.boqForm.patchValue({
       employeeid:data.employeeid,
+      projectid:data.projectid,
       monthandyear:data.monthandyear,
       totaldays:data.totaldays,
       manmonths:data.manmonths,
@@ -97,23 +100,29 @@ export class ManageBoqAttendenceComponent {
   ngAfterViewInit(){
     this.cdr.detectChanges();
   }
-  companyChange(){
+  projectChange(data:any=null){
     this.empInit=false;
-    let compId= this.boqForm.controls['companyid'].value;
-    if(compId){
-       this.employeeService.getSiteEmployeeParital({companyId:compId},'')
-       .subscribe((response:any)=>{
-         if(response && response.success)
-          this.employeeList= response.data.map((item:any)=>({
-            id:item.id,
-            name:item.code+ ' - '+item.name,
-            text:item.name
-          }));
-          this.empInit=true;
-       })
+    if(data && data.value){
+      this.projectName=data.value.projectshortname;
+      this.boqForm.patchValue({
+        projectid:data.value.id,
+        companyid:data.value.companyid
+      });
+    }
+    let projectId = this.boqForm.controls['projectid'].value;
+    if(projectId){
+      this.employeeService.getSiteEmployeeParital({projectid: projectId},'')
+      .pipe(finalize(()=> this.isLoading=false)).subscribe((response:any)=>{
+       if(response && response.success)
+        this.employeeList= response.data.map((item:any)=>({
+          id:item.id,
+          name:item.code+ ' - '+item.name,
+          text:item.name
+        }));
+        this.empInit=true;
+      });
     }
   }
-
   empSelect(event:any){
     if(event.value){
       this.boqForm.patchValue({employeeid:event.value.id});  
@@ -121,14 +130,15 @@ export class ManageBoqAttendenceComponent {
   }
 
   dateChange(data:any){
-    this.boqForm.patchValue({monthandyear:data.format()});   
+    this.boqForm.patchValue({monthandyear:data});   
   }
   submit(){   
+    this.message=null;
     let formValue = this.boqForm.value;
-    formValue.company= this.companyList.find(x=>x.id== this.boqForm.get('companyid')?.value).name;
+    formValue.projectname= this.projectName;
     formValue.employee= this.employeeList.find(x=>x.id== this.boqForm.get('employeeid')?.value).text;
     if (this.isEdit) {
-      formValue.projectname= this.data.element.projectname;
+      formValue.projectname= this.projectName;
       this.attendenceService.updateBoqAttendence(this.boqForm.value, '')
         .pipe(finalize(() => { this.isLoading = false; })).subscribe({
           next: (response:any) => {
@@ -147,10 +157,10 @@ export class ManageBoqAttendenceComponent {
           next:(response: any) => {
           if (response && response.success) {
             this.boqForm.controls["id"].setValue(response.data.id);
-            formValue.projectname= response.data.projectname;
+            formValue.projectname= this.projectName;
             this.dialogRef.close({ value: formValue, valid: true });
           } else {
-            this.dialogRef.close({ value: null, valid: false });
+            this.message= response.message;
           }
         },
          error: (err: any) => {

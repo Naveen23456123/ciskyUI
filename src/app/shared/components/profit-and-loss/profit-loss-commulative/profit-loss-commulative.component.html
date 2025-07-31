@@ -1,0 +1,125 @@
+<div  class="dialog ">
+    <mat-card>
+        
+        <mat-dialog-content>
+            <mat-card-content class="pt-0">
+                <div class="load-wrap" *ngIf="isLoading">
+                    <app-loader [IsLoading]="isLoading"></app-loader>
+                </div>
+                <div  *ngIf="!isLoading && !emptyData">
+                    <div class="no-print content-center control-div container">
+                        <div class="button-row ">
+                        <app-download-pdf (clickEvent)="download()" ></app-download-pdf>                  
+                        </div>                 
+                    </div>
+                    <div #pdfContent id="pdfContent" >
+                        <div class="report-head">
+                            <h5 class="sub-heading content-center">Profit & Loss</h5>
+                            <hr>
+                            <div class="control-div pd-1">
+                                <span class="report-heading">Project : {{dataObj.project}} </span>
+                                <span class="report-heading float-end" > Date : {{ dataObj.today | formatDate}}</span>
+                            </div>
+                            
+                            <div class="control-div">
+                                <span class="report-heading"> Income : {{dataObj.totalincome | formatCurrency}}  </span>
+                                <span class="report-heading float-end" > </span>   
+                            </div>
+                            <div class="control-div">
+                            <span class="report-heading">Expense : {{dataObj.totalexpense | formatCurrency}}  </span>
+                            <span class="report-heading float-end" > </span>    
+                            </div>
+                            <div class="control-div">
+                            <span  class="report-heading">
+                                Net Gain/Loss :
+                                <span [ngClass]="{
+                                ' positive': (dataObj.totalincome - dataObj.totalexpense) > 0,
+                                ' negative': (dataObj.totalincome - dataObj.totalexpense) < 0
+                                }">{{(dataObj.totalincome-dataObj.totalexpense) | formatCurrency}} ({{this.dataObj.percentage}})</span>  
+                            </span>
+                            <span class="report-heading float-end" > </span>    
+                        </div>
+                        </div>
+                        <div id="print-section" class="dialog-print mat-elevation-z8"> 
+                        
+                            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" multiTemplateDataRows>
+
+                                <!-- Group Header Row -->
+                                <ng-container matColumnDef="groupHeader">
+                                <td mat-cell *matCellDef="let row; let i = index" [attr.colspan]="displayedColumns.length">
+                                    <div class="item-center">
+                                        <strong>{{ row.label }}</strong>
+                                    
+                                    </div>
+                                
+                                
+                                </td>
+                                </ng-container>
+                                
+                                <ng-container matColumnDef="totalHeader">
+                                    <td mat-cell class="pd-4" *matCellDef="let row" [attr.colspan]="1">
+                                        <strong>{{ row.name }}</strong>
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="totalcurrent">                                
+                                    <td mat-cell *matCellDef="let row" >
+                                        <strong> {{(row.isincome ? ' (+) ':' (-) ')+(row.actualamount |formatCurrency) }}</strong>
+                                    </td>  
+                                </ng-container>
+                            
+                            
+                                <ng-container matColumnDef="name">
+                                <th mat-header-cell *matHeaderCellDef> Particulars </th>
+                                <td mat-cell class="pd-4" *matCellDef="let row"> 
+                                    <ng-container *ngIf="!row.isNew && !row.isEditing">
+                                        {{row.srno+'. '+ row.name }}
+                                    </ng-container>
+                                    
+                                    </td>
+                                </ng-container>                        
+                            
+                                                        
+                                <ng-container matColumnDef="actualamount">
+                                <th mat-header-cell *matHeaderCellDef> Income(s) / Expense(s) </th>
+                                <td mat-cell *matCellDef="let row"> 
+                                    <ng-container *ngIf="!row.isNew && !row.isEditing">
+                                        <span > {{ row.actualamount }}  </span>
+                                    </ng-container>
+                                    
+                                    
+                                </td>
+                                </ng-container> 
+                                                        
+
+                                <ng-container matColumnDef="totalfooter">
+                                    <td mat-cell class="pd-4" *matCellDef="let row" [attr.colspan]="1">
+                                        <strong>{{ row.name }}</strong>
+                                    </td> 
+                                
+                                    </ng-container>
+                                    <ng-container matColumnDef="totalfootercurrent">                                
+                                        <td mat-cell *matCellDef="let row" >
+                                            <strong> {{(row.actualamount |formatCurrency) }}</strong>
+                                        </td>  
+                                    </ng-container>
+                                
+                                <!-- Header -->
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            
+                                <!-- Group Row -->
+                                <tr mat-row *matRowDef="let row; columns: ['groupHeader']; when: isGroup" class="group-header-row"></tr>
+                                <tr mat-row *matRowDef="let row; columns: ['totalHeader','totalcurrent']; when: isTotalInfo" class="group-total-row"></tr>
+                                <tr mat-row *matRowDef="let row; columns: ['totalfooter','totalfootercurrent']; when: isFooterInfo" class="group-total-row"></tr>
+                                    <!-- Data Row -->
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns ; when: isData"></tr>
+                            </table>
+                        </div>
+                     </div>
+               </div>
+               <app-no-data *ngIf="emptyData && !isLoading" message="No Details found at this moment !!" ></app-no-data>
+            </mat-card-content>
+        </mat-dialog-content>
+    </mat-card>
+   
+</div>
+  

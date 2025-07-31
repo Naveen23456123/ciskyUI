@@ -11,6 +11,7 @@ import { BoqTransportationInterfaceService } from '@app/shared/services/external
 import { CommonInterfaceService } from '@app/shared/services/external/common-interface.service';
 import { DesignationInterfaceService } from '@app/shared/services/external/designation-interface.service';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
+import { InvContingencyInterfaceService } from '@app/shared/services/external/invoice/inv-contingency-interface.service';
 import { InvDutyTravelInterfaceService } from '@app/shared/services/external/invoice/inv-duty-travel-interface.service';
 import { InvOfcFurnitureInterfaceService } from '@app/shared/services/external/invoice/inv-ofc-furniture-interface.service';
 import { InvOfcRentInterfaceService } from '@app/shared/services/external/invoice/inv-ofc-rent-interface.service';
@@ -33,7 +34,7 @@ export class InvoiceService {
     private transportService:InvTransportInterfaceService, private dutyTravelService:InvDutyTravelInterfaceService,
     private officeRentService: InvOfcRentInterfaceService, private officeFurntiureService:InvOfcFurnitureInterfaceService,
     private officeSupplyService:InvOfcSupplyInterfaceService, private reportDocService : InvReportDocInterfaceService ,
-    private roadSurveyService:InvRoadSurveyInterfaceService ) { }
+    private roadSurveyService:InvRoadSurveyInterfaceService, private contigencyService:InvContingencyInterfaceService) { }
 
   getBoqStaffListByProjectId(param: any, guid: string) {
     return this.staffService.getBoqStaffListByProjectId(param,guid);
@@ -93,5 +94,8 @@ export class InvoiceService {
   }
   getProjectScopeDurationById(param: any, guid: string) {
     return this.projectService.getProjectScopeDurationById(param,guid);
+  }  
+  getConsultantContingencyListByProjectId(param: any, guid: string) {
+    return this.contigencyService.getConsultantContingencyListByProjectId(param,guid);
   }
 }

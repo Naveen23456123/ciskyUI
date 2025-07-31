@@ -1,0 +1,58 @@
+<mat-card>
+    <mat-card-title>
+        <h6>V-Contingencies
+            <button  class="title-btn float-end no-print"  routerLink="cont-create"   type="button"  mat-mini-fab color="primary">
+                <mat-icon>add box</mat-icon> Contingencies
+            </button>
+          </h6>
+    </mat-card-title>
+    <mat-card-content>
+        <table mat-table [dataSource]="dataSource" >
+          
+            <ng-container matColumnDef="serial">
+              <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+              <td mat-cell *matCellDef="let row ;let i = index"> {{i+1}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container> 
+              <ng-container matColumnDef="desc">
+                <th mat-header-cell *matHeaderCellDef > Description </th>
+                <td mat-cell *matCellDef="let row"> {{row.description}} </td>
+                <td mat-footer-cell *matFooterCellDef>Total </td>
+              </ng-container>       
+              <ng-container matColumnDef="previous">
+                <th mat-header-cell *matHeaderCellDef > Up To Previous </th>
+                <td mat-cell *matCellDef="let row"> {{row.previousbillamount}} </td>
+                <td mat-footer-cell *matFooterCellDef> {{amount?.previous | formatCurrency}} </td>
+              </ng-container>                     
+           
+              <ng-container matColumnDef="current">
+                <th mat-header-cell *matHeaderCellDef > This (Rs.) </th>
+                <td mat-cell *matCellDef="let row"> {{row.currentbillamount}} </td>
+                <td mat-footer-cell *matFooterCellDef>  {{amount?.current | formatCurrency}} </td>
+              </ng-container>
+              <ng-container matColumnDef="commu">
+                <th mat-header-cell *matHeaderCellDef > Commulative Bill (Rs.) </th>
+                <td mat-cell *matCellDef="let row"> {{row.currentbillamount+row.previousbillamount}} </td>
+                <td mat-footer-cell *matFooterCellDef> {{amount?.commulative | formatCurrency}}  </td>
+              </ng-container> 
+              <ng-container matColumnDef="remaining">
+                <th mat-header-cell *matHeaderCellDef > Remaining </th>
+                <td mat-cell *matCellDef="let row"> {{row.totalamount-(row.currentbillamount+row.previousbillamount)}} </td>
+                <td mat-footer-cell *matFooterCellDef>  {{amount?.remaining | formatCurrency}}  </td>
+              </ng-container>
+              <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef > Action </th>
+                <td mat-cell *matCellDef="let row"> 
+                    <div class="button-row">
+                        <app-edit-btn [state]="row" [routerLink]="['cont-edit',row.id]" ></app-edit-btn>                              
+                        <app-delete-btn [state]="row" [routerLink]="['cont-delete',row.id]"></app-delete-btn>
+                        </div>
+                </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+              </ng-container>
+            <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>
+            <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr> 
+          <tr mat-footer-row *matFooterRowDef="dataColumn"></tr>                  
+          </table>
+    </mat-card-content>
+</mat-card>

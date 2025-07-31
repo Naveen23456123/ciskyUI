@@ -44,7 +44,16 @@ export class EmployeeInterfaceService {
     ];
   return columns;
   }
-
+  getCSVTemplateColumnList() {
+    let columns = [
+      { label: 'Employee_Code', value: 'code' },
+      { label: 'Employee_Name', value: 'name' },
+      { label: 'Designation', value: 'designation' },
+      { label: 'Mobile', value: 'phonenumber' },
+      { label: 'Email', value: 'emailid' }
+    ];
+  return columns;
+  }
   getEmployeeListComponent(){
             return {
               component: ManageEmployeeListComponent,
@@ -76,7 +85,20 @@ export class EmployeeInterfaceService {
       action: Operation.GET
     }
     return this.coreApi.standardService(standardAttribute);
-  } 
+  }
+
+  geEmployeeTypeCount(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'SiteEmployee/TypeSummary',
+      params: param,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+
   getSiteEmployeeUsingItem(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'SiteEmployee/ItemEmployees/'+param.itemid,

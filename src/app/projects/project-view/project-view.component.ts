@@ -49,7 +49,6 @@ export class ProjectViewComponent {
 
   ngOnInit()
   {    
-    // this.contactListcomponentData= this.projectService.getContactListComponent().component;
     this.sessionService.workOwnerSubject$.subscribe((response:any)=>{
       if(response) {
        this.workOwnerList= response;
@@ -100,6 +99,7 @@ export class ProjectViewComponent {
         projectId:this.workingProject.id,
         isConsultant: this.isConsultant,
         relatedToId: selectedOption.id,
+        companyId:this.workingProject.companyid,
         consultantId:'',
         contractorId:this.projectForm.controls['contractorId'].value,
         projectshortname:this.workingProject.projectshortname

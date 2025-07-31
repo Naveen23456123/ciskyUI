@@ -29,6 +29,7 @@ export class OfficeRentListComponent {
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  isSearchLoading=false;
 
   readonly dialog = inject(MatDialog);
   
@@ -61,15 +62,15 @@ export class OfficeRentListComponent {
       this.stateDataService.stateDataSubject.next({});
     }
   });
-    this.officeService.getOfficeRentsByOrdIdProjectId({ organizationId: this.activeOrgId }, '')
-           .pipe(finalize(() => this.isLoading = false))
-           .subscribe((response: any) => {
-             if (response && response.success) {
-              this.rents = response.data;
-              this.dataSource = new MatTableDataSource(this.rents);
-              this.pageSize= this.helperService.getPageSize();
-             }
-      });
+  this.officeService.searchOfficeRent({}, '')
+  .pipe(finalize(() =>{ this.isLoading = false; this.isSearchLoading=false;}))
+  .subscribe((response: any) => {
+    if (response && response.success) {
+      this.rents = response.data;
+      this.dataSource = new MatTableDataSource(this.rents);
+      this.pageSize= this.helperService.getPageSize();  
+    }
+  }); 
   }
 
   ngAfterViewInit() {
@@ -140,6 +141,49 @@ export class OfficeRentListComponent {
       else {
       }
     });
+  }
+  searchObj:any={
+    projectid:'',
+    companyid:'',
+    startdate:'',
+    enddate:''
+  };
+  projectChange(data:any){ 
+    this.searchObj.projectid= data.value ?? '';
+    this.filterRent();
+  } 
+  compChange(data:any){
+    this.searchObj.companyid= data.value ?? '';
+    this.searchObj.projectid= data.projectid ?? '';
+    this.filterRent();
+  } 
+  anyChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
+    }
+  } 
+  dateRangeChange(data:any){
+    if(data){
+      this.searchObj.startdate= data.start ?? '';
+      this.searchObj.enddate= data.end ?? '';
+    }
+    this.filterRent();
+  }
+
+  filterRent(){
+    this.isSearchLoading=true;
+    this.officeService.searchOfficeRent(this.searchObj, '')
+    .pipe(finalize(() =>{ this.isLoading = false; this.isSearchLoading=false;}))
+    .subscribe((response: any) => {
+      if (response && response.success) {
+        this.rents = response.data;
+        this.dataSource = new MatTableDataSource(this.rents);
+        this.pageSize= this.helperService.getPageSize();  
+      }
+    }); 
   }
 }
 

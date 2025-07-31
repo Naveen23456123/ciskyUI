@@ -93,13 +93,13 @@ export class UploadFileComponent {
       apiCalls.subCompanyAPI= this.subcompanyService.getSubCompanyListByOrgId({},'');
       this.allColumnsData = this.designationService.getTemplateColumnList();
     } else if (this.title.toLowerCase() === TemplateType.COS.toLowerCase()) {
-      this.allColumnsData = this.cosService.getTemplateColumnList();
+      //this.allColumnsData = this.cosService.getTemplateColumnList();
     } else if (this.title.toLowerCase() === TemplateType.MILESTONE.toLowerCase()) {
-      this.allColumnsData = this.milestoneService.getTemplateColumnList();
+      //this.allColumnsData = this.milestoneService.getTemplateColumnList();
     } else if (this.title.toLowerCase() === TemplateType.SITEPROGRESS.toLowerCase()) {
-       this.allColumnsData = this.siteProgressService.getTemplateColumnList();
+       //this.allColumnsData = this.siteProgressService.getTemplateColumnList();
     } else if (this.title.toLowerCase() === TemplateType.EOT.toLowerCase()) {
-      this.allColumnsData = this.eotService.getTemplateColumnList();
+      //this.allColumnsData = this.eotService.getTemplateColumnList();
     } else if (this.title.toLowerCase() === TemplateType.CONTRACTORBILLING.toLowerCase()) {
       this.allColumnsData = this.contracorService.getTemplateColumnList();
     } else if (this.title.toLowerCase() === TemplateType.CONTRACTORLETTER.toLowerCase()) {

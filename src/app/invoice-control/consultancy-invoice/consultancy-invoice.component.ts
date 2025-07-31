@@ -15,7 +15,7 @@ import { finalize, take } from 'rxjs';
   styleUrl: './consultancy-invoice.component.scss'
 })
 export class ConsultancyInvoiceComponent {
-  isLoading=false;
+  isLoading=true;
   displayedColumns: string[] = ['serial','value','contract_amount','previous_amount','current_amount','commulated','remaining' ];
   contdataColumn: string[] = ['serial','month','actualmonth','curr_amount','action' ];
 
@@ -31,6 +31,8 @@ export class ConsultancyInvoiceComponent {
   billing:number=5;
   fixbilling= this.billing;
   gst=18;
+  today= new Date();
+  invoiceData:any;
   subTotalKey='Sub Total';
   billingKey=`Billing rates shall increase by @ ${this.fixbilling}% every 12 months to cover all item of
   contract as per Special conditions of Contract clause`;
@@ -56,7 +58,8 @@ export class ConsultancyInvoiceComponent {
   ngOnInit()  {
     
     this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((projectEntity:any)=>{
-      if(projectEntity && projectEntity.projectId){
+      if(projectEntity && projectEntity.projectId){        
+        this.invoiceData= projectEntity.invoiceData;
         this.invoiceService.getProjectScopeDurationById({id:projectEntity.projectId},'')
         .pipe(finalize(() => this.isLoading = false)).subscribe((response:any)=>{
            if(response && response.success){
@@ -104,6 +107,9 @@ export class ConsultancyInvoiceComponent {
   }
   tp_amt(event:any){
     this.bindAmount(BOQInvoice.TRANSPORTATION,event); 
+  }
+  cont_amt(event:any){
+    this.bindAmount(BOQInvoice.CONTINGENCIES,event); 
   }
   bindAmount(valueKey:any,event:any){
     const element:any = this.dataSource.data.find((x:any) => x.value==valueKey);    

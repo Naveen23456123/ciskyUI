@@ -7,6 +7,7 @@ import { ProjectViewComponent } from '../project-view/project-view.component';
 import { ContractorAddComponent } from '@app/contractor/contractor-add/contractor-add.component';
 import { ContractorDetailsComponent } from '@app/contractor/contractor-details/contractor-details.component';
 import { Title } from '@angular/platform-browser';
+import { UploadProjectComponent } from '../upload-project/upload-project.component';
 
 
 const routes: Routes = [
@@ -21,7 +22,12 @@ const routes: Routes = [
         loadChildren:()=>import('app/projects/create-project/create-project.module').then(x=>x. CreateProjectModule),
         data:{pageGuid:'',type:'add'}
       },      
-     
+      {
+        path: 'upload',
+        component: UploadProjectComponent,
+        loadChildren:()=>import('app/projects/upload-project/upload-project.module').then(x=>x.UploadProjectModule),
+        data:{pageGuid:'',type:'add'}
+      },
     ]},
     {
       path: 'project-view',

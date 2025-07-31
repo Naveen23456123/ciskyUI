@@ -7,7 +7,7 @@
     </div> -->
     <div style="padding: 0;" class="col-md-12 horizontal-center">
       <mat-form-field>
-        <!-- <mat-label>Month and Year</mat-label> -->
+        <mat-label>Month - Year</mat-label>
         <label class="date-vw">{{date.value?.format('MMM - YYYY')}}</label>
         <input matInput [hidden]="true"  [matDatepicker]="dp" [max]="maxDate" [formControl]="date">
         <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>

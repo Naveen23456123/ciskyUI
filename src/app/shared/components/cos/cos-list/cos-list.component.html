@@ -7,100 +7,105 @@
               </div>
         </mat-card-title>
         <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
-            </div>
-            <div class="wrapper" *ngIf="!isLoading">                
-
-                <div class="mat-elevation-z8">                   
-                      <div class="table-title-row">
-                        <mat-form-field>
-                          <mat-label>Filter</mat-label>
-                          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
-                        </mat-form-field>
-                        <div class="button-row">              
-                          <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
-
-                          <button class="title-btn" type="button" (click)="add_cos()"  mat-mini-fab color="primary">
-                              <mat-icon>add box</mat-icon> COS
-                          </button> 
-                          <app-download-csv (clickEvent)="export()" ></app-download-csv> 
-                      </div>
-                    </div> 
-                    <app-no-data *ngIf="dataSource?.data?.length==0" message="No COS found at this moment !!" ></app-no-data>
-                    <div *ngIf="dataSource?.data?.length!=0"  class="mat-elevation-z8">     
-                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
-                      
-                          <ng-container matColumnDef="serial">
-                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
-                          </ng-container>
-                      
-                          <!-- contractName Column -->
-                          <ng-container matColumnDef="coscode">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> COS Code </th>
-                            <td mat-cell *matCellDef="let row"> {{row.code}} </td>
-                          </ng-container>
-                      
-                          <!-- Name Column -->
-                          <ng-container matColumnDef="initiatedate">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Initiate Date </th>
-                            <td mat-cell *matCellDef="let row"> {{row.initiatedate | formatDate }} </td>
-                          </ng-container>                      
-                          <ng-container matColumnDef="amount">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
-                            <td mat-cell *matCellDef="let row">Amount : {{row.amount | formatCurrency}} <br/> Approved : {{row.approvedamount | formatCurrency}} </td>
-                          </ng-container>
-                          <ng-container matColumnDef="approveddate">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Approved Date </th>
-                            <td mat-cell *matCellDef="let row">{{row.closedate | formatDate }} </td>
-                          </ng-container>
-                          
-                          <ng-container matColumnDef="cosstatus">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Status</th>
-                            <td mat-cell *matCellDef="let row">{{row.status ??'-'}} </td>
-                          </ng-container>
-                          <ng-container matColumnDef="letters">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Letters</th>
-                            <td mat-cell *matCellDef="let row">
-                              <table style="width: auto;">
-                                <tr *ngIf="row.initiateletterid">
-                                  <td> <span>Initiate </span></td>
-                                  <td> <app-view-btn (clickEvent)="viewletter(row.initiateletterid)" ></app-view-btn></td>
-                                </tr>
-                                <tr *ngIf="row.closeletterid">
-                                  <td> <span>Close </span></td>
-                                  <td><app-view-btn (clickEvent)="viewletter(row.closeletterid)"></app-view-btn></td>
-                                </tr>
-                              </table>                             
-                            </td>
-                          </ng-container>
-                          <ng-container matColumnDef="action">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Status</th>
-                            <td mat-cell *matCellDef="let row"> 
-                              <div class="button-row">                              
-                               <app-edit-btn (clickEvent)="edit_cos(row)" ></app-edit-btn>                              
-                               <app-delete-btn (clickEvent)="delete_cos(row)"></app-delete-btn>
-                              </div>
-                            </td>
-                          </ng-container> 
-                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                          
-                          <!-- Row shown when there is no matching data. -->
-                          <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
-                              No COS Details found at this moment.</td>
+          <div class="row  content-center">
+              <div class="col-md-4 ">
+                  <mat-form-field >
+                      <mat-icon matPrefix>search</mat-icon>
+                      <mat-label>COS Code / Status </mat-label>
+                      <input matInput (keyup)="applyFilter($event)"  #input>
+                  </mat-form-field>  
+              </div>       
+              <div class="col-md-8 button-row main-btn-row d-flex justify-content-end">
+                <button class="title-btn" type="button" (click)="add_cos()"  mat-mini-fab color="primary">
+                  <mat-icon>add box</mat-icon> COS
+                </button> 
+                <app-download-csv (clickEvent)="export()" ></app-download-csv>
+              </div>
+          </div> 
+            <ng-container *ngIf=" isLoading; else checkNoData">
+            <app-empty-table-skltn></app-empty-table-skltn>
+          </ng-container>
+          <ng-template #checkNoData>
+            <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+              <app-no-data message="No Cos found at this moment !!"></app-no-data>
+            </ng-container>
+          </ng-template>
+          <ng-template #showTable>
+            <div class="" >  
+              <div   class="mat-elevation-z8">     
+                  <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+                
+                    <ng-container matColumnDef="serial">
+                      <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                      <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                    </ng-container>
+                
+                    <!-- contractName Column -->
+                    <ng-container matColumnDef="coscode">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> COS Code </th>
+                      <td mat-cell *matCellDef="let row"> {{row.code}} </td>
+                    </ng-container>
+                
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="initiatedate">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Initiate Date </th>
+                      <td mat-cell *matCellDef="let row"> {{row.initiatedate | formatDate }} </td>
+                    </ng-container>                      
+                    <ng-container matColumnDef="amount">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount </th>
+                      <td mat-cell *matCellDef="let row">Amount : {{row.amount | formatCurrency}} <br/> Approved : {{row.approvedamount | formatCurrency}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="approveddate">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Approved Date </th>
+                      <td mat-cell *matCellDef="let row">{{row.closedate | formatDate }} </td>
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="cosstatus">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Status</th>
+                      <td mat-cell *matCellDef="let row">
+                        <app-status-badge [value]="row.status" [label]="row.status"></app-status-badge>  
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="letters">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Letters</th>
+                      <td mat-cell *matCellDef="let row">
+                        <table style="width: auto;">
+                          <tr *ngIf="row.initiateletterid">
+                            <td> <span>Initiate </span></td>
+                            <td> <app-view-btn (clickEvent)="viewletter(row.initiateletterid)" ></app-view-btn></td>
                           </tr>
-                        </table>
-                        <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
-                        </mat-paginator>
-                       
-                      </div>
-                      
-                      
+                          <tr *ngIf="row.closeletterid">
+                            <td> <span>Close </span></td>
+                            <td><app-view-btn (clickEvent)="viewletter(row.closeletterid)"></app-view-btn></td>
+                          </tr>
+                        </table>                             
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="action">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Status</th>
+                      <td mat-cell *matCellDef="let row"> 
+                        <div class="button-row">                              
+                          <app-edit-btn (clickEvent)="edit_cos(row)" ></app-edit-btn>                              
+                          <app-delete-btn (clickEvent)="delete_cos(row)"></app-delete-btn>
+                        </div>
+                      </td>
+                    </ng-container> 
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    
+                    <!-- Row shown when there is no matching data. -->
+                    <tr class="mat-row" *matNoDataRow>
+                      <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                        No COS Details found at this moment.</td>
+                    </tr>
+                  </table>
+                  <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
+                  </mat-paginator>
+                  
                 </div>
+                   
             </div>
+            </ng-template>
         </mat-card-content>
     </mat-card>
 </div>

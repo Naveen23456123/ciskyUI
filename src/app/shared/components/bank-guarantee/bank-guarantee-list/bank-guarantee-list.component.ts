@@ -98,7 +98,7 @@ export class BankGuaranteeListComponent {
           pageGuid: this.route.snapshot.data['pageGuid'],
           type: DialogOperation.ADD,    
         };
-        config.minWidth='55vw';
+        config.minWidth='65vw';
         const dialogRef = this.dialog.open(ManageBankGuaranteeComponent, config);
         dialogRef.afterClosed().subscribe((data:any) => {
           if (data && data.valid) {  
@@ -116,7 +116,7 @@ export class BankGuaranteeListComponent {
            type: DialogOperation.EDIT,
            element: row
          }; 
-         this.defaultdialogoptions.minWidth='55vw';    
+         this.defaultdialogoptions.minWidth='65vw';    
          const dialogRef = this.dialog.open(ManageBankGuaranteeComponent, this.defaultdialogoptions);
          dialogRef.afterClosed().subscribe((data) => {       
            if (data.valid) {

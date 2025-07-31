@@ -26,10 +26,17 @@
                                            
                                         </mat-form-field>
                                     </div>  
-                                    <div class="col-md-4">                       
+                                    <div class="col-md-2">                       
                                         <mat-form-field>
                                             <mat-label>Actual Month</mat-label>
                                             <input matInput type="number" formControlName="currentbillmonths">
+                                            <mat-error>Please provide month</mat-error>
+                                        </mat-form-field>
+                                    </div>  
+                                    <div class="col-md-2">                       
+                                        <mat-form-field>
+                                            <mat-label>Amount</mat-label>
+                                            <input readonly matInput type="number" formControlName="currentbillamount">
                                             <mat-error>Please provide month</mat-error>
                                         </mat-form-field>
                                     </div>                           

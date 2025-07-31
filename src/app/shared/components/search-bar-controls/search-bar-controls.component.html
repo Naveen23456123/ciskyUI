@@ -55,11 +55,23 @@
 </div>
 <div class="col-md-2 pr-0" *ngIf="isGeneralStatus">
     <mat-form-field>
-        <mat-icon matPrefix>toggle_on</mat-icon>
+        <mat-icon matPrefix>published_with_changes</mat-icon>
         <mat-label>Status</mat-label>
         <mat-select (selectionChange)="generalStatusChange($event)"  >
             <mat-option value="">All</mat-option>
             <mat-option  *ngFor="let field of generalStatus" [value]="field.id">
+                {{field.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div class="col-md-2 pr-0" *ngIf="isApprovalStatus">
+    <mat-form-field>
+        <mat-icon matPrefix>toggle_on</mat-icon>
+        <mat-label>Status</mat-label>
+        <mat-select (selectionChange)="approvalStatusChange($event)"  >
+            <mat-option value="">All</mat-option>
+            <mat-option  *ngFor="let field of approvalStatus" [value]="field.id">
                 {{field.name}}
             </mat-option>
         </mat-select>
@@ -78,7 +90,7 @@
 </div>
 <div class="col-md-3 pr-0" *ngIf="isRelatedTo">
     <mat-form-field>
-        <mat-icon matPrefix>toggle_on</mat-icon>
+        <mat-icon matPrefix>person</mat-icon>
         <mat-label>Associated To</mat-label>
         <mat-select (selectionChange)="relatedChange($event)" >
             <mat-option value="">All</mat-option>
@@ -90,7 +102,7 @@
 </div>
 <div class="col-md-3 pr-0" *ngIf="isExchangeType">
     <mat-form-field>
-        <mat-icon matPrefix>toggle_on</mat-icon>
+        <mat-icon matPrefix>compare_arrows</mat-icon>
         <mat-label>Exchange Type</mat-label>
         <mat-select (selectionChange)="exchangeTypeChange($event)" >
             <mat-option value="">All</mat-option>
@@ -101,7 +113,7 @@
     </mat-form-field>
 </div>
 <div class="col-md-3 pr-0 date-range" *ngIf="isMonthAndYear">
-    <app-month-and-year-picker  (onValueChange)="monthYearChange($event)"  ></app-month-and-year-picker> 
+    <app-month-and-year-picker [setValueDefault]="false"  (onValueChange)="monthYearChange($event)"  ></app-month-and-year-picker> 
 </div>
 <div class="col-md-3 pr-0 date-range" *ngIf="isDateRange">   
     <mat-form-field>
@@ -132,6 +144,23 @@
         <mat-icon  matSuffix (click)="openFromIcon(timepicker)">schedule</mat-icon>                                     
       </mat-form-field>                              
       <ngx-mat-timepicker (timeSet)="onEndTimeSelected($event)" #timepicker [enableKeyboardInput]="true"></ngx-mat-timepicker>
+</div>
+<div class="col-md-2 pr-0" *ngIf="isStartDate">  
+    <mat-form-field class="example-full-width">
+        <mat-label>Start Date</mat-label>
+        <input matInput  [matDatepicker]="startDate" (dateChange)="startDateChange($event)">        
+        <mat-datepicker-toggle matIconSuffix [for]="startDate"></mat-datepicker-toggle>
+        <mat-datepicker #startDate></mat-datepicker>
+      </mat-form-field>
+
+</div>
+<div class="col-md-2 pr-0" *ngIf="isEndDate">  
+    <mat-form-field class="example-full-width">
+        <mat-label>End Date</mat-label>
+        <input matInput  [matDatepicker]="endDate" (dateChange)="endDateChange($event)">        
+        <mat-datepicker-toggle matIconSuffix [for]="endDate"></mat-datepicker-toggle>
+        <mat-datepicker #endDate></mat-datepicker>
+      </mat-form-field>
 </div>
 <div class="col-md-4 pr-0" *ngIf="isAny">
     <mat-form-field>

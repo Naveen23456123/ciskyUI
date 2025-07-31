@@ -14,6 +14,7 @@ import { ConReportDocListModule } from './con-report-doc/con-report-doc-list/con
 import { ConRoadSurveyListModule } from './con-road-survey/con-road-survey-list/con-road-survey-list.module';
 import { ConStaffListModule } from './con-staff/con-staff-list/con-staff-list.module';
 import { ConTransportationListModule } from './con-transportation/con-transportation-list/con-transportation-list.module';
+import { ConContingencyListModule } from './con-contigency/con-contingency-list/con-contingency-list.module';
 
 
 @NgModule({
@@ -25,7 +26,7 @@ import { ConTransportationListModule } from './con-transportation/con-transporta
     CommonModule,
     ConsultancyInvoiceRoutingModule,ConDutyTravelListModule,ConOfcFurnitureListModule,
     ConOfcRentListModule,ConOfcSupplyListModule, ConReportDocListModule,ConRoadSurveyListModule,
-    ConStaffListModule,ConTransportationListModule, SharedModule,MaterialModule
+    ConStaffListModule,ConTransportationListModule, SharedModule,MaterialModule, ConContingencyListModule
   ]
 })
 export class ConsultancyInvoiceModule { }

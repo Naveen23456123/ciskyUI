@@ -23,4 +23,7 @@ export class EmployeeService {
    getBOQAttendenceListByProjectIdByOrgId(param: any, guid: string) {
     return this.attendenceService.getBOQAttendenceListByProjectIdByOrgId(param,guid);
    }
+   searchBoqAttendence(request: any, guid: string) {
+    return this.attendenceService.searchBoqAttendence(request,guid);
+   }
 }

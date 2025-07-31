@@ -23,12 +23,23 @@ export class InvOfcSupplyInterfaceService {
   }
   getBoqOfficeSupplyListForInsertByProjectId(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'BoqOfficeSupply/Insert/'+param.id,
+      url: 'BoqOfficeSupply/Insert/'+param.id+'/'+param.invid,
        params: {},
       headers: true,
       guid: '',
       request: {},
       action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  UpdateBoqOfficeSupplyDescription(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BoqOfficeSupply/Description/',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   }

@@ -4,6 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { untilDestroyed } from '@app/core/until-destroyed';;
 import { InvoiceService } from '@app/invoice-control/invoice.service';
 import { StaffType } from '@app/shared/models/constant.config';
+import { CommonService } from '@app/shared/services/common.service';
+import { CommonInterfaceService } from '@app/shared/services/external/common-interface.service';
 import { HelperService } from '@app/shared/services/helper.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
@@ -46,7 +48,7 @@ export class ConStaffListComponent {
   
    constructor(private invoiceService:InvoiceService,private helperService:HelperService,
     private stateDataService :StateDataService, private notifyBarService :NotifyBarService,
-    private sessionService:SessionService
+    private sessionService:SessionService, private commonService:CommonService
     
    ){
     this.dataSource = new MatTableDataSource(this.kpsData);
@@ -131,9 +133,9 @@ export class ConStaffListComponent {
       totalmonths:data.constructionperiod+data.oandmperiod,
       contractamount:(data.constructionperiod+data.oandmperiod)*data.rate,
       previousbill:data.previousbillmonths*data.rate,
-      currentbill:data.currentbillmonths*data.rate,
+      currentbill: data.currentbillmonths*data.rate,
       commulativemonth:data.previousbillmonths+data.currentbillmonths,
-      commulativeAmount:(data.previousbillmonths+data.currentbillmonths)*data.rate,
+      commulativeAmount:this.commonService.roundValue((data.previousbillmonths+data.currentbillmonths)*data.rate,2),
       remainingmonth:(data.constructionperiod+data.oandmperiod)-(data.previousbillmonths+data.currentbillmonths),
       remainingamount:((data.constructionperiod+data.oandmperiod)*data.rate)-((data.previousbillmonths+data.currentbillmonths)*data.rate)
     }
