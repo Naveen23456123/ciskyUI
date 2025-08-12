@@ -7,9 +7,9 @@
         </h3>        
         <mat-dialog-content class="mat-typography">
         <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
+            <!-- <div class="load-wrap" *ngIf="isLoading">
                 <app-loader [IsLoading]="isLoading"></app-loader>
-            </div>
+            </div> -->
             <div class="row col-md-12 d-flex justify-content-end">
                 <div class="col-md-6 letter-head">
                    <h6 class="sub-heading">Letter No : {{'  '+letterDetails?.letternumber}}</h6>
@@ -23,8 +23,9 @@
                    
                 </div>
             </div>
-            <hr class="vw-hr">
-            <div class="row">
+            <hr class="vw-hr">            
+            <div class="row" >
+                <app-empty-table-skltn *ngIf="isLoading"></app-empty-table-skltn>
                 <mat-tab-group *ngIf="!isLoading" mat-stretch-tabs="false">
                     <mat-tab >
                     <ng-template mat-tab-label>

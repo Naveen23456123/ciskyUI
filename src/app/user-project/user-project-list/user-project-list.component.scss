@@ -1,0 +1,14 @@
+.tab-container {
+  display: flex;
+  height: 100vh; /* Full height */
+  width: 100vw;  /* Full width */
+}
+
+
+
+.main-content {
+  flex: 1; /* Takes the remaining 80% */
+  background-color: #f9f9f9; /* Light background */
+  padding: 1rem;
+  overflow-y: auto;
+}

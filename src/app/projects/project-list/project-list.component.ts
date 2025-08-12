@@ -17,6 +17,7 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { stubFalse } from 'lodash';
 import { ManageUploadConsultantComponent } from '@app/shared/components/consultant/manage-upload-consultant/manage-upload-consultant.component';
 import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
+import { CommonService } from '@app/shared/services/common.service';
 
 @Component({
   selector: 'app-project-list',
@@ -56,6 +57,7 @@ showLegend: boolean = false;
 showXAxisLabel: boolean = true;
 showYAxisLabel: boolean = true;
 isSearchLoading=true;
+pagePermissions:any;
   projects:any[]= [];
   isLoading = true;
   displayedColumns: string[] = ['serial','code', 'shortname', 'location','clientname', 'concernpersonname'];
@@ -76,7 +78,8 @@ isSearchLoading=true;
 
   constructor(private projectService: ProjectService, private sessionService : SessionService,
     private router: Router,private route: ActivatedRoute,private stateDataService: StateDataService,
-    private notifyBarService:NotifyBarService, private csvService:GenerateCsvService
+    private notifyBarService:NotifyBarService, private csvService:GenerateCsvService,
+    private commonService:CommonService
   )
   {
    
@@ -100,7 +103,12 @@ isSearchLoading=true;
         this.stateDataService.stateDataSubject.next({});
       }  
     });
-
+    let pageGuid= this.route.snapshot.data['pageGuid'];
+    console.log(this.commonService.getPermissionsForCurrentPage(this.route.snapshot.data['pageGuid']));
+    this.commonService.getPermissionsForCurrentPage(pageGuid).then((permissions) => {
+      this.pagePermissions = permissions;
+      console.log(this.pagePermissions);
+    });
     this.isLoading=true;
     this.filterProject();
   }

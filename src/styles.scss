@@ -88,6 +88,29 @@ div.mat-mdc-select-panel {
 .mat-mdc-dialog-actions.mat-mdc-dialog-actions-align-end, .mat-mdc-dialog-actions[align=end] {
     box-shadow: 0 -4px 6px -2px rgba(0, 0, 0, 0.1);
 }
+//skeleton
+.skeleton-loader {
+  height: 16px;
+  background: linear-gradient(-90deg, #f0f0f0 0%, #e2e2e2 50%, #f0f0f0 100%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite ease-in-out;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+.sk-table {
+    --bs-table-bg: white !important;
+}
+.sk-table > :not(caption) > * > * {
+    padding: 1.2rem 1.5rem !important;
+}
 //export-pdf
 .export-pdf-mode .hide-in-pdf {
   display: none !important;

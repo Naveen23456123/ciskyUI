@@ -27,7 +27,7 @@ export class TicketListComponent {
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-
+  isSearching=false;
   readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
@@ -58,16 +58,7 @@ export class TicketListComponent {
       this.stateDataService.stateDataSubject.next({});
     }
   });
-
-    this.ticketService.getTicketListByOrgId({ organizationId: this.activeOrgId }, '')
-           .pipe(finalize(() => this.isLoading = false))
-           .subscribe((response: any) => {
-             if (response && response.success) {
-              this.ticketList = response.data;
-              this.dataSource = new MatTableDataSource(this.ticketList);
-              this.pageSize= this.helperService.getPageSize();
-             }
-      });
+    this.filterTicket();
   }
 
   ngAfterViewInit() {
@@ -131,5 +122,33 @@ export class TicketListComponent {
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }
+  searchObj:any={
+    projectid:'',   
+    datetime:''
+  };
+  projectChange(data:any){ 
+   this.searchObj.projectid= data.value ?? '';
+   this.filterTicket();
+  }
 
+  anyChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
+    }
+  }
+  filterTicket(){
+  this.isSearching=true;
+    this.ticketService.getTicketListByOrgId(this.searchObj, '')
+      .pipe(finalize(() => {this.isLoading = false;this.isSearching=false}))
+      .subscribe({next : (response: any) => {
+        if (response && response.success) {
+          this.ticketList = response.data;
+          this.dataSource = new MatTableDataSource(this.ticketList);
+          this.pageSize= this.helperService.getPageSize();
+        }
+    }});
+  }
 }

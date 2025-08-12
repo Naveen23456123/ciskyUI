@@ -97,6 +97,10 @@ export class SessionService {
     const invObj =_storageService.get(Constants.invoiceEntityStorage);
     if(invObj)
       this.invoiceEntitySubject.next(invObj);
+
+    const orgObj =_storageService.get(Constants.orgData);
+    if(orgObj)
+      this.orgSubject.next(orgObj);
   }
 
   public getRunTimeConfig(config: any) {
@@ -104,7 +108,8 @@ export class SessionService {
   }
 
   public setOrganization(orgObj: any) {
-    this.orgSubject.next({ organization: orgObj });
+    this._storageService.set(Constants.orgData, orgObj);
+    this.userSubject.next(this._storageService.get(Constants.orgData));
   }
 
   public setDashBoardProject(projectObj: any) {

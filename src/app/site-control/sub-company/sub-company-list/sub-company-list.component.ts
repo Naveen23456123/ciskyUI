@@ -30,8 +30,7 @@ export class SubCompanyListComponent {
   readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
-    minWidth: '1200px', 
-    minHeight:'80vh',
+    minWidth: '1200px',
     disableClose: false,
     data: {},
   };

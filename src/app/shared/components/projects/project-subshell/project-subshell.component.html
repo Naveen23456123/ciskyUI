@@ -1,0 +1,38 @@
+<div class="container">
+    <mat-card class="wrapper">
+        <mat-card-content>
+            <!-- <mat-tab-group animationDuration="0ms"  (selectedIndexChange)="onTabChange($event)">
+            <mat-tab >
+                <ng-template mat-tab-label>
+                   
+                    Construction Provision
+                </ng-template>
+                 <ng-container #constructionHost></ng-container>
+            </mat-tab>
+              <mat-tab >               
+                <ng-template mat-tab-label>
+                    
+                     Detailed Project Report
+                </ng-template>
+                 <ng-container #dprHost></ng-container>
+            </mat-tab>
+            <mat-tab label="O&M Operation">
+                <ng-template matTabContent #omHost></ng-template>
+            </mat-tab>
+            <mat-tab label="Feasibility Report">
+                <ng-template matTabContent #feasibilityHost></ng-template>
+            </mat-tab>
+            <mat-tab label="Safety Consultant">
+                <ng-template matTabContent #safetyHost></ng-template>
+            </mat-tab>
+            </mat-tab-group> -->
+           <mat-tab-group animationDuration="0ms" mat-stretch-tabs="false" (selectedTabChange)="onTabChange($event)">
+                <mat-tab *ngFor="let subsector of subsectors; let i = index" [label]="subsector.name">
+                    <ng-template matTabContent>
+                    <ng-template appTabHost [tabIndex]="i" [subsector]="subsector" #tabHost="appTabHost"></ng-template>
+                    </ng-template>
+                </mat-tab>
+            </mat-tab-group>
+        </mat-card-content>
+    </mat-card>
+</div>

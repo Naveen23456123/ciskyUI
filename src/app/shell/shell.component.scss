@@ -487,9 +487,9 @@ body{
   font-size: 18px;
   font-weight: 600;
   //color: #fff;
-  background: linear-gradient(45deg, #09002d, #737373);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  // background: linear-gradient(45deg, #09002d, #737373);
+  // -webkit-background-clip: text;
+  // -webkit-text-fill-color: transparent;
   transition: all 0.4s ease;
 }
 .sidebar .nav-links li i{
@@ -498,16 +498,16 @@ body{
   text-align: center;
   line-height: 50px;
   //color: #fff;
-  background: linear-gradient(45deg, #09002d, #737373);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  // background: linear-gradient(45deg, #09002d, #737373);
+  // -webkit-background-clip: text;
+  // -webkit-text-fill-color: transparent;
   font-size: 25px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 .sidebar .nav-links li .sub-menu a{
   //color: #fff;
-  background: linear-gradient(45deg, #09002d, #737373);
+  background: linear-gradient(45deg, #09002d, #09002d);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 17px;
@@ -516,6 +516,7 @@ body{
   //opacity: 0.6;
   transition: all 0.3s ease;
   font-weight: 500;
+  //color: black;
 }
 .sidebar .nav-links li .sub-menu{
   padding: 6px 6px 14px 45px;
@@ -542,3 +543,35 @@ body{
   transition: 0.3s ease;
   transition-delay: 0.1s;
 }
+
+// Hover color to selected item 
+.nav-links li {
+  transition: 0.3s;
+}
+
+.nav-links li:hover:not(.sub-menu li),
+.nav-links li.active:not(.sub-menu li) {
+  background-color: var(--mdc-fab-small-container-color); 
+}
+.sub-menu li:hover,
+.sub-menu li.active {
+  background-color: #dbdbdb; 
+ 
+}
+
+.nav-links li:hover .link_name,
+.nav-links li.active .link_name,
+.nav-links li:hover a i,
+.nav-links li.active a i
+
+ {
+ 
+  color: white;
+}
+
+.nav-links li .link_name,
+.nav-links li i {
+  color: #333; /* Default color */
+  transition: 0.3s;
+}
+

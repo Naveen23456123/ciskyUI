@@ -13,6 +13,7 @@ export interface AppConstants {
     workingProjectStorage: string;
     projectEntityStorage:string;
     invoiceEntityStorage:string;
+    orgData:string;
     IsEditableTrue: number;
     Active: number;
     InActive: number;
@@ -26,6 +27,7 @@ export const Constants: AppConstants = {
     invalid: 'invalid',
     OrgLocationStorage: 'Location',
     userStorage: 'User',
+    orgData:'org-data',
     workingProjectStorage: 'project',
     projectEntityStorage: 'project-entity',
     invoiceEntityStorage:'invoice-entity',
@@ -102,3 +104,7 @@ export const TOTAL_PROFIT_LOSS_HEADING = [
     { Name: "Admin expense", isadmin: true,ispersonal: false,isincome:false  }   
    
   ];
+
+  export interface DynamicTabComponent {
+  subsectorId: string;
+}

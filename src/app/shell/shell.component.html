@@ -93,7 +93,7 @@
             </div>
            
             <ul class="nav-links">
-              <li *ngFor="let item of sidebarLinks">
+              <li *ngFor="let item of sidebarLinks" [class.active]="selectedItem === item" (click)="selectItem(item)">
                 <a *ngIf="!item.link && !item.items" href="javascript:void(0)">               
                   <i class='bx ' [ngClass]="item.icon" ></i>
                   <span class="link_name">{{item.label}}</span>
@@ -114,8 +114,8 @@
                   <li><a class="link_name" [routerLink]="item.link">{{item.label}}</a></li>
                 </ul>
                 <ul *ngIf="item.items" class="sub-menu">
-                  <li *ngFor="let subitem of item.items">
-                    <a [routerLink]="subitem.link">{{subitem.label}}</a>
+                  <li *ngFor="let subitem of item.items"  > 
+                    <a [routerLink]="subitem.link" (click)="selectItem(subitem)" [class.active]="selectedItem === subitem" >{{subitem.label}}</a>
                   </li>
                  
                 </ul>

@@ -34,7 +34,6 @@ export class DesignationListComponent {
   
   private defaultdialogoptions:  MatDialogConfig = {
     minWidth: '1200px', 
-    minHeight:'80vh', 
     disableClose: false,
     data: {},
   };

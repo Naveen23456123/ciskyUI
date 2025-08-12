@@ -40,12 +40,68 @@ export class MenuService {
         guid: '',
         roles: []
       },
+       {
+        label: 'Projects',
+        icon: 'bxs-network-chart',
+        link: '#',
+        guid: '',
+        roles: [],
+        items: [
+        {
+          label: 'Transport Infra',
+          link: 'transport-list',
+          guid: '',
+          roles: []
+        },
+        {
+          label: 'Smart Cities/Urban',
+          link: 'sub-company',
+          guid: '',
+          roles: []
+        },
+        {
+          label: 'Env & Social',
+          link: 'projects',
+          guid: '',
+          roles: []
+        },
+        {
+          label: 'Survey & Testing',
+          link: 'department',
+          guid: '',
+          roles: []
+        },
+        {
+          label: 'Finance & Advisory',
+          link: 'con-account',
+          guid: '',
+          roles: []
+        },       
+        {
+          label: 'Railway & Metros',
+          link: 'con-account',
+          guid: '',
+          roles: []
+        },
+        {
+          label: 'Water Resources',
+          link: 'con-account',
+          guid: '',
+          roles: []
+        },
+        {
+        label: 'Tourism',
+        link: 'con-account',
+        guid: '',
+        roles: []
+        }],
+      },
       {
         label: 'Projects',
         icon: 'bxs-network-chart',
         link: 'projects',
         guid: '',
-        roles: []
+        roles: [],
       },
       {
         label: 'Glance',

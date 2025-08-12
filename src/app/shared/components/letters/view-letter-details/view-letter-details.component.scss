@@ -10,13 +10,15 @@
   ::ng-deep .full-width{
     width: 100% !important;
   }
-  .sub-heading{
-    margin-top: 0px;
-  }
+
   .letter-head{
     display: flex; 
     align-items: center;
   }
   ::ng-deep .mdc-tab{
     margin-right: 20px !important;
+  }
+  .sub-heading {
+    font-size: 20px;
+    margin-top: 0px;
   }

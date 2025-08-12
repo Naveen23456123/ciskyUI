@@ -30,6 +30,8 @@ export class LoginComponent {
     this.authService.login(this.loginform.value,'').subscribe((response:any)=>{
       if(response && response.success){
         localStorage.setItem('auth_token', response.data.token);
+        this.sessionService.setOrganization({id:response.data.orgid,sectors:response.data.sectors});
+         this.sessionService.setUser({employeeid:response.data.userid,modules:response.data.modules  });
         this.router.navigate(['/dashboard']);
       }
     })

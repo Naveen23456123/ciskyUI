@@ -15,8 +15,7 @@ constructor(private route: ActivatedRoute, private dialog: MatDialog,
     private router: Router) { }
 
   defaultdialogOptionConfig: MatDialogConfig = {
-    minWidth: '1100px',
-    minHeight: '90vh',
+    minWidth: '75vw',
     disableClose: true,
     data: {}
   }

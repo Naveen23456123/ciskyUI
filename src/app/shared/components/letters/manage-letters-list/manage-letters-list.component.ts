@@ -217,7 +217,6 @@ export class ManageLettersListComponent {
   viewletter(data:any){
     const config = this.defaultdialogoptions;
     config.minWidth='1200px';
-    //config.minHeight= '90vh',
     config.data = {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type'],

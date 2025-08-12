@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import moment from 'moment';
 import { ApprovalStatus } from '../models/constant.config';
+import { SessionService } from './session.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonService {
 
-  constructor() { }
+  constructor(private sessionService:SessionService) { }
   public roundValue(value:number, digit:number=2) : number{
     if(value>0){
       return parseFloat(value.toFixed(digit));
@@ -154,4 +155,41 @@ export class CommonService {
     return percent.toFixed(2) + '%';
   }
 
+  getPermissionsForCurrentPage(pageGuid: string): Promise<any> {
+    return new Promise((resolve) => {
+      this.sessionService.userSubject$.subscribe((response: any) => {
+        if (response) {
+          const modules: any[] = response.modules.modules;
+
+          const findPermissions = (modules: any[]): string[] | null => {
+            for (let module of modules) {
+              if (module.id === pageGuid) {
+                return module.permission;
+              }
+              if (module.modulelist?.length) {
+                const result = findPermissions(module.modulelist);
+                if (result) return result;
+              }
+            }
+            return null;
+          };
+
+          const permissions = findPermissions(modules);
+          resolve({
+            canCreate: permissions?.includes('C') ?? false,
+            canRead: permissions?.includes('R') ?? false,
+            canUpdate: permissions?.includes('U') ?? false,
+            canDelete: permissions?.includes('D') ?? false
+          });
+        } else {
+          resolve({
+            canCreate: false,
+            canRead: false,
+            canUpdate: false,
+            canDelete: false
+          });
+        }
+      });
+    });
+  }
 }

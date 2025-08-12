@@ -14,7 +14,7 @@ const routes: Routes = [
   {
     path:'',
     component:ProjectListComponent,
-    data:{title:extractTitle('Projects'), breadcrumb: 'Projects'},
+    data:{title:extractTitle('Projects'), breadcrumb: 'Projects',pageGuid:'680dd1bd3682904bdd6e9ad2'},
     children: [
       {
         path: 'create',

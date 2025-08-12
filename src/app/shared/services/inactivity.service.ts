@@ -55,6 +55,7 @@ export class InactivityService {
     this._dialogRef.closeAll();    
     this._idle.stop();
      this.sessionervice.setWorkingLocation(null);
+     this.sessionervice.setOrganization(null);
     // this.sessionervice.workingLocationSubject$.pipe().subscribe((org) => {
     //   log.debug(org);
     // });

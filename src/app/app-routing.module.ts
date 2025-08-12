@@ -180,6 +180,11 @@ const routes: Routes = [
       path: 'misc',
       loadChildren:()=>import('app/misc/misc-list/misc-list.module').then(x=>x.MiscListModule),
       data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'transport-list',
+      loadChildren:()=>import('app/projects/transport-infra/transport-infra-list/transport-infra-list.module').then(x=>x.TransportInfraListModule),
+      data:{pageGuid:'',type:'view'}
     }
   ]),
   // { path: 'login', loadChildren: () => import('app/login/login.module').then(x => x.LoginModule) },

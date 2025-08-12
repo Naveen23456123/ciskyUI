@@ -9,14 +9,14 @@ import { ServiceAttributeModel } from '@app/shared/models/http/ServiceAttributeM
 export class TicketInterfaceService {
 
   constructor(private coreApi:CoreAPIService) { }
-  getTicketListByOrgId(param: any, guid: string) {
+  getTicketListByOrgId(request: any, guid: string) {
       const standardAttribute: ServiceAttributeModel = {
-          url: 'Ticket',
+          url: 'Ticket/Search',
           params: {},
           headers: true,
           guid: '',
-          request: {},
-          action: Operation.GET
+          request: request,
+          action: Operation.CREATE
         }
         return this.coreApi.standardService(standardAttribute);
   }

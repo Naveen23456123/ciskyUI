@@ -29,6 +29,7 @@ export class ShellComponent implements OnInit, OnDestroy {
   orgList: any[] = [];
   selectedOrg: string='';
   location: FormControl = new FormControl('');
+  selectedItem: any;
   constructor(private _httpClient: HttpClient, private _servicehelper: CoreAPIService,
     private _menuservice: MenuService,
     private router: Router,
@@ -104,14 +105,14 @@ export class ShellComponent implements OnInit, OnDestroy {
   locChange(event: any) {
     this.sessionService.setWorkingLocation(this.orgList.find(x => x.orgId == event.value));
   }
-  selectedItem(event: any) {
-    if (this.sidenav && this.sidenav.close) {
-      this.sidenav.close();
-    }
-    this.router.navigate([event.link]).then(() => {
-      window.scroll(0, 0);
-    });
-  }
+  // selectedItem(event: any) {
+  //   if (this.sidenav && this.sidenav.close) {
+  //     this.sidenav.close();
+  //   }
+  //   this.router.navigate([event.link]).then(() => {
+  //     window.scroll(0, 0);
+  //   });
+  // }
 
   toggleSlidebar() {
     this.expanded = !this.expanded;
@@ -156,4 +157,7 @@ export class ShellComponent implements OnInit, OnDestroy {
       sidebar?.classList.add("close");
   } 
 
+  selectItem(item: any) {
+    this.selectedItem = item;
+  }
 }
