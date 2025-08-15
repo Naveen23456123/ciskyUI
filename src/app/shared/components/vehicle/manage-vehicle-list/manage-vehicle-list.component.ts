@@ -90,7 +90,11 @@ export class ManageVehicleListComponent {
     this.getVehicleDetails({projectId: data.value });
    }
   }
-  getVehicleDetails(dataObj:any){    
+  clear(){
+    this.getVehicleDetails({});
+  }
+  getVehicleDetails(dataObj:any){
+    this.isSearchLoading=true;    
     this.vehicleService.getVehileDetailsByOrgId(dataObj, '')
     .pipe(finalize(() => {this.isLoading = false;this.isSearchLoading=false}))
     .subscribe((response: any) => {

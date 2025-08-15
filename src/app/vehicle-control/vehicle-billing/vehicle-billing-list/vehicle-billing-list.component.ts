@@ -175,17 +175,17 @@ export class VehicleBillingListComponent {
   searchObj:any={};
   projectChange(data:any){ 
     this.searchObj.projectid= data.value ?? '';
-    this.filterVehicleLogs();
+    this.filterVehicleBillings();
    }
    compChange(data:any){
      this.searchObj.companyid= data.value ?? '';
      this.searchObj.projectid= data.projectid ?? '';
-     this.filterVehicleLogs();
+     this.filterVehicleBillings();
    }
 
   vehicleChange(data:any){ 
     this.searchObj.vehicleid= data.value ?? '';
-    this.filterVehicleLogs();
+    this.filterVehicleBillings();
    }
 
    anyChange(data:any){
@@ -198,10 +198,16 @@ export class VehicleBillingListComponent {
    }
    monthYearChange(data:any){
     this.searchObj.monthandyear= data.value ?? '';
-    this.filterVehicleLogs();
+    this.filterVehicleBillings();
    }
-
-   filterVehicleLogs(){
+  clear(){
+    this.searchObj.projectid= '';
+    this.searchObj.companyid= '';
+    this.searchObj.monthandyear= null;
+    this.searchObj.vehicleid= '';
+    this.filterVehicleBillings();
+  }
+   filterVehicleBillings(){
     this.isSearchLoading=true;
     this.vehicleService.getVehicleBillingDetailsByOrgId(this.searchObj, '')
     .pipe(finalize(() => {this.isLoading = false; this.isSearchLoading=false}))

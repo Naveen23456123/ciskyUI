@@ -3,7 +3,7 @@
         <mat-card-content>
             <div class="table-title-row">
                 <div class="row col-md-12">
-                  <app-search-bar-controls   (OnAnyChange)="filterChange($event)"
+                  <app-search-bar-controls   (OnAnyChange)="filterChange($event)" (OnClear)="clear()"
                   [isAny]="true" searchByAnyPlaceholder="Project Code / Name" ></app-search-bar-controls>
                 </div>
             </div> 

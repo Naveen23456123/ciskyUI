@@ -82,8 +82,8 @@ export class ManageApprovalComponent {
     this.getTitle(this.data.type);
     this.approvalForm = this.formbuilder.group({       
       levels: this.formbuilder.array([]),
-      moduleid:[],
-      companyid:[],
+      moduleid:[,Validators.required],
+      companyid:[,Validators.required],
       id :[]
     });
     this.moduleName= this.data?.element?.modulename;
@@ -124,7 +124,7 @@ export class ManageApprovalComponent {
       roleid: ['',Validators.required], 
       roles:[this.getFreshRoles()],
       name: ['',Validators.required],
-      employeeid:[''],
+      employeeid:['',Validators.required],
       employees:[],
       employeename:[],
       rolename:[],
@@ -132,7 +132,8 @@ export class ManageApprovalComponent {
     group.get('roleid')?.valueChanges.subscribe(value => {
       group.patchValue({
         empInit:false,
-        rolename:this.roleList.find(x=>x.id==value).name
+        rolename:this.roleList.find(x=>x.id==value).name,
+        employeeid:''
        })
       this.employeeService.getSiteEmployeeParital({roleId:value,companyid:this.approvalForm.get('companyid')?.value},'').subscribe((response:any)=>{
         if(response && response.success){

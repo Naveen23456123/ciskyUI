@@ -8,6 +8,7 @@
               (OnSubCompanyChange)="compChange($event)" 
               (OnProjectChange)="projectChange($event)"
               (OnAnyChange)="anyChange($event)"
+              (OnClear)="clear()"
               [isAny]="true" searchByAnyPlaceholder="Project Code or Name" ></app-search-bar-controls>
             </div>         
           <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">         
@@ -21,8 +22,8 @@
       </div>
       </mat-card-content>
      </mat-card>
-    <mat-card class="">        
-        <mat-card-content>
+    <mat-card >        
+        <mat-card-content class="pr-0 pt-0 ps-0">
            
             <ng-container *ngIf="isSearchLoading || isLoading; else checkNoData">
               <app-empty-table-skltn></app-empty-table-skltn>
@@ -34,7 +35,7 @@
               </ng-container>
             </ng-template>
              <ng-template #showTable>
-            <div class="wrapper" >  
+            
               <div  class="mat-elevation-z8">                     
                 <table mat-table [dataSource]="dataSource" matSort >
 
@@ -87,7 +88,7 @@
                 </table>
                 <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>                   
               </div>
-            </div>
+            
             </ng-template>
         </mat-card-content>
     </mat-card>

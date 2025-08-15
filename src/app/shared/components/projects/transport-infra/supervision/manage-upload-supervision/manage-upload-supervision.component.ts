@@ -1,5 +1,5 @@
-import { Component, Optional } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, Optional } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CommonService } from '@app/shared/services/common.service';
 import { CommonInterfaceService } from '@app/shared/services/external/common-interface.service';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
@@ -16,26 +16,20 @@ import { finalize } from 'rxjs';
   styleUrl: './manage-upload-supervision.component.scss'
 })
 export class ManageUploadSupervisionComponent {
-
+  data: any;
   allColumnsData:any;
-  workTypes:any[]=[];
   ourRoles:any[]=[];
   contractorModes:any[]=[];
   companies:any[]=[];
   errors:any[]=[];
   isImporting:boolean=false;
 
-  constructor(@Optional() private dialogRef: MatDialogRef<ManageUploadSupervisionComponent>,private projectService:ProjectInterfaceService, private sessionService:SessionService,
+  constructor(@Inject(MAT_DIALOG_DATA) data: any,@Optional() private dialogRef: MatDialogRef<ManageUploadSupervisionComponent>,private projectService:ProjectInterfaceService, private sessionService:SessionService,
     private commonService:CommonService, private subCompanyService:SubCompanyInterfaceService
   ){
-
+    this.data = data || {};
   }
   ngOnInit(){
-   this.sessionService.projectWorkTypeSubject$.subscribe((response)=>{
-      if(response)
-        this.workTypes=response;
-    });
-
     this.sessionService.ourRoleSubject$.subscribe((response)=>{
       if(response)
         this.ourRoles=response;
@@ -45,6 +39,8 @@ export class ManageUploadSupervisionComponent {
         this.contractorModes=response;
     });
     this.allColumnsData = this.projectService.getTemplateColumnList();
+    this.allColumnsData.push({ label: 'O&M_Duration', value: 'oandmduration' });
+    this.allColumnsData.push({ label: 'Construction_Duration', value: 'constructionduration' });
     this.subCompanyService.getSubCompanyListByOrgId({},'').subscribe((response:any)=>{
       if(response && response.success ){
         this.companies= response.data;
@@ -53,7 +49,11 @@ export class ManageUploadSupervisionComponent {
   }
   importing(data:any){
     this.isImporting=true;
-    let consultantData=data.map((item:any) => ({ ...item }));
+    let consultantData=data.map((item:any) => ({ 
+      ...item,
+      sectorid:this.data.parentPageGuid,
+      subsectorid:this.data.pageGuid
+     }));
     let companyElement= consultantData.filter((ele:any) => {
       if(!this.companies.find(x=>x.name==ele.companyId)){          
         ele.error = true;           
@@ -64,16 +64,17 @@ export class ManageUploadSupervisionComponent {
     });
     if(companyElement.length > 0)
       this.insertErrors('Kindly provide the correct value for Sub Company.');
-    let workTypesElement= consultantData.filter((ele:any) => {
-      if(!this.workTypes.find(x=>x.name==ele.workTypeId)){          
+   
+    let projectLengthElement= consultantData.filter((ele:any) => {
+      const total = (Number(ele.oandmduration) || 0) + (Number(ele.constructionduration) || 0);         
+      if(total<=0){          
         ele.error = true;           
         return ele;
-      } else{
-        ele.workTypeId=this.workTypes.find(x=>x.name==ele.workTypeId).id;  
-      }
+      } 
     });
-    if(workTypesElement.length > 0)
-      this.insertErrors('Kindly provide the correct value for Work Type.');
+    if(projectLengthElement.length > 0)
+      this.insertErrors('Kindly provide the value for O&M or Construction Duration');
+
     let ourRolesElement= consultantData.filter((ele:any) => {
       if(!this.ourRoles.find(x=>x.name==ele.ourRoleId)){          
         ele.error = true;           
@@ -95,11 +96,12 @@ export class ManageUploadSupervisionComponent {
     if(contractorModesElement.length > 0)
       this.insertErrors('Kindly provide the correct value for Contract Mode.');
     let consultancyFeesElement= consultantData.filter((ele:any) => {
-      console.log(isNaN(Number(ele.consultancyFees)));
+      
       if(isNaN(Number(ele.consultancyFees))){          
         ele.error = true;           
         return ele;
       }
+      ele.consultancyFees=Number(ele.consultancyFees);
     });
     if(consultancyFeesElement.length > 0)
       this.insertErrors('Kindly provide the correct value for Consultancy Fees.');

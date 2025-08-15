@@ -113,7 +113,16 @@ export class VehicleLogListComponent {
        this.dataSource.filter = '';
      }
    }
-
+  clear(){
+    this.searchObj.projectid= '';
+    this.searchObj.companyid= '';
+    this.searchObj.starttime= '';
+    this.searchObj.endtime= '';
+    this.searchObj.startdate= null;
+    this.searchObj.enddate= null;
+    this.searchObj.vehicleid= '';
+    this.filterVehicleLogs();
+  }
    filterVehicleLogs(){
     this.isSearchLoading=true;
     this.vehicleService.getVehicleLogDetailsByOrgId(this.searchObj, '')

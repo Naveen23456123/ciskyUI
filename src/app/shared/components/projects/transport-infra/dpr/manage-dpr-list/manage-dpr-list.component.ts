@@ -201,6 +201,11 @@ single1:any = [
       this.dataSource.filter = '';
     }
   } 
+   clear(){
+    this.searchObj.projectid='';
+    this.searchObj.companyid=''; 
+    this.filterProject();
+  }
   filterProject(){
     this.isSearchLoading=true;
     this.projectService.getAllProjectDetailsByOrdIg(this.searchObj, '')

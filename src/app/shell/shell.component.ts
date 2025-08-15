@@ -92,14 +92,14 @@ export class ShellComponent implements OnInit, OnDestroy {
         this.orgList = org.organizations;
       }
     });
-    this.showTabletSlidebar = document.body.offsetWidth < 994;
-    const checkScreenSize = () => document.body.offsetWidth < 994;
-    const changedScreenSize$ = fromEvent(window, 'resize').pipe(debounceTime(500)).pipe(map(checkScreenSize));
+    // this.showTabletSlidebar = document.body.offsetWidth < 994;
+    // const checkScreenSize = () => document.body.offsetWidth < 994;
+    // const changedScreenSize$ = fromEvent(window, 'resize').pipe(debounceTime(500)).pipe(map(checkScreenSize));
 
-    this.isTablet$ = changedScreenSize$.pipe(startWith(checkScreenSize()));
-    this.isTablet$.subscribe((value:any) => {
-      this.showTabletSlidebar = value;
-    });
+    // this.isTablet$ = changedScreenSize$.pipe(startWith(checkScreenSize()));
+    // this.isTablet$.subscribe((value:any) => {
+    //   this.showTabletSlidebar = value;
+    // });
   }
 
   locChange(event: any) {

@@ -14,7 +14,7 @@
                         [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Vehicle Name / Number / Purpose"
                         (OnProjectChange)="projectChange($event)" (OnSubCompanyChange)="compChange($event)" 
                          (OnAnyChange)="anyChange($event)" 
-                        
+                        (OnClear)="clear()"
                          (OnMonthYearChange)="monthYearChange($event)"
                         ></app-search-bar-controls>
                       </div>  

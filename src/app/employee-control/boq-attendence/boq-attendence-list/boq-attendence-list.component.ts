@@ -147,6 +147,11 @@ export class BoqAttendenceListComponent {
        this.dataSource.filter = '';
      }
    }
+  clear(){
+    this.searchObj.projectid='';
+    this.searchObj.monthandyear=null;
+    this.filterAttendences();
+  }
    filterAttendences(){
     this.isSearching=true;
     this.employeeService.searchBoqAttendence(this.searchObj, '')

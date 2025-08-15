@@ -148,6 +148,13 @@ export class ImperestListComponent {
       this.dataSource.filter = '';
     }
   }
+  clear() {
+    this.searchObj={
+      projectid:'',
+      companyid:'',
+    };
+    this.filterImprest();
+  }
   filterImprest(){
   this.isSearching=true;
     this.siteopsService.searchImperestListByOrgId(this.searchObj, '')

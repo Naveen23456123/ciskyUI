@@ -81,6 +81,17 @@ export class ExploreComponent {
     startdate:'',
     enddate:''
   };
+  clear(){
+    this.searchObj={
+    projectid:'',
+    companyid:'',   
+    relatedtoid:'',
+    statusid:'',
+    startdate:'',
+    enddate:''
+  };
+    this.filter();
+  }
   projectChange(data:any){ 
     this.searchObj.projectid= data.value ?? '';
     this.filter();

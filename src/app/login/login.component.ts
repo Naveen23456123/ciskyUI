@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CONSTANTS, Constants } from '@app/shared/models/constant.config';
 import { AuthrizationInterfaceService } from '@app/shared/services/external/authrization-interface.service';
+import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
+import { StorageService } from '@app/shared/services/storage.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -12,29 +16,62 @@ import { SessionService } from '@app/shared/services/session.service';
 })
 export class LoginComponent {
   loginform:any;
+  isBtnClicked=false;
   constructor(private formbuilder: FormBuilder, private router:Router, private sessionService:SessionService,
-    private authService:AuthrizationInterfaceService
+    private authService:AuthrizationInterfaceService, private notifyBarService:NotifyBarService,
+    private storageService:StorageService
   ){}
 
   ngOnInit(){
     this.loginform= this.formbuilder.group({ 
       id:[''],
-      username:['Naveen.kumar12@gmail.com'],
-      password:['password']
+      username:['Naveen.kumar12@gmail.com',Validators.required],
+      password:['password',Validators.required]
     });
   }
   submit(){
-    console.log(this.loginform.value);
-    this.sessionService.setOrganization({id:'680dd39c3682904bdd6e9aff'});
-    this.sessionService.setUser({employeeid:'681f8c18b344c914ebfb58d7'});
-    this.authService.login(this.loginform.value,'').subscribe((response:any)=>{
-      if(response && response.success){
-        localStorage.setItem('auth_token', response.data.token);
-        this.sessionService.setOrganization({id:response.data.orgid,sectors:response.data.sectors});
-         this.sessionService.setUser({employeeid:response.data.userid,modules:response.data.modules  });
-        this.router.navigate(['/dashboard']);
+    console.log('submit');
+    this.isBtnClicked=true;
+    //this.sessionService.setOrganization({id:'680dd39c3682904bdd6e9aff'});
+    //this.sessionService.setUser({employeeid:'681f8c18b344c914ebfb58d7'});
+    // this.authService.login(this.loginform.value,'').pipe(finalize(()=>{ this.isBtnClicked=false})).subscribe((response:any)=>{
+    //   console.log(response);
+    //   if(response && response.success){
+    //     localStorage.setItem('auth_token', response.data.token);
+    //     this.sessionService.setOrganization({id:response.data.orgid,sectors:response.data.sectors});
+    //      this.sessionService.setUser({employeeid:response.data.userid,modules:response.data.modules  });
+    //     this.router.navigate(['/dashboard']);
+    //   }
+    //   else{
+    //     this.notifyBarService.showsnackbar("Please provide correct Email Id and Password");
+    //   }
+    // })
+    this.authService.login(this.loginform.value, '')
+    .pipe(finalize(() => {  this.isBtnClicked = false;}))
+    .subscribe({
+      next: (response: any) => {
+        if (response && response.success) {
+          this.storageService.set(Constants.AuthToken, response.data.token);
+          this.sessionService.setOrganization({
+            id: response.data.orgid,
+            sectors: response.data.sectors
+          });
+          this.sessionService.setUser({
+            employeeid: response.data.userid,
+            modules: response.data.modules
+          });
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.notifyBarService.showsnackbar(
+            "Please provide valid Email Id and Password."
+          );
+        }
+      },
+      error: (err) => {     
+        this.notifyBarService.showsnackbar("Please provide valid Email Id and Password."
+        );
       }
-    })
-  
-  }
+    });
+    
+    }
 }

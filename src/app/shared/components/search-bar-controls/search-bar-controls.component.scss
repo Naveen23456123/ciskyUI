@@ -2,8 +2,8 @@
      padding: 0px !important; 
    
 }
-.mat-mdc-form-field {
-    width: 100%;
+mat-form-field {
+    width: 100% !important;
 }
 
 .col-md-3 {
@@ -14,4 +14,11 @@
 }
 .date-range{
     width: 23% !important;
+}
+.search-c-btn{
+    align-self: center;
+    display: inline-table;
+    cursor: pointer;
+    color: var(--mdc-fab-small-container-color);
+    font-size: 32px;
 }

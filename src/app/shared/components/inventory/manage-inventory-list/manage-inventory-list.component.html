@@ -9,6 +9,7 @@
             <app-search-bar-controls [isProjects]="true" [isAny]="true"
             (OnProjectChange)="projectChnage($event)"
             (OnAnyChange)="filterChange($event)"
+            (OnClear)="clear()"
              searchByAnyPlaceholder="Name / Description" ></app-search-bar-controls>                         
       </div>       
       <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">

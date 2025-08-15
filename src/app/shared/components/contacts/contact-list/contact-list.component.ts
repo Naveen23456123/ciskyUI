@@ -85,16 +85,7 @@ export class ContactListComponent {
       this.pagination = this.helperService.paginationOptionGeneration(info, 10);
       this.pageSize = this.helperService.getPageSize();
     }
-    import() {
-     const config = this.defaultdialogoptions;
-          config.minWidth='75vw';
-            config.data = {
-              pageGuid: this.route.snapshot.data['pageGuid'],
-              type: this.route.snapshot.data['type'], 
-              template_type: TemplateType.CONTACT   
-            };
-              this.dialog.open(UploadFileComponent,config);
-    }
+
 
  export(){
     if(this.contactList && this.contactList.length>0)

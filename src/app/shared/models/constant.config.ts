@@ -16,6 +16,7 @@ export interface AppConstants {
     orgData:string;
     IsEditableTrue: number;
     Active: number;
+    AuthToken:string;
     InActive: number;
 
 }
@@ -33,6 +34,7 @@ export const Constants: AppConstants = {
     invoiceEntityStorage:'invoice-entity',
     IsEditableTrue: 1,
     Active: 1,
+    AuthToken:'auth-token',
     InActive: 2
 
 };

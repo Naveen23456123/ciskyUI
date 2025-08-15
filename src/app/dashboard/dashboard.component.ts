@@ -863,7 +863,6 @@ export class DashboardComponent {
     })
     this.eotService.geEOTStatusCount(this.getDataObj,'').pipe(finalize(()=> this.isEotLoading=false)).subscribe((response:any)=>{
       if(response && response.success){
-        console.log(response.data);
         this.eotStatusData= response.data.map((element:any)=>({
           name:element.name,
           value:element.count,
@@ -1339,7 +1338,6 @@ export class DashboardComponent {
           data: (items as Array<any>).map((item:any) => item.totalamount)
         });     
       });
-      console.log(expenseObj);
       this.expenseoption['series']=expenseObj;
     });
   }
@@ -1429,7 +1427,7 @@ export class DashboardComponent {
   }
   getProjectList(){
     //this.projectService.getProjectInfoSummary(this.projectSearchObj,'').pipe(finalize(()=> this.isLoading=false))
-    console.log(this.projectSearchObj);
+    
      this.defaultdialogoptions.data = {     
           element:this.projectSearchObj
         };
@@ -1445,7 +1443,7 @@ export class DashboardComponent {
           relatedTo=  response.find((x:any)=>x.name.toLowerCase()=='contractor')?.id;
         else
          relatedTo=  response.find((x:any)=>x.name.toLowerCase()!='contractor')?.id;
-        console.log(relatedTo);
+       
         this.letterSearchObj.relatedtoid= relatedTo;
         this.letterSearchObj.lettertypeid=event.data.id;
         this.letterSearchObj.ownername= event.seriesName;

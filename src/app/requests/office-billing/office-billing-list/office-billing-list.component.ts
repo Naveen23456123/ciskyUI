@@ -154,7 +154,14 @@ export class OfficeBillingListComponent {
     this.searchObj.monthandyear= data.value ?? '';
     this.filterRequestData();
    }
-
+  clear(){
+    this.searchObj={
+      projectid:'',
+      companyid:'',
+      monthandyear:null
+    };
+    this.filterRequestData();
+  }
    filterRequestData(){
     this.isSearchLoading=true;
     this.requestService.searchOfficeBillingRequests({...this.searchObj,employeeid:this.userObj.employeeid}, '')

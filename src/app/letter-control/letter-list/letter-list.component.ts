@@ -146,6 +146,19 @@ export class LetterListComponent {
     }
     this.filterLetter();
   }
+  clear(){
+    this.searchObj={
+    projectid:'',
+    companyid:'',
+    exchangetypeId:'',
+    lettertypeid:'',
+    relatedtoid:'',
+    statusid:'',
+    startdate:null,
+    enddate:null
+  };
+    this.filterLetter();
+  }
   addBulkLetters(data:any){
     data.forEach((element:any) => {
       this.addRowData(element);

@@ -57,7 +57,7 @@ export class ManageLettersListComponent {
         this.title = this.isConsultantLetter ? 'Consultant ' : 'Contractor'; 
           this.letterService.getLettersByProjectIdAndContractorId({ 
             projectId: entityData.projectId,
-            contractorId: entityData.isConsultant? '': entityData.contractorId 
+            contractorId: entityData.isConsultant? '': entityData.contractorId??'' 
           }, '')
           .pipe(finalize(() => this.isLoading = false))
           .subscribe((response: any) => {

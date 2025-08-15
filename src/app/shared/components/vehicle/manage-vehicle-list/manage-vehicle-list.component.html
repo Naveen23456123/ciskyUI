@@ -7,7 +7,8 @@
           <div class="row content-center">
             <div class="col-md-9">
               <app-search-bar-controls  [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Vehicle Name / Number"
-              (OnProjectChange)="projectChange($event)" (OnAnyChange)="anyChange($event)" >
+                (OnClear)="clear()"
+              (OnProjectChange)="projectChange($event)" (OnAnyChange)="anyChange($event)"  >
             </app-search-bar-controls>
           </div>         
           <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">         

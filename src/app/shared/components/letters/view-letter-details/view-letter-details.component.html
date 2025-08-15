@@ -40,6 +40,24 @@
                             <div class="col-md-10">
                             <span class="vw-details-val"> {{letterDetails?.subject  }} </span>
                             </div>    
+                            <hr class="vw-hr">                                                          
+                            <div class="col-md-2">
+                                <span *ngIf="!isconsultant" class="vw-details-text">
+                                    Contractor
+                                </span>
+                            </div>
+                            <div class="col-md-10">
+                            <span class="vw-details-val">
+                                {{letterDetails?.contractor}}
+                            </span>
+                            </div>
+                            <hr *ngIf="!isconsultant" class="vw-hr">
+                            <div class="col-md-2">
+                            <span class="vw-details-text">{{typetitle}} Letter Number</span>
+                            </div>
+                            <div class="col-md-10">
+                            <span class="vw-details-val">{{letterDetails?.letternumber  }}  </span>
+                            </div>  
                             <hr class="vw-hr">
                             <div class="col-md-2">
                             <span class="vw-details-text">
@@ -61,24 +79,6 @@
                                 {{letterDetails?.relatedto }}
                             </span>
                             </div>
-                            <hr class="vw-hr">                              
-                            <div class="col-md-2">
-                                <span *ngIf="!isconsultant" class="vw-details-text">
-                                    Contractor
-                                </span>
-                            </div>
-                            <div class="col-md-10">
-                            <span class="vw-details-val">
-                                {{letterDetails?.contractor}}
-                            </span>
-                            </div>
-                            <hr *ngIf="!isconsultant" class="vw-hr">
-                            <div class="col-md-2">
-                            <span class="vw-details-text">{{typetitle}} Letter Number</span>
-                            </div>
-                            <div class="col-md-10">
-                            <span class="vw-details-val">{{letterDetails?.letternumber  }}  </span>
-                            </div>  
                             <hr class="vw-hr">
                             <div class="col-md-2">                            
                             <span class="vw-details-text">

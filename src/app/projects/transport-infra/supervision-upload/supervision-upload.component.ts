@@ -34,6 +34,7 @@ export class SupervisionUploadComponent {
     const config = this.defaultdialogoptions;
     config.data = {
       pageGuid: this.route.snapshot.data['pageGuid'],
+      parentPageGuid : this.route.snapshot.parent?.data['pageGuid'],
       type: this.route.snapshot.data['type'],
       template_type: TemplateType.PROJECT 
     };

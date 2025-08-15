@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from '@env/environment';
@@ -9,6 +9,9 @@ import { I18nService } from './core/i18n.service';
 import { Router, NavigationEnd, ActivatedRoute, NavigationStart } from '@angular/router';
 import { filter, map, mergeMap } from 'rxjs/operators';
 import { SessionService } from './shared/services/session.service';
+import { NetworkStatusService } from './shared/services/network-status.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { NetworkGlitchComponent } from './shared/components/network-glitch/network-glitch.component';
 
 @Component({
   selector: 'app-root',
@@ -27,21 +30,37 @@ export class AppComponent {
     {Text:'Employees', icon:'people'}
   ];
   selectedItem: string | null = null;
-
+  private dialogRef?: MatDialogRef<NetworkGlitchComponent>;
   onItemClick(item: string) {
     this.selectedItem = item;
   }
   constructor( private translateService: TranslateService,
     private titleService: Title,private router: Router, private route: ActivatedRoute,
     private sessionService: SessionService,
-    private stateDataService:StateDataService
+    private stateDataService:StateDataService,
+    private networkService: NetworkStatusService,
+    private dialog: MatDialog
   ){
 
   }
   ngOnInit() {
+     
+    this.networkService.status$.subscribe((isOnline:any) => {
+      if (!isOnline && !this.dialogRef) {
+        this.dialogRef = this.dialog.open(NetworkGlitchComponent, {
+          disableClose: true,
+          width: '30vw'
+        });
+      } else if (isOnline && this.dialogRef) {
+        this.dialogRef.close();
+        this.dialogRef = undefined;
+      }
+    });
+
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
-        if (event.url !== '/projects/project-view' && !event.url.includes('/boq-invoice')) {
+        if (event.url !== '/projects/project-view' && !event.url.includes('/boq-invoice')
+        && !event.url.includes('/login')) {
           this.sessionService.setProjectEntity(null); // Clear data only when leaving /specific
         }
       }

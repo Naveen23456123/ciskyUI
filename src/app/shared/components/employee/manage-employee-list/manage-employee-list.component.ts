@@ -299,6 +299,13 @@ export class ManageEmployeeListComponent {
     this.searchObj.typeid= data.value ?? '';
     this.filterEmployee();
   }
+  clear(){
+    this.searchObj.projectid='';
+    this.searchObj.desgid='';
+    this.searchObj.compid='';
+    this.searchObj.typeid='';
+    this.filterEmployee();
+  }
   filterEmployee(){
   this.isSearching=true;
     this.employeeService.searchEmployee(this.searchObj, '')

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
@@ -53,6 +53,7 @@ export class MonthAndYearPickerComponent implements OnInit {
   @Output() onValueChange: EventEmitter<any> = new EventEmitter();
   maxDate = new Date();
   @Input() defaultValue:any;
+  @Input() reset:any;
   @Input() setValueDefault:any=true;
   nextBtn: boolean = false;  
   date = new FormControl();
@@ -68,7 +69,12 @@ export class MonthAndYearPickerComponent implements OnInit {
     this.onValueChange.emit(this.date.value);
   }
 
-
+  ngOnChanges(changes: SimpleChanges) {
+      if (changes['reset']) {      
+        this.date.reset();
+      }
+  }
+  
   chosenYearHandler(normalizedYear: Moment) {
     const ctrlValue = this.date.value;
     ctrlValue?.year(normalizedYear.year());

@@ -33,13 +33,13 @@ export class MenuService {
         guid: '',
         roles: []
       },
-      {
-        label: 'Dashboard Test',
-        icon: 'bxs-dashboard',
-        link: 'dashboard-test',
-        guid: '',
-        roles: []
-      },
+      // {
+      //   label: 'Dashboard Test',
+      //   icon: 'bxs-dashboard',
+      //   link: 'dashboard-test',
+      //   guid: '',
+      //   roles: []
+      // },
        {
         label: 'Projects',
         icon: 'bxs-network-chart',
@@ -53,56 +53,57 @@ export class MenuService {
           guid: '',
           roles: []
         },
-        {
-          label: 'Smart Cities/Urban',
-          link: 'sub-company',
-          guid: '',
-          roles: []
-        },
-        {
-          label: 'Env & Social',
-          link: 'projects',
-          guid: '',
-          roles: []
-        },
-        {
-          label: 'Survey & Testing',
-          link: 'department',
-          guid: '',
-          roles: []
-        },
-        {
-          label: 'Finance & Advisory',
-          link: 'con-account',
-          guid: '',
-          roles: []
-        },       
-        {
-          label: 'Railway & Metros',
-          link: 'con-account',
-          guid: '',
-          roles: []
-        },
-        {
-          label: 'Water Resources',
-          link: 'con-account',
-          guid: '',
-          roles: []
-        },
-        {
-        label: 'Tourism',
-        link: 'con-account',
-        guid: '',
-        roles: []
-        }],
+        // {
+        //   label: 'Smart Cities/Urban',
+        //   link: 'sub-company',
+        //   guid: '',
+        //   roles: []
+        // },
+        // {
+        //   label: 'Env & Social',
+        //   link: 'projects',
+        //   guid: '',
+        //   roles: []
+        // },
+        // {
+        //   label: 'Survey & Testing',
+        //   link: 'department',
+        //   guid: '',
+        //   roles: []
+        // },
+        // {
+        //   label: 'Finance & Advisory',
+        //   link: 'con-account',
+        //   guid: '',
+        //   roles: []
+        // },       
+        // {
+        //   label: 'Railway & Metros',
+        //   link: 'con-account',
+        //   guid: '',
+        //   roles: []
+        // },
+        // {
+        //   label: 'Water Resources',
+        //   link: 'con-account',
+        //   guid: '',
+        //   roles: []
+        // },
+        // {
+        // label: 'Tourism',
+        // link: 'con-account',
+        // guid: '',
+        // roles: []
+        // }
+        ],
       },
-      {
-        label: 'Projects',
-        icon: 'bxs-network-chart',
-        link: 'projects',
-        guid: '',
-        roles: [],
-      },
+      // {
+      //   label: 'Projects',
+      //   icon: 'bxs-network-chart',
+      //   link: 'projects',
+      //   guid: '',
+      //   roles: [],
+      // },
       {
         label: 'Glance',
         icon: 'bxs-network-chart',

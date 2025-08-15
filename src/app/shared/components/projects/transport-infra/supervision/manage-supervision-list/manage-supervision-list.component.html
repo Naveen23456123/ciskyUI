@@ -8,6 +8,7 @@
               (OnSubCompanyChange)="compChange($event)" 
               (OnProjectChange)="projectChange($event)"
               (OnAnyChange)="anyChange($event)"
+              (OnClear)="clear()"
               [isAny]="true" searchByAnyPlaceholder="Project Code or Name" ></app-search-bar-controls>
             </div>         
           <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">         
@@ -21,8 +22,8 @@
       </div>
       </mat-card-content>
      </mat-card>
-    <mat-card class="">        
-        <mat-card-content>
+    <mat-card >        
+        <mat-card-content class="pr-0 pt-0 ps-0">
            
             <ng-container *ngIf="isSearchLoading || isLoading; else checkNoData">
               <app-empty-table-skltn></app-empty-table-skltn>
@@ -34,7 +35,7 @@
               </ng-container>
             </ng-template>
              <ng-template #showTable>
-            <div class="wrapper" >  
+            <div class="" >  
               <div  class="mat-elevation-z8">                     
                 <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
 
@@ -167,7 +168,7 @@
 
                               </div>
                               <div  class="chart-container col-md-4">
-                                <!-- <ngx-charts-bar-horizontal *ngIf="element.progress"
+                                <ngx-charts-bar-horizontal *ngIf="element.progress"
                                 [view]="viewGraph"
                                 [results]="element.progress"
                                 [gradient]="gradient"
@@ -184,7 +185,7 @@
                                 [xAxis]="true"
                                 scheme="picnic"
                                 [dataLabelFormatting]="dataLabelFormat">                                   
-                                </ngx-charts-bar-horizontal> -->
+                                </ngx-charts-bar-horizontal>
                                 <app-no-data *ngIf="!element.progress" icon="insert_chart" message="No Site Progress Found."></app-no-data>
                               </div>
                             </div>

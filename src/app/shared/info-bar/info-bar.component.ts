@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
+import { StorageService } from '../services/storage.service';
 
 const log = new Logger('info-bar');
 @Component({
@@ -29,7 +30,8 @@ export class InfoBarComponent implements OnInit {
 
   constructor( private translateService: TranslateService,
       private titleService: Title,private router: Router, private route: ActivatedRoute,
-      private sessionService: SessionService,private cdrRef:ChangeDetectorRef) { }
+      private sessionService: SessionService,private cdrRef:ChangeDetectorRef,
+    private storageService:StorageService) { }
 
   ngOnInit(): void {
     // this.sessionService.workingLocationSubject$.pipe(take(1)).subscribe((org) => {
@@ -100,6 +102,7 @@ export class InfoBarComponent implements OnInit {
     this.subscription.unsubscribe();
   }
   logout(){
+    this.storageService.clear();
     this.router.navigate(['/login']);
   }
   openbottom(){

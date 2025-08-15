@@ -127,6 +127,9 @@ export class ConsultantAccountListComponent {
   openDoc(row:any){
     window.open(row.docaddress, "_blank");
   }
+  clear(){    
+    this.filterChange('');
+  }
   filterChange(data:any){
     if(data && data.value){ 
       this.dataSource.filter = data.value.trim().toLowerCase()

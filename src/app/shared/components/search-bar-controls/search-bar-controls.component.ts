@@ -1,4 +1,5 @@
 import { Component, EventEmitter, input, Input, Output, SimpleChanges } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { CommonService } from '@app/shared/services/common.service';
 import { DesignationInterfaceService } from '@app/shared/services/external/designation-interface.service';
@@ -57,6 +58,7 @@ export class SearchBarControlsComponent {
   @Output() OnApprovalStatusChange:EventEmitter<any> = new EventEmitter();
   @Output() OnEndDateChange:EventEmitter<any> = new EventEmitter();
   @Output() OnStartDateChange:EventEmitter<any> = new EventEmitter();
+  @Output() OnClear:EventEmitter<any> = new EventEmitter();
 
   isProjectLoaded=false;
   isDesgLoaded=false;
@@ -73,19 +75,40 @@ export class SearchBarControlsComponent {
   letterTypes:any=[];
   exchangeTypes:any=[];
   vehicles:any=[];
-
+  isReset=false;
+  filtersForm:FormGroup = new FormGroup({});
   constructor(private sessionservice: SessionService, private designationService:DesignationInterfaceService,
     private subCompanyService:SubCompanyInterfaceService, private projectService:ProjectInterfaceService,
-    private commonService:CommonService, private vehicleService: VehicleInterfaceService
+    private commonService:CommonService, private vehicleService: VehicleInterfaceService,
+    private fb:FormBuilder
     ){
       
   }
 
   ngOnInit(){
+    this.filtersForm = this.fb.group({
+      subCompany: [''],
+      project: [''],
+      vehicle: [''],
+      professional: [''],
+      designation: [''],
+      letterType: [''],
+      generalStatus: [''],
+      approvalStatus: [''],
+      status: [''],
+      relatedTo: [''],
+      exchangeType: [''],
+      monthAndYear: [null],
+      startdaterange:[null],
+      enddaterange:[null],
+      startTime: [null],
+      endTime: [null],
+      startDate: [null],
+      endDate: [null],
+      anySearch: ['']
+    });
     let apiCalls: any = {};
     let token= this.sessionservice.getTokenData();
-    console.log(token);
-    console.log(JSON.parse(token.c_ids));
     if(token && token.c){
       if (this.isSubCompany)
         apiCalls.subCompanyAPI = this.subCompanyService.getSubCompanyListByOrgId({},'');
@@ -278,5 +301,30 @@ export class SearchBarControlsComponent {
   }
   openFromIcon(timepicker: { open: () => void }) {    
     timepicker.open();
+  }
+  onClear(){
+    this.filtersForm.patchValue({
+      subCompany: '',
+      vehicle: '',
+      professional: '',
+      designation: '',
+      letterType: '',
+      generalStatus: '',
+      approvalStatus: '',
+      status: '',
+      relatedTo: '',
+      exchangeType: '',
+      monthAndYear: null,    
+      startdaterange: null,
+      enddaterange:null,
+      startTime: null,
+      endTime: null,
+      startDate: null,
+      endDate: null,
+      anySearch: '' 
+    });   
+    this.isReset=!this.isReset;
+    this.projectId='';
+    this.OnClear.emit({value:''});
   }
 }

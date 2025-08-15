@@ -3,8 +3,17 @@ import { RouterModule, Routes, PreloadAllModules } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
 import { Shell } from './shell/shell.service';
+import { authGuard } from './shared/guards/auth.guard';
 
-const routes: Routes = [
+function protectRoutes(routes: Routes): Routes {
+  return routes.map(route => ({
+    ...route,
+    canActivate: [authGuard],
+    children: route.children ? protectRoutes(route.children) : undefined
+  }));
+}
+
+const baseroutes: Routes = [
   Shell.childRoutes([
     {
       path: 'dashboard',
@@ -185,11 +194,13 @@ const routes: Routes = [
       path: 'transport-list',
       loadChildren:()=>import('app/projects/transport-infra/transport-infra-list/transport-infra-list.module').then(x=>x.TransportInfraListModule),
       data:{pageGuid:'',type:'view'}
-    }
+    },
+    //{ path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
   ]),
   // { path: 'login', loadChildren: () => import('app/login/login.module').then(x => x.LoginModule) },
-  { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
+  
 ];
+const routes: Routes = protectRoutes(baseroutes);
 @NgModule({
   imports: [CommonModule, RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })],
   exports: [RouterModule]

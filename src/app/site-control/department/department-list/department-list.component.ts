@@ -116,7 +116,9 @@ export class DepartmentListComponent {
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }
-
+  clear(){    
+    this.filterChange('');
+  }
   filterChange(data:any){
     if(data && data.value){ 
       this.dataSource.filter = data.value.trim().toLowerCase()

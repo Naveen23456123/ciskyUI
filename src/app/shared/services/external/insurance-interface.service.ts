@@ -14,17 +14,29 @@ export class InsuranceInterfaceService {
 
   getTemplateColumnList() {
     let columns = [
-      { label: 'Insurance_Name', value: 'Insurance_Name' },
-      { label: 'Company_Name', value: 'Company_Name' },
-      { label: 'Policy_Number', value: 'Policy_Number' },
-      { label: 'Amount', value: 'Amount' },
-      { label: 'Start_Date', value: 'Start_Date' },
-      { label: 'Expiry_Date', value: 'Expiry_Date' }
+      { label: 'Project', value: 'Project' },
+      { label: 'Insurance_Name', value: 'insurancename' },
+      { label: 'Company_Name', value: 'companyname' },
+      { label: 'Policy_Number', value: 'policynumber' },
+      { label: 'Amount', value: 'amount' },
+      { label: 'Start_Date', value: 'startdate' },
+      { label: 'Expiry_Date', value: 'enddate' }
     
     ];
   return columns;
   }
-
+  getCsvTemplateColumnList() {
+    let columns = [
+      { label: 'Insurance_Name', value: 'insurancename' },
+      { label: 'Company_Name', value: 'companyname' },
+      { label: 'Policy_Number', value: 'policynumber' },
+      { label: 'Amount', value: 'amount' },
+      { label: 'Start_Date', value: 'startdate' },
+      { label: 'Expiry_Date', value: 'enddate' }
+    
+    ];
+  return columns;
+  }
   getInsuranceListComponent(){
         return {
           component: InsuranceListComponent,
@@ -49,6 +61,17 @@ export class InsuranceInterfaceService {
   createInsurance(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Insurance',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  createBulkInsurance(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Insurance/Bulk',
       params: {},
       headers: true,
       guid: '',

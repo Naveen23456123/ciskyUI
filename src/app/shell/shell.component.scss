@@ -50,8 +50,8 @@ margin-bottom: 15px;
 {
     display: table-cell;
     min-height: 100%;
-    background-color: #00343f;
-    background-image: linear-gradient(#09002d, #737373);
+    // background-color: #00343f;
+    // background-image: linear-gradient(#09002d, #737373);
     color: #fff;
     vertical-align: top;
     padding-top: 30px;
@@ -430,6 +430,7 @@ body{
 @media screen and (max-width: 400px){
   .sidebar{
     width: 240px;
+    
   }
   .sidebar.close{
     width: 78px;
@@ -482,7 +483,11 @@ body{
   background-image: linear-gradient(#ffffff, #ffffff);
   z-index: 100;
   transition: all 0.5s ease;
+ 
 }
+
+
+
 .sidebar .nav-links li a .link_name{
   font-size: 18px;
   font-weight: 600;

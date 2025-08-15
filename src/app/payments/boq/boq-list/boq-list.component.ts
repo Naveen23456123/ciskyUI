@@ -53,7 +53,9 @@ export class BoqListComponent {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
-
+  clear(){
+    this.filterChange('');
+  }
   filterChange(data:any){
     if(data && data.value){ 
       this.dataSource.filter = data.value.trim().toLowerCase()

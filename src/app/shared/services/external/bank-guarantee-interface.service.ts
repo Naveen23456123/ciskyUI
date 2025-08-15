@@ -14,17 +14,29 @@ export class BankGuaranteeInterfaceService {
 
   getTemplateColumnList() {
     let columns = [
-      { label: 'Bank_Name', value: 'Bank_Name' },
-      { label: 'Bank_Guarantee_Name', value: 'Bank_Guarantee_Name' },
-      { label: 'Amount', value: 'Amount' },
-      { label: 'Start_Date', value: 'Start_Date' },
-      { label: 'Expiry_Date', value: 'Expiry_Date' },
-      { label: 'Release_Date', value: 'Release_Date' },
-      { label: 'Remarks', value: 'Remarks' },
+      { label: 'Project', value: 'project' },
+      { label: 'Bank_Name', value: 'bankname' },
+      { label: 'Bank_Guarantee_Name', value: 'guaranteenumber' },
+      { label: 'Amount', value: 'amount' },
+      { label: 'Guarantee_Date', value: 'guaranteedate' },
+      { label: 'Expiry_Date', value: 'guaranteeexpirydate' },
+      { label: 'Release_Date', value: 'releasedate' },
+      { label: 'Remarks', value: 'remark' },
     ];
   return columns;
   }
-
+  getCsvTemplateColumnList() {
+    let columns = [      
+      { label: 'Bank_Name', value: 'bankname' },
+      { label: 'Bank_Guarantee_Name', value: 'guaranteenumber' },
+      { label: 'Amount', value: 'amount' },
+      { label: 'Guarantee_Date', value: 'guaranteedate' },
+      { label: 'Expiry_Date', value: 'guaranteeexpirydate' },
+      { label: 'Release_Date', value: 'releasedate' },
+      { label: 'Remarks', value: 'remark' },
+    ];
+  return columns;
+  }
   getBankGuaranteeListComponent(){
     return {
         component: BankGuaranteeListComponent,
@@ -48,6 +60,17 @@ export class BankGuaranteeInterfaceService {
   createBankGuarantee(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'BankGuarantee',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  createBulkBankGuarantee(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'BankGuarantee/Bulk',
       params: {},
       headers: true,
       guid: '',

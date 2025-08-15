@@ -52,7 +52,8 @@ export class ProjectViewComponent {
     this.sessionService.workOwnerSubject$.subscribe((response:any)=>{
       if(response) {
        this.workOwnerList= response;
-       this.projectForm.patchValue({conscontName:this.workOwnerList[0].id});
+       if(this.workOwnerList)
+       this.projectForm.patchValue({conscontName:this.workOwnerList[0]?.id});
       }
     }); 
     this.sessionService.workingProjectSubject$.pipe(take(1)).subscribe((data:any)=>{
@@ -120,7 +121,6 @@ export class ProjectViewComponent {
   }
 
   contractor(){
-
     const config = this.defaultdialogoptions;
         config.data = {
           pageGuid: this.route.snapshot.data['pageGuid'],

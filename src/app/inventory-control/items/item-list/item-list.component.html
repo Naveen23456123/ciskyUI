@@ -8,6 +8,7 @@
         <div class="col-md-9">
           <app-search-bar-controls [isAny]="true"
           (OnAnyChange)="filterChange($event)"
+          (OnClear)="clear()"
            searchByAnyPlaceholder="Item Name" ></app-search-bar-controls>                           
       </div>       
       <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">

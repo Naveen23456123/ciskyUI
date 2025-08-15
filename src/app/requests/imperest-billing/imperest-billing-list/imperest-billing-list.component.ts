@@ -144,6 +144,13 @@ export class ImperestBillingListComponent {
       this.dataSource.filter = '';
     }
   }
+  clear(){
+    this.searchObj={
+      projectid:'',
+      companyid:''
+    };
+    this.filterImprest();
+  }
   filterImprest(){
   this.isSearching=true;
     this.requestService.searchImperestBillingRequests({...this.searchObj,employeeid:this.userObj.employeeid}, '')

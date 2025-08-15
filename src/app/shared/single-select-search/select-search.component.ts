@@ -35,6 +35,8 @@ export class SelectSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   /** select is requuired or not. */
   @Input() required: Boolean = false;
 
+  @Input() reset: Boolean = false;
+
   @Input() multiple: Boolean = false;
 
   @Input() disable: Boolean = false;
@@ -119,7 +121,11 @@ export class SelectSearchComponent implements OnInit, AfterViewInit, OnDestroy {
       this.ArrayCtrl.disable();
    
   }
-
+  ngOnChanges(changes: SimpleChanges) {
+      if (changes['reset']) {      
+        this.ArrayCtrl.reset();
+      }
+  }
   ngAfterViewInit() {
     this.setInitialValue();
   }

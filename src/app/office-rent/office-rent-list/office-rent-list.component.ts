@@ -148,6 +148,15 @@ export class OfficeRentListComponent {
     startdate:'',
     enddate:''
   };
+  clear(){
+    this.searchObj={
+    projectid:'',
+    companyid:'',
+    startdate:null,
+    enddate:null
+  };
+    this.filterRent();
+  }
   projectChange(data:any){ 
     this.searchObj.projectid= data.value ?? '';
     this.filterRent();

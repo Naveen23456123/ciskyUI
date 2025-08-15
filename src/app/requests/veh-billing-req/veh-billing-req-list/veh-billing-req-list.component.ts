@@ -146,7 +146,14 @@ export class VehBillingReqListComponent {
     this.searchObj.monthandyear= data.value ?? '';
     this.filterVehicleBilling();
    }
-
+  clear(){
+    this.searchObj={
+      projectid:'',
+      companyid:'',
+      monthandyear:null
+    };
+    this.filterVehicleBilling();
+  }
    filterVehicleBilling(){
     this.isSearchLoading=true;
     this.requestService.searchVehicleBillingRequests({...this.searchObj,employeeid:this.userObj.employeeid}, '')

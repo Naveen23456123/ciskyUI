@@ -5,7 +5,7 @@
             <div class="row col-md-12 content-center">
               <div class="col-md-9">
                 <div>
-                  <app-search-bar-controls  (OnAnyChange)="filterChange($event)"
+                  <app-search-bar-controls  (OnAnyChange)="filterChange($event)" (OnClear)="clear()"
                     [isAny]="true" searchByAnyPlaceholder="Project Name / Invoice No." ></app-search-bar-controls>
                 </div>  
             </div>       

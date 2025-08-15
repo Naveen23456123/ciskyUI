@@ -121,7 +121,12 @@ miscList:any[]= [];
     this.searchObj.projectid= data.value ?? '';
     this.filterMisc();
   } 
-
+  clear(){
+    this.searchObj={
+     projectid:''
+    };
+    this.filterMisc();
+  }
   anyChange(data:any){
     if(data && data.value){ 
       this.dataSource.filter = data.value.trim().toLowerCase()

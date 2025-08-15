@@ -77,7 +77,7 @@ export class ExpenseListComponent {
        this.userObj= response;
       }
     })
-    this.filterImprest();
+    this.filterExpense();
   }
   
   ngAfterViewInit() {
@@ -144,12 +144,12 @@ export class ExpenseListComponent {
   };
   projectChange(data:any){ 
     this.searchObj.projectid= data.value ?? '';
-    this.filterImprest();
+    this.filterExpense();
   }
   compChange(data:any){
     this.searchObj.companyid= data.value ?? '';
     this.searchObj.projectid= data.projectid ?? '';
-    this.filterImprest();
+    this.filterExpense();
   }
   anyChange(data:any){
     if(data && data.value){ 
@@ -159,7 +159,14 @@ export class ExpenseListComponent {
       this.dataSource.filter = '';
     }
   }
-  filterImprest(){
+  clear() {
+    this.searchObj={
+      projectid:'',
+      companyid:'',
+    };
+    this.filterExpense();
+  }
+  filterExpense(){
   this.isSearching=true;
     this.siteOpsService.searchExpenseListByOrgId({...this.searchObj,employeeid:this.userObj.employeeid}, '')
       .pipe(finalize(() => {this.isLoading = false;this.isSearching=false}))

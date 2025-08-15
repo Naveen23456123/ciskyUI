@@ -70,7 +70,7 @@ export class ExpReqBillingListComponent {
      this.userObj= response;
     }
   })
-  this.filterImprest();
+  this.filterExpRequest();
   }
 
   ngAfterViewInit() {
@@ -127,12 +127,12 @@ export class ExpReqBillingListComponent {
   };
   projectChange(data:any){ 
    this.searchObj.projectid= data.value ?? '';
-   this.filterImprest();
+   this.filterExpRequest();
   }
   compChange(data:any){
     this.searchObj.companyid= data.value ?? '';
     this.searchObj.projectid= data.projectid ?? '';
-    this.filterImprest();
+    this.filterExpRequest();
   }
   anyChange(data:any){
     if(data && data.value){ 
@@ -142,7 +142,14 @@ export class ExpReqBillingListComponent {
       this.dataSource.filter = '';
     }
   }
-  filterImprest(){
+  clear(){
+    this.searchObj={
+      projectid:'',
+      companyid:''
+    };
+    this.filterExpRequest();
+  }
+  filterExpRequest(){
   this.isSearching=true;
     this.requestService.searchExpenseBillingRequests({...this.searchObj,employeeid:this.userObj.employeeid}, '')
       .pipe(finalize(() => {this.isLoading = false;this.isSearching=false}))

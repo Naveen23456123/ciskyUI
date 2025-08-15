@@ -110,17 +110,7 @@
                                       {{workingProject.bidduedate | formatDate  }}
                                     </span>
                                   </div>
-                                  <hr>
-                                  <div class="col-md-3">
-                                    <span class="details-text">
-                                      Lead
-                                    </span>
-                                  </div>
-                                  <div class="col-md-3">
-                                    <span class="details-val">
-                                      {{workingProject.lead}}
-                                    </span>
-                                  </div>                    
+                                  <hr>                                                  
                                   <div class="col-md-3">
                                     <span class="details-text">
                                       Consultant LOA Date
@@ -131,7 +121,25 @@
                                       {{workingProject.loadate | formatDate }}
                                     </span>
                                   </div>
-                                  <hr>
+                                  <div class="col-md-3">
+                                    <span class="details-text">
+                                      Lead
+                                    </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">
+                                      {{workingProject.lead}}
+                                    </span>
+                                  </div>    
+                                  <hr>              
+                                  <div class="col-md-3">
+                                    <span class="details-text">
+                                      Agreement Date
+                                    </span>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <span class="details-val">{{workingProject.agreementdate | formatDate }}  </span>
+                                  </div>
                                   <div class="col-md-3">
                                     <span class="details-text">
                                       JV
@@ -141,15 +149,7 @@
                                     <span class="details-val">
                                       {{workingProject.jv}}
                                     </span>
-                                  </div>                    
-                                  <div class="col-md-3">
-                                    <span class="details-text">
-                                      Agreement Date
-                                    </span>
-                                  </div>
-                                  <div class="col-md-3">
-                                    <span class="details-val">{{workingProject.agreementdate | formatDate }}  </span>
-                                  </div>
+                                  </div>      
                                   <hr>
                                   <div class="col-md-3">
                                     <span class="details-text">Commencement Date </span>
@@ -184,10 +184,10 @@
                                     <span class="details-val"> {{workingProject.actualconstructioncompletedate | formatDate }} </span>
                                   </div>                    
                                   <div class="col-md-3">
-                                    <span class="details-text"> Work Type</span>
+                                    <span class="details-text">Contract Mode </span>
                                   </div>
                                   <div class="col-md-3">
-                                    <span class="details-val"> {{workingProject.worktype}} </span>
+                                    <span class="details-val"> {{workingProject.contractmode}} </span>
                                   </div> 
                                   <hr>
                                   <div class="col-md-3">
@@ -197,10 +197,10 @@
                                     <span class="details-val"> {{workingProject.schedulecompletedate | formatDate }} </span>
                                   </div>                    
                                   <div class="col-md-3">
-                                    <span class="details-text">Contract Mode </span>
+                                    <span class="details-text">Authority Engineer </span>
                                   </div>
                                   <div class="col-md-3">
-                                    <span class="details-val"> {{workingProject.contractmode}} </span>
+                                    <span class="details-val"> {{workingProject.authengineer}} </span>
                                   </div> 
                                   <hr>
                                   <div class="col-md-3">
@@ -210,25 +210,13 @@
                                     <span class="details-val"> {{workingProject.actualcompletedate | formatDate }} </span>
                                   </div>                    
                                   <div class="col-md-3">
-                                    <span class="details-text">Authority Engineer </span>
-                                  </div>
-                                  <div class="col-md-3">
-                                    <span class="details-val"> {{workingProject.authengineer}} </span>
-                                  </div> 
-                                  <hr>
-                                  <div class="col-md-3">
-                                    <span class="details-text">Employee Count </span>
-                                  </div>
-                                  <div class="col-md-3">
-                                    <span class="details-val">  </span>
-                                  </div>                    
-                                  <div class="col-md-3">
                                     <span class="details-text">Coordinator </span>
                                   </div>
                                   <div class="col-md-3">
                                     <span class="details-val"> {{workingProject.cordinator}} </span>
                                   </div> 
-                                  <hr>                                                    
+                                  <hr>
+                                                                                  
                                   <div class="col-md-3">
                                     <span class="details-text"> Client</span>
                                   </div>
@@ -388,7 +376,7 @@
                                     <span class="details-text"> Project Duration With EOT (in Months)</span>
                                   </div>
                                   <div class="col-md-3">
-                                    <span class="details-val"> {{selectedContractor?.projectduration}} </span>
+                                    <span class="details-val"> - </span>
                                   </div> 
                               
                                   <div class="col-md-3">
@@ -402,7 +390,7 @@
                                     <span class="details-text">Extension of Time Count </span>
                                   </div>
                                   <div class="col-md-3">
-                                    <span class="details-val"> {{selectedContractor?.contractorname}} </span>
+                                    <span class="details-val"> - </span>
                                   </div> 
                                   
                                   <div class="col-md-3">
@@ -416,7 +404,7 @@
                                     <span class="details-text">COS of Count </span>
                                   </div>
                                   <div class="col-md-3">
-                                    <span class="details-val"> {{selectedContractor?.contractorname}} </span>
+                                    <span class="details-val"> - </span>
                                   </div> 
                                   
                                   <div class="col-md-3">

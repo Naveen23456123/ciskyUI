@@ -146,17 +146,17 @@ export class OfcRentBillingListComponent {
   searchObj:any={};
   projectChange(data:any){ 
     this.searchObj.projectid= data.value ?? '';
-    this.filterVehicleLogs();
+    this.filterOfcBilling();
    }
    compChange(data:any){
      this.searchObj.companyid= data.value ?? '';
      this.searchObj.projectid= data.projectid ?? '';
-     this.filterVehicleLogs();
+     this.filterOfcBilling();
    }
 
   vehicleChange(data:any){ 
     this.searchObj.vehicleid= data.value ?? '';
-    this.filterVehicleLogs();
+    this.filterOfcBilling();
    }
 
    anyChange(data:any){
@@ -169,10 +169,19 @@ export class OfcRentBillingListComponent {
    }
    monthYearChange(data:any){
     this.searchObj.monthandyear= data.value ?? '';
-    this.filterVehicleLogs();
+    this.filterOfcBilling();
    }
 
-   filterVehicleLogs(){
+  clear() {
+    this.searchObj={
+      projectid:'',
+      companyid:'',
+      monthandyear:null,
+      vehicleid:''
+    };
+    this.filterOfcBilling();
+  }
+   filterOfcBilling(){
     this.isSearchLoading=true;
     this.officeService.searchOfficeBilling(this.searchObj, '')
     .pipe(finalize(() => {this.isLoading = false; this.isSearchLoading=false}))

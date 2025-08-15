@@ -159,7 +159,7 @@ export class CommonService {
     return new Promise((resolve) => {
       this.sessionService.userSubject$.subscribe((response: any) => {
         if (response) {
-          const modules: any[] = response.modules.modules;
+          const modules: any[] = response.modules?.modules;
 
           const findPermissions = (modules: any[]): string[] | null => {
             for (let module of modules) {

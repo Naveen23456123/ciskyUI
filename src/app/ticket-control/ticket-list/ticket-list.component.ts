@@ -130,7 +130,12 @@ export class TicketListComponent {
    this.searchObj.projectid= data.value ?? '';
    this.filterTicket();
   }
-
+  clear(){
+    this.searchObj={
+     projectid:''
+    };
+    this.filterTicket();
+  }
   anyChange(data:any){
     if(data && data.value){ 
       this.dataSource.filter = data.value.trim().toLowerCase()

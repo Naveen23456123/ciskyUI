@@ -13,6 +13,7 @@
                       <app-search-bar-controls [isMonthAndYear]="true"
                       [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Employee Name"
                       (OnProjectChange)="projectChange($event)"  
+                      (OnClear)="clear()"
                        (OnAnyChange)="anyChange($event)"  (OnMonthYearChange)="monthYearChange($event)"
                       ></app-search-bar-controls>
                     </div>  

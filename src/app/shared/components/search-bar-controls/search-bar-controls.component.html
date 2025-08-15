@@ -1,173 +1,179 @@
-<div class="row col-md-12">
-<div class="col-md-3 pr-0" *ngIf="isSubCompany">
-    <mat-form-field>
-        <mat-icon matPrefix>domain</mat-icon>
-        <mat-label>Sub Company</mat-label>
-        <mat-select (selectionChange)="subCompanyChange($event)" >
-            <mat-option value="">All</mat-option>
-            <mat-option  *ngFor="let field of subCompanies" [value]="field.id">
-                {{field.name}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
-<div class="col-md-4 pr-0" *ngIf="isProjects" >
-    <app-select-search *ngIf="isProjectLoaded"  [showAllLabel]="showProjectAllLabel"
-        searchPlaceholder="Search Project" [defaultValue]="projectId" emptySearchMessage="No Project Found" label="Select Project"
-        (onValueChange)="projectChange($event)" [valueArrays]="projects">
+<form [formGroup]="filtersForm">
+    <div class=" d-flex flex-wrap gap-2">
+    <div class=" pr-0" *ngIf="isSubCompany">
+        <mat-form-field>
+            <mat-icon matPrefix>domain</mat-icon>
+            <mat-label>Sub Company</mat-label>
+            <mat-select (selectionChange)="subCompanyChange($event)" formControlName="subCompany" >
+                <mat-option value="">All</mat-option>
+                <mat-option  *ngFor="let field of subCompanies" [value]="field.id">
+                    {{field.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="pr-0" *ngIf="isProjects" >
+        <app-select-search *ngIf="isProjectLoaded"  [showAllLabel]="showProjectAllLabel"
+            searchPlaceholder="Search Project" [reset]="isReset" [defaultValue]="projectId" emptySearchMessage="No Project Found" label="Select Project"
+            (onValueChange)="projectChange($event)" [valueArrays]="projects">
+        </app-select-search>
+    </div>
+    <div class=" pr-0" *ngIf="isVehicle">
+        <mat-form-field>
+            <mat-icon matPrefix>toggle_on</mat-icon>
+            <mat-label>Vehicles</mat-label>
+            <mat-select (selectionChange)="vehicleChange($event)" formControlName="vehicle">
+                <mat-option value="">All</mat-option>
+                <mat-option  *ngFor="let field of vehicles" [value]="field.id">
+                    {{field.number}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class=" pr-0" *ngIf="isProfessional">
+        <mat-form-field>
+            <mat-icon matPrefix>engineering</mat-icon>
+            <mat-label>Professional</mat-label>
+            <mat-select (selectionChange)="professionalChange($event)" formControlName="professional">
+                <mat-option value="">All</mat-option>
+                <mat-option  *ngFor="let field of professionals" [value]="field.id">
+                    {{field.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class=" pr-0" *ngIf="isDesignation">  
+        <app-select-search *ngIf="isDesgLoaded" [showAllLabel]="true"
+        searchPlaceholder="Search Designation" [reset]="isReset"  emptySearchMessage="No Designation Found" label="Designation"
+        (onValueChange)="desgChange($event)" [valueArrays]="designations">
     </app-select-search>
-</div>
-<div class="col-md-3 pr-0" *ngIf="isVehicle">
-    <mat-form-field>
-        <mat-icon matPrefix>toggle_on</mat-icon>
-        <mat-label>Vehicles</mat-label>
-        <mat-select (selectionChange)="vehicleChange($event)">
-            <mat-option value="">All</mat-option>
-            <mat-option  *ngFor="let field of vehicles" [value]="field.id">
-                {{field.number}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
-<div class="col-md-2 pr-0" *ngIf="isProfessional">
-    <mat-form-field>
-        <mat-icon matPrefix>engineering</mat-icon>
-        <mat-label>Professional</mat-label>
-        <mat-select (selectionChange)="professionalChange($event)" >
-            <mat-option value="">All</mat-option>
-            <mat-option  *ngFor="let field of professionals" [value]="field.id">
-                {{field.name}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
-<div class="col-md-4 pr-0" *ngIf="isDesignation">  
-    <app-select-search *ngIf="isDesgLoaded" [showAllLabel]="true"
-    searchPlaceholder="Search Designation"  emptySearchMessage="No Designation Found" label="Designation"
-    (onValueChange)="desgChange($event)" [valueArrays]="designations">
-</app-select-search>
-</div>
-<div class="col-md-3 pr-0" *ngIf="isLetterType">  
-    <app-select-search *ngIf="isLetterTypeLoaded" [showAllLabel]="true"
-    searchPlaceholder="Search Letter Type"  emptySearchMessage="No Letter Type Found" label="Letter Type"
-    (onValueChange)="letterTypeChange($event)" [valueArrays]="letterTypes">
-</app-select-search>
-</div>
-<div class="col-md-2 pr-0" *ngIf="isGeneralStatus">
-    <mat-form-field>
-        <mat-icon matPrefix>published_with_changes</mat-icon>
-        <mat-label>Status</mat-label>
-        <mat-select (selectionChange)="generalStatusChange($event)"  >
-            <mat-option value="">All</mat-option>
-            <mat-option  *ngFor="let field of generalStatus" [value]="field.id">
-                {{field.name}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
-<div class="col-md-2 pr-0" *ngIf="isApprovalStatus">
-    <mat-form-field>
-        <mat-icon matPrefix>toggle_on</mat-icon>
-        <mat-label>Status</mat-label>
-        <mat-select (selectionChange)="approvalStatusChange($event)"  >
-            <mat-option value="">All</mat-option>
-            <mat-option  *ngFor="let field of approvalStatus" [value]="field.id">
-                {{field.name}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
-<div class="col-md-3 pr-0" *ngIf="isStatus">
-    <mat-form-field>
-        <mat-icon matPrefix>toggle_on</mat-icon>
-        <mat-label>Status</mat-label>
-        <mat-select >
-            <mat-option  *ngFor="let field of statuses" [value]="field.id">
-                {{field.name}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
-<div class="col-md-3 pr-0" *ngIf="isRelatedTo">
-    <mat-form-field>
-        <mat-icon matPrefix>person</mat-icon>
-        <mat-label>Associated To</mat-label>
-        <mat-select (selectionChange)="relatedChange($event)" >
-            <mat-option value="">All</mat-option>
-            <mat-option  *ngFor="let field of relatedTo" [value]="field.id">
-                {{field.name}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
-<div class="col-md-3 pr-0" *ngIf="isExchangeType">
-    <mat-form-field>
-        <mat-icon matPrefix>compare_arrows</mat-icon>
-        <mat-label>Exchange Type</mat-label>
-        <mat-select (selectionChange)="exchangeTypeChange($event)" >
-            <mat-option value="">All</mat-option>
-            <mat-option  *ngFor="let field of exchangeTypes" [value]="field.id">
-                {{field.name}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
-<div class="col-md-3 pr-0 date-range" *ngIf="isMonthAndYear">
-    <app-month-and-year-picker [setValueDefault]="false"  (onValueChange)="monthYearChange($event)"  ></app-month-and-year-picker> 
-</div>
-<div class="col-md-3 pr-0 date-range" *ngIf="isDateRange">   
-    <mat-form-field>
-        <mat-label>Select a date range</mat-label>
-        <mat-date-range-input [rangePicker]="picker" >
-          <input matStartDate #dateRangeStart placeholder="Start date">
-          <input matEndDate  #dateRangeEnd placeholder="End date"
-          (dateChange)="dateRangeChange(dateRangeStart, dateRangeEnd)">
-        </mat-date-range-input>        
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-date-range-picker #picker></mat-date-range-picker>
-      </mat-form-field>
-</div>
-<div class="col-md-2" *ngIf="isStartTime">                           
-    <mat-form-field>
-        <mat-label>Start Time</mat-label>
-        <input type="text" matInput [ngxMatTimepicker]="timepicker" [format]="24"
-          readonly/>                        
-        <mat-icon  matSuffix (click)="openFromIcon(timepicker)">schedule</mat-icon>
-      </mat-form-field>                              
-      <ngx-mat-timepicker (timeSet)="onStartTimeSelected($event)" #timepicker [enableKeyboardInput]="true"></ngx-mat-timepicker>
-</div> 
-<div class="col-md-2" *ngIf="isEndTime">                           
-    <mat-form-field>
-        <mat-label>End Time</mat-label>
-        <input type="text" matInput [ngxMatTimepicker]="timepicker" [format]="24"
-          readonly/>                        
-        <mat-icon  matSuffix (click)="openFromIcon(timepicker)">schedule</mat-icon>                                     
-      </mat-form-field>                              
-      <ngx-mat-timepicker (timeSet)="onEndTimeSelected($event)" #timepicker [enableKeyboardInput]="true"></ngx-mat-timepicker>
-</div>
-<div class="col-md-2 pr-0" *ngIf="isStartDate">  
-    <mat-form-field class="example-full-width">
-        <mat-label>Start Date</mat-label>
-        <input matInput  [matDatepicker]="startDate" (dateChange)="startDateChange($event)">        
-        <mat-datepicker-toggle matIconSuffix [for]="startDate"></mat-datepicker-toggle>
-        <mat-datepicker #startDate></mat-datepicker>
-      </mat-form-field>
+    </div>
+    <div class=" pr-0" *ngIf="isLetterType">  
+        <app-select-search *ngIf="isLetterTypeLoaded" [showAllLabel]="true"
+        searchPlaceholder="Search Letter Type" [reset]="isReset"  emptySearchMessage="No Letter Type Found" label="Letter Type"
+        (onValueChange)="letterTypeChange($event)" [valueArrays]="letterTypes">
+    </app-select-search>
+    </div>
+    <div class=" pr-0" *ngIf="isGeneralStatus">
+        <mat-form-field>
+            <mat-icon matPrefix>published_with_changes</mat-icon>
+            <mat-label>Status</mat-label>
+            <mat-select (selectionChange)="generalStatusChange($event)" formControlName="generalStatus" >
+                <mat-option value="">All</mat-option>
+                <mat-option  *ngFor="let field of generalStatus" [value]="field.id">
+                    {{field.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class=" pr-0" *ngIf="isApprovalStatus">
+        <mat-form-field>
+            <mat-icon matPrefix>published_with_changes</mat-icon>
+            <mat-label>Status</mat-label>
+            <mat-select (selectionChange)="approvalStatusChange($event)" formControlName="approvalStatus" >
+                <mat-option value="">All</mat-option>
+                <mat-option  *ngFor="let field of approvalStatus" [value]="field.id">
+                    {{field.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class=" pr-0" *ngIf="isStatus">
+        <mat-form-field>
+            <mat-icon matPrefix>published_with_changes</mat-icon>
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+                <mat-option  *ngFor="let field of statuses" [value]="field.id">
+                    {{field.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class=" pr-0" *ngIf="isRelatedTo">
+        <mat-form-field>
+            <mat-icon matPrefix>person</mat-icon>
+            <mat-label>Associated To</mat-label>
+            <mat-select (selectionChange)="relatedChange($event)" formControlName="relatedTo" >
+                <mat-option value="">All</mat-option>
+                <mat-option  *ngFor="let field of relatedTo" [value]="field.id">
+                    {{field.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class=" pr-0" *ngIf="isExchangeType">
+        <mat-form-field>
+            <mat-icon matPrefix>compare_arrows</mat-icon>
+            <mat-label>Exchange Type</mat-label>
+            <mat-select (selectionChange)="exchangeTypeChange($event)" formControlName="exchangeType" >
+                <mat-option value="">All</mat-option>
+                <mat-option  *ngFor="let field of exchangeTypes" [value]="field.id">
+                    {{field.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class=" pr-0 date-range" *ngIf="isMonthAndYear">
+        <app-month-and-year-picker [setValueDefault]="false" [reset]="isReset"
+          (onValueChange)="monthYearChange($event)"  ></app-month-and-year-picker> 
+    </div>
+    <div class=" pr-0 date-range" *ngIf="isDateRange">   
+        <mat-form-field>
+            <mat-label>Select a date range</mat-label>
+            <mat-date-range-input [rangePicker]="picker" >
+            <input matStartDate #dateRangeStart placeholder="Start date" formControlName="startdaterange">
+            <input matEndDate  #dateRangeEnd placeholder="End date" formControlName="enddaterange"
+            (dateChange)="dateRangeChange(dateRangeStart, dateRangeEnd)">
+            </mat-date-range-input>        
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+    </div>
+    <div class="" *ngIf="isStartTime">                           
+        <mat-form-field>
+            <mat-label>Start Time</mat-label>
+            <input type="text" matInput [ngxMatTimepicker]="timepicker" formControlName="startTime" [format]="24"
+            readonly/>                        
+            <mat-icon  matSuffix (click)="openFromIcon(timepicker)">schedule</mat-icon>
+        </mat-form-field>                              
+        <ngx-mat-timepicker (timeSet)="onStartTimeSelected($event)" #timepicker [enableKeyboardInput]="true"></ngx-mat-timepicker>
+    </div> 
+    <div class="" *ngIf="isEndTime">                           
+        <mat-form-field>
+            <mat-label>End Time</mat-label>
+            <input type="text" matInput [ngxMatTimepicker]="timepicker" formControlName="endTime" [format]="24"
+            readonly/>                        
+            <mat-icon  matSuffix (click)="openFromIcon(timepicker)">schedule</mat-icon>                                     
+        </mat-form-field>                              
+        <ngx-mat-timepicker (timeSet)="onEndTimeSelected($event)" #timepicker [enableKeyboardInput]="true"></ngx-mat-timepicker>
+    </div>
+    <div class=" pr-0" *ngIf="isStartDate">  
+        <mat-form-field class="example-full-width">
+            <mat-label>Start Date</mat-label>
+            <input matInput  [matDatepicker]="startDate" formControlName="startDate" (dateChange)="startDateChange($event)">        
+            <mat-datepicker-toggle matIconSuffix [for]="startDate"></mat-datepicker-toggle>
+            <mat-datepicker #startDate></mat-datepicker>
+        </mat-form-field>
 
-</div>
-<div class="col-md-2 pr-0" *ngIf="isEndDate">  
-    <mat-form-field class="example-full-width">
-        <mat-label>End Date</mat-label>
-        <input matInput  [matDatepicker]="endDate" (dateChange)="endDateChange($event)">        
-        <mat-datepicker-toggle matIconSuffix [for]="endDate"></mat-datepicker-toggle>
-        <mat-datepicker #endDate></mat-datepicker>
-      </mat-form-field>
-</div>
-<div class="col-md-4 pr-0" *ngIf="isAny">
-    <mat-form-field>
-        <mat-icon matPrefix>search</mat-icon>
-        <mat-label>{{searchByAnyPlaceholder}}</mat-label>
-        <input matInput (keyup)="applyFilter($event)"  #input>
-      </mat-form-field>
-</div>
+    </div>
+    <div class=" pr-0" *ngIf="isEndDate">  
+        <mat-form-field class="example-full-width">
+            <mat-label>End Date</mat-label>
+            <input matInput  [matDatepicker]="endDate" formControlName="endDate" (dateChange)="endDateChange($event)">        
+            <mat-datepicker-toggle matIconSuffix [for]="endDate"></mat-datepicker-toggle>
+            <mat-datepicker #endDate></mat-datepicker>
+        </mat-form-field>
+    </div>
+    <div class=" pr-0" *ngIf="isAny">
+        <mat-form-field>
+            <mat-icon matPrefix>search</mat-icon>
+            <mat-label>{{searchByAnyPlaceholder}}</mat-label>
+            <input matInput (keyup)="applyFilter($event)" formControlName="anySearch"  #input>
+        </mat-form-field>
+    </div>
+    <mat-icon matTooltip="Reset Filter" (click)="onClear()" class=" text-center search-c-btn">
+        change_circle
+    </mat-icon>
 
-</div>
+    </div>
+</form>

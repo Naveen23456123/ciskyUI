@@ -21,6 +21,7 @@ export class StorageService {
 
   private defaultDriver: DRIVERS = this.driver.session;
   private sec = '{ng-pms}';
+  private appSec = 'ng-pms';
 
   constructor() {
 
@@ -33,6 +34,7 @@ export class StorageService {
   // }
 
   public set(key: string, data: any, config: IStorageSetConfig = {}, driverOverride: DRIVERS = this.defaultDriver): void {
+   
     const enckey = this.sha(key);
     const encval = this.encode(data);
     let updateconfig = config;
@@ -44,16 +46,14 @@ export class StorageService {
         domain: window.location.hostname
       };
     }
-    sessionStorage.setItem(enckey,encval);
+    sessionStorage.setItem(this.sec+enckey,encval);
     //this.locker.set(driverOverride, enckey, encval, updateconfig);
   }
 
   public get(key: string, driverOverride: DRIVERS = this.defaultDriver): any {
-    const enckey = this.sha(key);
-    console.log(enckey);
+    const enckey = this.sha(key);    
     if (this.has(key, driverOverride)) {
-      console.log(this.parse(sessionStorage.getItem(enckey)));
-      return this.parse(sessionStorage.getItem(enckey));
+      return this.parse(sessionStorage.getItem(this.sec+enckey));
       //return this.parse(this.locker.get(driverOverride, decodeURIComponent(enckey)));     
     }
     else {
@@ -63,7 +63,7 @@ export class StorageService {
 
   private has(key: string, driverOverride: DRIVERS = this.defaultDriver): boolean {
     const enckey = this.sha(key);
-    return sessionStorage.getItem(enckey) !== null
+    return sessionStorage.getItem(this.sec+enckey) !== null
     //return this.locker.has(driverOverride, enckey);
     //return true;
   }
@@ -98,6 +98,12 @@ export class StorageService {
         //this.locker.clear(driverOverride);
         log.info('Unable to clear cookies', e);
 
+      }
+    }
+    for (let i = sessionStorage.length - 1; i >= 0; i--) {
+      const key = sessionStorage.key(i);     
+      if (key && key.startsWith(this.sec)) {
+        sessionStorage.removeItem(key);
       }
     }
   }

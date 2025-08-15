@@ -1,0 +1,18 @@
+<app-upload-data [isUploading]="isImporting"
+ [templateColumns]="allColumnsData"
+ [errorLoadingCSV]="errors"
+  (onImportClick)="importing($event)" >
+    <div metadata>
+        <div class="row ">
+            <div class="col-md-6">
+                <span class="msg-note">Information</span> 
+                <ul class="mt-2"> 
+                    <li><b>Project Code </b>should be unique.</li>
+                    <li><b>Start & End Date</b> should be provided.</li>
+                </ul>
+            </div>
+            
+        </div>
+    </div>
+</app-upload-data>
+

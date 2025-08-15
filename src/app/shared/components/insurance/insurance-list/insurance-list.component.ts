@@ -14,6 +14,8 @@ import { ManageInsuranceComponent } from '../manage-insurance/manage-insurance.c
 import { InsuranceInterfaceService } from '@app/shared/services/external/insurance-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { DialogOperation } from '@app/shared/models/constant.config';
+import { ManageInsuranceUploadComponent } from '../manage-insurance-upload/manage-insurance-upload.component';
+import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 
 @Component({
   selector: 'app-insurance-list',
@@ -38,151 +40,163 @@ export class InsuranceListComponent {
       };
 
   constructor(private sessionService : SessionService,private insuranceService:InsuranceInterfaceService,
-      private router: Router,private route: ActivatedRoute,private helperService:HelperService,
-    private notifyBarService:NotifyBarService){     
-       this.dataSource = new MatTableDataSource(this.insList);
-    }
+    private router: Router,private route: ActivatedRoute,private helperService:HelperService,
+    private notifyBarService:NotifyBarService,private csvService:GenerateCsvService){     
+      this.dataSource = new MatTableDataSource(this.insList);
+  }
 
-    ngOnInit()  {     
-      this.sessionService.workingProjectSubject$.pipe(take(1)).subscribe((response:any)=>{
-        if(response){
-          this.insuranceService.getInsuranceListByProjectIdByOrgId({ projectId: response.id }, '')
-          .pipe(finalize(() => this.isLoading = false))
-          .subscribe((insResponse: any) => {
-            if (insResponse && insResponse.success) {
-             this.insList = insResponse.data;
-             this.dataSource = new MatTableDataSource(this.insList);               
-             this.updateTable(this.insList);
-            
-            }
-          });
-        }
-      });     
-    }
-  
-    ngAfterViewInit() {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }
-  
-    applyFilter(event: Event) {
-      const filterValue = (event.target as HTMLInputElement).value;
-      this.dataSource.filter = filterValue.trim().toLowerCase();
-  
-      if (this.dataSource.paginator) {
-        this.dataSource.paginator.firstPage();
+  ngOnInit()  {     
+    this.sessionService.workingProjectSubject$.pipe(take(1)).subscribe((response:any)=>{
+      if(response){
+        this.insuranceService.getInsuranceListByProjectIdByOrgId({ projectId: response.id }, '')
+        .pipe(finalize(() => this.isLoading = false))
+        .subscribe((insResponse: any) => {
+          if (insResponse && insResponse.success) {
+            this.insList = insResponse.data;
+            this.dataSource = new MatTableDataSource(this.insList);               
+            this.updateTable(this.insList);
+          
+          }
+        });
       }
-    }
+    });     
+  }
 
-    private updateTable(info: any) {
-      this.dataSource = new MatTableDataSource<any>(info);
-      this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-      this.pageSize = this.helperService.getPageSize();
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
-    import() {
-     const config = this.defaultdialogoptions;
-          config.minWidth='75vw';
-            config.data = {
-              pageGuid: this.route.snapshot.data['pageGuid'],
-              type: this.route.snapshot.data['type'], 
-              template_type: TemplateType.INSURANCE   
-            };
-              this.dialog.open(UploadFileComponent,config);
-    }
-    export() {
-      
-    }
-    
-  add() {
-      const config = this.defaultdialogoptions;
+  }
+
+  private updateTable(info: any) {
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
+    this.pageSize = this.helperService.getPageSize();
+  }
+  import() {
+    const config = this.defaultdialogoptions;
+    config.minWidth='75vw';
       config.data = {
         pageGuid: this.route.snapshot.data['pageGuid'],
-        type: DialogOperation.ADD,    
-      };
-      config.minWidth='65vw';    
-      const dialogRef = this.dialog.open(ManageInsuranceComponent, config);
-      dialogRef.afterClosed().subscribe((data:any) => {
-        if (data && data.valid) {
-          this.notifyBarService.showsnackbar('The Insurance details created successfully.');
-          this.addRowData(data.value);
-        }
-        else {            
-        }
-      });
+        type: this.route.snapshot.data['type'],
+        template_type: TemplateType.INSURANCE 
+    };
+    let dialogRef= this.dialog.open(ManageInsuranceUploadComponent,config);
+    dialogRef.afterClosed().subscribe((data) => { 
+      if (data && data.valid) {
+        this.addBulkIns(data.value);
+        this.notifyBarService.showsnackbar('The Insurance(s) created successfully.');
+      }
+    });
   }
-    edit_ins(row:any){
-      this.defaultdialogoptions.data = {
-           pageGuid: this.route.snapshot.data['pageGuid'],
-           type: DialogOperation.EDIT,
-           element: row
-         };  
-         this.defaultdialogoptions.minWidth='65vw';    
-         const dialogRef = this.dialog.open(ManageInsuranceComponent, this.defaultdialogoptions);
-         dialogRef.afterClosed().subscribe((data) => {       
-           if (data.valid) {
-            this.notifyBarService.showsnackbar('The Insurance details updated successfully.');
-            this.updateRowData(data.value);
-           }
-           else {
-           }
-        });
-    }
-
-    delete_ins(row:any){
-        this.defaultdialogoptions.data = {
-          pageGuid: this.route.snapshot.data['pageGuid'],
-          type: DialogOperation.DELETE,
-          element: row
-        };
-        this.defaultdialogoptions.minWidth='45vw';
-        const dialogRef = this.dialog.open(ManageInsuranceComponent, this.defaultdialogoptions);
-        dialogRef.afterClosed().subscribe((data) => {
-          if (data.valid) {
-            this.notifyBarService.showsnackbar('The Insurance removed successfully.');
-            this.deleteRow(data.value);
-          }
-          else {
-          }
-        });
+    addBulkIns(data:any){
+    data.forEach((element:any) => {
+      this.addRowData(element);
+    });
+  }
+  export() {
+    if(this.insList && this.insList.length>0)
+      this.csvService.downloadFile(this.insList,this.insuranceService.getCsvTemplateColumnList(),'Insurances');
+  }
+  
+  add() {
+    const config = this.defaultdialogoptions;
+    config.data = {
+      pageGuid: this.route.snapshot.data['pageGuid'],
+      type: DialogOperation.ADD,    
+    };
+    config.minWidth='65vw';    
+    const dialogRef = this.dialog.open(ManageInsuranceComponent, config);
+    dialogRef.afterClosed().subscribe((data:any) => {
+      if (data && data.valid) {
+        this.notifyBarService.showsnackbar('The Insurance details created successfully.');
+        this.addRowData(data.value);
       }
-      updateRowData(data: any) {
-        const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
-        if(element){
-          element.projectid =data.projectid,
-          element.insurancename =data.insurancename,
-          element.policynumber=data.insurancename,
-          element.companyname=data.companyname,
-          element.amount=data.amount,
-          element.policynumber=data.policynumber,
-          element.startdate=data.startdate,
-          element.enddate=data.enddate,
-        this.dataSource._updateChangeSubscription();
-        }
+      else {            
       }
-    addRowData(data: any) {
-        const data1:any = {
-          id: data.id,
-          projectid :data.projectid,
-          insurancename:data.insurancename,
-          companyname:data.companyname,
-          amount:data.amount,
-          policynumber:data.policynumber,
-          startdate:data.startdate,
-          enddate:data.enddate,
-          docaddress:data.docaddress
-      }    
-      this.dataSource.data.unshift(data1);  
-      this.dataSource._updateChangeSubscription();
-    }
+    });
+  }
+  edit_ins(row:any){
+    this.defaultdialogoptions.data = {
+      pageGuid: this.route.snapshot.data['pageGuid'],
+      type: DialogOperation.EDIT,
+      element: row
+    };  
+    this.defaultdialogoptions.minWidth='65vw';    
+    const dialogRef = this.dialog.open(ManageInsuranceComponent, this.defaultdialogoptions);
+    dialogRef.afterClosed().subscribe((data) => {       
+      if (data.valid) {
+      this.notifyBarService.showsnackbar('The Insurance details updated successfully.');
+      this.updateRowData(data.value);
+      }
+      else {
+      }
+    });
+  }
 
-    deleteRow(data: any) {
-      const index = this.dataSource.data.findIndex((x:any) => x.id == data);
-      this.dataSource.data.splice(index, 1);
-      this.dataSource._updateChangeSubscription();
+  delete_ins(row:any){
+    this.defaultdialogoptions.data = {
+      pageGuid: this.route.snapshot.data['pageGuid'],
+      type: DialogOperation.DELETE,
+      element: row
+    };
+    this.defaultdialogoptions.minWidth='45vw';
+    const dialogRef = this.dialog.open(ManageInsuranceComponent, this.defaultdialogoptions);
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data.valid) {
+        this.notifyBarService.showsnackbar('The Insurance removed successfully.');
+        this.deleteRow(data.value);
+      }
+      else {
+      }
+    });
+  }
+  updateRowData(data: any) {
+    const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
+    if(element){
+      element.projectid =data.projectid,
+      element.insurancename =data.insurancename,
+      element.policynumber=data.insurancename,
+      element.companyname=data.companyname,
+      element.amount=data.amount,
+      element.policynumber=data.policynumber,
+      element.startdate=data.startdate,
+      element.enddate=data.enddate,
+    this.dataSource._updateChangeSubscription();
     }
-    openDoc(row:any){
-      window.open(row.docaddress, "_blank");
-    }
+  }
+  addRowData(data: any) {
+    const data1:any = {
+      id: data.id,
+      projectid :data.projectid,
+      insurancename:data.insurancename,
+      companyname:data.companyname,
+      amount:data.amount,
+      policynumber:data.policynumber,
+      startdate:data.startdate,
+      enddate:data.enddate,
+      docaddress:data.docaddress
+    }    
+    this.dataSource.data.unshift(data1);  
+    this.dataSource._updateChangeSubscription();
+  }
+
+  deleteRow(data: any) {
+    const index = this.dataSource.data.findIndex((x:any) => x.id == data);
+    this.dataSource.data.splice(index, 1);
+    this.dataSource._updateChangeSubscription();
+  }
+  openDoc(row:any){
+    window.open(row.docaddress, "_blank");
+  }
 }
 
 

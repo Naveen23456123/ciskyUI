@@ -9,7 +9,7 @@ export enum TemplateType{
     SITEPROGRESS='Site Progress',
     MILESTONE='Milestone',
     CONTRACTORBILLING='Contractor Billing',
-    BANKGUARANTEE='Bank Gurarntee',
+    BANKGUARANTEE='Bank Gurarantee',
     INSURANCE='Insurance',
     VEHICLE='Vehicle',
     EMPLOYEE='Employee',

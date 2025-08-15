@@ -75,8 +75,7 @@ isSearchLoading=true;
     private notifyBarService:NotifyBarService, private csvService:GenerateCsvService,
     private contractorService:ContractorInterfaceService
   )
-  {
-   
+  {   
      this.dataSource = new MatTableDataSource(this.projects);
   }
 
@@ -118,8 +117,7 @@ isSearchLoading=true;
     }
   }
 
-  view(element: any){   
-    console.log(element);
+  view(element: any){  
     this.sessionService.setCurrentProject(element);
     this.router.navigate(['sup-view'], { relativeTo: this.route });
   }
@@ -213,6 +211,11 @@ isSearchLoading=true;
       this.dataSource.filter = '';
     }
   } 
+  clear(){
+    this.searchObj.projectid='';
+    this.searchObj.companyid=''; 
+    this.filterProject();
+  }
   filterProject(){
     this.isSearchLoading=true;
     this.projectService.getAllProjectDetailsByOrdIg(this.searchObj, '')

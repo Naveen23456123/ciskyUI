@@ -136,6 +136,9 @@ export class DesignationListComponent {
       }
     });
   }
+  clear(){    
+    this.filterChange('');
+  }
   filterChange(data:any){
     if(data && data.value){ 
       this.dataSource.filter = data.value.trim().toLowerCase()

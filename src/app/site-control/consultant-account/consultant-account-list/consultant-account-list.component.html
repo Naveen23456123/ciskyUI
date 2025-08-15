@@ -7,6 +7,7 @@
               <app-search-bar-controls [isSubCompany]="true" [isAny]="true"
                 (OnSubCompanyChange)="filterChange($event)"
                 (OnAnyChange)="filterChange($event)"
+                (OnClear)="clear()"
                   searchByAnyPlaceholder="Account / PAN / GST No." ></app-search-bar-controls>  
             </div>         
           <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">         
