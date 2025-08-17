@@ -28,10 +28,13 @@ siteProgressList:any[]= [];
   isLoading = true;
   displayedColumns: string[] = ['serial','project','contractor','month', 'year', 'status','submitted','acted','letters'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   @Input() filters:any={};
   statusCounts = { approved: 0, rejected: 0, pending: 0 };
   readonly dialog = inject(MatDialog);
@@ -62,7 +65,6 @@ siteProgressList:any[]= [];
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -96,26 +98,27 @@ siteProgressList:any[]= [];
       });
     }
   }
-    private updateTable(info: any) {
-      this.dataSource = new MatTableDataSource<any>(info);
-      this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-      this.pageSize = this.helperService.getPageSize();
-    }
-    import() {
-      const config = this.defaultdialogoptions;
-      config.minWidth='1200px';
-      //config.minHeight='600px';
-        config.data = {
-          pageGuid: this.route.snapshot.data['pageGuid'],
-          type: this.route.snapshot.data['type'], 
-          template_type: TemplateType.SITEPROGRESS   
-        };
-          this.dialog.open(UploadFileComponent,config);
+  private updateTable(info: any) {
+    this.siteProgressList = info;
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.siteProgressList.length;   
+  }
+  import() {
+    const config = this.defaultdialogoptions;
+    config.minWidth='1200px';
+    //config.minHeight='600px';
+      config.data = {
+        pageGuid: this.route.snapshot.data['pageGuid'],
+        type: this.route.snapshot.data['type'], 
+        template_type: TemplateType.SITEPROGRESS   
+      };
+        this.dialog.open(UploadFileComponent,config);
 
-    }
-    export() {
-      
-    }   
+  }
+  export() {
+    
+  }   
 
   getMonthandYear(data:any){
     if(data){

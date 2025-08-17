@@ -25,10 +25,13 @@ invoiceList:any[]= [];
   displayedColumns: string[] = ['serial','projectid','name', 'view'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   projectId='';
   readonly dialog = inject(MatDialog);
   
@@ -58,18 +61,16 @@ invoiceList:any[]= [];
     }
   });
   this.paymentService.getAllProjectPartialDetailsByOrdIg({ organizationId: this.activeOrgId }, '')
-           .pipe(finalize(() => this.isLoading = false))
-           .subscribe((response: any) => {
-            if (response && response.success) {
-              this.invoiceList = response.data;
-              this.dataSource = new MatTableDataSource(this.invoiceList);
-              this.pageSize= this.helperService.getPageSize();
-             }
-      });
+    .pipe(finalize(() => this.isLoading = false))
+    .subscribe((response: any) => {
+      if (response && response.success) {
+        this.invoiceList = response.data;
+        this.updateTable(this.invoiceList);
+      }
+    });
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
   clear(){
@@ -85,9 +86,10 @@ invoiceList:any[]= [];
   }
 
   private updateTable(info: any) {
+    this.invoiceList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.invoiceList.length;   
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);

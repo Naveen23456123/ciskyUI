@@ -23,10 +23,13 @@ export class ItemListComponent {
   displayedColumns: string[] = ['serial','name','emp', 'view','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
 
   readonly dialog = inject(MatDialog);
   
@@ -60,25 +63,24 @@ export class ItemListComponent {
   });
 
     this.inventoryService.getItemListByOrgId({ organizationId: this.activeOrgId }, '')
-           .pipe(finalize(() => this.isLoading = false))
-           .subscribe((response: any) => {
-             if (response && response.success) {
-              this.itemsList = response.data;
-              this.dataSource = new MatTableDataSource(this.itemsList);
-              this.pageSize= this.helperService.getPageSize();
-             }
-      });
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe((response: any) => {
+        if (response && response.success) {
+          this.itemsList = response.data;
+          this.updateTable(this.itemsList);
+        }
+    });
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
   private updateTable(info: any) {
+    this.itemsList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.itemsList.length;   
   }
 
   updateRowData(data: any) {

@@ -26,10 +26,13 @@ export class ExploreMilestoneComponent {
   isLoading = true;
   displayedColumns: string[] = ['serial','name','project','contractor', 'milestonedate', 'day','status','actual','reschd','letters'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   @Input() filters:any={};
   statusCounts = { achieved: 0, notachieved: 0};
   @Output() OnControlFilter:EventEmitter<any> = new EventEmitter();
@@ -47,15 +50,7 @@ export class ExploreMilestoneComponent {
     }
 
   ngOnInit()  {
-    // this.milestoneService.getAllMilestonesDetailsByOrdIdProjectId({ }, '')
-    // .pipe(finalize(() => this.isLoading = false))
-    // .subscribe((response: any) => {
-    //   if (response && response.success) {
-    //     this.milestones = response.data;
-    //     this.dataSource = new MatTableDataSource(this.milestones);               
-    //     this.updateTable(this.milestones);
-    //   }
-    // });
+    
     this.OnControlFilter.emit({value:{
       relatedto:true,
       isproject:true,
@@ -64,7 +59,6 @@ export class ExploreMilestoneComponent {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
   ngOnChanges(changes: SimpleChanges) {   
@@ -95,11 +89,11 @@ export class ExploreMilestoneComponent {
       this.dataSource.paginator.firstPage();
     }
   }
-
   private updateTable(info: any) {
+    this.milestones = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.milestones.length;   
   }
   import() {
     const config = this.defaultdialogoptions;

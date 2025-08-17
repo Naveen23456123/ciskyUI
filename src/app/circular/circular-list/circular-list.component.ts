@@ -22,10 +22,13 @@ export class CircularListComponent {
   displayedColumns: string[] = ['serial','title','publishdate','description','file','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   subscription:Subscription = new Subscription();
   readonly dialog = inject(MatDialog);
   
@@ -63,21 +66,20 @@ export class CircularListComponent {
       .subscribe((response: any) => {
         if (response && response.success) {
         this.circularList =response.data;
-        this.dataSource = new MatTableDataSource(this.circularList);
-        this.pageSize= this.helperService.getPageSize();
+        this.updateTable(this.circularList);
         }
       });
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
   private updateTable(info: any) {
+    this.circularList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.circularList.length;   
   }
 
   updateRowData(data: any) {

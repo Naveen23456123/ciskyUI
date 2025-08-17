@@ -18,6 +18,7 @@ import { stubFalse } from 'lodash';
 import { ManageUploadConsultantComponent } from '@app/shared/components/consultant/manage-upload-consultant/manage-upload-consultant.component';
 import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 import { CommonService } from '@app/shared/services/common.service';
+import { HelperService } from '@app/shared/services/helper.service';
 
 @Component({
   selector: 'app-project-list',
@@ -66,10 +67,13 @@ pagePermissions:any;
   expandedElement: any | null;
   activeOrgId='123';
   readonly dialog = inject(MatDialog);
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
-
+  pagination: any;
+  pageSize!: number;
+  resultsLength!:number;
    private defaultdialogoptions:  MatDialogConfig = {
         minWidth: '900px', 
         disableClose: false,
@@ -79,7 +83,7 @@ pagePermissions:any;
   constructor(private projectService: ProjectService, private sessionService : SessionService,
     private router: Router,private route: ActivatedRoute,private stateDataService: StateDataService,
     private notifyBarService:NotifyBarService, private csvService:GenerateCsvService,
-    private commonService:CommonService
+    private commonService:CommonService, private helperService:HelperService
   )
   {
    
@@ -104,19 +108,21 @@ pagePermissions:any;
       }  
     });
     let pageGuid= this.route.snapshot.data['pageGuid'];
-    console.log(this.commonService.getPermissionsForCurrentPage(this.route.snapshot.data['pageGuid']));
     this.commonService.getPermissionsForCurrentPage(pageGuid).then((permissions) => {
       this.pagePermissions = permissions;
-      console.log(this.pagePermissions);
     });
     this.isLoading=true;
     this.filterProject();
   }
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
-
+  private updateTable(info: any) {
+    this.projects = info;
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.projects.length;   
+  }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -231,7 +237,8 @@ pagePermissions:any;
           ...item,
           selectedContractor:item.contractor!=null ? item.contractor.id : null
         }));  
-         this.dataSource = new MatTableDataSource(this.projects);           
+         this.dataSource = new MatTableDataSource(this.projects); 
+         this.updateTable(this.projects);          
       }
   }); 
   }

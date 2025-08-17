@@ -28,10 +28,13 @@ export class ImperestBillingListComponent {
   displayedColumns: string[] = ['serial','project','office','name','date','gamount','apramount', 'view','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   isSearching=false;
   statusList:any[]=[];
   userObj:any={};
@@ -77,7 +80,6 @@ export class ImperestBillingListComponent {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -91,9 +93,10 @@ export class ImperestBillingListComponent {
   }
 
   private updateTable(info: any) {
+    this.imperestList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.imperestList.length;   
   }
 
   updateRowData(updatedata: any) {
@@ -162,8 +165,7 @@ export class ImperestBillingListComponent {
             ...item,
             ...this.setLevelConfig(item.levels)
           }));
-          this.dataSource = new MatTableDataSource(this.imperestList);
-          this.pageSize= this.helperService.getPageSize();
+          this.updateTable(this.imperestList);
         }
     }});
   }

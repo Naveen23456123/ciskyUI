@@ -75,11 +75,10 @@ export class DesignationListComponent {
   }
 
   private updateTable(info: any) {
-    this.dataSource = new MatTableDataSource(this.designations);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);
-    this.resultsLength=info.length;
-    this.pageSize = this.helperService.getPageSize();   
-    this.dataSource.sort = this.sort;   
+    this.designations = info;
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.designations.length;   
   }
 
   ngAfterViewInit() {

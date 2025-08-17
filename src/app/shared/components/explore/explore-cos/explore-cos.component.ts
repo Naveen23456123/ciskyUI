@@ -27,10 +27,13 @@ cosList:any[]= [];
   isLoading = true;
   displayedColumns: string[] = ['serial','project','contractor','coscode', 'initiatedate','amount',  'approveddate','cosstatus','letters'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   @Input() filters:any={};
   readonly dialog = inject(MatDialog);
   statusCounts = { approved: 0, rejected: 0, pending: 0 };
@@ -87,7 +90,6 @@ cosList:any[]= [];
     }
   }
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
   
@@ -101,9 +103,10 @@ cosList:any[]= [];
   }
 
   private updateTable(info: any) {
+    this.cosList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.cosList.length;   
   }
 
   import() {

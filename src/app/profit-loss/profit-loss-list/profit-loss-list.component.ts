@@ -38,10 +38,13 @@ export class ProfitLossListComponent {
     pwdisplayedColumns: string[] = ['serial','projectid','name', 'monthly','commulative'];
     dataSource!: MatTableDataSource<any[]>;
     activeOrgId='123';
-    @ViewChild(MatPaginator) paginator!: MatPaginator;
-    @ViewChild(MatSort) sort!: MatSort;
-    pagination: any;
-    pageSize!: number;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
+  @ViewChild(MatSort) sort!: MatSort;
+  pagination: any;
+  pageSize!: number;
+  resultsLength!:number;
     detailsObj:any={today : new Date()};
     scopes:any[]=[];
     dataRecords:any[]=[];
@@ -71,8 +74,7 @@ export class ProfitLossListComponent {
       .subscribe((response: any) => {
       if (response && response.success) {
         this.itemsList = response.data;
-        this.dataSource = new MatTableDataSource(this.itemsList);
-        this.pageSize= this.helperService.getPageSize();
+        this.updateTable(this.itemsList);
       }
     });
   
@@ -249,7 +251,6 @@ ngOnDestroy(){
    this.subscription.unsubscribe();
 } 
     ngAfterViewInit() {
-      this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
   
@@ -262,12 +263,12 @@ ngOnDestroy(){
       }
     }
   
-    private updateTable(info: any) {
-      this.dataSource = new MatTableDataSource<any>(info);
-      this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-      this.pageSize = this.helperService.getPageSize();
-    }
-
+  private updateTable(info: any) {
+    this.itemsList = info;
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.itemsList.length;   
+  }
     // Dynamically 
     displayedColumns: string[] = ['name', 'actions'];
     ddataSource = new MatTableDataSource<any>([

@@ -22,10 +22,13 @@ export class ApprovalListComponent {
   displayedColumns: string[] = ['serial','cname','name', 'view','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
 
   readonly dialog = inject(MatDialog);
   
@@ -57,36 +60,40 @@ export class ApprovalListComponent {
       this.stateDataService.stateDataSubject.next({});
     }
   });
-
-    this.approvalService.getApprovalDetails({ organizationId: this.activeOrgId }, '')
-           .pipe(finalize(() => this.isLoading = false))
-           .subscribe((response: any) => {
-             if (response && response.success) {
-              this.approvals = response.data;
-              this.dataSource = new MatTableDataSource(this.approvals);
-              this.pageSize= this.helperService.getPageSize();
-             }
-      });
+  this.getApprovalDetails();
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+  filterChange(data:any){
+    if(data && data.value){ 
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else{
+      this.dataSource.filter = '';
     }
   }
-
+  clear(){    
+    this.getApprovalDetails();
+  }
+  getApprovalDetails(){
+    this.isLoading=true;
+    this.approvalService.getApprovalDetails({ organizationId: this.activeOrgId }, '')
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe((response: any) => {
+        if (response && response.success) {
+          this.approvals = response.data;
+          this.updateTable(this.approvals);
+        }
+    });
+  }
   private updateTable(info: any) {
+    this.approvals = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.approvals.length;   
   }
 
   updateRowData(data: any) {

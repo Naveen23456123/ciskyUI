@@ -13,6 +13,7 @@ import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
 import { ProjectInterfaceService } from '@app/shared/services/external/project-interface.service';
 import { ContractorInterfaceService } from '@app/shared/services/external/contractor-interface.service';
 import { DynamicTabComponent } from '@app/shared/models/constant.config';
+import { HelperService } from '@app/shared/services/helper.service';
 
 @Component({
   selector: 'app-manage-supervision-list',
@@ -61,8 +62,13 @@ isSearchLoading=true;
   activeOrgId='123';
   readonly dialog = inject(MatDialog);
   @Input() subsectorId!: string;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
+  pagination: any;
+  pageSize!: number;
+  resultsLength!:number;
 
    private defaultdialogoptions:  MatDialogConfig = {
         minWidth: '900px', 
@@ -73,7 +79,7 @@ isSearchLoading=true;
   constructor(private projectService: ProjectInterfaceService, private sessionService : SessionService,
     private router: Router,private route: ActivatedRoute,private stateDataService: StateDataService,
     private notifyBarService:NotifyBarService, private csvService:GenerateCsvService,
-    private contractorService:ContractorInterfaceService
+    private contractorService:ContractorInterfaceService, private helperService:HelperService
   )
   {   
      this.dataSource = new MatTableDataSource(this.projects);
@@ -104,10 +110,14 @@ isSearchLoading=true;
     this.filterProject();
   }
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
-
+  private updateTable(info: any) {
+    this.projects = info;
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.projects.length;   
+  }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -227,7 +237,8 @@ isSearchLoading=true;
           ...item,
           selectedContractor:item.contractor!=null ? item.contractor.id : null
         }));  
-         this.dataSource = new MatTableDataSource(this.projects);           
+         this.dataSource = new MatTableDataSource(this.projects);
+         this.updateTable(this.projects);           
       }
   }); 
   }

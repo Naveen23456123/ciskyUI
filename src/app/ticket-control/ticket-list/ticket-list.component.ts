@@ -23,10 +23,13 @@ export class TicketListComponent {
   displayedColumns: string[] = ['serial','projectname', 'source','destination','date','amount','view','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   isSearching=false;
   readonly dialog = inject(MatDialog);
   
@@ -62,7 +65,6 @@ export class TicketListComponent {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -76,11 +78,11 @@ export class TicketListComponent {
   }
 
   private updateTable(info: any) {
+    this.ticketList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.ticketList.length;   
   }
-
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
     if(element){
@@ -151,8 +153,7 @@ export class TicketListComponent {
       .subscribe({next : (response: any) => {
         if (response && response.success) {
           this.ticketList = response.data;
-          this.dataSource = new MatTableDataSource(this.ticketList);
-          this.pageSize= this.helperService.getPageSize();
+          this.updateTable(this.ticketList);
         }
     }});
   }

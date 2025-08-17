@@ -21,10 +21,13 @@ miscList:any[]= [];
   displayedColumns: string[] = ['serial','project','title','publishdate','description','file','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   isSearchLoading=false;
   subscription:Subscription = new Subscription();
   readonly dialog = inject(MatDialog);
@@ -62,14 +65,14 @@ miscList:any[]= [];
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
   private updateTable(info: any) {
+    this.miscList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.miscList.length;   
   }
 
   updateRowData(data: any) {
@@ -142,8 +145,7 @@ miscList:any[]= [];
     .pipe(finalize(() =>{ this.isLoading = false; this.isSearchLoading=false;}))
     .subscribe((response: any) => {
       if (response && response.success) {
-        this.miscList = response.data;
-        this.dataSource = new MatTableDataSource(this.miscList);               
+        this.miscList = response.data;             
         this.updateTable(this.miscList);
       }
   }); 

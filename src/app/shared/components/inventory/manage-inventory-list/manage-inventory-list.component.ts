@@ -32,10 +32,13 @@ inventories:any[]= [];
   displayedColumns: string[] = ['serial','projectshortname', 'name', 'employeename','description','quantity','rateperitem','purchasedate','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   isProject=false;
   isSearching=false;
   private subscription: Subscription = new Subscription();
@@ -71,9 +74,8 @@ inventories:any[]= [];
   
   ngAfterViewInit() {
     if(this.isProject){
-      this.displayedColumns=this.displayedColumns.filter(fruit => fruit !== "projectshortname")
+      this.displayedColumns=this.displayedColumns.filter(x => x !== "projectshortname")
     }
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -97,9 +99,10 @@ inventories:any[]= [];
     }
   }
   private updateTable(info: any) {
+    this.inventories = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.inventories.length;   
   }
 
   import(){
@@ -130,13 +133,12 @@ inventories:any[]= [];
   getInventoryData(obj:any){
     this.isSearching=true;
     this.inventoryService.getSiteInventoryListByOrgId(obj, '').pipe(finalize(() => {this.isLoading = false; this.isSearching=false;}))
-        .subscribe((response: any) => {
-          if (response && response.success) {
+      .subscribe((response: any) => {
+        if (response && response.success) {
           this.inventories = response.data;
-          this.dataSource = new MatTableDataSource(this.inventories);
-          this.pageSize= this.helperService.getPageSize();
-          }
-        });
+          this.updateTable(this.inventories);
+        }
+      });
   }
   add_inv(){
     const config = this.defaultdialogoptions;

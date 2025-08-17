@@ -43,6 +43,7 @@
           </div>
 
         </div>    
+        <div class="table-container">   
           <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
         
             <ng-container matColumnDef="serial">
@@ -103,16 +104,16 @@
               </td>
             </ng-container>
           
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky-header"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>        
           <tr class="mat-row" *matNoDataRow>
             <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
               No EOT Detail found at this moment.</td>
           </tr>
           </table>
-          <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
-          </mat-paginator>
-        
+         <mat-paginator [length]="resultsLength" [pageSize]="pageSize" 
+          [pageSizeOptions]="pagination" showFirstLastButtons></mat-paginator>
+        </div>
     </div>
     </ng-template>
   </mat-card-content>

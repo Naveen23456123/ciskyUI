@@ -31,6 +31,7 @@
               </ng-container>
             </ng-template>
              <ng-template #showTable> 
+              <div  class="table-container">
                 <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
               
                   <ng-container matColumnDef="serial">
@@ -75,7 +76,7 @@
                     </td>
                   </ng-container>
                 
-                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky-header"></tr>
                   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
                   <tr class="mat-row" *matNoDataRow>
                     <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
@@ -84,6 +85,7 @@
                 </table>
                 <mat-paginator [length]="resultsLength" [pageSize]="pageSize" [pageSizeOptions]="pagination" showFirstLastButtons>
                 </mat-paginator>
+              </div>
             </ng-template>
         </mat-card-content>
     </mat-card>

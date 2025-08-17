@@ -25,10 +25,13 @@ export class OfficeRentListComponent {
   displayedColumns: string[] = ['serial','project','basicamount', 'agrdate', 'ownername','mobileno','docs','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   isSearchLoading=false;
 
   readonly dialog = inject(MatDialog);
@@ -67,14 +70,12 @@ export class OfficeRentListComponent {
   .subscribe((response: any) => {
     if (response && response.success) {
       this.rents = response.data;
-      this.dataSource = new MatTableDataSource(this.rents);
-      this.pageSize= this.helperService.getPageSize();  
+      this.updateTable(this.rents); 
     }
   }); 
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -88,11 +89,11 @@ export class OfficeRentListComponent {
   }
 
   private updateTable(info: any) {
+    this.rents = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.rents.length;   
   }
-
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
       if(element){

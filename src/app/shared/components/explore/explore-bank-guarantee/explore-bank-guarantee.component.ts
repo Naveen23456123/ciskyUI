@@ -21,10 +21,13 @@ export class ExploreBankGuaranteeComponent {
   isLoading = true;
   displayedColumns: string[] = ['serial','bankname', 'guranteename', 'amount','releasedate', 'startdate','expirydate','remarks','file'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   @Input() filters:any={};
   financeCount:any={total:0,expired:0};
   readonly dialog = inject(MatDialog);
@@ -78,11 +81,11 @@ export class ExploreBankGuaranteeComponent {
       });
     }
   }
+
   ngOnDestroy(){
     this.subscription.unsubscribe();
   }
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -94,11 +97,11 @@ export class ExploreBankGuaranteeComponent {
       this.dataSource.paginator.firstPage();
     }
   }
-
   private updateTable(info: any) {
+    this.bgList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.bgList.length;   
   }
   openDoc(row:any){
     window.open(row.docaddress, "_blank");

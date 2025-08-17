@@ -1,18 +1,14 @@
-<div class="container" >
+<div class="container mb-4" >
    
     <div class="row">
     <div class="wrapper col-md-6 pr-0">
-    <mat-card>        
-              
+    <mat-card>                      
         <mat-dialog-content class="mat-typography">
         <mat-card-content class="pad-0">
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
-            </div>
+            <app-empty-table-skltn *ngIf="isLoading"></app-empty-table-skltn>
             <div class="wrapper" *ngIf="!isLoading">
-                <div class="row col-md-12" >                    
-                    <div class="col-md-4" >
-                        
+                <div class="row col-md-12">                    
+                    <div class="col-md-4">                        
                       <img [src]="imageURL" alt="Profile" class="round-image" />
                       <div class="row col-md-12 content-center">
                         <div class="col-md-6 pr-0">
@@ -101,13 +97,10 @@
     <mat-card class="ht-100">        
         <span class="sub-heading">General Information</span>
         <mat-dialog-content class="mat-typography">
-        <mat-card-content >
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
-            </div>
-            <div class="wrapper" *ngIf="!isLoading">
-                <div  class=" row col-md-12">
-                            
+        <mat-card-content>           
+            <app-empty-table-skltn *ngIf="isLoading"></app-empty-table-skltn>
+            <div class="" *ngIf="!isLoading">
+                <div  class=" row col-md-12">                            
                     <div class="col-md-3">
                     <span class="details-text">
                         Gender
@@ -204,13 +197,10 @@
     <mat-card class="wrapper">  
         <span class="sub-heading">Bank Information</span>
         <mat-dialog-content class="mat-typography">
-        <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
-            </div>
+        <mat-card-content>            
+            <app-empty-table-skltn *ngIf="isLoading"></app-empty-table-skltn>
             <div class="container" *ngIf="!isLoading">
-                <div  class=" row col-md-12">
-                            
+                <div  class=" row col-md-12">                            
                     <div class="col-md-3">
                     <span class="details-text">
                         Bank Name
@@ -263,9 +253,7 @@
         <span class="sub-heading">Emergency Information</span>
         <mat-dialog-content class="mat-typography">
         <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
-            </div>
+            <app-empty-table-skltn *ngIf="isLoading"></app-empty-table-skltn>
             <div class="wrapper" *ngIf="!isLoading">
                 <div  class=" row col-md-12">
                             

@@ -29,10 +29,13 @@ export class ManageLettersListComponent {
   isLoading = true;
   displayedColumns: string[] = ['serial','letterno', 'lettertype','subject',  'letterdate','status','action'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   projectEntity:any;
   title='';
   isConsultantLetter:boolean=true;
@@ -51,6 +54,7 @@ export class ManageLettersListComponent {
     }
 
   ngOnInit()  {
+    this.isLoading=true;
     this.subscription= this.sessionService.projectEntitySubject$.pipe(untilDestroyed(this)).subscribe((entityData)=>{ 
        if(entityData) {  
         this.isConsultantLetter= entityData.isConsultant;
@@ -62,10 +66,8 @@ export class ManageLettersListComponent {
           .pipe(finalize(() => this.isLoading = false))
           .subscribe((response: any) => {
             if (response && response.success) {
-             this.lettersList = response.data;
-             this.dataSource = new MatTableDataSource(this.lettersList);               
+             this.lettersList = response.data;             
              this.updateTable(this.lettersList);
-             this.isLoading=true;
             }
           });
         }
@@ -77,7 +79,6 @@ export class ManageLettersListComponent {
     }
   
     ngAfterViewInit() {
-      this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
       
     }
@@ -91,11 +92,13 @@ export class ManageLettersListComponent {
       }
     }
 
-    private updateTable(info: any) {
-      this.dataSource = new MatTableDataSource<any>(info);
-      this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-      this.pageSize = this.helperService.getPageSize();
-    }
+  private updateTable(info: any) {
+    this.lettersList = info;
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.lettersList.length;   
+  }
+
     import() {
     const config = this.defaultdialogoptions;
           config.minWidth='1200px';

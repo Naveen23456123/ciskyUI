@@ -22,10 +22,13 @@ export class SubCompanyListComponent {
   displayedColumns: string[] = ['serial','name', 'employeecount', 'viewemp','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
 
   readonly dialog = inject(MatDialog);
   
@@ -58,17 +61,16 @@ export class SubCompanyListComponent {
     }
   });
     this.siteControlService.getSubCompanyListByOrgId({ organizationId: this.activeOrgId }, '')
-           .pipe(finalize(() => this.isLoading = false))
-           .subscribe((response: any) => {
-             if (response && response.success) {
-              this.subCompanies = response.data;
-              this.dataSource = new MatTableDataSource(this.subCompanies);
-             }
-      });
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe((response: any) => {
+        if (response && response.success) {
+          this.subCompanies = response.data;
+          this.updateTable(this.subCompanies);
+        }
+    });
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -82,10 +84,12 @@ export class SubCompanyListComponent {
   }
 
   private updateTable(info: any) {
+    this.subCompanies = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.subCompanies.length;   
   }
+
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
     if(element){

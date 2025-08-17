@@ -24,10 +24,13 @@ export class ExploreInsuranceComponent {
   isLoading = true;
   displayedColumns: string[] = ['serial','policyno', 'name',  'amount','startdate','enddate','file'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   today= new Date();
   @Input() filters:any={};
   financeCount:any={total:0,expired:0};
@@ -80,7 +83,6 @@ export class ExploreInsuranceComponent {
     }
   }
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
   ngOnDestroy(){
@@ -96,9 +98,10 @@ export class ExploreInsuranceComponent {
     }
   }
   private updateTable(info: any) {
+    this.insList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.insList.length;   
   }
 
   openDoc(row:any){

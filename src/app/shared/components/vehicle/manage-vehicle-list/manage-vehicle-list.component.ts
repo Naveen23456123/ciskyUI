@@ -32,10 +32,13 @@ export class ManageVehicleListComponent {
   displayedColumns: string[] = ['serial','projectshortname','name', 'vehiclenum', 'fixedkm', 'fixedbillamt', 'extraamtabovefixkm','log','docs', 'action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   private subscription: Subscription = new Subscription();
   isProject=false;
   readonly dialog = inject(MatDialog);
@@ -70,9 +73,8 @@ export class ManageVehicleListComponent {
   }
   ngAfterViewInit() {
     if(this.isProject){
-      this.displayedColumns=this.displayedColumns.filter(fruit => fruit !== "projectshortname")
+      this.displayedColumns=this.displayedColumns.filter(x => x !== "projectshortname")
     }
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -100,8 +102,7 @@ export class ManageVehicleListComponent {
     .subscribe((response: any) => {
       if (response && response.success) {
         this.vehicles = response.data;
-        this.dataSource = new MatTableDataSource(this.vehicles);
-        this.pageSize= this.helperService.getPageSize();
+        this.updateTable(this.vehicles);
       }
     });
   }
@@ -114,9 +115,10 @@ export class ManageVehicleListComponent {
     }
   }
   private updateTable(info: any) {
+    this.vehicles = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.vehicles.length;   
   }
 
   add_vehicle(){

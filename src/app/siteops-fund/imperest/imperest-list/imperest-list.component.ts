@@ -26,10 +26,13 @@ export class ImperestListComponent {
   displayedColumns: string[] = ['serial','project','office','name','date','gamount','apramount', 'view','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   isSearching=false;
   statusList:any[]=[];
   readonly dialog = inject(MatDialog);
@@ -73,7 +76,6 @@ export class ImperestListComponent {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -87,9 +89,10 @@ export class ImperestListComponent {
   }
 
   private updateTable(info: any) {
+    this.imperestList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.imperestList.length;   
   }
 
   updateRowData(data: any) {
@@ -167,9 +170,7 @@ export class ImperestListComponent {
             ...this.setLevelConfig(item.levels)          
             }          
           });
-          console.log(this.imperestList);
-          this.dataSource = new MatTableDataSource(this.imperestList);
-          this.pageSize= this.helperService.getPageSize();
+          this.updateTable(this.imperestList);
         }
     }});
   }

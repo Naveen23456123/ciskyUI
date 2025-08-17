@@ -26,10 +26,13 @@ export class VehBillingReqListComponent {
   displayedColumns: string[] = ['serial','vehiclename', 'vehiclenum', 'extraamtkmabovefix', 'fixeddetails', 'extraDetails','totaldetails','aaproved','status', 'action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   isSearchLoading=false;
   statusList:any[]=[];
   userObj:any={};
@@ -83,7 +86,6 @@ export class VehBillingReqListComponent {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.cdr.detectChanges();
   }
@@ -96,11 +98,11 @@ export class VehBillingReqListComponent {
       this.dataSource.paginator.firstPage();
     }
   }
-
   private updateTable(info: any) {
+    this.vehicleBilings = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.vehicleBilings.length;   
   }
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.billingid);    
@@ -165,7 +167,7 @@ export class VehBillingReqListComponent {
         ...item,
         levels: this.setLevel(item.levels) 
       }));
-      this.dataSource = new MatTableDataSource(this.vehicleBilings);
+      this.updateTable(this.vehicleBilings);
       }
       this.cdr.detectChanges();
   });

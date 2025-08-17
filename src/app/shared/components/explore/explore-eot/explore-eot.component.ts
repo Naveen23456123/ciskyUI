@@ -28,10 +28,13 @@ eotList:any[]= [];
   isLoading = true;
   displayedColumns: string[] = ['serial','project','contractor','eotcode', 'initiatedate','days',  'approveddate','eotstatus','letters'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   statusCounts = { approved: 0, rejected: 0, pending: 0 };
   @Input() filters:any={};
   readonly dialog = inject(MatDialog);
@@ -64,7 +67,6 @@ eotList:any[]= [];
   }
   
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
   ngOnChanges(changes: SimpleChanges) {   
@@ -103,9 +105,10 @@ eotList:any[]= [];
   }
 
   private updateTable(info: any) {
+    this.eotList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.eotList.length;   
   }
 
   import() {

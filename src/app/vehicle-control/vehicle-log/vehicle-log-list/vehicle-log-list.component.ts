@@ -23,10 +23,13 @@ export class VehicleLogListComponent {
   displayedColumns: string[] = ['serial','vehiclename','vehicleno', 'date','starttime','endtime','commencementoftrip','purposeandplace','images', 'action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   isSearchLoading=false;
 
   readonly dialog = inject(MatDialog);
@@ -61,17 +64,16 @@ export class VehicleLogListComponent {
     }
   });
     this.vehicleService.getVehicleLogDetailsByOrgId({}, '')
-           .pipe(finalize(() => this.isLoading = false))
-           .subscribe((response: any) => {
-            if (response && response.success) {
-              this.vehicleLogs = response.data;
-              this.dataSource = new MatTableDataSource(this.vehicleLogs);
-             }
-      });
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe((response: any) => {
+      if (response && response.success) {
+        this.vehicleLogs = response.data;
+        this.updateTable(this.vehicleLogs);
+      }
+    });
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
   searchObj:any={};
@@ -126,13 +128,13 @@ export class VehicleLogListComponent {
    filterVehicleLogs(){
     this.isSearchLoading=true;
     this.vehicleService.getVehicleLogDetailsByOrgId(this.searchObj, '')
-           .pipe(finalize(() => {this.isLoading = false; this.isSearchLoading=false}))
-           .subscribe((response: any) => {
-            if (response && response.success) {
-              this.vehicleLogs = response.data;
-              this.dataSource = new MatTableDataSource(this.vehicleLogs);
-             }
-      });
+      .pipe(finalize(() => {this.isLoading = false; this.isSearchLoading=false}))
+      .subscribe((response: any) => {
+      if (response && response.success) {
+        this.vehicleLogs = response.data;
+        this.updateTable(this.vehicleLogs);
+      }
+    });
    }
 
   applyFilter(event: Event) {
@@ -145,9 +147,10 @@ export class VehicleLogListComponent {
   }
 
   private updateTable(info: any) {
+    this.vehicleLogs = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.vehicleLogs.length;   
   }
   updateRowData(data: any) {
     console.log(data);

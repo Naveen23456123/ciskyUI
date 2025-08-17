@@ -23,10 +23,13 @@ export class ExploreProjectReportsComponent {
   isLoading = true;
   displayedColumns: string[] = ['serial','type', 'name', 'no','letterno', 'date','file'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   @Input() filters:any={};
   financeCount:any={total:0,expired:0};
   readonly dialog = inject(MatDialog);
@@ -82,7 +85,6 @@ export class ExploreProjectReportsComponent {
     this.subscription.unsubscribe();
   }
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -96,9 +98,10 @@ export class ExploreProjectReportsComponent {
   }
 
   private updateTable(info: any) {
+    this.reportList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.reportList.length;   
   }
   openDoc(row:any){
     window.open(row.docaddress, "_blank");
