@@ -185,6 +185,7 @@ export class InsuranceListComponent {
       enddate:data.enddate,
       docaddress:data.docaddress
     }    
+    
     this.dataSource.data.unshift(data1);  
     this.dataSource._updateChangeSubscription();
   }

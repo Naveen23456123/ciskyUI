@@ -117,8 +117,8 @@ export class BoqAttendenceListComponent {
       totaldays:data.totaldays,
       manmonths:data.manmonths
     }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription(); 
+    this.boqAttendences.unshift(data1);
+    this.updateTable(this.boqAttendences);
   }
 
   deleteRow(data: any) {

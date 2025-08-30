@@ -30,10 +30,13 @@ export class MilestoneListComponent {
   isLoading = true;
   displayedColumns: string[] = ['serial','name', 'milestonedate', 'day','status','actual','reschd','letters', 'action'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   readonly dialog = inject(MatDialog);
 
    private defaultdialogoptions:  MatDialogConfig = {       
@@ -58,8 +61,7 @@ export class MilestoneListComponent {
           .pipe(finalize(() => this.isLoading = false))
           .subscribe((response: any) => {
             if (response && response.success) {
-             this.milestones = response.data;
-             this.dataSource = new MatTableDataSource(this.milestones);               
+             this.milestones = response.data;               
              this.updateTable(this.milestones);
             }
           });
@@ -69,8 +71,7 @@ export class MilestoneListComponent {
           .pipe(finalize(() => this.isLoading = false))
           .subscribe((response: any) => {
             if (response && response.success) {
-             this.milestones = response.data;
-             this.dataSource = new MatTableDataSource(this.milestones);               
+             this.milestones = response.data;               
              this.updateTable(this.milestones);
             }
           });
@@ -79,7 +80,6 @@ export class MilestoneListComponent {
     }
   
     ngAfterViewInit() {
-      this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
   
@@ -91,12 +91,12 @@ export class MilestoneListComponent {
         this.dataSource.paginator.firstPage();
       }
     }
-
-    private updateTable(info: any) {
-      this.dataSource = new MatTableDataSource<any>(info);
-      this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-      this.pageSize = this.helperService.getPageSize();
-    }
+  private updateTable(info: any) {
+    this.milestones = info;
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.milestones.length;   
+  }
     import() {
       const config = this.defaultdialogoptions;
               config.minWidth='75vw';
@@ -204,9 +204,9 @@ export class MilestoneListComponent {
       rescheduledate:data.rescheduledate,
       actualletterid:data.actualletterid,
       rescheduleletterid:data.rescheduleletterid
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    }     
+    this.milestones.unshift(data1);
+    this.updateTable(this.milestones); 
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data.id);

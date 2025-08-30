@@ -324,7 +324,7 @@ export class ContractorBillingListComponent {
       horeleasedwithheldamount:data.horeleasedwithheldamount,
       hoAttachment:data.hoAttachment,
       horecommletterid:data.horecommletterid
-    }      
+    }          
     this.dataSource.data.unshift(data1);  
     this.dataSource._updateChangeSubscription();
   }

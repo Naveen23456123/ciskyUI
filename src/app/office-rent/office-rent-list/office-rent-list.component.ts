@@ -12,6 +12,7 @@ import { StateDataService } from '@app/shared/services/state-data.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { ManageOfficeDocComponent } from '@app/shared/components/office/manage-office-doc/manage-office-doc.component';
 import { ActivatedRoute } from '@angular/router';
+import { CommonService } from '@app/shared/services/common.service';
 
 @Component({
   selector: 'app-office-rent-list',
@@ -33,7 +34,7 @@ export class OfficeRentListComponent {
   pageSize!: number;
   resultsLength!:number;
   isSearchLoading=false;
-
+  pagePermissions:any;
   readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
@@ -44,7 +45,7 @@ export class OfficeRentListComponent {
 
  constructor(private officeService:OfficeService,private helperService:HelperService,
   private stateDataService :StateDataService, private notifyBarService:NotifyBarService,
-  private route :ActivatedRoute
+  private route :ActivatedRoute,private commonService:CommonService
  ){
   this.dataSource = new MatTableDataSource(this.rents);
  }
@@ -65,6 +66,11 @@ export class OfficeRentListComponent {
       this.stateDataService.stateDataSubject.next({});
     }
   });
+  let pageGuid= this.route.snapshot.data['pageGuid'];  
+    this.commonService.getPermissionsForCurrentPage(pageGuid).then((permissions) => {
+      this.pagePermissions = permissions;
+  });
+
   this.officeService.searchOfficeRent({}, '')
   .pipe(finalize(() =>{ this.isLoading = false; this.isSearchLoading=false;}))
   .subscribe((response: any) => {
@@ -119,8 +125,8 @@ export class OfficeRentListComponent {
       projectname:data.projectname,
       phoneno:data.phoneno,
     }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription(); 
+    this.rents.unshift(data1);
+    this.updateTable(this.rents);
   }
 
   deleteRow(data: any) {

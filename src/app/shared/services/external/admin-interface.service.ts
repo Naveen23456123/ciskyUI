@@ -21,9 +21,32 @@ export class AdminInterfaceService {
     }
     return this.coreapi.standardService(standardAttribute);
   }
+  getModulesByRoleId(id:any) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Module/Roles/'+id,
+      params: false,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreapi.standardService(standardAttribute);
+  }
+    getAllModules() {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Module',
+      params: false,
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreapi.standardService(standardAttribute);
+  }
+  
   assignModulesInRole(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'admin/AssignModuleInRole',
+      url: 'Module/AssignModules',
       params: false,
       headers: true,
       guid: guid,
@@ -31,5 +54,5 @@ export class AdminInterfaceService {
       action: Operation.CREATE
     }
     return this.coreapi.standardService(standardAttribute);
-  }
+  } 
 }

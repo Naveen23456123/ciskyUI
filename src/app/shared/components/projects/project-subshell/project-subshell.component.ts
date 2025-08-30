@@ -39,8 +39,8 @@ export class ProjectSubshellComponent {
   }
   ngAfterViewInit() {
     this.tabComponentMap = {
-    "Construction Provision": this.constructionComponent,
-    "Detailed Project Report": this.dprHostComponent,
+    "AE/IE": this.constructionComponent,
+    "DPR": this.dprHostComponent,
     "Operation & Maintenance": this.omHostComponent,
     "Feasibility Study": this.feasibilityHostComponent,
     "Safety Measures": this.safetyHostComponent
@@ -94,7 +94,7 @@ export class ProjectSubshellComponent {
    
   }
   loadTabComponent(index: number) {
-    const selectedSubsector = this.subsectors[index]?.name;
+    const selectedSubsector = this.subsectors[index]?.abbreviation;
     const component = this.tabComponentMap[selectedSubsector];
     
     const host = this.tabHostRefs[index];

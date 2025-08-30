@@ -115,9 +115,9 @@ export class TicketListComponent {
       proofaddress:data.proofaddress,
       proof:data.proof,
       projectname:data.projectname
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    }  
+    this.ticketList.unshift(data1);
+    this.updateTable(this.ticketList);
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);

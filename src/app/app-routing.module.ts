@@ -195,6 +195,11 @@ const baseroutes: Routes = [
       loadChildren:()=>import('app/projects/transport-infra/transport-infra-list/transport-infra-list.module').then(x=>x.TransportInfraListModule),
       data:{pageGuid:'',type:'view'}
     },
+    {
+      path: 'permission',
+      loadChildren:()=>import('app/app-permission/app-permission-list/app-permission-list.module').then(x=>x.AppPermissionListModule),
+      data:{pageGuid:'',type:'view'}
+    },
     //{ path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
   ]),
   // { path: 'login', loadChildren: () => import('app/login/login.module').then(x => x.LoginModule) },

@@ -10,7 +10,7 @@ const routes: Routes = [
   {
     path:'',
     component:OfficeRentListComponent,
-    data:{title:extractTitle('Office Rent')},
+    data:{title:extractTitle('Office Rent'),pageGuid:'680dd1bd3682904bdd6e9ac5'},
     children: [
       {
         path: 'create',

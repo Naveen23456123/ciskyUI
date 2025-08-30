@@ -184,9 +184,9 @@ export class BankGuaranteeListComponent {
       releasedate:data.releasedate,
       remark:data.remark,
       docaddress:data.docaddress
-    }    
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    }  
+    this.bgList.unshift(data1);
+    this.updateTable(this.bgList); 
   }
 
   deleteRow(data: any) {

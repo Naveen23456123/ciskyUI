@@ -17,6 +17,7 @@
                                         {{field.name}}
                                     </mat-option>
                                 </mat-select>
+                                <mat-error>Please select Company</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3" *ngIf="!hasProject && !isEdit">
@@ -30,15 +31,18 @@
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Employee Code</mat-label>
-                                <input matInput formControlName="Code">
-                                <mat-error></mat-error>
+                                <input [readonly]="isEdit ? true : null" matInput formControlName="Code">
+                                <mat-error *ngIf="employeeForm.get('Code')?.hasError('required')">Please provide Code.</mat-error>
+                                <mat-error *ngIf="employeeForm.get('Code')?.hasError('usercodeTaken')">
+                                     Employee Code already exists
+                                </mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Name</mat-label>
                                 <input matInput formControlName="name">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Name.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">
@@ -49,6 +53,7 @@
                                         {{field.name}}
                                     </mat-option>
                                 </mat-select>
+                                <mat-error>Please select Employee Role.</mat-error>
                             </mat-form-field>
                         </div>  
                        
@@ -60,6 +65,7 @@
                                         {{field.name}}
                                     </mat-option>
                                 </mat-select>
+                                <mat-error>Please select Type.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-3">
@@ -70,6 +76,7 @@
                                         {{field.name}}
                                     </mat-option>
                                 </mat-select>
+                                <mat-error>Please select Designation.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">
@@ -133,14 +140,14 @@
                             <mat-form-field>
                                 <mat-label>Email Id</mat-label>
                                 <input matInput formControlName="emailId">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Email-Id.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Phone Number</mat-label>
                                 <input matInput formControlName="PhoneNumber">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Phone Number.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">

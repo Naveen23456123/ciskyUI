@@ -224,6 +224,7 @@ export class ManageVehicleListComponent {
     }
   }
   addRowData(data: any) {
+    console.log(data);
     const data1:any = {
       id:data.id,
       projectid : data.projectid,
@@ -243,9 +244,9 @@ export class ManageVehicleListComponent {
       pancard : data.pancard,
       gstnumber: data.gstnumber,
       address : data.address,
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    }
+    this.vehicles.unshift(data1);
+    this.updateTable(this.vehicles);
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data.id);

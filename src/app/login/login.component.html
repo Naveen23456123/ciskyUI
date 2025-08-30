@@ -23,12 +23,15 @@
   <div class="content">
     <div class="">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-7">
           <img src="assets/images/internal/banner.png" alt="Image" class="img-fluid">
         </div>
-        <div class="col-md-6 contents">
+        <div class="col-md-5 contents" >
           <div class="row d-flex justify-content-center align-items-center ht-100">
-            <div class="col-md-8 login">
+            <div class="col-md-8 login ">
+              <div class="mb-4 content-center">
+               <img src="assets/images/internal/logo.png" height="90" width="90" alt="Image" class="img-fluid">
+            </div>
               <div class="mb-4">
               <h3 class="">Hi, Welcome back!</h3>
               <p class="mb-4 p-text">Let’s get you signed in.</p>
@@ -63,7 +66,7 @@
               </div> -->
               <div class=" d-flex justify-content-center align-items-center">
                 <!-- <input type="submit" value="Log In" class="btn btn-block btn-primary"> -->
-                <app-submit-load-btn  [isClicked]="isBtnClicked" [isValid]="loginform.valid || isBtnClicked"
+                <app-submit-load-btn class="login-btn"  [isClicked]="isBtnClicked" [isValid]="loginform.valid || isBtnClicked"
                   text="Log In" ></app-submit-load-btn>
               </div>
             </form>

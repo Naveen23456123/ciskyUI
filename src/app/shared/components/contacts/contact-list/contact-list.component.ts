@@ -27,10 +27,13 @@ export class ContactListComponent {
   isLoading = true;
   displayedColumns: string[] = ['serial','contacttype', 'name',  'designationname','contactno','email','branchname','address','action'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   readonly dialog = inject(MatDialog);
   private subscription: Subscription = new Subscription();
 
@@ -54,8 +57,7 @@ export class ContactListComponent {
         contactURL.pipe(finalize(() => this.isLoading = false))
           .subscribe((response: any) => {
             if (response && response.success) {
-              this.contactList = response.data;
-              this.dataSource = new MatTableDataSource(this.contactList);               
+              this.contactList = response.data;               
               this.updateTable(this.contactList);             
             }
         });
@@ -67,7 +69,6 @@ export class ContactListComponent {
   }
 
   ngAfterViewInit() {
-      this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
   }
   
@@ -80,11 +81,12 @@ export class ContactListComponent {
       }
     }
 
-    private updateTable(info: any) {
-      this.dataSource = new MatTableDataSource<any>(info);
-      this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-      this.pageSize = this.helperService.getPageSize();
-    }
+  private updateTable(info: any) {
+    this.contactList = info;
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.contactList.length;   
+  }
 
 
  export(){
@@ -183,8 +185,8 @@ export class ContactListComponent {
       address:data.address,
       alternatephoneno:data.alternatephoneno,
     }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    this.contactList.unshift(data1);
+    this.updateTable(this.contactList); 
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data.id);

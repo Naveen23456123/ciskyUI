@@ -104,8 +104,8 @@ export class SubCompanyListComponent {
       name : newdata.name,
       employeecount:0
     }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    this.subCompanies.unshift(data1);
+    this.updateTable(this.subCompanies); 
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);

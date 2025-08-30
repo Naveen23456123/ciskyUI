@@ -1,5 +1,7 @@
 <div class="container">
-  <mat-card >
+<app-project-shell [sectors]="allowedSectors"></app-project-shell>
+
+  <!-- <mat-card >
     <mat-card-content>
 <mat-tab-group>
   <mat-tab *ngFor="let vertical of invoiceVerticals" [label]="vertical.label">
@@ -16,11 +18,11 @@
             </mat-nav-list>
          </div>
         <div class="main-content">
-        <!-- Content Area -->
+        
             <div class="content">
                 <ng-container *ngIf="selectedSubcategory?.vertical === vertical.label">
                 <h3>{{ selectedSubcategory?.sub }}</h3>
-                <!-- Replace with dynamic component / content -->
+                
                 <p>Invoices for: {{ selectedSubcategory?.vertical }} > {{ selectedSubcategory?.sub }}</p>
                 </ng-container>
             </div>
@@ -30,5 +32,5 @@
   </mat-tab>
 </mat-tab-group>
     </mat-card-content>
-  </mat-card>
+  </mat-card> -->
 </div>

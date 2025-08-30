@@ -1,0 +1,45 @@
+<div class="container">
+<!-- <mat-tab-group class="parent-tab-group" animationDuration="0ms" mat-stretch-tabs="false">
+  <mat-tab *ngFor="let vertical of sectors" [label]="vertical.name">
+
+  
+    <ng-container *ngIf="vertical.subsectors && vertical.subsectors.length">
+      <mat-card class="subcategory-card">
+        <mat-tab-group animationDuration="0ms" mat-stretch-tabs="false">
+          <mat-tab *ngFor="let sub of vertical.subsectors" [label]="sub.name">
+            <div class="tab-content">
+              <h3>{{ sub.name }}</h3>
+              <p>Content for {{ sub.name }} under {{ vertical.name }}</p>
+              <ng-template dynamicHost></ng-template>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card>
+    </ng-container>
+
+    <ng-container *ngIf="!vertical.subsectors">
+        <mat-card class="subcategory-card">
+            <div class="tab-content">
+                <h3>{{ vertical.name }}</h3>
+                <p>No subsectors available.</p>
+            </div>
+      </mat-card>
+    </ng-container>
+
+  </mat-tab>
+</mat-tab-group> -->
+<mat-tab-group class="parent-tab-group" animationDuration="0ms" mat-stretch-tabs="false">
+  <mat-tab *ngFor="let parent of sectors" [label]="parent.name">
+    <mat-card class="subcategory-card">
+      <mat-tab-group animationDuration="0ms" mat-stretch-tabs="false">
+        <mat-tab *ngFor="let sub of parent.subcategories" [label]="sub.name">
+           <ng-template matTabContent>
+            <ng-container *ngComponentOutlet="sub.component; inputs: {sectorId:parent.id, subSectorId: sub.id }"
+            ></ng-container>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+  </mat-tab>
+</mat-tab-group>
+</div>

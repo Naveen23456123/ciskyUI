@@ -121,9 +121,9 @@ export class ImperestListComponent {
       remarks:newdata.remarks, 
       details:newdata.details,
       ...this.setLevelConfig(newdata.levels) 
-    }     
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    } 
+    this.imperestList.unshift(data1);
+    this.updateTable(this.imperestList); 
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);

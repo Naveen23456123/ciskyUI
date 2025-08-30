@@ -28,10 +28,13 @@ cosList:any[]= [];
   isLoading = true;
   displayedColumns: string[] = ['serial','coscode', 'initiatedate','amount',  'approveddate','cosstatus','letters','action'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   readonly dialog = inject(MatDialog);
   private subscription: Subscription = new Subscription();
 
@@ -57,8 +60,7 @@ cosList:any[]= [];
         .pipe(finalize(() => this.isLoading = false))
         .subscribe((response: any) => {
           if (response && response.success) {
-            this.cosList = response.data;
-            this.dataSource = new MatTableDataSource(this.cosList);               
+            this.cosList = response.data;              
             this.updateTable(this.cosList);          
           }
         });
@@ -71,7 +73,6 @@ cosList:any[]= [];
   }
   
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
   
@@ -85,9 +86,10 @@ cosList:any[]= [];
   }
 
   private updateTable(info: any) {
+    this.cosList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.cosList.length;   
   }
   export(){
     if(this.cosList && this.cosList.length>0)
@@ -180,8 +182,8 @@ cosList:any[]= [];
       status:data.status,
       closeletterid:data.closeletterid
     }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    this.cosList.unshift(data1);
+    this.updateTable(this.cosList);
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data.id);

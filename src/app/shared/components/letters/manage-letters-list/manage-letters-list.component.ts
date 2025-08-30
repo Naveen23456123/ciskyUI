@@ -169,8 +169,8 @@ export class ManageLettersListComponent {
       associatedletterids:data.associatedletterids,
       replybyid:data.replybyid,
     }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription(); 
+    this.lettersList.unshift(data1);
+    this.updateTable(this.lettersList);
   }
 
   deleteRow(data: any) {

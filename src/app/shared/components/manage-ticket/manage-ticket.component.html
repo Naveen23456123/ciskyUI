@@ -24,28 +24,28 @@
                                 
                                 <mat-datepicker-toggle matIconSuffix [for]="bookingdate"></mat-datepicker-toggle>
                                 <mat-datepicker #bookingdate></mat-datepicker>
-                                <mat-error>Please select Used Date</mat-error>
+                                <mat-error>Please select Booking Date</mat-error>
                               </mat-form-field>
                         </div> 
                         <div class="col-md-4">
                             <mat-form-field >
                                 <mat-label>Ticket Number</mat-label>
                                 <input matInput formControlName="ticketnumber">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Ticket No.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-4">
                             <mat-form-field >
                                 <mat-label>Source</mat-label>
                                 <input matInput formControlName="source">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Source.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-4">
                             <mat-form-field >
                                 <mat-label>Destination</mat-label>
                                 <input matInput formControlName="destination">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Destination.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-4">
@@ -59,7 +59,7 @@
                             <mat-form-field >
                                 <mat-label>Amount</mat-label>
                                 <input type="number" matInput formControlName="ticketamount">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Amount.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-4">                            
@@ -70,7 +70,7 @@
                             </app-select-search>                           
                         </div>                         
                         <div class="col-md-4">
-                            <app-file-uploader 
+                            <app-file-uploader [required]="isEdit ? false : true" 
                             (onfileUpload)="fileUploded($event)" title="Ticket"></app-file-uploader>
                         </div>                        
                         <div class="col-md-12 button-row" align="right">

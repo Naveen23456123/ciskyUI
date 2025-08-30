@@ -112,8 +112,8 @@ export class DesignationListComponent {
       companyname:newdata.companyname,
       empcount:0
     }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    this.designations.unshift(data1);
+    this.updateTable(this.designations);
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);

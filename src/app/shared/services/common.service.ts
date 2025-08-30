@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import moment from 'moment';
-import { ApprovalStatus } from '../models/constant.config';
+import { ApprovalStatus, Sector } from '../models/constant.config';
 import { SessionService } from './session.service';
 
 @Injectable({
@@ -191,5 +191,54 @@ export class CommonService {
         }
       });
     });
+  }
+  updateSectorIds(sectors: Sector[], backendSectors: any[]): Sector[] {
+    return sectors.map(sec => {
+      const backendSec = backendSectors.find(b => b.abbreviation === sec.abbr || b.name === sec.name);
+
+      if (backendSec) {
+        sec.id = backendSec.id;
+
+        if (sec.subcategories && backendSec.subsectors) {
+          sec.subcategories = sec.subcategories.map(sub => {
+            const backendSub = backendSec.subsectors.find(
+              (bs: any) => bs.abbreviation === sub.abbr || bs.name === sub.name
+            );
+            return backendSub ? { ...sub, id: backendSub.id } : sub;
+          });
+        }
+      }
+      return sec;
+    });
+  }
+  mapSectors(apiResponse: any, masterVerticals: any[]) {
+    return masterVerticals.map(masterSector => {
+      const apiSector = apiResponse.sectors.find(
+        (s: any) => s.abbreviation === masterSector.name
+      );
+
+      if (!apiSector) return null; 
+
+      return {
+        id: apiSector.id,
+        name: apiSector.name,
+        abbr: apiSector.abbreviation,
+        subcategories: masterSector.subcategories
+          .map((sub:any) => {
+            const apiSub = apiSector.subsectors.find(
+              (apiSub: any) => apiSub.abbreviation === sub.name
+            );
+            if (!apiSub) return null;
+
+            return {
+              id: apiSub.id,
+              name: apiSub.name,
+              abbr: apiSub.abbreviation,
+              component: sub.component
+            };
+          })
+          .filter(Boolean)
+      };
+    }).filter(Boolean);
   }
 }

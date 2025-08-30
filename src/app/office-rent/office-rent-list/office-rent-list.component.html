@@ -22,7 +22,7 @@
                     </div>  
                 </div>       
                 <div class="col-md-1 button-row main-btn-row d-flex justify-content-end">
-                  <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
+                  <button class="title-btn" *ngIf="pagePermissions.canCreate" type="button" routerLink="create"  mat-mini-fab color="primary">
                     <mat-icon>add box</mat-icon> Office Rent
                 </button>   
                 </div>
@@ -90,8 +90,8 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
                     <td class="action-col" mat-cell *matCellDef="let row"> 
                       <div class="button-row">                               
-                        <app-edit-btn [state]="row"  [routerLink]="['/ofc-rent/edit',row.id]" ></app-edit-btn>                              
-                        <app-delete-btn [state]="row" [routerLink]="['/ofc-rent/delete',row.id]"></app-delete-btn>
+                        <app-edit-btn [state]="row" *ngIf="pagePermissions.canUpdate" [routerLink]="['/ofc-rent/edit',row.id]" ></app-edit-btn>                              
+                        <app-delete-btn [state]="row" *ngIf="pagePermissions.canDelete" [routerLink]="['/ofc-rent/delete',row.id]"></app-delete-btn>
                       </div>
                     </td>
                   </ng-container>

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CONSTANTS, Constants } from '@app/shared/models/constant.config';
+import { CONSTANTS, Constants, SECTORS } from '@app/shared/models/constant.config';
+import { CommonService } from '@app/shared/services/common.service';
 import { AuthrizationInterfaceService } from '@app/shared/services/external/authrization-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
@@ -19,7 +20,7 @@ export class LoginComponent {
   isBtnClicked=false;
   constructor(private formbuilder: FormBuilder, private router:Router, private sessionService:SessionService,
     private authService:AuthrizationInterfaceService, private notifyBarService:NotifyBarService,
-    private storageService:StorageService
+    private storageService:StorageService, private commonService:CommonService
   ){}
 
   ngOnInit(){
@@ -56,6 +57,7 @@ export class LoginComponent {
             id: response.data.orgid,
             sectors: response.data.sectors
           });
+          this.commonService.updateSectorIds(SECTORS,response.data.sectors);
           this.sessionService.setUser({
             employeeid: response.data.userid,
             modules: response.data.modules

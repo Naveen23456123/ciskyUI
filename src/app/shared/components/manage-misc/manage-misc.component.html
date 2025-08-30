@@ -20,7 +20,7 @@
                             <mat-form-field>
                                 <mat-label>Name</mat-label>
                                 <input matInput formControlName="name">
-                                <mat-error>Please enter First Name.</mat-error>
+                                <mat-error>Please enter Name.</mat-error>
                             </mat-form-field>
                         </div>    
                         <div class="col-md-6">
@@ -30,10 +30,11 @@
                               <mat-form-field>
                                 <mat-label>Amount</mat-label>
                                 <input type="number" matInput formControlName="amount">
+                                 <mat-error>Please enter Amount.</mat-error>
                               </mat-form-field>
                         </div>                  
                         <div class="col-md-8">
-                            <app-file-uploader (onfileUpload)="fileUploded($event)" title="Attachment"></app-file-uploader>
+                            <app-file-uploader [required]="isEdit ? false : true" (onfileUpload)="fileUploded($event)" title="Attachment"></app-file-uploader>
                         </div>
                         
                        <div class="col-md-12 button-row" align="right">

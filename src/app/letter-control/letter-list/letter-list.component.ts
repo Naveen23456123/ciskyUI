@@ -255,9 +255,9 @@ export class LetterListComponent {
       letterto:data.letterto,     
       remarks:data.remarks,
       associatedletterids:data.associatedletterids,
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription(); 
+    }
+    this.lettersList.unshift(data1);
+    this.updateTable(this.lettersList);  
   }
 
   deleteRow(data: any) {

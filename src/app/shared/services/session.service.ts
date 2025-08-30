@@ -4,8 +4,9 @@ import { v4 as uuid } from 'uuid';
 import { Logger } from '@app/core/logger.service';
 import { StorageService } from './storage.service';
 import { BehaviorSubject, forkJoin, ReplaySubject, shareReplay } from 'rxjs';
-import { Constants } from '../models/constant.config';
+import { Constants, SECTORS } from '../models/constant.config';
 import { CommonInterfaceService } from './external/common-interface.service';
+import { CommonService } from './common.service';
 
 const log = new Logger('SessionService');
 

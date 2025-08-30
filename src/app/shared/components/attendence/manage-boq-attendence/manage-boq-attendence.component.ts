@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component,Inject,Optional,inject } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router,NavigationExtras } from '@angular/router';
 import { AttendenceInterfaceService } from '@app/shared/services/external/attendence-interface.service';
@@ -30,6 +30,7 @@ export class ManageBoqAttendenceComponent {
   companyList:any[] = [];
   empInit=true;
   projectName='';
+  isBtnClicked=false;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageBoqAttendenceComponent>, private formbuilder: FormBuilder,
     private sessionservice: SessionService,  private router: Router,private cdr:ChangeDetectorRef,
@@ -69,10 +70,10 @@ export class ManageBoqAttendenceComponent {
     this.boqForm = this.formbuilder.group({
       companyid:[],
       projectid:[],
-      employeeid:[''],
+      employeeid:['',Validators.required],
       monthandyear:[],
-      totaldays:[],
-      manmonths:[],
+      totaldays:[,Validators.required],
+      manmonths:[,Validators.required],
       id :[]
     });
     this.subCompanyService.getSubCompanyListByOrgId({},'').pipe(finalize(()=> this.isLoading=false))
@@ -132,15 +133,17 @@ export class ManageBoqAttendenceComponent {
   dateChange(data:any){
     this.boqForm.patchValue({monthandyear:data});   
   }
-  submit(){   
+  submit(){
+    this.isBtnClicked=true;   
     this.message=null;
     let formValue = this.boqForm.value;
     formValue.projectname= this.projectName;
+    formValue.monthandyear= this.boqForm.controls["monthandyear"].value?.toISOString();
     formValue.employee= this.employeeList.find(x=>x.id== this.boqForm.get('employeeid')?.value).text;
     if (this.isEdit) {
       formValue.projectname= this.projectName;
       this.attendenceService.updateBoqAttendence(this.boqForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked=false })).subscribe({
           next: (response:any) => {
           if(response && response.success)
             console.log(formValue);
@@ -153,10 +156,12 @@ export class ManageBoqAttendenceComponent {
     } else {
       this.boqForm.value.id=null;
       this.attendenceService.createBoqAttendence(this.boqForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked=false })).subscribe({
           next:(response: any) => {
           if (response && response.success) {
             this.boqForm.controls["id"].setValue(response.data.id);
+            formValue.id= response.data.id;
+            
             formValue.projectname= this.projectName;
             this.dialogRef.close({ value: formValue, valid: true });
           } else {

@@ -90,7 +90,7 @@
                             <mat-form-field>
                                 <mat-label>Subject</mat-label>
                                 <input matInput formControlName="subject">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Subject.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-4">
@@ -114,18 +114,21 @@
                                       <mat-option [value]="option.id">{{ option.name }}</mat-option>
                                     }
                                 </mat-select>
+                                <mat-error>Please select Department.</mat-error>
                               </mat-form-field>
                         </div>
                         <div  class="col-md-4">
                             <mat-form-field>
                                 <mat-label>Letter From</mat-label>
                                 <input matInput formControlName="letterfrom">
+                                <mat-error>Please provide Letter-Form.</mat-error>
                             </mat-form-field>
                         </div>   
                         <div  class="col-md-4">
                             <mat-form-field>
                                 <mat-label>Letter To</mat-label>
                                 <input matInput formControlName="letterto">
+                                <mat-error>Please provide Letter-To.</mat-error>
                             </mat-form-field>
                         </div>                      
                        

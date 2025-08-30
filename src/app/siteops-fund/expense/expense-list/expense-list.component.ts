@@ -115,9 +115,9 @@ export class ExpenseListComponent {
       remarks:newdata.remarks, 
       approved:newdata.approved,
       ...this.setLevelConfig(newdata.levels) 
-    }     
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    }
+    this.expenseList.unshift(data1);
+    this.updateTable(this.expenseList); 
   }
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);

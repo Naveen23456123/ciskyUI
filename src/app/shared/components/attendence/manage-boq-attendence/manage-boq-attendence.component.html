@@ -10,7 +10,7 @@
                 <app-loader [IsLoading]="isLoading"></app-loader>
             </div>
             <div class="wrapper">
-                <form [formGroup]="boqForm" (submit)="submit()">
+                <form [formGroup]="boqForm" >
                     <app-alert-badge *ngIf="message" [isError]="true" [message]="message"></app-alert-badge>
                     <div class="row control-div">
                         <div class="col-md-6">
@@ -18,7 +18,7 @@
                             [defaultValue]="boqForm.get('projectid')?.value" ></app-project-control>
                         </div>
                         <div class="col-md-6">                            
-                            <app-select-search *ngIf="empInit"  [defaultValue]="boqForm.get('employeeid')?.value"
+                            <app-select-search *ngIf="empInit" [required]="true"  [defaultValue]="boqForm.get('employeeid')?.value"
                             searchPlaceholder="Search Employee" emptySearchMessage="No Employee Found"
                               label="Select Employee" [required]="true" selectPlaceholder="Employee(s)"
                             (onValueChange)="empSelect($event)" [valueArrays]="employeeList">
@@ -28,7 +28,7 @@
                             <mat-form-field>
                                 <mat-label>Total Days</mat-label>
                                 <input matInput type="number" formControlName="totaldays">
-                                <mat-error>Please enter First Name.</mat-error>
+                                <mat-error>Please enter Days.</mat-error>
                             </mat-form-field>
                         </div>
                       
@@ -36,7 +36,7 @@
                             <mat-form-field>
                                 <mat-label>Man Months</mat-label>
                                 <input matInput type="number" formControlName="manmonths">
-                                <mat-error>Please enter First Name.</mat-error>
+                                <mat-error>Please enter Man Months.</mat-error>
                             </mat-form-field>
                         </div>   
                         <div class="col-md-6">
@@ -49,8 +49,9 @@
                     <div class="row control-div">
                         <div class="col-md-12 button-row" align="right">
                             <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-                            <button class="submit-btn" mat-flat-button [disabled]="!boqForm.valid" color="primary">
-                                {{isEdit?'Update':'Submit'}}</button>
+                            <app-submit-load-btn (clickEvent)="submit()" 
+                                 [isClicked]="isBtnClicked" [isValid]="boqForm.valid || isBtnClicked"
+                                text="{{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
                         </div>
                     </div> 
                 </form>

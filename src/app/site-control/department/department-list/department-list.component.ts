@@ -102,9 +102,9 @@ export class DepartmentListComponent {
       name : newdata.name,
       companyid : newdata.companyid,
       companyname:newdata.companyname
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    }    
+    this.departments.unshift(data1);
+    this.updateTable(this.departments);
   }
   addBulk(data:any){
     data.forEach((dept:any) => {

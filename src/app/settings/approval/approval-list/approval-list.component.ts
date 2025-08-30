@@ -114,9 +114,9 @@ export class ApprovalListComponent {
       moduleid: newdata.moduleid,
       modulename:newdata.modulename,
       levels:newdata.levels
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    }     
+    this.approvals.unshift(data1);
+    this.updateTable(this.approvals); 
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);

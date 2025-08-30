@@ -222,9 +222,9 @@ inventories:any[]= [];
       project:data.project,
       item:data.item,
       employee:data.employee
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    }     
+    this.inventories.unshift(data1);
+    this.updateTable(this.inventories);  
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data.id);

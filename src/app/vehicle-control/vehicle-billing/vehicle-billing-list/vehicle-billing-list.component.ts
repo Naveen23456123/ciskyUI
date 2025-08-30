@@ -159,9 +159,9 @@ export class VehicleBillingListComponent {
       vehicleno:data.vehicleno,
       vehiclename:data.vehiclename,
       levels: this.setLevel(data.levels)
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription(); 
+    }   
+    this.vehicleBilings.unshift(data1);
+    this.updateTable(this.vehicleBilings); 
   }
   addBulkBilling(data:any){
     data.forEach((element:any) => {

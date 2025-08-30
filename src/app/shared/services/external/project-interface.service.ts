@@ -209,14 +209,14 @@ export class ProjectInterfaceService {
   // }
   //   ]);
   }
-  getAllProjectPartialDetailsByOrdIg(params: any, guid: string) {
+  getAllProjectPartialDetailsByOrdIg(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Consultant/Partial',
-      params: params,
+      params: {},
       headers: true,
       guid: '',
-      request: {},
-      action: Operation.GET
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   

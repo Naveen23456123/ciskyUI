@@ -343,6 +343,13 @@ export class MenuService {
         link: 'user-project',
         guid: '',
         roles: []
+      },
+      {
+        label: 'Permissions',
+        icon: 'bx-money',
+        link: 'permission',
+        guid: '',
+        roles: []
       }, 
       
     ]

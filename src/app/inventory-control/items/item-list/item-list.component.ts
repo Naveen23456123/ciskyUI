@@ -95,9 +95,9 @@ export class ItemListComponent {
     const data1:any = {
       id:newdata.id,
       name : newdata.name,
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    }    
+    this.itemsList.unshift(data1);
+    this.updateTable(this.itemsList);  
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);

@@ -115,9 +115,9 @@ export class ConsultantAccountListComponent {
       companyid: newdata.companyId,
       acctypeid: newdata.accTypeId,
       docaddress:newdata.docAddress
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    }  
+    this.accounts.unshift(data1);
+    this.updateTable(this.accounts);
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data);

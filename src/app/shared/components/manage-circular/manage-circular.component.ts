@@ -1,5 +1,5 @@
 import { Component, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CircularInterfaceService } from '@app/shared/services/external/circular-interface.service';
@@ -61,10 +61,10 @@ export class ManageCircularComponent {
     this.checkMode(this.data.type);
     this.getTitle(this.data.type);
     this.circularForm = this.formbuilder.group({ 
-      title: [''],
-      type:[],
-      date:[''],
-      description:[''],
+      title: ['',Validators.required],
+      type:[,Validators.required],
+      date:['',Validators.required],
+      description:['',Validators.required],
       id :[],
       file:[]
     });

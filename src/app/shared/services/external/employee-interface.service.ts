@@ -143,6 +143,18 @@ export class EmployeeInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
+  validateCode(request: any, guid: string) {
+    console.log(request);
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'SiteEmployee/ValidateCode/'+request.code,
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   searchEmployee(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'SiteEmployee/Search',

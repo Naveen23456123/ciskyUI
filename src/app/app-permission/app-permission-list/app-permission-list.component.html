@@ -1,0 +1,160 @@
+    <mat-card >
+        
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+                <form (submit)="submit()">
+                    <div class="row control-div">
+                       
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>Role</mat-label>
+                                <mat-select (selectionChange)="onRoleChange($event)">
+                                    <mat-option  *ngFor="let field of roles" [value]="field.id">
+                                        {{field.name}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select Role.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field appearance="outline" class="w-64 mr-4">
+                                <mat-label>Module</mat-label>
+                                <mat-select [(value)]="selectedModule" (selectionChange)="onModuleChange()">
+                                <mat-option *ngFor="let mod of allModules" [value]="mod">
+                                    {{ mod.name }}
+                                </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4">
+                             <mat-form-field appearance="outline" class="w-64" *ngIf="selectedModule?.submodules?.length">
+                                <mat-label>Sub Module</mat-label>
+                                <mat-select [(value)]="selectedSubModule">
+                                <mat-option *ngFor="let sub of selectedModule.submodules" [value]="sub">
+                                    {{ sub.name }}
+                                </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-12">
+                           
+                            <div class="mt-4 flex gap-4">
+                                <mat-checkbox [(ngModel)]="permissions.C" name="permissions.C">Create</mat-checkbox>
+                                <mat-checkbox [(ngModel)]="permissions.R" name="permissions.R">Read</mat-checkbox>
+                                <mat-checkbox [(ngModel)]="permissions.U" name="permissions.U">Update</mat-checkbox>
+                                <mat-checkbox [(ngModel)]="permissions.D" name="permissions.D">Delete</mat-checkbox>
+                            </div>
+
+                            <!-- Save Button -->
+                            <div class="mt-4">
+                                <button mat-raised-button color="primary" (click)="savePermission()">Save</button>
+                            </div>
+
+                            <div class="mt-6">
+                                <table mat-table [dataSource]="allModules" multiTemplateDataRows class="mat-elevation-z8 full-width-table">
+
+                                <!-- Name Column -->
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef> Module Name </th>
+                                    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                                </ng-container>
+
+                                <!-- C Permission -->
+                                <ng-container matColumnDef="C">
+                                    <th mat-header-cell *matHeaderCellDef> C </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <mat-icon *ngIf="element.permissionMap.C" class="count-icon bi bi-person-fill fs-4   text-success">check_circle</mat-icon>
+                                    </td>
+                                </ng-container>
+
+                                <!-- R Permission -->
+                                <ng-container matColumnDef="R">
+                                    <th mat-header-cell *matHeaderCellDef> R </th>
+                                    <td mat-cell *matCellDef="let element">
+                                    <mat-icon *ngIf="element.permissionMap.R" class="count-icon bi bi-person-fill fs-4   text-success">check_circle</mat-icon>
+                                    </td>
+                                </ng-container>
+
+                                <!-- U Permission -->
+                                <ng-container matColumnDef="U">
+                                    <th mat-header-cell *matHeaderCellDef> U </th>
+                                    <td mat-cell *matCellDef="let element">
+                                    <mat-icon *ngIf="element.permissionMap.U" class="count-icon bi bi-person-fill fs-4   text-success">check_circle</mat-icon>
+                                    </td>
+                                </ng-container>
+
+                                <!-- D Permission -->
+                                <ng-container matColumnDef="D">
+                                    <th mat-header-cell *matHeaderCellDef> D </th>
+                                    <td mat-cell *matCellDef="let element">
+                                    <mat-icon *ngIf="element.permissionMap.D" class="count-icon bi bi-person-fill fs-4   text-success">check_circle</mat-icon>
+                                    </td>
+                                </ng-container>
+
+                                <!-- Row Def -->
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+                                <!-- Child Row (Submodules) -->
+                                <tr mat-row *matRowDef="let row; columns: ['childRow']" class="child-row"></tr>
+
+                                <ng-container matColumnDef="childRow">
+                                    <td mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
+                                    <!-- Render child table only if modulelist is not empty -->
+                                    <table *ngIf="row.submodules?.length > 0" mat-table [dataSource]="row.submodules" class="inner-table">
+
+                                        <!-- Submodule Name -->
+                                        <ng-container matColumnDef="subName">
+                                        <td mat-cell *matCellDef="let sub"> ↳ {{sub.name}} </td>
+                                        </ng-container>
+
+                                        <!-- Sub C -->
+                                        <ng-container matColumnDef="subC">
+                                        <td mat-cell *matCellDef="let sub">                                            
+                                            <mat-icon *ngIf="sub.permissionMap.C" class="count-icon bi bi-person-fill fs-4   text-success">check_circle</mat-icon>                                          
+                                        </td>
+                                        </ng-container>
+
+                                        <!-- Sub R -->
+                                        <ng-container matColumnDef="subR">
+                                        <td mat-cell *matCellDef="let sub">
+                                            <mat-icon *ngIf="sub.permissionMap.R" class="count-icon bi bi-person-fill fs-4   text-success">check_circle</mat-icon>
+                                        </td>
+                                        </ng-container>
+
+                                        <!-- Sub U -->
+                                        <ng-container matColumnDef="subU">
+                                        <td mat-cell *matCellDef="let sub">
+                                            <mat-icon *ngIf="sub.permissionMap.U" class="count-icon bi bi-person-fill fs-4   text-success">check_circle</mat-icon>
+                                        </td>
+                                        </ng-container>
+
+                                        <!-- Sub D -->
+                                        <ng-container matColumnDef="subD">
+                                        <td mat-cell *matCellDef="let sub">
+                                            <mat-icon *ngIf="sub.permissionMap.D" class="count-icon bi bi-person-fill fs-4   text-success">check_circle</mat-icon>
+                                        </td>
+                                        </ng-container>
+
+                                        <!-- Render Submodule Row -->
+                                        <tr mat-row *matRowDef="let row; columns: ['subName','subC','subR','subU','subD']"></tr>
+                                    </table>
+                                    </td>
+                                </ng-container>
+
+                                </table>
+                            </div>
+                        </div>                           
+                        <div class="col-md-12 button-row" align="right">
+                                <!-- <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
+                                <button [ngClass]="deptForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!deptForm.valid" color="primary">
+                                    {{isEdit?'Update':'Submit'}}</button> -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </mat-card-content>
+    </mat-card>

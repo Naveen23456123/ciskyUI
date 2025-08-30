@@ -110,3 +110,89 @@ export const TOTAL_PROFIT_LOSS_HEADING = [
   export interface DynamicTabComponent {
   subsectorId: string;
 }
+
+//sectors
+export interface Subsector {
+  name: string;
+  id:string;
+  abbr:string;
+}
+
+export interface Sector {
+  name: string;
+  id:string;
+  abbr:string;
+  subcategories?: Subsector[];
+}
+export enum SECTOR_ABBR {
+  TRASNPORT='Transport',
+  CONSTRUCTION_SUPERVISION='AE/IE',
+  OM_OPERATION='O&M',
+  DETAILED_PROJECT_REPORT='DPR',
+  FEAIBILITY_REPORT='FS',
+  SAFETY_CONSULTANT='SC'
+};
+export const SECTORS: Sector[] = [
+  {
+    name: 'Smart Cities/Urban',
+    abbr:'',
+    id:''
+  },
+  {
+    name: 'Env & Social',
+    abbr:'',
+    id:''
+  },
+  {
+    name: 'Survey & Testing',
+    abbr:'',
+    id:''
+  },
+  {
+    name: 'Finance & Advisory',
+    abbr:'',
+    id:''
+  },
+  {
+    name: 'Transport Infra',
+    abbr:'Transport',
+    id:'',
+    subcategories: [
+      { name: 'Construction Provision', abbr:SECTOR_ABBR.CONSTRUCTION_SUPERVISION,id:''},
+      { name: 'O&M Operation', abbr:SECTOR_ABBR.OM_OPERATION,id:''},
+      { name: 'Detailed Project Report', abbr:SECTOR_ABBR.DETAILED_PROJECT_REPORT,id:''},
+      { name: 'Feasibility Report', abbr:SECTOR_ABBR.FEAIBILITY_REPORT,id:''},
+      { name: 'Safety Consultant', abbr:SECTOR_ABBR.SAFETY_CONSULTANT,id:''}
+    ]
+  },
+  {
+    name: 'Railway & Metros',
+    abbr:'',
+    id:'',
+    subcategories: [
+       { name: 'Construction Provision', abbr:SECTOR_ABBR.CONSTRUCTION_SUPERVISION,id:''},
+      { name: 'O&M Operation', abbr:SECTOR_ABBR.OM_OPERATION,id:''},
+      { name: 'Detailed Project Report', abbr:SECTOR_ABBR.DETAILED_PROJECT_REPORT,id:''},
+      { name: 'Feasibility Report', abbr:SECTOR_ABBR.FEAIBILITY_REPORT,id:''},
+      { name: 'Safety Consultant', abbr:SECTOR_ABBR.SAFETY_CONSULTANT,id:''}
+    ]
+  },
+  {
+    name: 'Water Resources',
+    abbr:'',
+    id:'',
+    subcategories: [
+      { name: 'Construction Provision', abbr:SECTOR_ABBR.CONSTRUCTION_SUPERVISION,id:''},
+      { name: 'O&M Operation', abbr:SECTOR_ABBR.OM_OPERATION,id:''},
+      { name: 'Detailed Project Report', abbr:SECTOR_ABBR.DETAILED_PROJECT_REPORT,id:''},
+      { name: 'Feasibility Report', abbr:SECTOR_ABBR.FEAIBILITY_REPORT,id:''},
+      { name: 'Safety Consultant', abbr:SECTOR_ABBR.SAFETY_CONSULTANT,id:''}
+    ]
+  },
+  {
+    name: 'Tourism',
+    abbr:'',
+    id:'',
+    
+  }
+];

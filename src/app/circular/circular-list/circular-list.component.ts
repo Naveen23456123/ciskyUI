@@ -106,8 +106,8 @@ export class CircularListComponent {
       attachmentaddress: data.attachmentaddress,
       description:data.description,
     }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription(); 
+    this.circularList.unshift(data1);
+    this.updateTable(this.circularList);
   }
 
   deleteRow(data: any) {

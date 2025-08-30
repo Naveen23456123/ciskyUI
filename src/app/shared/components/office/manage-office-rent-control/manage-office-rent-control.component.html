@@ -21,21 +21,21 @@
                             <mat-form-field>
                                 <mat-label>Office Name</mat-label>
                                 <input   matInput formControlName="officename">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Name.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3" >
                             <mat-form-field>
                                 <mat-label>Office Location</mat-label>
                                 <input   matInput formControlName="officelocation">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Location.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Basic Amount</mat-label>
                                 <input type="number" matInput (input)="onAmountChangeEvent()"  formControlName="basicamount">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Basic Amount.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-3" *ngIf="showTDS" >
@@ -68,6 +68,7 @@
                                 
                                 <mat-datepicker-toggle matIconSuffix [for]="agreementstartdate"></mat-datepicker-toggle>
                                 <mat-datepicker #agreementstartdate></mat-datepicker>
+                                <mat-error>Please select Agreement Date.</mat-error>
                               </mat-form-field>
                         </div>
                         
@@ -79,6 +80,7 @@
                               
                                 <mat-datepicker-toggle matIconSuffix [for]="agreementenddate"></mat-datepicker-toggle>
                                 <mat-datepicker #agreementenddate></mat-datepicker>
+                                <mat-error>Please select End date.</mat-error>
                               </mat-form-field>
                         </div>
                         <div class="col-md-3">
@@ -92,7 +94,7 @@
                             <mat-form-field>
                                 <mat-label>Owner Name</mat-label>
                                 <input matInput formControlName="ownername">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Name.</mat-error>
                             </mat-form-field>
                         </div>
                      
@@ -100,21 +102,21 @@
                             <mat-form-field>
                                 <mat-label>Bank Name</mat-label>
                                 <input matInput formControlName="bankname">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Name.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Account Holder Name</mat-label>
                                 <input matInput formControlName="accountholdername">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Name.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Account Number</mat-label>
                                 <input matInput formControlName="accountnumber">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Number.</mat-error>
                             </mat-form-field>
                         </div>                     
                         <div class="col-md-3">
@@ -128,21 +130,21 @@
                             <mat-form-field>
                                 <mat-label>PAN Card</mat-label>
                                 <input matInput formControlName="panno">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide card No.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>GST No.</mat-label>
                                 <input matInput formControlName="gstno">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide GST No.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Phone Number</mat-label>
                                 <input matInput formControlName="phoneno">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Phone Number.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-6">

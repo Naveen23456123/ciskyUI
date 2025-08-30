@@ -155,9 +155,9 @@ export class ManageEmployeeListComponent {
     currentaddress : newdata.currentAddress,
     emergencyaddress: newdata.emergencyAddress,
     designation:newdata.designation
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    }   
+    this.employees.unshift(data1);
+    this.updateTable(this.employees); 
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data.id);

@@ -1,5 +1,5 @@
 import { Component, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CircularInterfaceService } from '@app/shared/services/external/circular-interface.service';
@@ -60,9 +60,9 @@ export class ManageMiscComponent {
     this.getTitle(this.data.type);
     this.miscForm = this.formbuilder.group({ 
       projectid: [''],
-      name:[],
-      monthyear:[''],
-      amount:[''],
+      name:[,Validators.required],
+      monthyear:['',Validators.required],
+      amount:['',Validators.required],
       id :[],
       file:[]
     });

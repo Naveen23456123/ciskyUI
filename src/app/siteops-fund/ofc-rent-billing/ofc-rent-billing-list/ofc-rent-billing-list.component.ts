@@ -132,9 +132,9 @@ export class OfcRentBillingListComponent {
       project:data.project,
       totalamount:data.totalamount,
       levels: this.setLevel(data.levels)
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription(); 
+    }
+    this.ofcBilling.unshift(data1);
+    this.updateTable(this.ofcBilling); 
   }
   addBulkBilling(data:any){
     data.forEach((element:any) => {

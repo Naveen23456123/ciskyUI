@@ -1,0 +1,30 @@
+/* Make parent tab group white */
+.parent-tab-group .mat-tab-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+::ng-deep .parent-tab-group .mat-mdc-tab-group.mat-mdc-tab-group-stretch-tabs>.mat-mdc-tab-header .mat-mdc-tab{
+  padding: 1px;
+}
+::ng-deep .mat-mdc-tab-label-container{
+  background-color: white !important;
+}
+/* Add spacing between parent tabs and child tab card */
+.subcategory-card {
+  margin-top: 10px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0px 3px 6px rgba(0,0,0,0.15);
+}
+
+/* Child tab styling */
+.subcategory-card .mat-tab-header {
+  background-color: #f9f9f9;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Tab content area */
+.tab-content {
+  //padding: 10px;
+}

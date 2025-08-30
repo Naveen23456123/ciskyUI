@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { EmployeeInterfaceService } from './external/employee-interface.service';
+import { catchError, map, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ValidatorService {
 
-  constructor() { }
+  constructor(private employeeService:EmployeeInterfaceService) { }
 
   public pattern = {
     Email: new RegExp(/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/),
@@ -87,4 +89,19 @@ export class ValidatorService {
     const [hours, minutes] = time.split(':').map(Number);
     return hours * 60 + minutes;
   }
+  validateUsername(): AsyncValidatorFn {
+  return (control: AbstractControl) => {
+    return this.employeeService.validateCode({ code: control.value }, '')
+      .pipe(
+        map((response: any) => {
+          if (response && response.success) {
+            return response.data ? null : { usercodeTaken: true };
+          } else {
+            return null;
+          }
+        }),
+        catchError(() => of(null)) 
+      );
+  };
+}
 }

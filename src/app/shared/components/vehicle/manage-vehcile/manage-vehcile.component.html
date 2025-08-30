@@ -8,39 +8,39 @@
             </div>
             <div class="wrapper">
                 <!-- <form [formGroup]="organizationForm" > -->
-                <form [formGroup]="vehicleForm" (submit)="submit()">
+                <form [formGroup]="vehicleForm" >
                     <div class="row control-div">
                         <div class="col-md-4" *ngIf="!isProject">                           
                             <app-project-control (onValueChange)="projectChange($event)"
                             [defaultValue]="vehicleForm.get('projectid')?.value" ></app-project-control>
                         </div> 
-                        <div class="col-md-4">
+                        <!-- <div class="col-md-4">
                             <mat-form-field>
                                 <mat-label>BOQ</mat-label>
                                 <input matInput formControlName="boqId">
                                 <mat-error></mat-error>
                             </mat-form-field>
-                        </div> 
+                        </div>  -->
 
                         <div class="col-md-4">
                             <mat-form-field>
                                 <mat-label>Vehicle Name</mat-label>
                                 <input matInput formControlName="name">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Vehicle Name.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-4">
                             <mat-form-field>
                                 <mat-label>Vehicle Number</mat-label>
                                 <input matInput formControlName="number">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Vehcicle Number.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-4">
                             <mat-form-field>
                                 <mat-label>Fixed Km</mat-label>
                                 <input type="number" matInput formControlName="fixedkm">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide fixed KM.</mat-error>
                             </mat-form-field>
                         </div> 
 
@@ -62,7 +62,7 @@
                             <mat-form-field>
                                 <mat-label>Fixed Bill Amount</mat-label>
                                 <input type="number" matInput formControlName="fixedbillamount">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Bill Amount.</mat-error>
                             </mat-form-field>
                         </div> 
 
@@ -70,21 +70,23 @@
                             <mat-form-field>
                                 <mat-label>Extra Amount Per KM After Fixed KM</mat-label>
                                 <input type="number" matInput formControlName="extraamountafterfixedkm">
-                                <mat-error></mat-error>
+                                <mat-error>Pleae provide extra KM amount.</mat-error>
                             </mat-form-field>
                         </div> 
+                    </div>
+                    <div class="row ">
                         <div class="col-md-4">
                             <mat-form-field>
                                 <mat-label>Bank Name</mat-label>
                                 <input matInput formControlName="bankname">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Bank Name.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-4">
                             <mat-form-field>
                                 <mat-label>Account Holder Name</mat-label>
                                 <input matInput formControlName="accountholdername">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Name.</mat-error>
                             </mat-form-field>
                         </div> 
 
@@ -92,7 +94,7 @@
                             <mat-form-field>
                                 <mat-label>Account Number</mat-label>
                                 <input type="number" matInput formControlName="accountnumber">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide Account Number.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-4">
@@ -111,7 +113,7 @@
                         </div> 
                         <div class="col-md-4">
                             <mat-form-field>
-                                <mat-label>PAN Crad</mat-label>
+                                <mat-label>PAN Card</mat-label>
                                 <input matInput formControlName="pancard">
                                 <mat-error></mat-error>
                             </mat-form-field>
@@ -120,7 +122,7 @@
                             <mat-form-field>
                                 <mat-label>GST Number</mat-label>
                                 <input matInput formControlName="gstnumber">
-                                <mat-error></mat-error>
+                                <mat-error>Please provide GST No.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-8">
@@ -163,7 +165,7 @@
         <div class="row control-div">
             <div class=" button-row" align="right">
                   <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">Cancel</button>
-                  <app-submit-load-btn  [isClicked]="isBtnClicked" [isValid]="vehicleForm.valid || isBtnClicked"
+                  <app-submit-load-btn (clickEvent)="submit()" [isClicked]="isBtnClicked" [isValid]="vehicleForm.valid || isBtnClicked"
                   text=" {{isEdit?'Update':'Submit'}}" ></app-submit-load-btn>
           </div>
           </div>

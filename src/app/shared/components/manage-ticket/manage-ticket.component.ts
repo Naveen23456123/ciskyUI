@@ -72,12 +72,12 @@ export class ManageTicketComponent {
       id: [],
       projectid :[,Validators.required],
       source:[,Validators.required],
-      ticketnumber:[],
-      employeeids:[],
-      destination:[],
-      bookingdate:[],
+      ticketnumber:[,Validators.required],
+      employeeids:[,Validators.required],
+      destination:[,Validators.required],
+      bookingdate:[,Validators.required],
       personname:[],
-      ticketamount:[],
+      ticketamount:[,Validators.required],
       proof:[],
       proofaddress:[]
     });

@@ -29,7 +29,25 @@ const routes: Routes = [
         component: DeleteInvoiceComponent,
         loadChildren:()=>import('app/payments/invoice/delete-invoice/delete-invoice.module').then(x=>x.DeleteInvoiceModule),
         data:{pageGuid:'',type:'delete'}
-      }
+      },
+       {
+        path: 'trans-sv-create',
+        component: AddInvoiceComponent,
+        loadChildren:()=>import('app/payments/invoice/add-invoice/add-invoice.module').then(x=>x.AddInvoiceModule),
+        data:{pageGuid:'',type:'add'}
+      },
+      {
+        path: 'trans-sv-list',
+        component: ProjectInvoiceListComponent,
+        loadChildren:()=>import('app/payments/invoice/project-invoice-list/project-invoice-list.module').then(x=>x.ProjectInvoiceListModule),
+        data:{pageGuid:'',type:'add'}
+      },
+      {
+        path: 'trans-dpr-create',
+        component: AddInvoiceComponent,
+        loadChildren:()=>import('app/payments/invoice/add-invoice/add-invoice.module').then(x=>x.AddInvoiceModule),
+        data:{pageGuid:'',type:'add'}
+      },
     ]
   }
 ];

@@ -20,14 +20,14 @@
                                         {{field.name}}
                                     </mat-option>
                                 </mat-select>
-                                <mat-error>Please select Sub company.</mat-error>
+                                <mat-error>Please select Type.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-6">
                             <mat-form-field>
                                 <mat-label>Title</mat-label>
                                 <input matInput formControlName="title">
-                                <mat-error>Please enter First Name.</mat-error>
+                                <mat-error>Please provide Title.</mat-error>
                             </mat-form-field>
                         </div>    
                         <div class="col-md-6">
@@ -37,12 +37,14 @@
                                 
                                 <mat-datepicker-toggle matIconSuffix [for]="publishDate"></mat-datepicker-toggle>
                                 <mat-datepicker #publishDate></mat-datepicker>
+                                <mat-error>Please select Publish Date.</mat-error>
                               </mat-form-field>
                         </div>  
                         <div class="col-md-6">                           
                               <mat-form-field>
                                 <mat-label>Description</mat-label>
                                 <textarea formControlName="description" matInput></textarea>
+                                <mat-error>Please provide Description.</mat-error>
                               </mat-form-field>
                         </div>                  
                         <div class="col-md-8">

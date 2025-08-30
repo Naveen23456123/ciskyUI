@@ -54,6 +54,17 @@ export class CommonInterfaceService {
     }
      return this.coreApi.standardService(standardAttribute);
   }
+  getAppRoles(){
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Common/AppRoles',
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   getCircularTypes(){
     const standardAttribute: ServiceAttributeModel = {
       url: 'Common/CircularType',

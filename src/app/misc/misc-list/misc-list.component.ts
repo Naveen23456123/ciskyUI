@@ -99,9 +99,9 @@ miscList:any[]= [];
        project:data.project,
        amount:data.amount,
       attachmentaddress: data.attachmentaddress,
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription(); 
+    }
+    this.miscList.unshift(data1);
+    this.updateTable(this.miscList);
   }
 
   deleteRow(data: any) {

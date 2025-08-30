@@ -178,8 +178,8 @@ isSearchLoading=true;
       piuaddress:data.piuAddress,
       siteaddress:data.siteAddress
     }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription(); 
+    this.projects.unshift(data1);
+    this.updateTable(this.projects); 
   }
 
   contractorChange(element:any, event:any){ 

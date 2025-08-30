@@ -11,6 +11,7 @@ import { SiteControlInterfaceService } from '@app/shared/services/external/site-
 import { SubCompanyInterfaceService } from '@app/shared/services/external/sub-company-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
+import { ValidatorService } from '@app/shared/services/validator.service';
 import moment from 'moment';
 import { finalize, forkJoin, take } from 'rxjs';
 
@@ -43,7 +44,7 @@ public data: any;
   empObj:any;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageEmployeeComponent>, private formbuilder: FormBuilder,
-    private sessionService: SessionService,  private router: Router,
+    private sessionService: SessionService,  private router: Router,private validatorService:ValidatorService,
     private notifibarservice: NotifyBarService, private commonService:CommonInterfaceService,
     private employeeService:EmployeeInterfaceService,private projectService:ProjectInterfaceService,
     private subCompanyService:SubCompanyInterfaceService, private designationService:DesignationInterfaceService){
@@ -79,15 +80,19 @@ public data: any;
     this.getTitle(this.data.type);
     this.employeeForm = this.formbuilder.group({ 
       id: [''],
-      Code:[''],
-      CompanyId :[],
+      Code:['',{ 
+        validators: [Validators.required], 
+        asyncValidators: this.isEdit ? [] :[this.validatorService.validateUsername()],
+        updateOn: 'blur'
+      }],
+      CompanyId :[,Validators.required],
       projectid:[],
-      name:[''],
-      emailId:[''],
-      PhoneNumber:[''],
-      TypeId:[''],
-      designationId:[''],
-      RoleId:[],
+      name:['',Validators.required],
+      emailId:['',Validators.required],
+      PhoneNumber:['',Validators.required],
+      TypeId:['',Validators.required],
+      designationId:['',Validators.required],
+      RoleId:[,Validators.required],
       statusId:[],
       joiningDate:[],
       dateOfBirth:[],
@@ -167,7 +172,17 @@ public data: any;
   }
 
   ngOnDestroy(){}
+  onUsernameBlur() {
+    const username = this.employeeForm.get('Code')?.value;
 
+    if (!username) return;
+
+  this.employeeService.validateCode({code:username},'').subscribe((response:any)=>{
+    if(response){
+      console.log(response);
+    }
+  })
+  }
   companyChange(event:any=null){
     this.projectInit=false;
     if(event)

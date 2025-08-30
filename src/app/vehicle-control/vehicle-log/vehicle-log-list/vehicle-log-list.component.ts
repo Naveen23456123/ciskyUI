@@ -189,9 +189,9 @@ export class VehicleLogListComponent {
       purposeandplace:data.purposeandplace,
       vehiclename:data.vehiclename,
       vehiclenumber:data.vehiclenumber
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription(); 
+    }  
+    this.vehicleLogs.unshift(data1);
+    this.updateTable(this.vehicleLogs); 
   }
 
   deleteRow(data: any) {

@@ -27,10 +27,13 @@ reportList:any[]= [];
   isLoading = true;
   displayedColumns: string[] = ['serial','type','name', 'no','letterno',  'date','file','action'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   readonly dialog = inject(MatDialog);
   private subscription: Subscription = new Subscription();
 
@@ -57,8 +60,7 @@ reportList:any[]= [];
         .pipe(finalize(() => this.isLoading = false))
         .subscribe((response: any) => {
           if (response && response.success) {
-            this.reportList = response.data;
-            this.dataSource = new MatTableDataSource(this.reportList);               
+            this.reportList = response.data;               
             this.updateTable(this.reportList);          
           }
         });
@@ -71,7 +73,6 @@ reportList:any[]= [];
   }
   
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
   
@@ -85,9 +86,10 @@ reportList:any[]= [];
   }
 
   private updateTable(info: any) {
+    this.reportList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-    this.pageSize = this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.reportList.length;   
   }
 
 
@@ -174,9 +176,9 @@ reportList:any[]= [];
       docaddress:data.docaddress,
       type:data.type,
       typeid:data.typeid
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    } 
+    this.reportList.unshift(data1);
+    this.updateTable(this.reportList); 
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data.id);

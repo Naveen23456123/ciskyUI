@@ -2,3 +2,67 @@
     <app-project-subshell [constructionComponent]="ConstructionComponent"
     [dprHostComponent]="dprComponent" [sectorGuid]="pageGuid"
     ></app-project-subshell>
+<app-help [help]="help"></app-help>
+<ng-template #help>
+    <div class="dialog">
+        <h1 mat-dialog-title>Dialog with elements</h1>
+        <div mat-dialog-content>
+            <h3>Header Section</h3>
+                "Construction Provision | Detailed Project Report"
+                This is the main title/navigation header.
+
+                It shows the module you are working in (Construction Provision).
+
+                The tab selected is Detailed Project Report.
+
+            <h3>Filters & Search Area</h3>
+                <p>This section allows you to filter or search projects. It includes:
+
+                Sub Company (Dropdown) → Lets you filter projects by sub-company.
+
+                Select Project (Dropdown) → Lets you choose a specific project from a list.
+
+                Project Code or Name (Search Box) → A text field to search directly by entering project code or name.
+
+                Refresh Button (Blue circular arrow) → Refreshes/reloads the project list.</p>
+
+            <h3>Action Buttons</h3>
+            <p>On the right-hand side:
+
+            Upload Button (⬆️) → Possibly for uploading data/files related to a project.
+
+            +Project Button → Used to add a new project into the system.
+
+            Download Button (⬇️) → Allows exporting or downloading project details (Excel, PDF, etc.)..</p>
+
+            <h3>Project List Table</h3>
+            <p>This is the main data grid displaying projects.
+            It has columns:
+
+            Sr. No. → Auto-generated serial number.
+
+            Project Code → Unique identifier for the project.
+
+            Project Name → Name of the project.
+
+            Location → Project location.
+
+            Client Name → The client associated with the project.
+
+            Concern Person (Dropdown/Expand Icon) → Likely shows contact details or responsible person when expanded.</p>
+
+        <h3>Pagination Section (Bottom)</h3>
+
+        <p>Items per page: 3 → Shows 3 projects per page.
+
+        1 – 3 of 3 → Displays current record range.
+
+        Pagination Controls (⏮ ⬅ ➡ ⏭) → Navigate between pages when more data exists.</p>
+
+  
+        </div>
+        <div mat-dialog-actions>
+            <button mat-button mat-dialog-close>Close</button>
+        </div>
+    </div>
+</ng-template>

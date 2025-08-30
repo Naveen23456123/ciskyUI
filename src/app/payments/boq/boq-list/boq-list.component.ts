@@ -1,11 +1,9 @@
 import { Component,ViewChild,inject} from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatPaginator} from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { PaymentService } from '@app/payments/payment.service';
-import { HelperService } from '@app/shared/services/helper.service';
-import { finalize } from 'rxjs';
+import { ManageDprBoqListComponent } from '@app/shared/components/payment/boq/transport/dpr/manage-dpr-boq-list/manage-dpr-boq-list.component';
+import { ManageSupervisionBoqListComponent } from '@app/shared/components/payment/boq/transport/supervision/manage-supervision-boq-list/manage-supervision-boq-list.component';
+import { SECTOR_ABBR } from '@app/shared/models/constant.config';
+import { CommonService } from '@app/shared/services/common.service';
+import { SessionService } from '@app/shared/services/session.service';
 
 @Component({
   selector: 'app-boq-list',
@@ -14,64 +12,28 @@ import { finalize } from 'rxjs';
   styleUrl: './boq-list.component.scss'
 })
 export class BoqListComponent {
-  itemsList:any[]= [];
-  isLoading = true;
-  displayedColumns: string[] = ['serial','projectid','name', 'view'];
-  dataSource!: MatTableDataSource<any[]>;
-  activeOrgId='123';
- @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
-    this.dataSource.paginator = paginator;
-  }
-  @ViewChild(MatSort) sort!: MatSort;
-  pagination: any;
-  pageSize!: number;
-  resultsLength!:number;
+ allowedSectors:any[]=[];
+  sectors = [
+    {
+      name: SECTOR_ABBR.TRASNPORT,
+      subcategories: [
+        { name: SECTOR_ABBR.CONSTRUCTION_SUPERVISION, component: ManageSupervisionBoqListComponent },
+        { name: SECTOR_ABBR.DETAILED_PROJECT_REPORT, component: ManageDprBoqListComponent }
+      ]
+    }
+  ];
 
-  readonly dialog = inject(MatDialog);
-  
-  private defaultdialogoptions:  MatDialogConfig = {
-    minWidth: '900px', 
-    disableClose: false,
-    data: {},
-  };
-
- constructor(private paymentService:PaymentService,private helperService:HelperService){
-  this.dataSource = new MatTableDataSource(this.itemsList);
+ constructor(private commonService:CommonService, private sessionService:SessionService
+ ){
+ 
  }
 
  ngOnInit()  {
-  this.isLoading=true;
-    this.paymentService.getAllProjectPartialDetailsByOrdIg({ organizationId: this.activeOrgId }, '')
-      .pipe(finalize(() => this.isLoading = false))
-      .subscribe((response: any) => {
-      if (response && response.success) {
-        this.itemsList = response.data;
-        this.updateTable(this.itemsList);
-      }
-    });
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-  }
-  clear(){
-    this.filterChange('');
-  }
-  filterChange(data:any){
-    if(data && data.value){ 
-      this.dataSource.filter = data.value.trim().toLowerCase()
+  
+  this.sessionService.orgSubject$.subscribe((response:any)=>{
+    if(response){
+      this.allowedSectors = this.commonService.mapSectors(response,this.sectors);
     }
-    else{
-      this.dataSource.filter = '';
-    }
+  })
   }
-
-  private updateTable(info: any) {
-    this.itemsList = info;
-    this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
-    this.resultsLength= this.itemsList.length;   
-  }
-
 }
-

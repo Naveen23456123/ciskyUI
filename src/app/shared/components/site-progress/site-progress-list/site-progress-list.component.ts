@@ -32,10 +32,13 @@ export class SiteProgressListComponent {
   isLoading = true;
   displayedColumns: string[] = ['serial','month', 'year', 'status','submitted','acted','letters', 'action'];
   dataSource!: MatTableDataSource<any[]>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+ @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    this.dataSource.paginator = paginator;
+  }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
+  resultsLength!:number;
   readonly dialog = inject(MatDialog);
   private subscription: Subscription = new Subscription();
 
@@ -51,60 +54,56 @@ export class SiteProgressListComponent {
        this.dataSource = new MatTableDataSource(this.siteProgressList);
     }
 
-    ngOnInit()  {
-      this.subscription = this.sessionService.projectEntitySubject$.pipe(untilDestroyed(this)).subscribe((response)=>{
-        if(response){
-          this.siteProgressService.getAllSiteProgressByOrdIdProjectId({ 
-            projectId: response.projectId,
-            contractorId: response.isConsultant? '': response.contractorId 
-          }, '')
-          .pipe(finalize(() => this.isLoading = false))
-          .subscribe((response: any) => {
-            if (response && response.success) {
-              this.siteProgressList = response.data;
-              this.dataSource = new MatTableDataSource(this.siteProgressList);               
-              this.updateTable(this.siteProgressList);          
-            }
-          });
-        }
-    });
-  
-  }
-    ngOnDestroy(): void {
-      this.subscription.unsubscribe();
-    }
-
-    ngAfterViewInit() {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }
-  
-    applyFilter(event: Event) {
-      const filterValue = (event.target as HTMLInputElement).value;
-      this.dataSource.filter = filterValue.trim().toLowerCase();
-  
-      if (this.dataSource.paginator) {
-        this.dataSource.paginator.firstPage();
+  ngOnInit()  {
+    this.subscription = this.sessionService.projectEntitySubject$.pipe(untilDestroyed(this)).subscribe((response)=>{
+      if(response){
+        this.siteProgressService.getAllSiteProgressByOrdIdProjectId({ 
+          projectId: response.projectId,
+          contractorId: response.isConsultant? '': response.contractorId 
+        }, '')
+        .pipe(finalize(() => this.isLoading = false))
+        .subscribe((response: any) => {
+          if (response && response.success) {
+            this.siteProgressList = response.data;              
+            this.updateTable(this.siteProgressList);          
+          }
+        });
       }
-    }
+    });
+  }
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 
-    private updateTable(info: any) {
-      this.dataSource = new MatTableDataSource<any>(info);
-      this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-      this.pageSize = this.helperService.getPageSize();
-    }
-    import() {
-      const config = this.defaultdialogoptions;
-      config.minWidth='1200px';
-      //config.minHeight='600px';
-        config.data = {
-          pageGuid: this.route.snapshot.data['pageGuid'],
-          type: this.route.snapshot.data['type'], 
-          template_type: TemplateType.SITEPROGRESS   
-        };
-          this.dialog.open(UploadFileComponent,config);
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
+  }
+
+  private updateTable(info: any) {
+    this.siteProgressList = info;
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.resultsLength= this.siteProgressList.length;   
+  }
+  import() {
+    const config = this.defaultdialogoptions;
+    config.minWidth='1200px';
+      config.data = {
+        pageGuid: this.route.snapshot.data['pageGuid'],
+        type: this.route.snapshot.data['type'], 
+        template_type: TemplateType.SITEPROGRESS   
+      };
+      this.dialog.open(UploadFileComponent,config);
+  }
  export(){
     if(this.siteProgressList && this.siteProgressList.length>0)
       this.csvService.downloadFile(this.siteProgressList,this.siteProgressService.getCSVTemplateColumnList(),'SiteProgress');
@@ -195,9 +194,9 @@ export class SiteProgressListComponent {
       status:data.status,
       submittedletterid:data.submittedletterid,
       approvedletterid:data.approvedletterid
-    }      
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();
+    }   
+    this.siteProgressList.unshift(data1);
+    this.updateTable(this.siteProgressList);  
   }
   deleteRow(data: any) {
     const index = this.dataSource.data.findIndex((x:any) => x.id == data.id);
