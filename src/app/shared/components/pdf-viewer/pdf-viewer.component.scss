@@ -1,0 +1,48 @@
+/* Toolbar background */
+::ng-deep .pdfViewer .toolbar,
+::ng-deep .pdfViewer .toolbarField,
+::ng-deep .toolbar {
+  background-color: #000 !important; /* black */
+  color: #fff !important;            /* white text */
+}
+
+/* Buttons */
+::ng-deep .toolbar button,
+::ng-deep .toolbar .splitToolbarButton button {
+  color: #fff !important;
+  fill: #fff !important;   /* for SVG icons */
+}
+
+/* Hover state */
+::ng-deep .toolbar button:hover {
+  //background-color: #222 !important;
+}
+
+/* Input fields (page number, zoom, search) */
+::ng-deep .toolbar input,
+::ng-deep .toolbar select {
+  background-color: #000 !important;
+  color: #fff !important;
+  border: 1px solid #555 !important;
+}
+
+/* Disable focus outlines */
+::ng-deep .toolbar input:focus,
+::ng-deep .toolbar select:focus {
+  outline: none !important;
+  //border-color: #888 !important;
+}
+
+::ng-deep #toolbarViewer{
+    background-color: black !important;
+}
+
+::ng-deep ngx-extended-pdf-viewer .toolbarButton>svg {
+    color: white !important;
+}
+
+::ng-deep button[id="primaryEditorFreeText"],
+::ng-deep button[id="primaryEditorStamp"],
+::ng-deep button[id="primaryEditorInk"] {
+  display: none !important;
+}

@@ -10,6 +10,7 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { finalize } from 'rxjs';
 import { DeleteEmployeeDocComponent } from '../delete-employee-doc/delete-employee-doc.component';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 
 @Component({
   selector: 'app-manage-employee-doc',
@@ -131,6 +132,13 @@ public data:any;
       }
     });   
   }
-
+  viewPdf(data:any){
+    const config = this.defaultdialogOptionConfig;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
+  }
 }
 

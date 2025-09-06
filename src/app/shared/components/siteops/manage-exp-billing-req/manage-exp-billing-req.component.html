@@ -50,7 +50,7 @@
                                             </mat-form-field>                                            
                                         </div> 
                                          <div class="col-md-1">
-                                            <app-file-icon [link]="item.get('document')?.value"></app-file-icon>
+                                            <app-file-icon [link]="!!item.get('document')?.value" (clickEvent)="viewPdf(item.get('document')?.value)"></app-file-icon>
                                          </div>
                                         <div class="col-md-4">
                                             <mat-form-field>

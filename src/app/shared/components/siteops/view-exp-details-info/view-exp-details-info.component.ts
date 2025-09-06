@@ -10,6 +10,7 @@ import { SessionService } from '@app/shared/services/session.service';
 import { finalize } from 'rxjs';
 import { ManageExpenseComponent } from '../manage-expense/manage-expense.component';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 
 @Component({
   selector: 'app-view-exp-details-info',
@@ -175,6 +176,14 @@ public data: any;
   }
   onCloseClick(): void {
     this.dialogRef.close({value:{expenses:this.expenseList,id:this.data.element}}); 
+  }
+  viewPdf(data:any){
+    const config = this.defaultdialogoptions;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
   }
 }
   

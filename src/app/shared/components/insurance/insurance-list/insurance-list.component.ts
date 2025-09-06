@@ -16,6 +16,7 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { DialogOperation } from '@app/shared/models/constant.config';
 import { ManageInsuranceUploadComponent } from '../manage-insurance-upload/manage-insurance-upload.component';
 import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 
 @Component({
   selector: 'app-insurance-list',
@@ -198,6 +199,14 @@ export class InsuranceListComponent {
   openDoc(row:any){
     window.open(row.docaddress, "_blank");
   }
+  viewPdf(data:any){
+    const config = this.defaultdialogoptions;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
+  }  
 }
 
 

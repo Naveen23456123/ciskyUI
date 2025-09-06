@@ -68,7 +68,9 @@
                             <td>{{item.itemname}}</td>
                             <td>:</td>
                             <td>{{item.amount | formatCurrency}}</td>
-                            <td><app-file-icon [link]="item.documentkey"></app-file-icon></td>
+                            <td><app-file-icon 
+                              [link]="!!item.documentkey" (clickEvent)="viewPdf(item.documentkey)"
+                              ></app-file-icon></td>
                             </tr>
                         </table>
                       </td>

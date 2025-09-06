@@ -1,0 +1,11 @@
+
+.table{
+    --bs-table-bg: transparent;
+}
+.table > :not(caption) > * > * {
+    padding: .3rem .3rem;
+}
+.mat-mdc-header-cell{
+        text-align: center;
+    font-weight: 700;
+}

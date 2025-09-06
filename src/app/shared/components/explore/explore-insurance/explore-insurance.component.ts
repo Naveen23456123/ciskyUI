@@ -12,6 +12,7 @@ import { UploadFileComponent } from '../../upload-file/upload-file.component';
 import { InsuranceInterfaceService } from '@app/shared/services/external/insurance-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { DialogOperation } from '@app/shared/models/constant.config';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 
 @Component({
   selector: 'app-explore-insurance',
@@ -107,6 +108,14 @@ export class ExploreInsuranceComponent {
   openDoc(row:any){
     window.open(row.docaddress, "_blank");
   }
+ viewPdf(data:any){
+    const config = this.defaultdialogoptions;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
+  } 
 }
 
 

@@ -1,1 +1,107 @@
-<p>contractor-billing-details works!</p>
+<div class="container">
+<mat-card>
+    <mat-card-title>      
+        <div class="no-print  d-flex justify-content-end">           
+            <app-download-pdf (clickEvent)="download()" ></app-download-pdf>                           
+        </div>
+        </mat-card-title>
+        <div  #pdfContent id="pdfContent" >
+        
+        <div class="container mt-3" *ngFor="let data of billingList">
+        <table class="table table-bordered align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                <th colspan="1" class="align-middle mat-mdc-header-cell">Bill Period</th>
+                <th class="mat-mdc-header-cell" colspan="6">{{(data.billstartdate| formatDate) +' - '+ (data.billenddate | formatDate)}}</th>
+            </tr>
+            <tr>
+                <th class="mat-mdc-header-cell align-middle" rowspan="2" >Description</th>
+                <th class="mat-mdc-header-cell" colspan="3">Provisional Payment</th>
+                <th class="mat-mdc-header-cell" colspan="3">Balance Payment</th>
+            </tr>
+            <tr>
+                <th class="mat-mdc-header-cell">Submitted</th>
+                <th class="mat-mdc-header-cell">Recommended</th>
+                <th class="mat-mdc-header-cell">Released</th>
+                <th class="mat-mdc-header-cell">Submitted</th>
+                <th class="mat-mdc-header-cell">Recommended</th>
+                <th class="mat-mdc-header-cell">Released</th>
+            </tr>
+            </thead>
+            <tbody class="text-start">
+            <tr>
+                <td>Bill Date</td>
+                <td>{{data.billsubmitdate | formatDate}}</td>
+                <td>{{data.sitebillrecommbilldate | formatDate}}</td>
+                <td>{{data.horecommbilldate | formatDate}}</td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td>Percentage</td>
+                <td>{{data.billPercentage}}</td>
+                <td>{{data.billPercentage}}</td>
+                <td>{{data.billPercentage}}</td>
+                <td colspan="3"></td>
+            </tr>
+            <tr class="fw-bold">
+                <td><em>Work Done Amount</em></td>
+                <td>{{data.billworkdoneamount | formatCurrency}}</td>
+                <td>{{data.sitebillworkdoneamount | formatCurrency}}</td>
+                <td>{{data.howorkdoneamount | formatCurrency}}</td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td>GST</td>
+                <td>{{data.billgstamount | formatCurrency}}</td>
+                <td>{{data.sitebillgstamount | formatCurrency}}</td>
+                <td>{{data.hogstamount | formatCurrency}}</td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td>Advances Payment (Mobilisation/Machinery)</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td>Withheld Amount</td>
+                <td>-</td>
+                <td>{{data.sitebillwithheldamount}}</td>
+                <td>{{data.howithheldamount}}</td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td>Released Withheld Amount</td>
+                <td>-</td>
+                <td>{{data.sitebillreleasedwithheldamount}}</td>
+                <td>{{data.horeleasedwithheldamount}}</td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td>Recover Amount</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td>Liquidated Damages Amount</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td colspan="3"></td>
+            </tr>
+            <tr class="fw-bold">
+                <td><em>Payable Amount</em></td>
+                <td>{{(data.billworkdoneamount-data.billgstamount) | formatCurrency}}</td>
+                <td>{{data.sitebillworkdoneamount-data.sitebillgstamount-data.sitebillwithheldamount-data.sitebillreleasedwithheldamount | formatCurrency}}</td>
+                <td>{{data.howorkdoneamount-data.hogstamount-data.howithheldamount-data.horeleasedwithheldamount | formatCurrency}}</td>
+                <td colspan="3"></td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+        </div>
+</mat-card>
+</div>

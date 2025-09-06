@@ -72,7 +72,7 @@
                       <ng-container matColumnDef="docaddress">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> GST Cretificate </th>
                         <td mat-cell *matCellDef="let row">
-                          <app-file-icon [link]="row.docaddress"></app-file-icon>
+                          <app-file-icon [link]="!!row.docaddress" (clickEvent)="viewPdf(row.docaddress)"></app-file-icon>
                         </td>
                       </ng-container>                     
                       

@@ -16,6 +16,7 @@ import { DialogOperation } from '@app/shared/models/constant.config';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { ManageBankGuaranteeUploadComponent } from '../manage-bank-guarantee-upload/manage-bank-guarantee-upload.component';
 import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 
 @Component({
   selector: 'app-bank-guarantee-list',
@@ -196,7 +197,15 @@ export class BankGuaranteeListComponent {
   }
   openDoc(row:any){
     window.open(row.docaddress, "_blank");
-  }    
+  }   
+  viewPdf(data:any){
+    const config = this.defaultdialogoptions;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
+  } 
 }
 
 

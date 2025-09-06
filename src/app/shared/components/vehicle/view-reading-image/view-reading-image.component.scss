@@ -1,0 +1,18 @@
+ .fixed-img {
+      width: 500px;
+      height: 300px;
+       /* maintains aspect ratio */
+      
+    }
+    .image-container {
+      display: flex;
+      justify-content: center;
+      padding: 15px;
+    }
+    .card{
+        background: transparent;
+    }
+    .card-header{
+        background: #f1f1f1;
+        font-size: 18px;
+    }

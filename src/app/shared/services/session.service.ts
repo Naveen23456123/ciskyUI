@@ -170,7 +170,7 @@ export class SessionService {
   }
   public getTokenData(){
     try {
-      let token = localStorage.getItem('auth_token');
+      let token = this._storageService.get(Constants.AuthToken);
       if(token!=null){
         const base64Payload = token.split('.')[1];
         let payload = atob(base64Payload);

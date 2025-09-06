@@ -5,6 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { RequestService } from '@app/requests/request.service';
+import { PdfViewerComponent } from '@app/shared/components/pdf-viewer/pdf-viewer.component';
 import { ApprovalStatus } from '@app/shared/models/constant.config';
 import { CommonService } from '@app/shared/services/common.service';
 import { HelperService } from '@app/shared/services/helper.service';
@@ -180,6 +181,14 @@ export class ExpReqBillingListComponent {
   }
   delete_row(data:any){
      this.router.navigate(['/exp-billing-request', 'delete', data.id], {state:{value :data,searchObj:this.searchObj}});
+  }
+  viewPdf(data:any){
+    const config = this.defaultdialogoptions;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
   }
 }
 

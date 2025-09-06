@@ -8,6 +8,7 @@ import { VehicleInterfaceService } from '@app/shared/services/external/vehicle-i
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { finalize } from 'rxjs';
 import { DeleteVehicleDocComponent } from '../delete-vehicle-doc/delete-vehicle-doc.component';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 
 @Component({
   selector: 'app-manage-vehicle-doc',
@@ -129,5 +130,12 @@ export class ManageVehicleDocComponent {
       }
     });   
   }
-
+  viewPdf(data:any){
+    const config = this.defaultdialogOptionConfig;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
+  }
 }

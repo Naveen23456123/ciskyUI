@@ -1,6 +1,6 @@
 import { Component, Inject, Optional } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { MatOption, MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { ApprovalStatus } from '@app/shared/models/constant.config';
@@ -10,6 +10,7 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { ValidatorService } from '@app/shared/services/validator.service';
 import { finalize } from 'rxjs';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 
 @Component({
   selector: 'app-manage-exp-billing-req',
@@ -34,10 +35,16 @@ public data: any;
   sdetails:any;
   isRejected=false;
   deleteobj={};
+   private defaultdialogoptions:  MatDialogConfig = {
+    minWidth: '80vw', 
+    disableClose: false,
+    data: {},
+  };
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageExpBillingReqComponent>, private formbuilder: FormBuilder,
     private sessionservice: SessionService,  private router: Router, private validatorService:ValidatorService,
-    private notifibarservice: NotifyBarService, private expenseService:ExpenseInterfaceService){
+    private notifibarservice: NotifyBarService, private expenseService:ExpenseInterfaceService,
+  private dialog:MatDialog){
       this.data = data || {};
   }
   
@@ -157,6 +164,14 @@ public data: any;
           this.dialogRef.close(err);
         }
       });
+  }
+  viewPdf(data:any){
+    const config = this.defaultdialogoptions;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
   }
 }
 

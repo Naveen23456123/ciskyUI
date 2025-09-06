@@ -4,6 +4,7 @@ import { MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { InventoryControlService } from '@app/inventory-control/inventory-control.service';
+import { PdfViewerComponent } from '@app/shared/components/pdf-viewer/pdf-viewer.component';
 import { CircularInterfaceService } from '@app/shared/services/external/circular-interface.service';
 import { HelperService } from '@app/shared/services/helper.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
@@ -125,5 +126,13 @@ export class CircularListComponent {
     else{
       this.dataSource.filter = '';
     }
+  }
+  viewPdf(data:any){
+    const config = this.defaultdialogoptions;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
   }
 }

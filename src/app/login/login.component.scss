@@ -52,3 +52,8 @@ mat-form-field{
 ::ng-deep .mdc-button{
       height: 43px;
 }
+.f-pass{
+  text-decoration: none;
+    color: var(--mdc-fab-small-container-color);
+    font-weight: 700;
+}

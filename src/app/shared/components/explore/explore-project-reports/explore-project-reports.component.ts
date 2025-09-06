@@ -10,6 +10,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { BankGuaranteeInterfaceService } from '@app/shared/services/external/bank-guarantee-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { ProjectReportInterfaceService } from '@app/shared/services/external/project-report-interface.service';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 
 
 @Component({
@@ -105,7 +106,15 @@ export class ExploreProjectReportsComponent {
   }
   openDoc(row:any){
     window.open(row.docaddress, "_blank");
-  }    
+  }  
+ viewPdf(data:any){
+    const config = this.defaultdialogoptions;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
+  }   
 }
 
 

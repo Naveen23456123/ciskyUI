@@ -1,6 +1,6 @@
 import { group } from '@angular/animations';
-import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, ElementRef, inject, Inject, ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { DialogOperation, TOTAL_PROFIT_LOSS_HEADING } from '@app/shared/models/constant.config';
 import { CommonService } from '@app/shared/services/common.service';
@@ -8,6 +8,7 @@ import { ProfitLossInterfaceService } from '@app/shared/services/external/profit
 import { GeneratePdfService } from '@app/shared/services/generate-pdf.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, forkJoin, take } from 'rxjs';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 export type Row = { type: 'group'; label: string,id:string, key:string } | {
   id?:string;
   type?: 'data'|'totalinfo'|'totalfooter'|'totalSeparate';
@@ -40,6 +41,11 @@ public data:any;
   dataSource: Row[] = [];
   profitLossData:any;
   emptyData=false;
+  readonly dialog = inject(MatDialog);
+  private defaultdialogoptions:  MatDialogConfig = {       
+      disableClose: false,
+      data: {},
+    };
   dataObj:any={today:new Date()};
   footerRow:string='totalfooter';
   @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
@@ -73,7 +79,17 @@ ngOnInit(){
   } 
 }
   download(){
-      this.pdfService.generatePDF(this.pdfContent, 'form-data.pdf');
+    this.pdfService.generateAndGetPDF(this.pdfContent, 'ProfitLoss_Commulative.pdf').then((pdf) => {
+      if (pdf) {
+        const config = this.defaultdialogoptions;
+        config.minWidth='80vw';
+        config.data = {
+          url:false,
+          element:pdf
+        };
+        this.dialog.open(PdfViewerComponent,config);
+      }
+    });
   }
   buildGroupedRows(data: any[]): Row[] {
     

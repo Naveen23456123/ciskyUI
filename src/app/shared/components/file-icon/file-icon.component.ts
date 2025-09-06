@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-file-icon',
@@ -7,10 +7,11 @@ import { Component, Input } from '@angular/core';
   styleUrl: './file-icon.component.scss'
 })
 export class FileIconComponent {
-  @Input() link:string='';
+  @Input() link=false;
+  @Output() clickEvent: EventEmitter<any> = new EventEmitter();
   
-  openDoc(){
-    window.open(this.link, "_blank");
+  clicked(){
+    this.clickEvent.emit();
   }
   ngOnInit(){
     

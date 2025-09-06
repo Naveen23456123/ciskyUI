@@ -14,6 +14,7 @@ import { untilDestroyed } from '@app/core/until-destroyed';
 import { ViewLetterDetailsComponent } from '../../letters/view-letter-details/view-letter-details.component';
 import { ProjectReportInterfaceService } from '@app/shared/services/external/project-report-interface.service';
 import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 
 
 @Component({
@@ -194,6 +195,14 @@ reportList:any[]= [];
       element:{id:data}
     };
     this.dialog.open(ViewLetterDetailsComponent,config);
+  }
+  viewPdf(data:any){
+    const config = this.defaultdialogoptions;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
   }
 }
 

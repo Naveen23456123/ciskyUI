@@ -9,6 +9,7 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { finalize } from 'rxjs';
 import { DeleteOfficeDocComponent } from '../delete-office-doc/delete-office-doc.component';
 import { OfficeInterfaceService } from '@app/shared/services/external/office-interface.service';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 
 @Component({
   selector: 'app-manage-office-doc',
@@ -130,6 +131,13 @@ export class ManageOfficeDocComponent {
       }
     });   
   }
-
+  viewPdf(data:any){
+    const config = this.defaultdialogOptionConfig;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
+  }
 }
 

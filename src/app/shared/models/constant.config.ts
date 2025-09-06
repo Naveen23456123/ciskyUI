@@ -196,3 +196,19 @@ export const SECTORS: Sector[] = [
     
   }
 ];
+
+// Bill Type
+export enum BillType {
+  IPC='ipc',
+  SPS='sps'
+}
+export enum BillPercentage {
+  IPC=10,
+  SPS=90
+}  
+// Merge into key-value-percentage list
+export const BillTypePercentValue = Object.keys(BillType).map((key) => ({
+  key,                                    
+  value: BillType[key as keyof typeof BillType],  
+  percentage: BillPercentage[key as keyof typeof BillPercentage] 
+}));

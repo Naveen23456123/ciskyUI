@@ -113,76 +113,76 @@ export class ContractorBillingListComponent {
           }
       });
     }
-    getattributes(data:any){  
-      let billAmount=(parseFloat(data.billworkdoneamount)+parseFloat(data.billescamount))-(parseFloat(data.billgstamount)+parseFloat(data.billdeductsubamount));
-      let sitebillAmount=(parseFloat(data.sitebillworkdoneamount)+parseFloat(data.sitebillescamount))-(parseFloat(data.sitebillgstamount)+parseFloat(data.sitebilldeductsubmittedamount));
-      let hobillAmount=(parseFloat(data.howorkdoneamount)+parseFloat(data.hoescamount))-(parseFloat(data.hogstamount)+parseFloat(data.hodeductedsubmittedamount));
+  getattributes(data:any){  
+    let billAmount=(parseFloat(data.billworkdoneamount)+parseFloat(data.billescamount))-(parseFloat(data.billgstamount)+parseFloat(data.billdeductsubamount));
+    let sitebillAmount=(parseFloat(data.sitebillworkdoneamount)+parseFloat(data.sitebillescamount))-(parseFloat(data.sitebillgstamount)+parseFloat(data.sitebilldeductsubmittedamount));
+    let hobillAmount=(parseFloat(data.howorkdoneamount)+parseFloat(data.hoescamount))-(parseFloat(data.hogstamount)+parseFloat(data.hodeductedsubmittedamount));
 
-      return {
-        submittedBillAmount:!isNaN(billAmount) ? billAmount :0,
-        submittedPercentage:(parseFloat(data.billsubmittedpercamount)/(billAmount))*100,
-        siterecommendedbillamount:!isNaN(sitebillAmount) ?sitebillAmount:0,
-        siterecombillamountpercent:(parseFloat(data.sitebillrecommpercamount)/(sitebillAmount))*100,
-        horecommendedbillamount:!isNaN(hobillAmount) ? hobillAmount:0,
-        horecombillamountpercent:(parseFloat(data.horecommpercentageamount)/(hobillAmount))*100,
-      }
+    return {
+      submittedBillAmount:!isNaN(billAmount) ? billAmount :0,
+      submittedPercentage:(parseFloat(data.billsubmittedpercamount)/(billAmount))*100,
+      siterecommendedbillamount:!isNaN(sitebillAmount) ?sitebillAmount:0,
+      siterecombillamountpercent:(parseFloat(data.sitebillrecommpercamount)/(sitebillAmount))*100,
+      horecommendedbillamount:!isNaN(hobillAmount) ? hobillAmount:0,
+      horecombillamountpercent:(parseFloat(data.horecommpercentageamount)/(hobillAmount))*100,
     }
+  }
 
-    ngOnDestroy(){
-      this.subscription.unsubscribe();
-    }
+  ngOnDestroy(){
+    this.subscription.unsubscribe();
+  }
 
-    ngAfterViewInit() {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }
-  
-    applyFilter(event: Event) {
-      const filterValue = (event.target as HTMLInputElement).value;
-      this.dataSource.filter = filterValue.trim().toLowerCase();
-  
-      if (this.dataSource.paginator) {
-        this.dataSource.paginator.firstPage();
-      }
-    }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
-    private updateTable(info: any) {
-      this.dataSource = new MatTableDataSource<any>(info);
-      this.pagination = this.helperService.paginationOptionGeneration(info, 10);
-      this.pageSize = this.helperService.getPageSize();
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
-    import() {
-     const config = this.defaultdialogoptions;
-          config.minWidth='75vw';          
-            config.data = {
-              pageGuid: this.route.snapshot.data['pageGuid'],
-              type: this.route.snapshot.data['type'], 
-              template_type: TemplateType.CONTRACTORBILLING   
-            };
-              this.dialog.open(UploadFileComponent,config);
-    }
-    export() {
-      
-    }
+  }
+
+  private updateTable(info: any) {
+    this.dataSource = new MatTableDataSource<any>(info);
+    this.pagination = this.helperService.paginationOptionGeneration(info, 10);
+    this.pageSize = this.helperService.getPageSize();
+  }
+  import() {
+    const config = this.defaultdialogoptions;
+        config.minWidth='75vw';          
+          config.data = {
+            pageGuid: this.route.snapshot.data['pageGuid'],
+            type: this.route.snapshot.data['type'], 
+            template_type: TemplateType.CONTRACTORBILLING   
+          };
+            this.dialog.open(UploadFileComponent,config);
+  }
+  export() {
     
-    billing(){
-        const config = this.defaultdialogoptions;
-        config.data = {
-          pageGuid: this.route.snapshot.data['pageGuid'],
-          type: DialogOperation.ADD,    
-        };
-        config.minWidth='75vw';    
-        const dialogRef = this.dialog.open(ManageContractorBillingComponent, config);
-        dialogRef.afterClosed().subscribe((data:any) => {
-          if (data && data.valid) {          
-            this.notifyBarService.showsnackbar('The Contractor Billing created successfully.');
-            this.addRowData(data.value);
-          }
-          else {
-            //this.router.navigate(['../'], { relativeTo: this.route });
-          }
-        });
-    }
+  }
+    
+  billing(){
+      const config = this.defaultdialogoptions;
+      config.data = {
+        pageGuid: this.route.snapshot.data['pageGuid'],
+        type: DialogOperation.ADD,    
+      };
+      config.minWidth='75vw';    
+      const dialogRef = this.dialog.open(ManageContractorBillingComponent, config);
+      dialogRef.afterClosed().subscribe((data:any) => {
+        if (data && data.valid) {          
+          this.notifyBarService.showsnackbar('The Contractor Billing created successfully.');
+          this.addRowData(data.value);
+        }
+        else {
+          //this.router.navigate(['../'], { relativeTo: this.route });
+        }
+      });
+  }
 
   edit_billing(row:any){
     const config = this.defaultdialogoptions;

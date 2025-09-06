@@ -173,6 +173,24 @@ mat-paginator {
     letter-spacing: 0px ;
     
 }
+//time-picker
+ .timepicker-header{
+    background-color: var(--mdc-fab-small-container-color) !important;
+}
+ .timepicker-dial__control {
+   
+    color: white !important;
+}
+ .timepicker-dial__time,.timepicker-dial__hint {   
+    color: white !important;
+}
+
+ .clock-face__number>.mat-unthemed{
+  color: black!important;  
+}
+ .clock-face__number>.mat-primary{
+  color: white!important;  
+}
 //summary
 
 .count-lbl{

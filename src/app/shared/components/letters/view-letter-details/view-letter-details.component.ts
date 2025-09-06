@@ -1,10 +1,11 @@
 import { Component, Inject, Optional } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { LetterEntity } from '@app/shared/models/constant.config';
 import { LetterInterfaceService } from '@app/shared/services/external/letter-interface.service';
 import { finalize, take } from 'rxjs';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 
 @Component({
   selector: 'app-view-letter-details',
@@ -23,9 +24,12 @@ export class ViewLetterDetailsComponent {
   letterList:any=[];
   displayedColumns: string[] = ['serial','name', 'doc'];
   dataSource!: MatTableDataSource<any[]>;
-
+  defaultdialogOptionConfig: MatDialogConfig = {
+    minWidth: '45vw',
+    data: {}
+  }
   constructor(@Inject(MAT_DIALOG_DATA) data: any,@Optional() private dialogRef: MatDialogRef<ViewLetterDetailsComponent>,
-  private letterService: LetterInterfaceService, private route:ActivatedRoute){
+  private letterService: LetterInterfaceService, private route:ActivatedRoute,private dialog: MatDialog){
     this.dialogData= data || {};
   }
   ngOnInit(){
@@ -72,5 +76,13 @@ export class ViewLetterDetailsComponent {
         }
       })
     }
+  }
+  viewPdf(data:any){
+    const config = this.defaultdialogOptionConfig;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
   }
 }

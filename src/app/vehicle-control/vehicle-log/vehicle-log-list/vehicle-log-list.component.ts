@@ -204,7 +204,7 @@ export class VehicleLogListComponent {
          pageGuid: this.route.snapshot.data['pageGuid'],
          element:data
        };
-       this.defaultdialogoptions.minWidth='55vw';
+       this.defaultdialogoptions.minWidth='75vw';
        this.dialog.open(ViewReadingImageComponent, this.defaultdialogoptions); 
   }
 }

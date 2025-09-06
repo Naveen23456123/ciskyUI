@@ -11,24 +11,35 @@
         </div>
         <div *ngIf="!isLoading">  
             <div class="wrapper row mb-4">
-                <div class="col-md-6 content-center">
-                    <h6 class="sub-heading">Initial Reading </h6>
+               
+                <div class="col-md-6 text-center">
+                    
+                    <div class="card">
+                        <div class="card-header fw-bold">
+                            Start 
+                        </div>
+                       
+                        <div class="image-container">
+                            <img [src]="startReading" 
+                            
+                            class="fixed-img" alt="End Reading">
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6 content-center">
-                    <h6 class="sub-heading">End Reading</h6>
+                <div class="col-md-6 text-center">
+                    <div class="card">
+                        <div class="card-header fw-bold">
+                            End 
+                        </div>
+                        
+                        <div class="image-container">
+                            <img [src]="endReading" class="fixed-img" alt="End Reading">
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6 content-center">
-                     
-                    <img [src]="startReading" height="100" width="100" />
-                </div>
-                <div class="col-md-6 content-center">
-                  
-                    <img [src]="endReading" height="100" width="100" />
-                </div>
+                
             </div>
-          
         </div>
         </mat-card-content>
     </mat-card>
 </div>
-            

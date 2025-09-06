@@ -8,6 +8,7 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { finalize } from 'rxjs';
 import { DeleteLetterDocComponent } from '../delete-letter-doc/delete-letter-doc.component';
 import { LetterInterfaceService } from '@app/shared/services/external/letter-interface.service';
+import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 
 
 @Component({
@@ -129,7 +130,14 @@ export class ManageLetterDocComponent {
       }
     });   
   }
-
+  viewPdf(data:any){
+    const config = this.defaultdialogOptionConfig;
+    config.minWidth='80vw';
+    config.data = {
+      element:data
+    };
+    this.dialog.open(PdfViewerComponent,config);
+  } 
 }
 
 

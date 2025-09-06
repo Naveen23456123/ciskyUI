@@ -1,5 +1,5 @@
 import { Component, inject, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
@@ -12,6 +12,7 @@ import { untilDestroyed } from '@app/core/until-destroyed';
 import { CommonInterfaceService } from '@app/shared/services/external/common-interface.service';
 import { LetterInterfaceService } from '@app/shared/services/external/letter-interface.service';
 import { CommonService } from '@app/shared/services/common.service';
+import { validate } from 'uuid';
 
 @Component({
   selector: 'app-manage-contractor-billing',
@@ -28,6 +29,7 @@ export class ManageContractorBillingComponent {
   title: string='Add';
   billingForm: FormGroup = new FormGroup({});
   deleteBilling=false;
+  isBtnClicked=false;
   letterList:any[] = [];
   billTypeList:{id:string,name:string}[] = [];
   billCategoryList:{id:string,name:string}[] = [];
@@ -38,6 +40,8 @@ export class ManageContractorBillingComponent {
   hoRecommBillAmount=0;
   hoRecommBillPercentage=0;
   letterInit=false;
+  isRecomm = new FormControl(false);
+  isApproved = new FormControl(false);
   private subscription: Subscription = new Subscription();
 
    readonly dialog = inject(MatDialog);
@@ -92,18 +96,18 @@ export class ManageContractorBillingComponent {
       projectid:[],
       contractorid:[],
       //bill details
-      billtypeid: [''],
-      billcategoryid :[],
-      billnumber:[],
-      billstartdate:[],
-      billenddate:[],
-      billsubmitdate:[],
-      billworkdoneamount:[],
-      billescamount:[],
-      billgstamount:[],
-      billdeductsubamount:[],
+      billtypeid: ['',Validators.required],
+      billcategoryid :[,Validators.required],
+      billnumber:[,Validators.required],
+      billstartdate:[,Validators.required],
+      billenddate:[,Validators.required],
+      billsubmitdate:[,Validators.required],
+      billworkdoneamount:[,Validators.required],
+      billescamount:[,Validators.required],
+      billgstamount:[,Validators.required],
+      billdeductsubamount:[,Validators.required],
       //submittedBillAmount auto calculated
-      billsubmittedpercamount:[],
+      billsubmittedpercamount:[, [Validators.required,Validators.min(0), Validators.max(100)]],
       //submittedPercentage auto calculated
       billsubmittedletterid:[],
 
@@ -139,7 +143,6 @@ export class ManageContractorBillingComponent {
     });
     if(!this.deleteBilling){
       this.sessionService.projectEntitySubject$.pipe(take(1),finalize(()=>{
-        this.isLoading=false
       }),untilDestroyed(this))
       .subscribe((entityData)=>{      
         if(entityData) {     
@@ -147,41 +150,42 @@ export class ManageContractorBillingComponent {
             projectid:entityData.projectId,
             contractorid:entityData.isConsultant ? '' :entityData.contractorId
           });        
-        this.sessionService.entityTypeSubject$.subscribe((response:any)=>{
-          if(response) {
-            let letterTypeitem = response.find((x:any)=>x.name.toLowerCase()==LetterType.BILLING.toLowerCase());
-          if(letterTypeitem) {
-            forkJoin({
-              billTypeAPI: this.commonService.getBillTypeList({},''),
-              billCategoryAPI:this.commonService.getBillCategoryList({},''),
-              letterAPI: this.letterService.getLettersPartial({
-                projectid:entityData.projectId,
-                contractorid:entityData.isConsultant ? '' :entityData.contractorId,
-                  lettertypeid:letterTypeitem.id
-              },'')
-            }).subscribe((response:any)=>{
-              if(response && response.billTypeAPI){
-                this.billTypeList= response.billTypeAPI.data
-              }
-              if(response && response.billTypeAPI){
-                this.billCategoryList= response.billCategoryAPI.data
-              }
-              if (this.isEdit) {
-                this.setBillingForm(this.data.element);
-              } 
-              if(response && response.letterAPI) {                  
-                this.letterList = response.letterAPI.data.map((item :any)=>({
-                  id: item.id,
-                  name:item.letternumber
-                }));
-                this.letterInit=true;                
-              };
-                          
-            }) 
-          }
-        }     
-      });                  
-    }
+          this.sessionService.entityTypeSubject$.subscribe((response:any)=>{
+            if(response) {
+              let letterTypeitem = response.find((x:any)=>x.name.toLowerCase()==LetterType.BILLING.toLowerCase());
+            if(letterTypeitem) {
+              forkJoin({
+                billTypeAPI: this.commonService.getBillTypeList({},''),
+                billCategoryAPI:this.commonService.getBillCategoryList({},''),
+                letterAPI: this.letterService.getLettersPartial({
+                  projectid:entityData.projectId,
+                  contractorid:entityData.isConsultant ? '' :entityData.contractorId,
+                    lettertypeid:letterTypeitem.id
+                },'').pipe(finalize(()=> this.isLoading=false))
+              }).subscribe((response:any)=>{
+                if(response && response.billTypeAPI){
+                  this.billTypeList= response.billTypeAPI.data
+                }
+                if(response && response.billTypeAPI){
+                  this.billCategoryList= response.billCategoryAPI.data
+                }
+                if (this.isEdit) {
+                  this.setBillingForm(this.data.element);
+                } 
+                if(response && response.letterAPI) {                  
+                  this.letterList = response.letterAPI.data.map((item :any)=>({
+                    id: item.id,
+                    name:item.letternumber
+                  }));
+                  this.letterInit=true;                
+                };
+                this.recommChange();
+                this.approveChange();          
+              }) 
+            }
+          }     
+        });                  
+      }
     });    
   }
   else{    
@@ -193,8 +197,69 @@ export class ManageContractorBillingComponent {
   }
    
   }
+  toggleRecommValidation(flag: boolean): void {
+    const controlsToValidate = [
+      'sitebillrecommbilldate',
+      'sitebillldamount',
+      'sitebillwithheldamount',
+      'sitebillworkdoneamount',
+      'sitebillescamount',
+      'sitebillgstamount',
+      'sitebilldeductsubmittedamount',
+      'sitebillrecommpercamount',
+      'sitebillreleasedwithheldamount'
+    ];
 
-  setBillingForm(data: any) {    
+    controlsToValidate.forEach(controlName => {
+      const control = this.billingForm.get(controlName);
+      if (control) {
+        if (flag) {         
+          if(controlName=='sitebillrecommpercamount')
+            control.setValidators([Validators.required,Validators.min(0), Validators.max(100)]);
+            else
+           control.setValidators([Validators.required]);
+        } else {
+          control.clearValidators();
+        }
+        control.updateValueAndValidity();
+      }
+    });
+  }
+  toggleApprovedValidation(flag: boolean): void {
+    const controlsToValidate = [
+      'horecommbilldate',
+      'howorkdoneamount',
+      'hoescamount',
+      'hogstamount',
+      'hodeductedsubmittedamount',
+      'horecommpercentageamount',
+      'holdamount',
+      'howithheldamount',
+      'horeleasedwithheldamount'
+    ];
+
+    controlsToValidate.forEach(controlName => {
+      const control = this.billingForm.get(controlName);
+      if (control) {
+        if (flag) {
+          control.setValidators([Validators.required]);
+        } else {
+          control.clearValidators();
+        }
+        control.updateValueAndValidity();
+      }
+    });
+  }
+
+  recommChange(){
+    this.toggleRecommValidation(this.isRecomm.value ?? false);
+  }
+  approveChange(){
+    this.toggleApprovedValidation(this.isApproved.value ??false);
+  }
+  setBillingForm(data: any) {  
+    this.isRecomm.setValue(!!data.sitebillrecommbilldate); 
+    this.isApproved.setValue(!!data.horecommbilldate); 
     this.billingForm.patchValue({
       id:data.id,
       //bill details
@@ -254,7 +319,7 @@ export class ManageContractorBillingComponent {
     let perAmt= this.billingForm.controls['billsubmittedpercamount'].value ?? 0;   
   
     this.billSubmitAmt=parseFloat(wdAmt)+parseFloat(escAmt)-parseFloat(gstAmt)-parseFloat(deductAmt);
-    this.billSubmitPercentage=this.cmnService.roundValue((perAmt/this.billSubmitAmt)*100);
+    this.billSubmitPercentage=this.cmnService.roundValue((this.billSubmitAmt*perAmt)/100);
    
   }
 
@@ -266,7 +331,7 @@ export class ManageContractorBillingComponent {
     let perAmt= this.billingForm.controls['sitebillrecommpercamount'].value ?? 0;
    
     this.siteRecommBillAmount=parseFloat(wdAmt)+parseFloat(escAmt)-parseFloat(gstAmt)-parseFloat(deductAmt);
-    this.siteRecommPercentage=this.cmnService.roundValue((perAmt/this.siteRecommBillAmount)*100);
+    this.siteRecommPercentage=this.cmnService.roundValue((perAmt*this.siteRecommBillAmount)/100);
     
    }
 
@@ -278,10 +343,11 @@ export class ManageContractorBillingComponent {
     let perAmt= this.billingForm.controls['horecommpercentageamount'].value ?? 0;
    
     this.hoRecommBillAmount=parseFloat(wdAmt)+parseFloat(escAmt)-parseFloat(gstAmt)-parseFloat(deductAmt);
-    this.hoRecommBillPercentage=this.cmnService.roundValue((perAmt/this.hoRecommBillAmount)*100);
+    this.hoRecommBillPercentage=this.cmnService.roundValue((perAmt*this.hoRecommBillAmount)/100);
     
    }
   submit(){  
+    this.isBtnClicked=true;
     let formsValue= this.billingForm.value;
     formsValue.billtype= this.billTypeList.find(x=>x.id== this.billingForm.get('billtypeid')?.value)?.name;
     formsValue.billcategory= this.billCategoryList.find(x=>x.id== this.billingForm.get('billcategoryid')?.value)?.name;
@@ -289,7 +355,7 @@ export class ManageContractorBillingComponent {
       if(response && response.projectId){ 
         if (this.isEdit) {
           this.contratorService.updateContractorBill(this.billingForm.value, '')
-            .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+            .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked=false })).subscribe({
               next: (response:any) => {
               if(response && response.success)
                 this.dialogRef.close({ value: formsValue, valid: true });

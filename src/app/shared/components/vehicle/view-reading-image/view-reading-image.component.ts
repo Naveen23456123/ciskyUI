@@ -12,16 +12,19 @@ export class ViewReadingImageComponent {
   data:any;
   startReading='';
   endReading='';
-
+ 
     constructor(@Inject(MAT_DIALOG_DATA) data: any,
       @Optional() private dialogRef: MatDialogRef<ViewReadingImageComponent>){
         this.data = data || {};
     }
   ngOnInit(){
-    this.isLoading=false;
+    
     if(this.data.element){
       this.startReading= this.data.element.initialimageaddress;
       this.endReading= this.data.element.endimageaddress;
+      this.isLoading=false;
     }
+    
   }
+
 }

@@ -48,13 +48,14 @@
                         <div class="col-md-4">                           
                             <mat-form-field>
                                 <mat-label>From Time</mat-label>
-                                <input type="text" formControlName="fromtime" matInput [ngxMatTimepicker]="timepicker" [format]="24"
+                                <input type="text" formControlName="fromtime" matInput 
+                                [ngxMatTimepicker]="timepicker" [format]="24"
                                   readonly/>                        
                                 <mat-icon  matSuffix (click)="openFromIcon(timepicker)">schedule</mat-icon>
                                 <mat-error >
                                     Please select From Time</mat-error>                               
                               </mat-form-field>                              
-                              <ngx-mat-timepicker #timepicker [enableKeyboardInput]="true"></ngx-mat-timepicker>
+                              <ngx-mat-timepicker #timepicker [timepickerClass]="'custom-timepicker'" [enableKeyboardInput]="true"></ngx-mat-timepicker>
                         </div> 
                         <div class="col-md-4">                           
                             <mat-form-field>

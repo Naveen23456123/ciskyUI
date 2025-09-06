@@ -18,12 +18,14 @@ import { finalize } from 'rxjs';
 export class LoginComponent {
   loginform:any;
   isBtnClicked=false;
+  isForgotPassword=false;
   constructor(private formbuilder: FormBuilder, private router:Router, private sessionService:SessionService,
     private authService:AuthrizationInterfaceService, private notifyBarService:NotifyBarService,
     private storageService:StorageService, private commonService:CommonService
   ){}
 
   ngOnInit(){
+    this.isForgotPassword=false;
     this.loginform= this.formbuilder.group({ 
       id:[''],
       username:['Naveen.kumar12@gmail.com',Validators.required],
@@ -75,5 +77,8 @@ export class LoginComponent {
       }
     });
     
-    }
+  }
+  onForgotPassword(){
+    this.isForgotPassword=true;
+  }
 }

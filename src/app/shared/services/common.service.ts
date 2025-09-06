@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import moment from 'moment';
-import { ApprovalStatus, Sector } from '../models/constant.config';
+import { ApprovalStatus, BillPercentage, BillType, Sector } from '../models/constant.config';
 import { SessionService } from './session.service';
 
 @Injectable({
@@ -156,42 +156,44 @@ export class CommonService {
   }
 
   getPermissionsForCurrentPage(pageGuid: string): Promise<any> {
-    return new Promise((resolve) => {
-      this.sessionService.userSubject$.subscribe((response: any) => {
-        if (response) {
-          const modules: any[] = response.modules?.modules;
+  return new Promise((resolve) => {
+    this.sessionService.userSubject$.subscribe((response: any) => {
+      if (response) {
+        const mainmodules: any[] = response.modules?.modules;
 
-          const findPermissions = (modules: any[]): string[] | null => {
-            for (let module of modules) {
-              if (module.id === pageGuid) {
-                return module.permission;
-              }
-              if (module.modulelist?.length) {
-                const result = findPermissions(module.modulelist);
-                if (result) return result;
-              }
+        const findPermissions = (modules: any[]): string[] | null => {
+          for (let module of modules) {
+            if (module.id === pageGuid) {
+              return module.permission;
             }
-            return null;
-          };
+            if (Array.isArray(module.modulelist) && module.modulelist.length) {
+              const result = findPermissions(module.modulelist);
+              if (result) return result;
+            }
+          }
+          return null;
+        };
 
-          const permissions = findPermissions(modules);
-          resolve({
-            canCreate: permissions?.includes('C') ?? false,
-            canRead: permissions?.includes('R') ?? false,
-            canUpdate: permissions?.includes('U') ?? false,
-            canDelete: permissions?.includes('D') ?? false
-          });
-        } else {
-          resolve({
-            canCreate: false,
-            canRead: false,
-            canUpdate: false,
-            canDelete: false
-          });
-        }
-      });
+        const permissions = findPermissions(mainmodules);
+
+        resolve({
+          canCreate: permissions?.includes('C') ?? false,
+          canRead: permissions?.includes('R') ?? false,
+          canUpdate: permissions?.includes('U') ?? false,
+          canDelete: permissions?.includes('D') ?? false
+        });
+      } else {
+        resolve({
+          canCreate: false,
+          canRead: false,
+          canUpdate: false,
+          canDelete: false
+        });
+      }
     });
-  }
+  });
+}
+
   updateSectorIds(sectors: Sector[], backendSectors: any[]): Sector[] {
     return sectors.map(sec => {
       const backendSec = backendSectors.find(b => b.abbreviation === sec.abbr || b.name === sec.name);
@@ -240,5 +242,12 @@ export class CommonService {
           .filter(Boolean)
       };
     }).filter(Boolean);
+  }
+  getContractorBillTypePercentage(bill: string): string | undefined {
+    const key = (Object.keys(BillType) as Array<keyof typeof BillType>).find(
+      (k) => BillType[k].toLowerCase() === bill.toLowerCase()
+    ) as keyof typeof BillType | undefined;
+
+    return key ? BillPercentage[key] +"%" : undefined;
   }
 }

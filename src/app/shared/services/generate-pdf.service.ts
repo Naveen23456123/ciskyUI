@@ -38,4 +38,44 @@ export class GeneratePdfService {
       });
     }, 100); 
   }
+   generateAndGetPDF(contentRef: ElementRef, fileName: string = 'form-data.pdf'): Promise<File  | null> {
+    const content = contentRef?.nativeElement;
+
+    if (!content) {
+      console.error("PDF content element not found.");
+      return Promise.resolve(null);
+    }
+
+    content.classList.add('export-pdf-mode');
+
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        html2canvas(content)
+          .then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgProps = pdf.getImageProperties(imgData);
+
+            const margin = 5;
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pdfWidth = pageWidth - margin * 2;
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            pdf.addImage(imgData, 'PNG', margin, 0, pdfWidth, pdfHeight);
+        
+            // Get Blob from jsPDF
+            const pdfBlob = pdf.output('blob');
+            console.log('Generated PDF size:', pdfBlob.size);
+            const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+            content.classList.remove('export-pdf-mode');
+            resolve(pdfFile);
+          })
+          .catch(err => {
+            console.error('Error generating PDF:', err);
+            content.classList.remove('export-pdf-mode');
+            reject(err);
+          });
+      }, 100);
+    });
+  }
 }
