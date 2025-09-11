@@ -1,5 +1,5 @@
 
-<div class="container">
+<div class="container hscroll-container">
     <mat-card>
         <mat-card-title>
             <h6>Appendix C-3:Breakdown of Costs 
@@ -17,6 +17,7 @@
     
             <h6>I-Renumeration for Local Professional Staff</h6>
             <h6>A. Key Personal</h6>
+            <section class="inv-container mat-elevation-z8" tabindex="0">
             <table mat-table [dataSource]="dataSource" >
         
                 <ng-container matColumnDef="serial">
@@ -25,7 +26,7 @@
                   <td mat-footer-cell *matFooterCellDef> </td>
                 </ng-container>
                 <ng-container matColumnDef="no">
-                  <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">No</th>
+                  <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Sr. No</th>
                 </ng-container>       
              
                 <ng-container matColumnDef="desg">
@@ -98,7 +99,7 @@
                     </ng-container>
                     <ng-container matColumnDef="comlt_month">
                       <th mat-header-cell *matHeaderCellDef > Month </th>
-                      <td mat-cell *matCellDef="let row"> {{row.commulativemonth}} </td>
+                      <td mat-cell *matCellDef="let row"> {{row.commulativemonth | number:'1.3-3'}} </td>
                       <td mat-footer-cell *matFooterCellDef> </td>
                     </ng-container>                         
       
@@ -120,7 +121,7 @@
                       <td mat-footer-cell *matFooterCellDef> {{amount?.kp.remaining | formatCurrency}}</td>
                     </ng-container>
       
-                    <ng-container matColumnDef="action">
+                    <ng-container matColumnDef="action" >
                       <th mat-header-cell class="no-print" *matHeaderCellDef class="hide"> Action </th>
                       <td mat-cell class="action-col no-print" *matCellDef="let row"> 
                         <div class="button-row">                  
@@ -133,7 +134,7 @@
                      
                       </td>
                     </ng-container>
-                    <ng-container matColumnDef="actionth">
+                    <ng-container matColumnDef="actionth" >
                       <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
                     </ng-container>
       
@@ -156,20 +157,22 @@
                     </ng-container>
       
                     <tr mat-header-row *matHeaderRowDef="['no','desgth','nameth','ctrtamt','previousinvc','currentinvc','cumulativeinvc','reminvc','actionth']"></tr>
-                  <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>
+                  <tr mat-header-row *matHeaderRowDef="dataColumn;"></tr>
                   <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>   
                   <tr mat-footer-row *matFooterRowDef="dataColumn"></tr>                  
                 </table>
+            </section>
             </div>
         </mat-card-content>
     </mat-card> 
     </div>
-    <div class="container">
+    <div class="container hscroll-container">
     <mat-card>
       <mat-card-title>
           <h6>B. Sub Professional Staff</h6>
       </mat-card-title>
       <mat-card-content>
+        <section class="inv-container mat-elevation-z8" tabindex="0">
         <table mat-table [dataSource]="spsdataSource" >
         
             <ng-container matColumnDef="serial">
@@ -178,7 +181,7 @@
               <td mat-footer-cell *matFooterCellDef> </td>
             </ng-container>
             <ng-container matColumnDef="no">
-              <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">No</th>
+              <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Sr. No</th>
             </ng-container>       
          
             <ng-container matColumnDef="desg">
@@ -251,14 +254,14 @@
                 </ng-container>
                 <ng-container matColumnDef="comlt_month">
                   <th mat-header-cell *matHeaderCellDef > Month </th>
-                  <td mat-cell *matCellDef="let row"> {{row.commulativemonth}} </td>
+                  <td mat-cell *matCellDef="let row"> {{row.commulativemonth | number:'1.3-3'}} </td>
                   <td mat-footer-cell *matFooterCellDef> </td>
                 </ng-container>                         
   
                 <ng-container matColumnDef="comlt_amt">
                   <th mat-header-cell *matHeaderCellDef > Amount </th>
                   <td mat-cell *matCellDef="let row"> {{row.commulativeAmount | formatAmount}} </td>
-                  <td mat-footer-cell *matFooterCellDef>  {{amount?.sps.commulative | formatCurrency}}</td>
+                  <td mat-footer-cell *matFooterCellDef>  {{ (amount?.sps?.commulative ?? 0) | formatCurrency}}</td>
                 </ng-container>
   
                 <ng-container matColumnDef="rem_month">
@@ -273,7 +276,7 @@
                   <td mat-footer-cell *matFooterCellDef> {{amount?.sps.remaining | formatCurrency}} </td>
                 </ng-container>
   
-                <ng-container matColumnDef="action">
+                <ng-container matColumnDef="action" >
                   <th mat-header-cell class="no-print"  *matHeaderCellDef class="hide"> Action </th>
                   <td mat-cell class="action-col no-print" *matCellDef="let row"> 
                     <div class="button-row">                  
@@ -286,7 +289,7 @@
                  
                   </td>
                 </ng-container>
-                <ng-container matColumnDef="actionth">
+                <ng-container matColumnDef="actionth" >
                   <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
                 </ng-container>
   
@@ -313,16 +316,18 @@
               <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>   
               <tr mat-footer-row *matFooterRowDef="dataColumn"></tr>                  
             </table>
+            </section>
       </mat-card-content>
     </mat-card>
     </div>
-    <div class="container">
+    <div class="container hscroll-container">
       <mat-card>
           <mat-card-title>
               <h6>II-Support Staff</h6>
           </mat-card-title>
           <mat-card-content>
-            <table mat-table [dataSource]="ssdataSource" >
+            <section class="inv-container mat-elevation-z8" tabindex="0">
+              <table mat-table [dataSource]="ssdataSource" >
         
                 <ng-container matColumnDef="serial">
                   <th mat-header-cell *matHeaderCellDef class="hide">Sr. No</th>
@@ -330,7 +335,7 @@
                   <td mat-footer-cell *matFooterCellDef> </td>
                 </ng-container>
                 <ng-container matColumnDef="no">
-                  <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">No</th>
+                  <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Sr. No</th>
                 </ng-container>       
              
                 <ng-container matColumnDef="desg">
@@ -339,7 +344,7 @@
                   <td mat-footer-cell *matFooterCellDef> Total</td>
                 </ng-container>
                 <ng-container matColumnDef="desgth">
-                    <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2"></th>
+                    <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Position</th>
                     </ng-container>
                 <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef class="hide"> Name </th>
@@ -348,7 +353,7 @@
                   </ng-container>
              
                 <ng-container matColumnDef="nameth">
-                    <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2"></th>
+                    <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Name</th>
                     </ng-container>
                    
                     <ng-container matColumnDef="contract_rate">
@@ -403,7 +408,7 @@
                     </ng-container>
                     <ng-container matColumnDef="comlt_month">
                       <th mat-header-cell *matHeaderCellDef > Month </th>
-                      <td mat-cell *matCellDef="let row"> {{row.commulativemonth}} </td>
+                      <td mat-cell *matCellDef="let row"> {{row.commulativemonth | number:'1.3-3'}} </td>
                       <td mat-footer-cell *matFooterCellDef> </td>
                     </ng-container>                         
       
@@ -425,7 +430,7 @@
                       <td mat-footer-cell *matFooterCellDef> {{amount?.ss.remaining | formatCurrency}} </td>
                     </ng-container>
       
-                    <ng-container matColumnDef="action">
+                    <ng-container matColumnDef="action" >
                       <th mat-header-cell class="no-print" *matHeaderCellDef class="hide"> Action </th>
                       <td mat-cell class="action-col no-print" *matCellDef="let row"> 
                         <div class="button-row">                  
@@ -438,7 +443,7 @@
                      
                       </td>
                     </ng-container>
-                    <ng-container matColumnDef="actionth">
+                    <ng-container matColumnDef="actionth" >
                       <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
                     </ng-container>
       
@@ -464,8 +469,8 @@
                   <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>
                   <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>   
                   <tr mat-footer-row *matFooterRowDef="dataColumn"></tr>                  
-                </table>
-    
+              </table>
+            </section>
           </mat-card-content>
       </mat-card>
     

@@ -29,7 +29,7 @@
                                     <div class="col-md-2">                       
                                         <mat-form-field>
                                             <mat-label>Actual Month</mat-label>
-                                            <input matInput type="number" formControlName="currentbilltrips">
+                                            <input matInput type="number" formControlName="currentbilltrips" [appDecimalLimit]="'INVOICE'">
                                             <mat-error>Please provide month</mat-error>
                                         </mat-form-field>
                                     </div>   

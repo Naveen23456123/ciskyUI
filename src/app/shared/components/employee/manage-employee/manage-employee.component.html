@@ -141,6 +141,8 @@
                                 <mat-label>Email Id</mat-label>
                                 <input matInput formControlName="emailId">
                                 <mat-error>Please provide Email-Id.</mat-error>
+                                 <mat-error *ngIf="employeeForm.hasError('Email', 'email')">Please enter Valid Email Id.
+                                </mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">

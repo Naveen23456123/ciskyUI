@@ -1,18 +1,20 @@
 import { Component, Inject, Input } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { NgxExtendedPdfViewerService } from 'ngx-extended-pdf-viewer';
 
 @Component({
   selector: 'app-pdf-viewer',
   standalone: false,
-  template: `<ngx-extended-pdf-viewer useBrowserLocale="true" [textLayer]="true" [src]="pdfFile"></ngx-extended-pdf-viewer>`,
+  templateUrl: './pdf-viewer.component.html',
   styleUrl: './pdf-viewer.component.scss'
 })
 export class PdfViewerComponent {
   pdfFile:any;
   data:any;
   url=true;
+  @Input() isLoading=false;
 
-  constructor(@Inject(MAT_DIALOG_DATA) data: any) {    
+  constructor(@Inject(MAT_DIALOG_DATA) data: any,private pdfService: NgxExtendedPdfViewerService) {    
     this.data = data || {};
   }
   ngOnInit(){
@@ -26,5 +28,9 @@ export class PdfViewerComponent {
       else
         this.pdfFile = this.data.element;
     }
+  }
+  onPdfLoading(state: boolean) {
+    console.log(this.isLoading);
+    this.isLoading = state;
   }
 }

@@ -13,6 +13,7 @@
 }
 html {
     --mat-table-background-color:white;
+    --right-container-width:1500px;
     --mdc-fab-small-container-color:#27388b ;
     --mat-fab-small-foreground-color:white;
     --bs-body-bg: rgb(60 76 158 / 18%) !important;
@@ -50,6 +51,8 @@ body{
 .mat-mdc-dialog-container .mat-mdc-dialog-title {
     --mdc-dialog-subhead-weight:500;
 }
+
+
 .mat-mdc-footer-row,.mat-mdc-footer-row td{
     font-weight: 600 !important;   
 }
@@ -136,13 +139,6 @@ mat-paginator {
 }
 .sk-table > :not(caption) > * > * {
     padding: 1.2rem 1.5rem !important;
-}
-//export-pdf
-.export-pdf-mode .hide-in-pdf {
-  display: none !important;
-}
-.export-pdf-mode .sub-heading {
-  color: white !important;
 }
 
 //pagination
@@ -402,7 +398,7 @@ mat-card{
     table, th, td {
       border: 1px solid black;
     }
-  
+    
     th {
       background-color: lightgray; /* Header background */
       color: black; /* Header text color */
@@ -412,6 +408,21 @@ mat-card{
       color: white !important;
     }
   }
+//export-pdf
+.export-pdf-mode .hide-in-pdf {
+  display: none !important;
+}
+.export-pdf-mode .sub-heading {
+  color: white !important;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.export-pdf-mode th[rowspan],
+.export-pdf-mode td,
+.export-pdf-mode mat-header-cell {
+  visibility: visible !important;
+  display: table-cell !important;
+}
 
 .card-title > mat-icon{
     margin-right: 10px;

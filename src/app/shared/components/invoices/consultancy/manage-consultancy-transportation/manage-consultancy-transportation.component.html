@@ -28,7 +28,7 @@
                                     <div class="col-md-3">                       
                                         <mat-form-field>
                                             <mat-label>Actual Month</mat-label>
-                                            <input matInput type="number" formControlName="currentmonth">
+                                            <input matInput type="number" [appDecimalLimit]="'INVOICE'" formControlName="currentmonth">
                                             <mat-error>Please provide month</mat-error>
                                         </mat-form-field>
                                     </div>

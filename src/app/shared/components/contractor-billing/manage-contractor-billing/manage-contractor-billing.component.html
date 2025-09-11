@@ -15,12 +15,23 @@
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Bill Type</mat-label>
-                                <mat-select formControlName="billtypeid">
+                                <mat-select (selectionChange)="billTypeChange()" formControlName="billtypeid">
                                     <mat-option  *ngFor="let field of billTypeList" [value]="field.id">
                                         {{field.name}}
                                     </mat-option>
                                 </mat-select>
                                 <mat-error>Please select Bill Type.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div *ngIf="isIpc" class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Raising Against SPS</mat-label>
+                                <mat-select  formControlName="parentid">
+                                    <mat-option  *ngFor="let field of parentBills" [value]="field.id">
+                                        {{field.billnumber}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error>Please select Bill.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">
@@ -44,9 +55,9 @@
                         <div class="col-md-3">                           
                             <mat-form-field class="example-full-width">
                                 <mat-label>Bill Start Date</mat-label>
-                                <input matInput  formControlName="billstartdate" [matDatepicker]="billStartDate">
+                                <input matInput  formControlName="billstartdate" [max]="today" [matDatepicker]="billStartDate">
                                 
-                                <mat-datepicker-toggle matIconSuffix [for]="billStartDate"></mat-datepicker-toggle>
+                                <mat-datepicker-toggle matIconSuffix  [for]="billStartDate"></mat-datepicker-toggle>
                                 <mat-datepicker #billStartDate></mat-datepicker>
                                 <mat-error>Please select Start Date.</mat-error>
                               </mat-form-field>
@@ -54,7 +65,7 @@
                         <div class="col-md-3">                           
                             <mat-form-field class="example-full-width">
                                 <mat-label>Bill End Date</mat-label>
-                                <input matInput  formControlName="billenddate" [matDatepicker]="billEndDate">
+                                <input matInput  formControlName="billenddate" [max]="today" [matDatepicker]="billEndDate">
                                 
                                 <mat-datepicker-toggle matIconSuffix [for]="billEndDate"></mat-datepicker-toggle>
                                 <mat-datepicker #billEndDate></mat-datepicker>
@@ -64,7 +75,7 @@
                         <div class="col-md-3">                           
                             <mat-form-field class="example-full-width">
                                 <mat-label>Bill Submit Date</mat-label>
-                                <input  matInput  formControlName="billsubmitdate" [matDatepicker]="billSubmitDate">
+                                <input  matInput  formControlName="billsubmitdate" [max]="today" [matDatepicker]="billSubmitDate">
                                 
                                 <mat-datepicker-toggle matIconSuffix [for]="billSubmitDate"></mat-datepicker-toggle>
                                 <mat-datepicker #billSubmitDate></mat-datepicker>
@@ -138,6 +149,8 @@
                                 <mat-icon >add_circle</mat-icon>
                               </button>                            
                         </div> 
+                    </div>
+                    <div class="row wrapper control-div">
                         <div class="col-md-3 d-flex align-items-center">
                            <span class="lbl">Is Recommended</span> <mat-slide-toggle [formControl]="isRecomm" (change)="recommChange()" labelPosition="before"></mat-slide-toggle>
                         </div>
@@ -152,7 +165,7 @@
                             <div class="col-md-3">                           
                                 <mat-form-field class="example-full-width">
                                     <mat-label>Recommended Bill Date</mat-label>
-                                    <input matInput  formControlName="sitebillrecommbilldate" [matDatepicker]="siteRecomBilDate">
+                                    <input matInput  formControlName="sitebillrecommbilldate" [max]="today" [matDatepicker]="siteRecomBilDate">
                                     
                                     <mat-datepicker-toggle matIconSuffix [for]="siteRecomBilDate"></mat-datepicker-toggle>
                                     <mat-datepicker #siteRecomBilDate></mat-datepicker>
@@ -247,7 +260,7 @@
                             <div class="col-md-3">                           
                                 <mat-form-field class="example-full-width">
                                     <mat-label>Recommended Bill Date</mat-label>
-                                    <input matInput  formControlName="horecommbilldate" [matDatepicker]="hoRecomBilDate">
+                                    <input matInput  formControlName="horecommbilldate" [max]="today" [matDatepicker]="hoRecomBilDate">
                                     
                                     <mat-datepicker-toggle matIconSuffix [for]="hoRecomBilDate"></mat-datepicker-toggle>
                                     <mat-datepicker #hoRecomBilDate></mat-datepicker>

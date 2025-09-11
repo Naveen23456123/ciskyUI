@@ -127,7 +127,7 @@ export class ManageVehicleListComponent {
         pageGuid: this.route.snapshot.data['pageGuid'],
         type: DialogOperation.ADD
       };
-      config.minWidth='70vw';
+      config.minWidth='75vw';
       const dialogRef = this.dialog.open(ManageVehicleComponent, config);
       dialogRef.afterClosed().subscribe((data) => {
         if (data && data.valid) {       
@@ -145,10 +145,10 @@ export class ManageVehicleListComponent {
          type: DialogOperation.EDIT,
          element: row
        };
-       this.defaultdialogoptions.minWidth='70vw';
+       this.defaultdialogoptions.minWidth='75vw';
        const dialogRef = this.dialog.open(ManageVehicleComponent, this.defaultdialogoptions);
        dialogRef.afterClosed().subscribe((data) => {       
-         if (data.valid) {
+         if (data && data.valid) {
           this.notifyBarService.showsnackbar('The vehicle updated successfully.');
           this.updateRowData(data.value);
          }

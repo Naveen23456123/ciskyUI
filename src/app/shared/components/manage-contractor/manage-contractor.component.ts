@@ -1,5 +1,5 @@
 import { Component, Inject, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ContractorInterfaceService } from '@app/shared/services/external/contractor-interface.service';
@@ -19,6 +19,7 @@ export class ManageContractorComponent {
   isEdit: boolean = false;
   pageGuid: any;
   title: string='';
+  isBtnClicked=false;
   contractorForm: FormGroup = new FormGroup({});
   deleteContractor= false;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
@@ -36,19 +37,19 @@ ngOnInit(): void {
 this.contractorForm = this.formbuilder.group({
   id:[],
   projectId:[],
-  contractorname: [],
-  contractoraddress:[],
-  projectcost:[],
-  projectlength:[],
-  projectduration:[],
-  bidduedate:[],
-  loadate:[],
-  agreementdate:[],
-  commencementdate:[],
-  scheduleconstructioncompletedate:[],
-  schedulecompletedate:[],
-  actualcompletedate:[],
-  actualconstructioncompletedate:[],
+  contractorname: [, Validators.required],
+  contractoraddress:[, Validators.required],
+  projectcost:[, Validators.required],
+  projectlength:[, Validators.required],
+  projectduration:[, Validators.required],
+  bidduedate:[, Validators.required],
+  loadate:[, Validators.required],
+  agreementdate:[, Validators.required],
+  commencementdate:[, Validators.required],
+  scheduleconstructioncompletedate:[, Validators.required],
+  schedulecompletedate:[, Validators.required],
+  actualcompletedate:[, Validators.required],
+  actualconstructioncompletedate:[, Validators.required],
   
 });
 if (this.isEdit || this.deleteContractor) {
@@ -101,10 +102,10 @@ setcontractorForm(data: any) {
 }
 
 submit(){  
-  
+  this.isBtnClicked=true;
   if (this.isEdit) {
     this.contractorService.updateContractor(this.contractorForm.value, '')
-      .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+      .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked=false; })).subscribe({
         next: (response:any) => {
         if(response && response.success)
           this.dialogRef.close({ value: this.contractorForm.value, valid: true });
@@ -119,7 +120,7 @@ submit(){
       this.contractorForm.value.id=null;
       this.contractorForm.controls["projectId"].setValue(projectResponse.id);
       this.contractorService.createContractor(this.contractorForm.value, '')
-        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false; })).subscribe({
           next:(response: any) => {
           if (response && response.success) {
             this.contractorForm.controls["id"].setValue(response.data.id);

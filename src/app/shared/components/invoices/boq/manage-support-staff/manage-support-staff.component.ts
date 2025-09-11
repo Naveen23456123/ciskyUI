@@ -131,6 +131,14 @@ export class ManageSupportStaffComponent {
                   name: emp.name + ' - '+emp.code,
                   empname:emp.name
                 }));
+                this.empList.push({
+                  id:'id',
+                  name:'TBN',
+                  empname:'TBN'
+                });
+                this.renumerationForm.patchValue({
+                  employeeid:'id'
+                });
                 this.employeeLoad=true;
               }
               if (this.isEdit) {
@@ -206,6 +214,7 @@ export class ManageSupportStaffComponent {
               }
             });
         } else {
+          this.renumerationForm.value.employeeid='';
           let postFormData= {
             projectid:response.projectId,
             scopes:[this.renumerationForm.value]

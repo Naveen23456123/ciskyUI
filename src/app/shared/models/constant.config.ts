@@ -212,3 +212,10 @@ export const BillTypePercentValue = Object.keys(BillType).map((key) => ({
   value: BillType[key as keyof typeof BillType],  
   percentage: BillPercentage[key as keyof typeof BillPercentage] 
 }));
+
+export const DECIMAL_LIMIT = {
+  BOQ: 3,  
+  INVOICE:3,     // allow 3 digits after decimal
+  TAX: 2,          // example: allow 2 digits after decimal
+  WEIGHT: 4        // example: allow 4 digits
+};

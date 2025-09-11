@@ -472,7 +472,9 @@
                               <mat-icon class="example-tab-icon">payments</mat-icon>
                               Billing Details
                             </ng-template>
-                            <app-contractor-billing-details></app-contractor-billing-details>
+                            <ng-template matTabContent>
+                              <app-contractor-billing-details></app-contractor-billing-details>
+                            </ng-template>
                           </mat-tab>
                           <mat-tab *ngIf="!isConsultant">
                               <ng-template mat-tab-label>

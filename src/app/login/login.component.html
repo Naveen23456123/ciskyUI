@@ -12,36 +12,34 @@
 
   
   <div class="content">
-    <div class="">
-      <div class="row">
-        <div class="col-md-7">
-          <img src="assets/images/internal/banner.png" alt="Image" class="img-fluid">
+    
+      <div class="row w-100">
+        <div class="col-md-7 p-0 img-content">
+          <img src="assets/images/internal/login-banner.png" alt="Image" class="img-fluid">
         </div>
-        <div class="col-md-5 contents" >
-          <div class="row d-flex justify-content-center align-items-center ht-100">
+        <div class="col-md-5 content-data" >
+            <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-md-8 login ">
               <div class="mb-4 content-center">
                <img src="assets/images/internal/logo.png" height="90" width="90" alt="Image" class="img-fluid">
             </div>
             <div *ngIf="!isForgotPassword">
-              <div class="mb-4">
+              <div class="mb-6">
                 <h3 class="">Hi, Welcome back!</h3>
                 <p class="mb-4 p-text">Let’s get you signed in.</p>
               </div>
               <form [formGroup]="loginform" (submit)="submit()">
                 <div class="form-group first mb-2">
-                  <!-- <label class="lbl" for="username">Email Id</label> -->
-                  <!-- <input type="text" class="form-control" formControlName="username" id="username"> -->
-                  <mat-form-field>
+               
+                  <mat-form-field appearance="outline">
                         <mat-label class="lbl">Email Id</mat-label>
                         <input matInput formControlName="username">
                         <mat-error>Please provide Email Id.</mat-error>
                     </mat-form-field>
                 </div>
                 <div class="form-group last mb-2">
-                  <!-- <label class="lbl" for="password">Password</label>
-                  <input type="password" class="form-control" formControlName="password" id="password"> -->
-                  <mat-form-field>
+                  
+                  <mat-form-field appearance="outline">
                         <mat-label class="lbl">Passowrd</mat-label>
                         <input type="password" matInput formControlName="password">
                         <mat-error>Please provide Password.</mat-error>
@@ -50,15 +48,7 @@
                 <div class="form-group  mb-4">
                   <a class="float-end f-pass" (click)="onForgotPassword()">Forgot Password ?</a>
                 </div> <br>
-                
-                <!-- <div class="d-flex  align-items-center">
-                  <label class="control control--checkbox mb-0"><span class="caption">Remember me</span>
-                    <input type="checkbox" checked="checked"/>
-                    <div class="control__indicator"></div>
-                  </label>
-                  <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password</a></span> 
-                  <mat-error>Please provide Password.</mat-error>
-                </div> -->
+               
                 <div class=" d-flex justify-content-center align-items-center">
                   <!-- <input type="submit" value="Log In" class="btn btn-block btn-primary"> -->
                   <app-submit-load-btn class="login-btn"  [isClicked]="isBtnClicked" [isValid]="loginform.valid || isBtnClicked"
@@ -72,7 +62,7 @@
         </div>
         
       </div>
-    </div>
+    
   </div>
 
   </body>

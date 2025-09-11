@@ -382,6 +382,17 @@ export class ContractorInterfaceService {
       action: Operation.DELETE
     }
     return this.coreApi.standardService(standardAttribute);
+  } 
+   getContractorBillPartialByParentId(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ContractorBill/ByParentId',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
   }
 
 }

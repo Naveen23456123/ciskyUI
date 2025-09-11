@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
+import { PdfViewerComponent } from '@app/shared/components/pdf-viewer/pdf-viewer.component';
+import { GeneratePdfService } from '@app/shared/services/generate-pdf.service';
 import { VehicleService } from '@app/vehicle-control/vehicle.service';
 import moment from 'moment';
 import { finalize } from 'rxjs';
@@ -18,12 +21,19 @@ export class ViewVehicleLogComponent {
   todayDate= new Date();
   vehicle:any;
   logData:any[]=[];
-  displayedColumns: string[] = ['serial','emps','useddate', 'initialreading','endreading','totalkm', 'fromtime', 'totime', 'purpose'];
+  @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
+  displayedColumns: string[] = ['emps','useddate', 'initialreading','endreading','totalkm', 'fromtime', 'totime', 'purpose'];
   footerColumns: string[] = ['total', 'km','time','action'];
   dataSource!: MatTableDataSource<any[]>;
   monthandyear:any='';
-  
-  constructor(private vehicleService:VehicleService, private route:ActivatedRoute){     
+  readonly dialog = inject(MatDialog);
+  private defaultdialogoptions:  MatDialogConfig = {       
+      disableClose: false,
+      data: {},
+    };
+  constructor(private vehicleService:VehicleService, private route:ActivatedRoute,
+    private pdfService:GeneratePdfService
+  ){     
       this.vehicleId = route.snapshot.paramMap.get('vehlogId');
       this.vehicle= window.history.state;
   }
@@ -53,5 +63,18 @@ export class ViewVehicleLogComponent {
   getTotalKm() {
     let total= this.logData.map((t:any) => (t.endreading-t.initialreading)).reduce((acc, value) => acc + value, 0);    
     return total;
+  }
+  printPdf(){
+    this.pdfService.generateAndGetPDF(this.pdfContent, 'Vehicle_Log.pdf').then((pdf) => {
+      if (pdf) {
+        const config = this.defaultdialogoptions;
+        config.minWidth='80vw';
+        config.data = {
+          url:false,
+          element:pdf
+        };
+        this.dialog.open(PdfViewerComponent,config);
+      }
+    });
   }
 }

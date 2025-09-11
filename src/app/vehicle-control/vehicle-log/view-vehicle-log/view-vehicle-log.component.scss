@@ -25,3 +25,10 @@ th,td{
 .vw-5rem{
     width: 5rem;
 }
+.vw-7rem{
+    width: 7rem;
+}
+.mdc-data-table__cell, .mdc-data-table__header-cell {
+    padding: 2px 5px !important;
+    text-align: center !important;
+}

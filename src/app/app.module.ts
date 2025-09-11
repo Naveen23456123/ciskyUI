@@ -17,6 +17,8 @@ import { registerLocaleData } from '@angular/common';
 import { ApiPrefixInterceptor } from './core/http/api-prefix.interceptor';
 import localeIn from '@angular/common/locales/en-IN';
 import { LoginModule } from './login/login.module';
+import { ForgotpasswordModule } from './password/forgotpassword/forgotpassword.module';
+import { ResetPasswordModule } from './password/reset-password/reset-password.module';
 
 registerLocaleData(localeIn, 'en-IN');
 
@@ -27,6 +29,8 @@ registerLocaleData(localeIn, 'en-IN');
   ],
   imports: [
     LoginModule,
+    ForgotpasswordModule,
+    ResetPasswordModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,

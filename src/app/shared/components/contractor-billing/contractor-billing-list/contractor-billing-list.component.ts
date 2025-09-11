@@ -60,6 +60,7 @@ export class ContractorBillingListComponent {
                let billingData = response.data.map((data:any)=>({
                 id:data.id,
                 //bill details
+                parentid:data.parentid,
                 billtypeid: data.billtypeid,
                 billcategoryid :data.billcategoryid,
                 billtype: data.billtype,
@@ -229,6 +230,7 @@ export class ContractorBillingListComponent {
     if(element){
     element.id = data.id;
       //bill details
+      element.parentid=data.parentid,
       element.billtypeid= data.billtypeid,
       element.billcategoryid =data.billcategoryid,
       element.billtype= data.billtype,
@@ -280,6 +282,7 @@ export class ContractorBillingListComponent {
     const data1:any = {
       id:data.id,
       //bill details
+      parentid:data.parentid,
       billtypeid: data.billtypeid,
       billcategoryid :data.billcategoryid,
       billtype: data.billtype,

@@ -29,7 +29,7 @@ export class LetterListComponent {
 
   lettersList:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','letterno','project', 'lettertype','subject','from','to',  'letterdate','status','docs','action'];
+  displayedColumns: string[] = ['serial','letterno',  'letterdate','project', 'lettertype','subject','from','to','status','docs','action'];
   dataSource!: MatTableDataSource<any[]>;
  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
     this.dataSource.paginator = paginator;

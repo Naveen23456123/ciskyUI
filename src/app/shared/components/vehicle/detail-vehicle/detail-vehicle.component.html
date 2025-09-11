@@ -10,17 +10,17 @@
             <div class="load-wrap" *ngIf="isLoading">
                 <app-loader [IsLoading]="isLoading"></app-loader>
             </div>
-            <div class="container">
-                <h3 class="sub-heading ">Vehicle Number  : {{vehicleDetails?.number}} </h3>
+            <div class="container mt-0">
+                <h3 class="sub-heading mt-0">Vehicle Number  : {{vehicleDetails?.number}} </h3>
                 <hr class="vw-hr">
                 <div  class="row col-md-12 ml-0">                    
                     <div class="col-md-3">
                     <span class="vw-details-text"> Project</span>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                     <span class="vw-details-val">{{vehicleDetails?.project}}</span>
                     </div>
-                    <div  class="col-md-3">
+                    <div  class="col-md-2">
                     <span class="vw-details-text">Vehicle Name</span>
                     </div>                     
                     <div class="col-md-3">
@@ -30,10 +30,10 @@
                     <div class="col-md-3">
                         <span  class="vw-details-text"> Fixed Km</span>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                     <span class="vw-details-val">{{vehicleDetails?.fixedkm}} </span>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                     <span class="vw-details-text"> KM Per Liter </span>
                     </div>
                     <div class="col-md-3">
@@ -41,12 +41,12 @@
                     </div>      
                     <hr class="vw-hr">              
                     <div class="col-md-3">
-                    <span class="vw-details-text"> Fuel Price </span>
+                    <span class="vw-details-text">Extra Amt./Km After fixed km </span>
                     </div>
-                    <div class="col-md-3">
-                    <span class="vw-details-val">{{vehicleDetails?.fuelprice | formatCurrency}} </span>
-                    </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
+                    <span class="vw-details-val">{{vehicleDetails?.extraamountafterfixedkm | formatCurrency }}  </span>
+                    </div> 
+                    <div class="col-md-2">
                     <span class="vw-details-text">Fixed Bill Amount</span>
                     </div>
                     <div class="col-md-3">
@@ -54,58 +54,89 @@
                     </div>    
                     <hr class="vw-hr">                
                     <div class="col-md-3">
-                    <span class="vw-details-text">Extra Amt./Km After fixed km </span>
+                    <span class="vw-details-text">Start Date</span>
+                    </div>
+                    <div class="col-md-4">
+                    <span class="vw-details-val">{{vehicleDetails?.startdate | formatDate }}  </span>
+                    </div> 
+                    <div class="col-md-2">
+                    <span class="vw-details-text">End Date </span>
                     </div>
                     <div class="col-md-3">
-                    <span class="vw-details-val">{{vehicleDetails?.extraamountafterfixedkm | formatCurrency }}  </span>
+                    <span class="vw-details-val">{{vehicleDetails?.enddate | formatDate }}  </span>
                     </div> 
+                    <hr class="vw-hr">                
+                    <div class="col-md-3">
+                    <span class="vw-details-text">Sunday Duty Amount</span>
+                    </div>
+                    <div class="col-md-4">
+                    <span class="vw-details-val">{{vehicleDetails?.sundaydutyrate | formatCurrency }}  </span>
+                    </div> 
+                    <div class="col-md-2">
+                    <span class="vw-details-text">Night Duty </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{vehicleDetails?.nightdutyrate | formatCurrency }}  </span>
+                    </div> 
+                    <hr class="vw-hr">                
+                    <div class="col-md-3">
+                    <span class="vw-details-text">Hourly Rate</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{vehicleDetails?.hourrate | formatCurrency }}  </span>
+                    </div>
+                    <hr class="vw-hr"> 
+                </div>
+                 <div class="col-md-12 mb-2 mt-2">  
+                    <span class="sub-heading control-div ">Owner Bank Details</span>
+                </div>
+                <div class="row col-md-12">
                     <div class="col-md-3">
                     <span class="vw-details-text"> Bank Name</span>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                     <span class="vw-details-val"> {{vehicleDetails?.bankname  }} </span>
-                    </div>  
-                    <hr class="vw-hr">                  
-                    <div class="col-md-3">
+                    </div>                   
+                    <div class="col-md-2">
                     <span class="vw-details-text"> Account Holder Name</span>
                     </div>
                     <div class="col-md-3">
                     <span class="vw-details-val"> {{vehicleDetails?.accountholdername}} </span>
                     </div> 
+                    <hr class="vw-hr">
                     <div class="col-md-3">
                     <span class="vw-details-text">Account Number</span>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                     <span class="vw-details-val"> {{vehicleDetails?.accountnumber }} </span>
-                    </div>   
-                    <hr class="vw-hr">                 
-                    <div class="col-md-3">
+                    </div>                  
+                    <div class="col-md-2">
                     <span class="vw-details-text"> Mobile Number</span>
                     </div>
                     <div class="col-md-3">
                     <span class="vw-details-val"> {{vehicleDetails?.mobilenumber}} </span>
-                    </div> 
+                    </div>   
+                    <hr class="vw-hr">
                     <div class="col-md-3">
                     <span class="vw-details-text">IFSC Code</span>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                     <span class="vw-details-val"> {{vehicleDetails?.ifsccode }} </span>
-                    </div>   
-                    <hr class="vw-hr">                 
-                    <div class="col-md-3">
+                    </div>                    
+                    <div class="col-md-2">
                     <span class="vw-details-text">PAN Card </span>
                     </div>
                     <div class="col-md-3">
                     <span class="vw-details-val"> {{vehicleDetails?.pancard}} </span>
                     </div>
+                    <hr class="vw-hr">
                     <div class="col-md-3">
                     <span class="vw-details-text">GST Number</span>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                     <span class="vw-details-val"> {{vehicleDetails?.gstnumber }} </span>
-                    </div>     
-                    <hr class="vw-hr">                    
-                    <div class="col-md-3">
+                    </div>                       
+                    <div class="col-md-2">
                     <span class="vw-details-text">Address </span>
                     </div>
                     <div class="col-md-3">

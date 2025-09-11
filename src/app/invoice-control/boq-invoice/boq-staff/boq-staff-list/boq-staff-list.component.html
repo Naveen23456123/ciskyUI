@@ -37,26 +37,38 @@
 
             <ng-container matColumnDef="constperiod">
                 <th mat-header-cell *matHeaderCellDef>Const. Period (MM) </th>
-                <td mat-cell *matCellDef="let row"> {{row.constructionperiod}} </td>
+                <td mat-cell *matCellDef="let row">
+                  <span class="content-center">{{row.constructionperiod}}</span>  
+                </td>
               </ng-container>
           
               <!-- contractName Column -->
               <ng-container matColumnDef="omperiod">
                 <th mat-header-cell *matHeaderCellDef > O&M Period (MM) </th>
-                <td mat-cell *matCellDef="let row"> {{row.oandmperiod}} </td>
+                <td mat-cell *matCellDef="let row" > 
+                  <span class="content-center">{{row.oandmperiod}}</span> 
+                </td>
               </ng-container>       
               <ng-container matColumnDef="manmonth">
                 <th mat-header-cell *matHeaderCellDef > Total (MM) </th>
-                <td mat-cell *matCellDef="let row"> {{row.constructionperiod + row.oandmperiod}} </td>
+                <td mat-cell *matCellDef="let row"> 
+                  <span class="content-center">{{row.constructionperiod + row.oandmperiod}} </span>
+                </td>
               </ng-container>                      
               <ng-container matColumnDef="rate">
-                <th mat-header-cell *matHeaderCellDef > Rate(Rs.) </th>
-                <td mat-cell *matCellDef="let row"> {{row.rate | formatAmount}} </td>
+                <th mat-header-cell *matHeaderCellDef > Rate(INR) </th>
+                <td mat-cell *matCellDef="let row"> 
+                  <span class="content-center">{{row.rate | formatAmount}} </span>
+                </td>
               </ng-container>
               <ng-container matColumnDef="amount">
-                <th mat-header-cell class="amt" *matHeaderCellDef > Amount(Rs.) </th>
-                <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount | formatAmount}} </td>
-                <td mat-footer-cell *matFooterCellDef > {{getkpTotalAmount() | formatCurrency}} </td>
+                <th mat-header-cell class="amt" *matHeaderCellDef > Amount(INR) </th>
+                <td mat-cell class="amt" *matCellDef="let row"> 
+                  <span class="content-center">{{row.totalamount | formatAmount}} </span>
+                </td>
+                <td mat-footer-cell *matFooterCellDef > 
+                  <span class="content-center">{{getkpTotalAmount() | formatCurrency}} </span>
+                </td>
               </ng-container>
               <ng-container matColumnDef="action"  >
                 <th mat-header-cell class="no-print" *matHeaderCellDef > Action </th>
@@ -103,26 +115,38 @@
 
           <ng-container matColumnDef="constperiod">
               <th mat-header-cell *matHeaderCellDef>Const. Period (MM) </th>
-              <td mat-cell *matCellDef="let row"> {{row.constructionperiod}} </td>
+              <td mat-cell *matCellDef="let row"> 
+                <span class="content-center">{{row.constructionperiod}} </span>
+              </td>
             </ng-container>
         
            
             <ng-container matColumnDef="omperiod">
               <th mat-header-cell *matHeaderCellDef > O&M Period (MM) </th>
-              <td mat-cell *matCellDef="let row"> {{row.oandmperiod}} </td>
+              <td mat-cell *matCellDef="let row"> 
+                <span class="content-center">{{row.oandmperiod}} </span>
+              </td>
             </ng-container>       
             <ng-container matColumnDef="manmonth">
               <th mat-header-cell *matHeaderCellDef > Total (MM) </th>
-              <td mat-cell *matCellDef="let row"> {{row.constructionperiod + row.oandmperiod}} </td>
+              <td mat-cell *matCellDef="let row"> 
+                <span class="content-center">{{row.constructionperiod + row.oandmperiod}}</span>
+               </td>
             </ng-container>                      
             <ng-container matColumnDef="rate">
-              <th mat-header-cell *matHeaderCellDef > Rate(Rs.) </th>
-              <td mat-cell *matCellDef="let row"> {{row.rate  | formatAmount}} </td>
+              <th mat-header-cell *matHeaderCellDef > Rate(INR) </th>
+              <td mat-cell *matCellDef="let row"> 
+                <span class="content-center">{{row.rate  | formatAmount}} </span>
+              </td>
             </ng-container>
             <ng-container matColumnDef="amount">
-              <th mat-header-cell class="amt" *matHeaderCellDef > Amount(Rs.) </th>
-              <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount  | formatAmount}} </td>
-              <td mat-footer-cell  *matFooterCellDef > {{getspsTotalAmount() | formatCurrency}} </td>
+              <th mat-header-cell class="amt" *matHeaderCellDef > Amount(INR) </th>
+              <td mat-cell class="amt" *matCellDef="let row"> 
+                <span class="content-center">{{row.totalamount  | formatAmount}}</span>
+               </td>
+              <td mat-footer-cell  *matFooterCellDef > 
+                <span class="content-center">{{getspsTotalAmount() | formatCurrency}}</span>
+               </td>
             </ng-container>
             <ng-container matColumnDef="action">
               <th mat-header-cell class="no-print" *matHeaderCellDef > Action </th>
@@ -167,26 +191,38 @@
 
               <ng-container matColumnDef="constperiod">
                   <th mat-header-cell *matHeaderCellDef>Const. Period (MM) </th>
-                  <td mat-cell *matCellDef="let row"> {{row.constructionperiod}} </td>
+                  <td mat-cell *matCellDef="let row"> 
+                    <span class="content-center">{{row.constructionperiod}}</span>
+                  </td>
                 </ng-container>
             
                 <!-- contractName Column -->
                 <ng-container matColumnDef="omperiod">
                   <th mat-header-cell *matHeaderCellDef > O&M Period (MM) </th>
-                  <td mat-cell *matCellDef="let row"> {{row.oandmperiod}} </td>
+                  <td mat-cell *matCellDef="let row"> 
+                    <span class="content-center">{{row.oandmperiod}} </span>
+                  </td>
                 </ng-container>       
                 <ng-container matColumnDef="manmonth">
                   <th mat-header-cell *matHeaderCellDef > Total (MM) </th>
-                  <td mat-cell *matCellDef="let row"> {{row.constructionperiod + row.oandmperiod}} </td>
+                  <td mat-cell *matCellDef="let row"> 
+                    <span class="content-center">{{row.constructionperiod + row.oandmperiod}}</span>
+                   </td>
                 </ng-container>                      
                 <ng-container matColumnDef="rate">
-                  <th mat-header-cell *matHeaderCellDef > Rate(Rs.) </th>
-                  <td mat-cell *matCellDef="let row"> {{row.rate  | formatAmount}} </td>
+                  <th mat-header-cell *matHeaderCellDef > Rate(INR) </th>
+                  <td mat-cell *matCellDef="let row"> 
+                    <span class="content-center">{{row.rate  | formatAmount}}</span>
+                   </td>
                 </ng-container>
                 <ng-container matColumnDef="amount">
-                  <th mat-header-cell class="amt" *matHeaderCellDef > Amount(Rs.) </th>
-                  <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount  | formatAmount}} </td>
-                  <td mat-footer-cell *matFooterCellDef> {{getssTotalAmount() | formatCurrency}}</td>
+                  <th mat-header-cell class="amt" *matHeaderCellDef > Amount(INR) </th>
+                  <td mat-cell class="amt" *matCellDef="let row"> 
+                    <span class="content-center">{{row.totalamount  | formatAmount}}</span> 
+                  </td>
+                  <td mat-footer-cell *matFooterCellDef> 
+                    <span class="content-center">{{getssTotalAmount() | formatCurrency}}</span>
+                  </td>
                 </ng-container>
                 <ng-container matColumnDef="action">
                   <th mat-header-cell class="no-print" *matHeaderCellDef > Action </th>

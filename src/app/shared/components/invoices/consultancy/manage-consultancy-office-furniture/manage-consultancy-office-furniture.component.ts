@@ -117,8 +117,10 @@ public data: any;
     (this.ofForm.get('controls') as FormArray).controls.forEach((group: AbstractControl, index: number) => {
       const quantityControl = group.get('currentbillmonths');
       if (quantityControl) {
-        quantityControl.valueChanges.subscribe(value => {
-           group.get('currentbillamount')?.setValue(value*(this.boqList.find(x=>x.id==group.get('boqid')?.value).ratepermonth));
+        quantityControl.statusChanges.subscribe(value => {
+          setTimeout(() => {
+            group.get('currentbillamount')?.setValue(quantityControl.value*(this.boqList.find(x=>x.id==group.get('boqid')?.value).ratepermonth));
+          });
         });
       }
     });

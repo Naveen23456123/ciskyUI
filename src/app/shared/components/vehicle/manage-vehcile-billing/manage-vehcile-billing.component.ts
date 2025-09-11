@@ -244,6 +244,7 @@ public data: any;
         formsValue.vehiclename= this.vehicleList.find(x=>x.id== this.vehicleForm.get('vehicleid')?.value).name;
         formsValue.vehicleno= this.vehicleList.find(x=>x.id== this.vehicleForm.get('vehicleid')?.value).number;  
         this.vehicleForm.value.id=null;
+        console.log(this.vehicleForm.value);
         this.vehicleBillingService.createVehicleBilling(this.vehicleForm.value, '')
           .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false; })).subscribe({
             next:(response: any) => {

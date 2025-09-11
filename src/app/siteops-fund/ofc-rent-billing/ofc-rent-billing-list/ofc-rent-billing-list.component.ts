@@ -23,7 +23,7 @@ export class OfcRentBillingListComponent {
 
   ofcBilling:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','ofc','project', 'month', 'year', 'amount','aamount','status', 'action'];
+  displayedColumns: string[] = ['serial','ofc','project', 'period', 'amount','aamount','status', 'action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
@@ -110,7 +110,8 @@ export class OfcRentBillingListComponent {
     this.ofcBilling = info;
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
-    this.resultsLength= this.ofcBilling.length;   
+    this.resultsLength= this.ofcBilling.length;  
+    this.pageSize= this.helperService.getPageSize(); 
   }
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);

@@ -1,4 +1,82 @@
-.mat-mdc-card-content {
-    width: 100% !important;
-  overflow-x: auto !important;
+// // .mat-mdc-card-content {
+// //     width: 100% !important;
+// //   overflow-x: auto !important;
+// // }
+// ::ng-deep .mat-mdc-card {
+//   width: 100%;              /* card takes available width */
+//   max-width: 100%;          /* prevent crossing browser width */
+//   overflow-x: hidden;       /* card itself won't scroll */
+// }
+
+// ::ng-deep .mat-mdc-card-content {
+//   width: 100%;
+//   max-width: 100%;
+//   overflow-x: auto;         /* scroll only inside card */
+// }
+
+// .inv-container {
+//   width: 100%;
+//   max-width: 100%;
+//   overflow-x: auto;         /* keep scroll confined here */
+//   overflow-y: hidden;
+// }
+
+// ::ng-deep .mat-mdc-table {
+//   width: max-content;       /* table expands to content */
+//   min-width: 100%;          /* but never smaller than card */
+// }
+// .inv-container {
+//   //width: 100%;
+//   overflow: auto;
+// }
+
+// ::ng-deep .mat-mdc-table-sticky {
+//   //background: #59abfd;
+//   opacity: 1;
+// }
+
+// // .example-sticky-toggle-group {
+// //   margin: 8px;
+// // }
+
+// // ::ng-deep .mat-column-filler {
+// //   //padding: 0 8px;
+// //   //font-size: 10px;
+// //   text-align: center;
+// // }
+
+// // ::ng-deep .mat-mdc-header-cell, .mat-mdc-footer-cell, .mat-mdc-cell {
+// //   min-width: 20px;
+// //   box-sizing: border-box;
+// // }
+// ::ng-deep .mat-mdc-header-cell,
+// ::ng-deep .mat-mdc-footer-cell,
+// ::ng-deep .mat-mdc-cell {
+//   white-space: nowrap;
+//   padding: 0px 8px;
+//   box-sizing: border-box;
+// }
+// ::ng-deep .mat-mdc-header-row, .mat-mdc-footer-row, .mat-mdc-row {
+//   //min-width: 1920px; /* 24 columns, 80px each */
+// }
+
+// ::ng-deep .mat-mdc-table-sticky-border-elem-top {
+//   border-bottom: 2px solid midnightblue;
+// }
+
+// ::ng-deep .mat-mdc-table-sticky-border-elem-right {
+//   border-left: 2px solid black;
+//   box-shadow: -4px 0 6px -2px rgba(0, 0, 0, 0.3) !important;
+// }
+
+// ::ng-deep .mat-mdc-table-sticky-border-elem-bottom {
+//   border-top: 2px solid midnightblue;
+// }
+
+// ::ng-deep .mat-mdc-table-sticky-border-elem-left {
+//   border-right: 2px solid midnightblue;
+// }
+
+.action-col {
+    min-width: 90px;
 }

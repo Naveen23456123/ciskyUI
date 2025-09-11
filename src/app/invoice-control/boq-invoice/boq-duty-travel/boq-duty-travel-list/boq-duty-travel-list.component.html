@@ -2,7 +2,7 @@
 <mat-card>
     <mat-card-title>
         <h6>IV-Duty Travel to Site (Fixed Costs) (For all Lengths of projects)
-          <app-edit-icon-btn toolTip="Add Description" (clickEvent)="add_desc()" ></app-edit-icon-btn>
+          <app-edit-icon-btn class="desc-btn no-print" toolTip="Add Description" (clickEvent)="add_desc()" ></app-edit-icon-btn>
             <button  class="title-btn float-end no-print" routerLink="dt-create"  type="button"  mat-mini-fab color="primary">
                 <mat-icon>add box</mat-icon> Duty Travel
             </button>
@@ -29,17 +29,25 @@
               <!-- contractName Column -->
               <ng-container matColumnDef="nooftrip">
                 <th mat-header-cell *matHeaderCellDef > Number of minimum Trips </th>
-                <td mat-cell *matCellDef="let row"> {{row.numberofminimumtrips}} </td>
+                <td mat-cell *matCellDef="let row"> 
+                  <span class="content-center">{{row.numberofminimumtrips}}</span> 
+                </td>
               </ng-container>       
                               
               <ng-container matColumnDef="rate">
-                <th mat-header-cell *matHeaderCellDef >Rate per trip (Rs.) </th>
-                <td mat-cell *matCellDef="let row"> {{row.ratepertrip  | formatAmount}} </td>
+                <th mat-header-cell *matHeaderCellDef >Rate per trip (INR) </th>
+                <td mat-cell *matCellDef="let row"> 
+                  <span class="content-center">{{row.ratepertrip  | formatAmount}}</span> 
+                </td>
               </ng-container>
               <ng-container matColumnDef="amount">
-                <th mat-header-cell *matHeaderCellDef > Amount(Rs.) </th>
-                <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount  | formatAmount}} </td>
-                <td mat-footer-cell *matFooterCellDef> {{getTotalAmount() | formatCurrency}}</td>
+                <th mat-header-cell *matHeaderCellDef > Amount(INR) </th>
+                <td mat-cell class="amt" *matCellDef="let row"> 
+                  <span class="content-center">{{row.totalamount  | formatAmount}}</span> 
+                </td>
+                <td mat-footer-cell *matFooterCellDef> 
+                  <span class="content-center">{{getTotalAmount() | formatCurrency}}</span>
+                </td>
               </ng-container>
               <ng-container matColumnDef="action">
                 <th mat-header-cell class="no-print"  *matHeaderCellDef > Action </th>

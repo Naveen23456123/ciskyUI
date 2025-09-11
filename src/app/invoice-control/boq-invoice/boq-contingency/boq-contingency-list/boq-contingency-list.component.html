@@ -2,7 +2,7 @@
     <mat-card-title>
         <h6>X-Contingencies
            
-            <app-edit-icon-btn toolTip="Add Description" (clickEvent)="add_desc()" ></app-edit-icon-btn>
+            <app-edit-icon-btn class="desc-btn no-print" toolTip="Add Description" (clickEvent)="add_desc()" ></app-edit-icon-btn>
             <button  class="title-btn float-end no-print" routerLink="cont-create"  type="button"  mat-mini-fab color="primary">
                 <mat-icon>add box</mat-icon> Contingencies
             </button>
@@ -29,12 +29,16 @@
               <!-- contractName Column -->
               <ng-container matColumnDef="unit">
                 <th mat-header-cell *matHeaderCellDef >	Unit </th>
-                <td mat-cell *matCellDef="let row"> {{row.unit}} </td>
+                <td mat-cell *matCellDef="let row"> {{row.unit}}</td>
               </ng-container>       
               <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef > Amount</th>
-                <td mat-cell class="amt" *matCellDef="let row"> {{row.amount  | formatAmount}} </td>
-                <td mat-footer-cell *matFooterCellDef> {{getTotalAmount() | formatCurrency}}</td>
+                <td mat-cell class="amt" *matCellDef="let row"> 
+                  <span class="content-center">{{row.amount  | formatAmount}}</span> 
+                </td>
+                <td mat-footer-cell *matFooterCellDef> 
+                  <span class="content-center">{{getTotalAmount() | formatCurrency}}</span>
+                </td>
               </ng-container>                      
               
               <ng-container matColumnDef="action">

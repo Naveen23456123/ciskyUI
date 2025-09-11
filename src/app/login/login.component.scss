@@ -46,8 +46,8 @@ mat-form-field{
 ::ng-deep .mdc-button__label{
   font-size: 18px !important;
 }
-.contents{
-      background-color: #27388b;
+.content-data{
+      background-color: #dbdbdb;
 }
 ::ng-deep .mdc-button{
       height: 43px;
@@ -56,4 +56,52 @@ mat-form-field{
   text-decoration: none;
     color: var(--mdc-fab-small-container-color);
     font-weight: 700;
+    cursor: pointer;
+}
+/* Make outer wrapper full height */
+.content {
+  height: 100vh; /* Full height of browser */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure row takes full height */
+.content .row {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+/* Image column should fill height */
+.content .col-md-7 img {
+  height: 90%;
+  width: 100%;
+  object-fit: contain; /* Keeps aspect ratio */
+}
+
+/* Right-side content full height */
+.contents {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+/* Inner box */
+.login {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+}
+.img-content {
+  display: flex;
+  align-items: center;      /* vertical center */
+  justify-content: center;  /* horizontal center */
+  height: 100%;             /* take full height of parent row */
+}
+
+.img-content img {
+  max-width: 90%;   /* decrease size (adjust %) */
+  height: auto;     /* keep aspect ratio */
 }

@@ -12,7 +12,29 @@ export class AuthrizationInterfaceService {
 
   login(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'Login/Login',
+      url: 'Auth/Login',
+      params: false,
+      headers: true,
+      guid: guid,
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApiService.standardService(standardAttribute);
+  }
+  forgotPassword(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Auth/forgot-password',
+      params: false,
+      headers: true,
+      guid: guid,
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApiService.standardService(standardAttribute);
+  }
+  resetPassword(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Auth/reset-password',
       params: false,
       headers: true,
       guid: guid,

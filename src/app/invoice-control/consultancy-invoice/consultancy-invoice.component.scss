@@ -85,3 +85,15 @@
  {
     padding: 8px 10px 10px 10px;   
 }
+::ng-deep .mat-mdc-table th:first-child{
+  min-width: 4em;
+  width: 4em;
+}
+::ng-deep .mdc-data-table__cell, .mdc-data-table__header-cell{
+    padding: 0px 5px !important;
+    text-align: center !important;
+}
+::ng-deep .mdc-data-table__header-cell{
+    padding: 0px 5px !important;
+    text-align: center !important;
+}

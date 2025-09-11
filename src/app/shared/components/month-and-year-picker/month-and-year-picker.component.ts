@@ -60,12 +60,17 @@ export class MonthAndYearPickerComponent implements OnInit {
   constructor(private commonService:CommonService) { }
 
   ngOnInit(): void {   
-    this.diabledNextBtn();
-    if(this.setValueDefault)
-      this.date.setValue(moment());
-    if(this.defaultValue)
-      this.date.setValue(moment(this.defaultValue));
    
+    this.diabledNextBtn();
+    if(this.setValueDefault){
+      this.date.setValue(moment().startOf('month'));
+      console.log(moment().startOf('month').utc());
+    }
+    if(this.defaultValue){
+      this.date.setValue(moment(this.defaultValue));
+      console.log('Inside 2');
+    }
+    console.log(this.date);
     this.onValueChange.emit(this.date.value);
   }
 

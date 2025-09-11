@@ -5,7 +5,7 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { AttachLetterComponent } from '../../letters/attach-letter/attach-letter.component';
-import { LetterEntity, LetterType } from '@app/shared/models/constant.config';
+import { BillType, LetterEntity, LetterType } from '@app/shared/models/constant.config';
 import { ContractorInterfaceService } from '@app/shared/services/external/contractor-interface.service';
 import { finalize, forkJoin, Subscription, take } from 'rxjs';
 import { untilDestroyed } from '@app/core/until-destroyed';
@@ -26,6 +26,7 @@ export class ManageContractorBillingComponent {
   isLoading = true;
   isEdit: boolean = false;
   pageGuid: any;
+  today = new Date();
   title: string='Add';
   billingForm: FormGroup = new FormGroup({});
   deleteBilling=false;
@@ -39,7 +40,10 @@ export class ManageContractorBillingComponent {
   siteRecommPercentage=0;
   hoRecommBillAmount=0;
   hoRecommBillPercentage=0;
+  isIpc=false;
   letterInit=false;
+  projectId="";
+  parentBills:any=[];
   isRecomm = new FormControl(false);
   isApproved = new FormControl(false);
   private subscription: Subscription = new Subscription();
@@ -97,6 +101,7 @@ export class ManageContractorBillingComponent {
       contractorid:[],
       //bill details
       billtypeid: ['',Validators.required],
+      parentid: [''],
       billcategoryid :[,Validators.required],
       billnumber:[,Validators.required],
       billstartdate:[,Validators.required],
@@ -145,7 +150,8 @@ export class ManageContractorBillingComponent {
       this.sessionService.projectEntitySubject$.pipe(take(1),finalize(()=>{
       }),untilDestroyed(this))
       .subscribe((entityData)=>{      
-        if(entityData) {     
+        if(entityData) { 
+          this.projectId= entityData.projectId;    
           this.billingForm.patchValue({
             projectid:entityData.projectId,
             contractorid:entityData.isConsultant ? '' :entityData.contractorId
@@ -263,6 +269,7 @@ export class ManageContractorBillingComponent {
     this.billingForm.patchValue({
       id:data.id,
       //bill details
+      parentid:data.parentid,
       billtypeid: data.billtypeid,
       billcategoryid :data.billcategoryid,
       billnumber:data.billnumber,
@@ -309,6 +316,8 @@ export class ManageContractorBillingComponent {
     this.handleBillChange();
     this.handleSiteBillChange();
     this.handleHoBillChange();
+    this.billTypeChange();
+
   }
 
   handleBillChange(){
@@ -440,6 +449,25 @@ export class ManageContractorBillingComponent {
             }
       });
     }
-
+  billTypeChange(){
+    const control = this.billingForm.get('parentid');
+    control?.clearValidators();
+    this.isIpc=false;
+    let typeName = this.billTypeList.find(x=>x.id==this.billingForm.value.billtypeid)?.name;
+    if(typeName?.toLocaleLowerCase()== BillType.IPC){
+    this.isIpc=true;
+    control?.setValidators([Validators.required]);
+    this.contratorService.getContractorBillPartialByParentId({
+        projectid:this.projectId,
+        billtypeid:this.billTypeList.find(x=>x.name.toLowerCase()==BillType.SPS)?.id,
+        },'').pipe(finalize(()=> this.isLoading=false))
+        .subscribe((response:any)=>{
+          if(response && response.success){
+            this.parentBills= response.data;
+          }
+        })
+    }
+    control?.updateValueAndValidity();
+  }
 
 }

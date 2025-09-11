@@ -25,6 +25,7 @@ export class ContractorBillingDetailsComponent {
       disableClose: false,
       data: {},
     };
+  pdfStart=false;
  @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
   constructor(private sessionService : SessionService,private contractorBillingService:ContractorInterfaceService,
     private pdfService:GeneratePdfService, private commonService:CommonService
@@ -45,6 +46,7 @@ export class ContractorBillingDetailsComponent {
             this.billingList = response.data.map((data:any)=>({
             id:data.id,
             //bill details
+            parentid:data.parentid,
             billtypeid: data.billtypeid,
             billcategoryid :data.billcategoryid,
             billtype: data.billtype,
@@ -91,6 +93,24 @@ export class ContractorBillingDetailsComponent {
             hoAttachment:data.hoAttachment,
             horecommletterid:data.horecommletterid
           })); 
+          const lookup: { [id: string]: any } = {};
+          this.billingList.forEach(item => {
+            lookup[item.id] = { ...item, children: [] };
+          });
+          const tree = this.billingList
+          .map(item => {
+            if (item.parentid) {
+              const parent = lookup[item.parentid];
+              if (parent) {
+                parent.child = lookup[item.id]; 
+              }
+              return null; 
+            } else {
+              return lookup[item.id]; 
+            }
+          })
+          .filter(item => item !== null)
+           this.billingList= tree;
           }
         });
       }
@@ -113,17 +133,20 @@ export class ContractorBillingDetailsComponent {
   ngOnDestroy(){
     this.subscription.unsubscribe();
   }
-    download(){
-      this.pdfService.generateAndGetPDF(this.pdfContent, 'ProfitLoss_Commulative.pdf').then((pdf) => {
-        if (pdf) {
-          const config = this.defaultdialogoptions;
-          config.minWidth='80vw';
-          config.data = {
-            url:false,
-            element:pdf
-          };
-          this.dialog.open(PdfViewerComponent,config);
-        }
-      });
-    }
+
+  download(){
+    this.pdfStart=true;
+    this.pdfService.generateAndGetPDF(this.pdfContent, 'ProfitLoss_Commulative.pdf').then((pdf) => {
+      if (pdf) {
+        this.pdfStart=false;        
+        const config = this.defaultdialogoptions;
+        config.minWidth='80vw';
+        config.data = {
+          url:false,
+          element:pdf
+        };
+        this.dialog.open(PdfViewerComponent,config);
+      }
+    });
+  }
 }

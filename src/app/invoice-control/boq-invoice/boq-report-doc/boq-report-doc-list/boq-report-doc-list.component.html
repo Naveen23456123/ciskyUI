@@ -2,7 +2,7 @@
 <mat-card>
     <mat-card-title>
         <h6>VIII-Reports and Document Printing
-          <app-edit-icon-btn toolTip="Add Description" (clickEvent)="add_desc()" ></app-edit-icon-btn>
+          <app-edit-icon-btn class="desc-btn no-print" toolTip="Add Description" (clickEvent)="add_desc()" ></app-edit-icon-btn>
             <button  class="title-btn float-end no-print" routerLink="rd-create"   type="button"  mat-mini-fab color="primary">
                 <mat-icon>add box</mat-icon> Report & Doc
             </button>
@@ -29,24 +29,36 @@
               <!-- contractName Column -->
               <ng-container matColumnDef="noofreport">
                 <th mat-header-cell *matHeaderCellDef >No. of Reports </th>
-                <td mat-cell *matCellDef="let row"> {{row.numberofreport}} </td>
+                <td mat-cell *matCellDef="let row"> 
+                  <span class="content-center">{{row.numberofreport}}</span> 
+                </td>
               </ng-container>       
               <ng-container matColumnDef="noofcopy">
                 <th mat-header-cell *matHeaderCellDef >No. of Copies/Report </th>
-                <td mat-cell *matCellDef="let row"> {{row.numberofcopiesperreport}} </td>
+                <td mat-cell *matCellDef="let row"> 
+                  <span class="content-center">{{row.numberofcopiesperreport}}</span> 
+                </td>
               </ng-container>                      
               <ng-container matColumnDef="totalcopy">
                 <th mat-header-cell *matHeaderCellDef > Total Nos. of copies </th>
-                <td mat-cell *matCellDef="let row"> {{row.numberofreport*row.numberofcopiesperreport}} </td>
+                <td mat-cell *matCellDef="let row"> 
+                  <span class="content-center">{{row.numberofreport*row.numberofcopiesperreport}}</span> 
+                </td>
               </ng-container> 
               <ng-container matColumnDef="ratepercopy">
-                <th mat-header-cell *matHeaderCellDef > Rate per Copy (Rs.) </th>
-                <td mat-cell *matCellDef="let row"> {{row.ratepercopy | formatAmount}} </td>
+                <th mat-header-cell *matHeaderCellDef > Rate per Copy (INR) </th>
+                <td mat-cell *matCellDef="let row"> 
+                  <span class="content-center">{{row.ratepercopy | formatAmount}}</span> 
+                </td>
               </ng-container>
               <ng-container matColumnDef="amount">
-                <th mat-header-cell *matHeaderCellDef > Amount (Rs.) </th>
-                <td mat-cell class="amt" *matCellDef="let row"> {{row.totalamount  | formatAmount}} </td>
-                <td mat-footer-cell *matFooterCellDef>{{ getTotalAmount() | formatCurrency}} </td>
+                <th mat-header-cell *matHeaderCellDef > Amount (INR) </th>
+                <td mat-cell class="amt" *matCellDef="let row"> 
+                  <span class="content-center">{{row.totalamount  | formatAmount}}</span> 
+                </td>
+                <td mat-footer-cell *matFooterCellDef>
+                  <span class="content-center">{{ getTotalAmount() | formatCurrency}}</span> 
+                </td>
               </ng-container>
               <ng-container matColumnDef="action">
                 <th mat-header-cell class="no-print"  *matHeaderCellDef > Action </th>

@@ -2,7 +2,7 @@
     <mat-card *ngIf="!deleteVehicle">        
         <h3 mat-dialog-title class="justify-content-center">{{title}}</h3>
         <mat-dialog-content class="mat-typography">
-        <mat-card-content>
+        <mat-card-content >
             <div class="load-wrap" *ngIf="isLoading">
                 <app-loader [IsLoading]="isLoading"></app-loader>
             </div>
@@ -10,11 +10,11 @@
                 <!-- <form [formGroup]="organizationForm" > -->
                 <form [formGroup]="vehicleForm" >
                     <div class="row control-div">
-                        <div class="col-md-4" *ngIf="!isProject">                           
+                        <div class="col-md-3" *ngIf="!isProject">                           
                             <app-project-control (onValueChange)="projectChange($event)"
                             [defaultValue]="vehicleForm.get('projectid')?.value" ></app-project-control>
                         </div> 
-                        <!-- <div class="col-md-4">
+                        <!-- <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>BOQ</mat-label>
                                 <input matInput formControlName="boqId">
@@ -22,43 +22,55 @@
                             </mat-form-field>
                         </div>  -->
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Vehicle Name</mat-label>
                                 <input matInput formControlName="name">
                                 <mat-error>Please provide Vehicle Name.</mat-error>
                             </mat-form-field>
                         </div> 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Vehicle Number</mat-label>
                                 <input matInput formControlName="number">
                                 <mat-error>Please provide Vehcicle Number.</mat-error>
                             </mat-form-field>
                         </div> 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Fixed Km</mat-label>
                                 <input type="number" matInput formControlName="fixedkm">
                                 <mat-error>Please provide fixed KM.</mat-error>
                             </mat-form-field>
                         </div> 
-
-                        <div class="col-md-4">
+                            <div class="col-md-3">
+                                <mat-form-field class="example-full-width">
+                                <mat-label>Start Date</mat-label>
+                                <input matInput  formControlName="startdate" [matDatepicker]="startdate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="startdate"></mat-datepicker-toggle>
+                                <mat-datepicker #startdate></mat-datepicker>
+                                <mat-error>Please select Date</mat-error>
+                              </mat-form-field>
+                            </div> 
+                            <div class="col-md-3">
+                                <mat-form-field class="example-full-width">
+                                <mat-label>End Date</mat-label>
+                                <input matInput  formControlName="enddate" [matDatepicker]="enddate">
+                                
+                                <mat-datepicker-toggle matIconSuffix [for]="enddate"></mat-datepicker-toggle>
+                                <mat-datepicker #enddate></mat-datepicker>
+                                <mat-error>Please select  Date</mat-error>
+                              </mat-form-field>
+                            </div> 
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>KM Per Liter</mat-label>
                                 <input type="number" matInput formControlName="kmperliter">
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div> 
-                        <div class="col-md-4">
-                            <mat-form-field>
-                                <mat-label>Fuel Price</mat-label>
-                                <input type="number" matInput formControlName="fuelprice">
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Fixed Bill Amount</mat-label>
                                 <input type="number" matInput formControlName="fixedbillamount">
@@ -66,23 +78,51 @@
                             </mat-form-field>
                         </div> 
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Extra Amount Per KM After Fixed KM</mat-label>
                                 <input type="number" matInput formControlName="extraamountafterfixedkm">
                                 <mat-error>Pleae provide extra KM amount.</mat-error>
                             </mat-form-field>
                         </div> 
+                    
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Sunday Duty Amount</mat-label>
+                                <input type="number" matInput formControlName="sundaydutyrate">
+                                <mat-error>Please provide Amount.</mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Night Duty Amount</mat-label>
+                                <input type="number" matInput formControlName="nightdutyrate">
+                                <mat-error>Please provide Amount.</mat-error>
+                            </mat-form-field>
+                        </div> 
+
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Hourly Amount</mat-label>
+                                <input type="number" matInput formControlName="hourrate">
+                                <mat-error>Pleae provide Amount.</mat-error>
+                            </mat-form-field>
+                        </div> 
                     </div>
+                    <div class="col-md-12 ">  
+                        <span class="sub-heading control-div ">Owner Bank Details</span>
+                    </div>
+                    <hr>
                     <div class="row ">
-                        <div class="col-md-4">
+                        
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Bank Name</mat-label>
                                 <input matInput formControlName="bankname">
                                 <mat-error>Please provide Bank Name.</mat-error>
                             </mat-form-field>
                         </div> 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Account Holder Name</mat-label>
                                 <input matInput formControlName="accountholdername">
@@ -90,42 +130,42 @@
                             </mat-form-field>
                         </div> 
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Account Number</mat-label>
                                 <input type="number" matInput formControlName="accountnumber">
                                 <mat-error>Please provide Account Number.</mat-error>
                             </mat-form-field>
                         </div> 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Mobile Number</mat-label>
                                 <input type="number" matInput formControlName="mobilenumber">
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div> 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>IFSC Code</mat-label>
                                 <input matInput formControlName="ifsccode">
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div> 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>PAN Card</mat-label>
                                 <input matInput formControlName="pancard">
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div> 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>GST Number</mat-label>
                                 <input matInput formControlName="gstnumber">
                                 <mat-error>Please provide GST No.</mat-error>
                             </mat-form-field>
                         </div> 
-                        <div class="col-md-8">
+                        <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Address</mat-label>
                                 <textarea rows="1" matInput formControlName="address"></textarea>

@@ -35,20 +35,6 @@ export class LoginComponent {
   submit(){
     console.log('submit');
     this.isBtnClicked=true;
-    //this.sessionService.setOrganization({id:'680dd39c3682904bdd6e9aff'});
-    //this.sessionService.setUser({employeeid:'681f8c18b344c914ebfb58d7'});
-    // this.authService.login(this.loginform.value,'').pipe(finalize(()=>{ this.isBtnClicked=false})).subscribe((response:any)=>{
-    //   console.log(response);
-    //   if(response && response.success){
-    //     localStorage.setItem('auth_token', response.data.token);
-    //     this.sessionService.setOrganization({id:response.data.orgid,sectors:response.data.sectors});
-    //      this.sessionService.setUser({employeeid:response.data.userid,modules:response.data.modules  });
-    //     this.router.navigate(['/dashboard']);
-    //   }
-    //   else{
-    //     this.notifyBarService.showsnackbar("Please provide correct Email Id and Password");
-    //   }
-    // })
     this.authService.login(this.loginform.value, '')
     .pipe(finalize(() => {  this.isBtnClicked = false;}))
     .subscribe({
@@ -79,6 +65,6 @@ export class LoginComponent {
     
   }
   onForgotPassword(){
-    this.isForgotPassword=true;
+    this.router.navigate(['/forgot-password']);
   }
 }

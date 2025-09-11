@@ -1,0 +1,12 @@
+<!-- <div *ngIf="isLoading" class="pdf-loader-popup">
+  <div class="pdf-loader-content">
+    <mat-spinner></mat-spinner>
+    <p>Loading PDF, please wait...</p>
+  </div>
+</div> -->
+
+<ngx-extended-pdf-viewer useBrowserLocale="true" [textLayer]="true" 
+[showUnverifiedSignatures]="true"
+(pdfLoadingStarts)="onPdfLoading(true)"
+(pdfLoadingEnds)="onPdfLoading(false)"
+[src]="pdfFile"></ngx-extended-pdf-viewer>

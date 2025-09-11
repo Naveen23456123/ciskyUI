@@ -6,17 +6,26 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class FormatCurrencyPipe implements PipeTransform {
 
-  transform(val: string|number) {
+  // transform(val: string|number) {    
+  //   return new Intl.NumberFormat('en-IN', {
+  //     style: 'currency',
+  //     currency: 'INR',
+  //     minimumFractionDigits: 2,
+  //   }).format(Number(val===''?0:val));
+  // }
+  transform(val: string | number | null | undefined): string {
+    const num = Number(val);
 
-    // if (typeof val === 'string') {
-    //   val = val.split(' ')[0];
-    // }
-    
+    if (val === null || val === undefined || val === '' || isNaN(num)) {
+      return '₹0.00'; 
+    }
+
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
       minimumFractionDigits: 2,
-    }).format(Number(val===''?0:val));
+      maximumFractionDigits: 2
+    }).format(num);
   }
 }
 

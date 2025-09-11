@@ -2,106 +2,151 @@
 <mat-card>
     <mat-card-title>      
         <div class="no-print  d-flex justify-content-end">           
-            <app-download-pdf (clickEvent)="download()" ></app-download-pdf>                           
+            <app-download-pdf *ngIf="!isLoading"  (clickEvent)="download()" ></app-download-pdf>                           
         </div>
         </mat-card-title>
-        <div  #pdfContent id="pdfContent" >
-        
-        <div class="container mt-3" *ngFor="let data of billingList">
-        <table class="table table-bordered align-middle text-center">
-            <thead class="table-light">
-                <tr>
-                <th colspan="1" class="align-middle mat-mdc-header-cell">Bill Period</th>
-                <th class="mat-mdc-header-cell" colspan="6">{{(data.billstartdate| formatDate) +' - '+ (data.billenddate | formatDate)}}</th>
-            </tr>
-            <tr>
-                <th class="mat-mdc-header-cell align-middle" rowspan="2" >Description</th>
-                <th class="mat-mdc-header-cell" colspan="3">Provisional Payment</th>
-                <th class="mat-mdc-header-cell" colspan="3">Balance Payment</th>
-            </tr>
-            <tr>
-                <th class="mat-mdc-header-cell">Submitted</th>
-                <th class="mat-mdc-header-cell">Recommended</th>
-                <th class="mat-mdc-header-cell">Released</th>
-                <th class="mat-mdc-header-cell">Submitted</th>
-                <th class="mat-mdc-header-cell">Recommended</th>
-                <th class="mat-mdc-header-cell">Released</th>
-            </tr>
-            </thead>
-            <tbody class="text-start">
-            <tr>
-                <td>Bill Date</td>
-                <td>{{data.billsubmitdate | formatDate}}</td>
-                <td>{{data.sitebillrecommbilldate | formatDate}}</td>
-                <td>{{data.horecommbilldate | formatDate}}</td>
-                <td colspan="3"></td>
-            </tr>
-            <tr>
-                <td>Percentage</td>
-                <td>{{data.billPercentage}}</td>
-                <td>{{data.billPercentage}}</td>
-                <td>{{data.billPercentage}}</td>
-                <td colspan="3"></td>
-            </tr>
-            <tr class="fw-bold">
-                <td><em>Work Done Amount</em></td>
-                <td>{{data.billworkdoneamount | formatCurrency}}</td>
-                <td>{{data.sitebillworkdoneamount | formatCurrency}}</td>
-                <td>{{data.howorkdoneamount | formatCurrency}}</td>
-                <td colspan="3"></td>
-            </tr>
-            <tr>
-                <td>GST</td>
-                <td>{{data.billgstamount | formatCurrency}}</td>
-                <td>{{data.sitebillgstamount | formatCurrency}}</td>
-                <td>{{data.hogstamount | formatCurrency}}</td>
-                <td colspan="3"></td>
-            </tr>
-            <tr>
-                <td>Advances Payment (Mobilisation/Machinery)</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td colspan="3"></td>
-            </tr>
-            <tr>
-                <td>Withheld Amount</td>
-                <td>-</td>
-                <td>{{data.sitebillwithheldamount}}</td>
-                <td>{{data.howithheldamount}}</td>
-                <td colspan="3"></td>
-            </tr>
-            <tr>
-                <td>Released Withheld Amount</td>
-                <td>-</td>
-                <td>{{data.sitebillreleasedwithheldamount}}</td>
-                <td>{{data.horeleasedwithheldamount}}</td>
-                <td colspan="3"></td>
-            </tr>
-            <tr>
-                <td>Recover Amount</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td colspan="3"></td>
-            </tr>
-            <tr>
-                <td>Liquidated Damages Amount</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td colspan="3"></td>
-            </tr>
-            <tr class="fw-bold">
-                <td><em>Payable Amount</em></td>
-                <td>{{(data.billworkdoneamount-data.billgstamount) | formatCurrency}}</td>
-                <td>{{data.sitebillworkdoneamount-data.sitebillgstamount-data.sitebillwithheldamount-data.sitebillreleasedwithheldamount | formatCurrency}}</td>
-                <td>{{data.howorkdoneamount-data.hogstamount-data.howithheldamount-data.horeleasedwithheldamount | formatCurrency}}</td>
-                <td colspan="3"></td>
-            </tr>
-            </tbody>
-        </table>
-        </div>
-        </div>
+        <ng-container *ngIf=" isLoading; else checkNoData">
+            <app-empty-table-skltn></app-empty-table-skltn>
+          </ng-container>
+          <ng-template #checkNoData>
+            <ng-container *ngIf="billingList?.length === 0; else showTable">
+              <app-no-data message="No Billing found at this moment !!"></app-no-data>
+            </ng-container>
+          </ng-template>
+          <ng-template #showTable>
+            <div  #pdfContent id="pdfContent" >
+                <div class="container mt-3" *ngFor="let data of billingList">
+                <table class="table table-bordered align-middle text-center">
+                    <thead class="table-light">
+                        <tr>
+                        <th colspan="1" class="align-middle mat-mdc-header-cell">Bill Period</th>
+                        <th class="mat-mdc-header-cell" colspan="6">{{(data.billstartdate| formatDate) +' - '+ (data.billenddate | formatDate)}}</th>
+                    </tr>
+                    <tr>
+                        <th class="mat-mdc-header-cell align-middle" rowspan="2" >Description</th>
+                        <th class="mat-mdc-header-cell" colspan="3"><b>{{ data.billtype | uppercase }}</b> - Provisional Payment</th>
+                        <th class="mat-mdc-header-cell" colspan="3" *ngIf="!data.child">Balance Payment</th>
+                        <th class="mat-mdc-header-cell" colspan="3" *ngIf="data.child"><b>{{ data.child.billtype | uppercase }}</b> - Balance Payment</th>
+                    </tr>
+                    <tr>
+                        <th class="mat-mdc-header-cell">Submitted</th>
+                        <th class="mat-mdc-header-cell">Recommended</th>
+                        <th class="mat-mdc-header-cell">Released</th>
+                        <th class="mat-mdc-header-cell">Submitted</th>
+                        <th class="mat-mdc-header-cell">Recommended</th>
+                        <th class="mat-mdc-header-cell">Released</th>
+                    </tr>
+                    </thead>
+                    <tbody class="text-start">
+                    <tr>
+                        <td>Bill Date</td>
+                        <td>{{data.billsubmitdate | formatDate}}</td>
+                        <td>{{data.sitebillrecommbilldate | formatDate}}</td>
+                        <td>{{data.horecommbilldate | formatDate}}</td>
+                        <td colspan="3" *ngIf="!data.child"></td>
+                        <ng-container *ngIf="data.child">
+                            <td>{{data.billsubmitdate | formatDate}}</td>
+                            <td>{{data.sitebillrecommbilldate | formatDate}}</td>
+                            <td>{{data.horecommbilldate | formatDate}}</td>
+                        </ng-container>
+                    </tr>
+                    <tr>
+                        <td>Percentage</td>
+                        <td>{{data.billPercentage}}</td>
+                        <td>{{data.billPercentage}}</td>
+                        <td>{{data.billPercentage}}</td>
+                        <td colspan="3" *ngIf="!data.child"></td>
+                        <ng-container *ngIf="data.child">
+                        <td>{{ data.child.billPercentage }}</td>
+                        <td>{{ data.child.billPercentage }}</td>
+                        <td>{{ data.child.billPercentage }}</td>
+                        </ng-container>
+                    </tr>
+                    <tr class="fw-bold">
+                        <td><em>Work Done Amount</em></td>
+                        <td>{{data.billworkdoneamount | formatCurrency}}</td>
+                        <td>{{data.sitebillworkdoneamount | formatCurrency}}</td>
+                        <td>{{data.howorkdoneamount | formatCurrency}}</td>
+                        <td colspan="3" *ngIf="!data.child"></td>
+                        <ng-container *ngIf="data.child">
+                            <td>{{data.child.billworkdoneamount | formatCurrency}}</td>
+                            <td>{{data.child.sitebillworkdoneamount | formatCurrency}}</td>
+                            <td>{{data.child.howorkdoneamount | formatCurrency}}</td>
+                        </ng-container>
+                    </tr>
+                    <tr>
+                        <td>GST</td>
+                        <td>{{data.billgstamount | formatCurrency}}</td>
+                        <td>{{data.sitebillgstamount | formatCurrency}}</td>
+                        <td>{{data.hogstamount | formatCurrency}}</td>
+                        <td colspan="3" *ngIf="!data.child"></td>
+                        <ng-container *ngIf="data.child">
+                            <td>{{data.child.billgstamount | formatCurrency}}</td>
+                            <td>{{data.child.sitebillgstamount | formatCurrency}}</td>
+                            <td>{{data.child.hogstamount | formatCurrency}}</td>
+                        </ng-container>
+                    </tr>
+                    <tr>
+                        <td>Advances Payment (Mobilisation/Machinery)</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td colspan="3"></td>
+                    </tr>
+                    <tr>
+                        <td>Withheld Amount</td>
+                        <td>-</td>
+                        <td>{{data.sitebillwithheldamount | formatCurrency}}</td>
+                        <td>{{data.howithheldamount | formatCurrency}}</td>
+                        <td colspan="3" *ngIf="!data.child"></td>
+                        <ng-container *ngIf="data.child">
+                            <td>-</td>
+                            <td>{{data.child.sitebillwithheldamount | formatCurrency}}</td>
+                            <td>{{data.child.howithheldamount | formatCurrency}}</td>
+                        </ng-container>
+                    </tr>
+                    <tr>
+                        <td>Released Withheld Amount</td>
+                        <td>-</td>
+                        <td>{{data.sitebillreleasedwithheldamount | formatCurrency}}</td>
+                        <td>{{data.horeleasedwithheldamount | formatCurrency}}</td>
+                        <td colspan="3" *ngIf="!data.child"></td>
+                        <ng-container *ngIf="data.child">
+                            <td>-</td>
+                            <td>{{data.child.sitebillreleasedwithheldamount | formatCurrency}}</td>
+                            <td>{{data.child.horeleasedwithheldamount | formatCurrency}}</td>
+                        </ng-container>
+                    </tr>
+                    <tr>
+                        <td>Recover Amount</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td colspan="3"></td>
+                    </tr>
+                    <tr>
+                        <td>Liquidated Damages Amount</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td colspan="3"></td>
+                    </tr>
+                    <tr class="fw-bold">
+                        <td><em>Payable Amount</em></td>
+                        <td>{{(data.billworkdoneamount-data.billgstamount) | formatCurrency}}</td>
+                        <td>{{(data.sitebillworkdoneamount-data.sitebillgstamount-data.sitebillwithheldamount-data.sitebillreleasedwithheldamount) | formatCurrency}}</td>
+                        <td>{{(data.howorkdoneamount-data.hogstamount-data.howithheldamount-data.horeleasedwithheldamount) | formatCurrency}}</td>
+                        <td colspan="3" *ngIf="!data.child"></td>
+                        <ng-container *ngIf="data.child">
+                            <td>{{(data.child.billworkdoneamount-data.child.billgstamount) | formatCurrency}}</td>
+                            <td>{{(data.child.sitebillworkdoneamount-data.child.sitebillgstamount-data.child.sitebillwithheldamount-data.child.sitebillreleasedwithheldamount) | formatCurrency}}</td>
+                            <td>{{(data.child.howorkdoneamount-data.child.hogstamount-data.child.howithheldamount-data.child.horeleasedwithheldamount) | formatCurrency}}</td>
+                        </ng-container>
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </ng-template>
 </mat-card>
 </div>

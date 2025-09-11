@@ -25,6 +25,20 @@ export class ValidatorService {
       }
     }
   }
+  public passwordMatchValidator(passwordField: string, confirmPasswordField: string): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+      const password = formGroup.get(passwordField)?.value;
+      const confirmPassword = formGroup.get(confirmPasswordField)?.value;
+
+      if (password && confirmPassword && password !== confirmPassword) {
+        formGroup.get(confirmPasswordField)?.setErrors({ passwordMismatch: true });
+        return { passwordMismatch: true };
+      } else {
+        formGroup.get(confirmPasswordField)?.setErrors(null);
+        return null;
+      }
+    };
+  }
   public validNumeric = (c: FormControl) => {
     // If a field is empty, it shold be considered valid.
     // If empty is not valid, the required validator should be used in addition

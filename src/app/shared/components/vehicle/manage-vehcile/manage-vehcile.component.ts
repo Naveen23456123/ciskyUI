@@ -7,6 +7,7 @@ import { ProjectInterfaceService } from '@app/shared/services/external/project-i
 import { VehicleInterfaceService } from '@app/shared/services/external/vehicle-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
+import moment from 'moment';
 import { finalize, Subscription, take } from 'rxjs';
 
 @Component({
@@ -69,11 +70,16 @@ public data: any;
       companyid :[],
       projectid :[],
       boqId:[],
+      startdate:[,Validators.required],
+      enddate:[,Validators.required],
       name:[,Validators.required],
       number:[,Validators.required],
       fixedkm:[,Validators.required],
       kmperliter:[],
       fuelprice:[],
+      sundaydutyrate:[,Validators.required],
+      nightdutyrate:[,Validators.required],
+      hourrate:[,Validators.required],
       fixedbillamount:[,Validators.required],
       extraamountafterfixedkm:[,Validators.required],
       bankname:[,Validators.required],
@@ -122,7 +128,12 @@ public data: any;
       projectid : data.projectid,
       number : data.number,
       name: data.name,
+      startdate:data.startdate,
+      enddate:data.enddate,
       fixedkm : data.fixedkm,
+      sundaydutyrate : data.sundaydutyrate,
+      nightdutyrate : data.nightdutyrate,
+      hourrate : data.hourrate,
       kmperliter : data.kmperliter,
       fuelprice : data.fuelprice,
       fixedbillamount: data.fixedbillamount,
@@ -182,7 +193,7 @@ public data: any;
     this.isBtnClicked=true; 
     let formData = new FormData(); 
     Object.entries(this.vehicleForm.controls).forEach(([key, value]) => {
-      if(key!='files'){          
+      if(key!='files' && key!='startdate' && key!='enddate'){          
       if (value.value != null) {
         formData.append(key, value.value);
       } else {
@@ -190,6 +201,8 @@ public data: any;
       }
     }
   });
+    formData.append('startdate', moment(this.vehicleForm.controls['startdate']?.value).toISOString());
+    formData.append('enddate', moment(this.vehicleForm.controls['enddate']?.value).toISOString());
     let formsValue= this.vehicleForm.value;
     formsValue.project= this.projectName;
     if (this.isEdit) {

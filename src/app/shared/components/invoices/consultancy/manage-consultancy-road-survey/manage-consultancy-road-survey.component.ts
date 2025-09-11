@@ -118,8 +118,10 @@ public data: any;
     (this.rsForm.get('controls') as FormArray).controls.forEach((group: AbstractControl, index: number) => {
       const quantityControl = group.get('currentbillkm');
       if (quantityControl) {
-        quantityControl.valueChanges.subscribe(value => {
-           group.get('currentbillamount')?.setValue(value*(this.boqList.find(x=>x.id==group.get('boqid')?.value).ratepersurvey));
+        quantityControl.statusChanges.subscribe(value => {
+          setTimeout(() => {
+            group.get('currentbillamount')?.setValue(quantityControl.value*(this.boqList.find(x=>x.id==group.get('boqid')?.value).ratepersurvey));
+          });
         });
       }
     });

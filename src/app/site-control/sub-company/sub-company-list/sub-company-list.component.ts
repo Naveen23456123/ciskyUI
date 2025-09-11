@@ -84,10 +84,12 @@ export class SubCompanyListComponent {
   }
 
   private updateTable(info: any) {
-    this.subCompanies = info;
-    this.dataSource = new MatTableDataSource<any>(info);
+    this.subCompanies = info;    
+    this.dataSource = new MatTableDataSource<any>(this.subCompanies);
     this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
-    this.resultsLength= this.subCompanies.length;   
+    this.resultsLength= this.subCompanies.length; 
+    this.pageSize= this.helperService.getPageSize();
+  
   }
 
   updateRowData(data: any) {

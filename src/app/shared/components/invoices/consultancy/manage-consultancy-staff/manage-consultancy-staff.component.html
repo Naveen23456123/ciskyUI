@@ -33,7 +33,7 @@
                                     <div class="col-md-2">                       
                                         <mat-form-field>
                                             <mat-label>Actual Month</mat-label>
-                                            <input matInput type="number" formControlName="currentbillmonths">
+                                            <input matInput type="number" formControlName="currentbillmonths" [appDecimalLimit]="'INVOICE'">
                                             <mat-error *ngIf="item.get('currentbillmonths')?.hasError('required')">Please provide month</mat-error>
                                             <mat-error *ngIf="item.get('currentbillmonths')?.hasError('min')">
                                                 Minimum allowed is 0
