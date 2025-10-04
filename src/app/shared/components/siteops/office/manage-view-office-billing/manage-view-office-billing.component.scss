@@ -1,0 +1,28 @@
+.mat-mdc-cell,.mat-mdc-header-cell{
+    text-align: center;
+}
+.w-40{
+    width: 40%;
+}
+.w-5{
+    width: 5%;
+}
+.w-25{
+    width: 25%;
+}
+.w-15{
+    width: 15%;
+}
+:host .mdc-data-table__cell, .mdc-data-table__header-cell
+ {
+    padding: 0px !important;
+}
+.report-head {
+    padding: 8px 10px 10px 10px;
+}
+.report-heading {
+    font-weight: 500;
+}
+.mat-mdc-table {
+    background-color: transparent;
+}

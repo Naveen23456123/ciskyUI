@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ApprovalStatus } from '@app/shared/models/constant.config';
+import { CommonService } from '@app/shared/services/common.service';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
 import { ProjectInterfaceService } from '@app/shared/services/external/project-interface.service';
 import { VehicleBillingInterfaceService } from '@app/shared/services/external/vehicle-billing-interface.service';
@@ -31,15 +32,18 @@ public data: any;
   projectName:any;
   deleteVehicle=false;
   isBtnClicked=false;
-  isAllProject = new FormControl(true);
-  isAllVehicle = new FormControl(true);
+  isAllProject = new FormControl(false);
+  isAllVehicle = new FormControl(false);
   isProjectrequired:boolean=false;
   isAllVehicleDisabled=false;
+  billObj:any;
+  remarkcontrol:any;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageVehcileBillingComponent>, private formbuilder: FormBuilder,
     private sessionservice: SessionService,  private router: Router,
     private vehicleBillingService: VehicleBillingInterfaceService,private cdRef: ChangeDetectorRef,
-    private projectService: ProjectInterfaceService, private vehicleService:VehicleInterfaceService){
+    private commonService: CommonService, private vehicleService:VehicleInterfaceService,
+  private billingService:VehicleBillingInterfaceService){
       this.data = data || {};
   }
   
@@ -79,14 +83,20 @@ public data: any;
     this.vehicleForm = this.formbuilder.group({ 
       id: [''],
       projectid :[,Validators.required],
+      project:[],
+      vehicle:[],
       companyid :[],
       statusid:[],
       vehicleid:[,Validators.required],
-      ownername:[],
       moduleid:[this.data.pageGuid],
       monthandyear:[],
-      enddate:[,Validators.required],
       extrakm:[],
+      additionalcharges:[],
+      remarks:[],
+      sundaycharges:[],
+      totalreading:[],
+      nightcharges:[],
+      hourcharges:[],
       currentkm:[],
       fixedkm:[],
       extraamountperkmafterfixedkm:[],
@@ -94,8 +104,16 @@ public data: any;
     });
     if(!this.deleteVehicle){     
       if (this.isEdit) {
-        this.setVehicleForm(this.data.element);
-        this.projectChange();
+        this.billingService.getVehicleBillingById({id:this.data.element.id},'')
+        .pipe(finalize(()=>{this.isLoading=false})).subscribe((response:any)=>{
+          if(response && response.success){
+            console.log(response);
+            this.setVehicleForm(response.data);
+            this.projectChange();
+          }
+        })
+        // this.setVehicleForm(this.data.element);
+        // this.projectChange();
       }
       else{
         this.isLoading=false;
@@ -108,10 +126,25 @@ public data: any;
         id:this.data.element.id
       })
     }
+    this.remarkcontrol= this.vehicleForm.get('remarks');
+    this.vehicleForm.get('additionalcharges')?.valueChanges.subscribe((value: any) => {
+      this.remarksValidaion(!(value === null || value === undefined || value === 0));     
+      this.totalamount = (this.billObj?.billamount ?? 0) + (value ?? 0);
+    });
+  }
+
+  
+  remarksValidaion(isAdd:boolean){ 
+    console.log(this.remarkcontrol,isAdd);
+    this.remarkcontrol?.clearValidators();
+    if(isAdd)
+      this.remarkcontrol?.setValidators([Validators.required]);
+    this.remarkcontrol?.updateValueAndValidity({ emitEvent: false });
+      console.log(this.remarkcontrol,isAdd);
   }
 
   ngAfterViewInit() {    
-    this.cdRef.detectChanges(); // ✅ Forces Angular to update
+    this.cdRef.detectChanges();
   }  
   onProjecttoggleChange(event:any){
     this.isAllProject.setValue(event.checked);
@@ -133,7 +166,8 @@ public data: any;
       this.projectName=data.value.projectshortname;
       this.vehicleForm.patchValue({
         projectid:data.value.id,
-        companyid:data.value.companyid
+        companyid:data.value.companyid,
+        vehicleid:''
       });
     }
     let projectId = this.vehicleForm.controls['projectid'].value;
@@ -147,19 +181,58 @@ public data: any;
         this.resetVehicleInfo();     
     }
   }
+  vehChange(){
+    
+  }
 
   resetVehicleInfo(){
     this.vehicleForm.patchValue({       
+      sundaycharges:0,
+      nightcharges:0,
+      hourcharges:0,
+      totalreading:0,
+      currentkm:0,
+      extrakm:0,
       fixedkm:0,
       extraamountperkmafterfixedkm:0,
       fixedamount:0,
-      extrakm:0
+      additionalcharges:0,
+      remarks:''
     });
     this.totalkm=this.totalamount=0;
+    this.remarksValidaion(false);
   }
 
   vehicleChange(){
     let vehicle = this.vehicleList.find((x:any)=>x.id== this.vehicleForm.controls['vehicleid'].value);
+    console.log({
+      vehicleid:this.vehicleForm.value.vehicleid,
+      projectid:this.vehicleForm.value.projectid,
+      monthyear:this.vehicleForm.value.monthyear
+    });
+    this.vehicleService.getVehicleWithBillingByVehId({
+      vehicleid:this.vehicleForm.value.vehicleid,
+      projectid:this.vehicleForm.value.projectid,
+      monthyear:this.vehicleForm.value.monthandyear
+    },'').pipe(finalize(()=>this.isLoading=false)).subscribe((response:any)=>{
+      if(response && response.success){
+        console.log(response.data);
+        this.billObj= response.data[0];
+        console.log(this.billObj);
+        this.vehicleForm.patchValue({
+          sundaycharges:this.billObj.sundays*this.billObj.sundayamount,
+          nightcharges:this.billObj.nights*this.billObj.nightamount,
+          hourcharges:this.billObj.totalhours*this.billObj.houramount,
+          totalreading:this.billObj.totalreading,
+          currentkm:this.billObj.totalreading,
+          extrakm:this.billObj.extrakm,
+          fixedkm:this.billObj.fixedkm,
+          extraamountperkmafterfixedkm:((this.billObj.totalreading >this.billObj.fixedkm)? (this.billObj.totalreading-this.billObj.fixedkm) : 0)*this.billObj.extraamountafterfixedkm,
+          fixedamount:this.billObj.fixedbillamount
+        })
+        this.totalamount= this.billObj.billamount;
+      }
+    })
     if(vehicle) {
       this.vehicleForm.patchValue({       
         fixedkm:vehicle.fixedkm,
@@ -173,15 +246,15 @@ public data: any;
   setVehicleForm(data: any) {    
     this.vehicleForm.patchValue({
       id: data.id,
+      project:data.project,
+      vehicle:data.vehicleno + ' '+data.vehiclename,
       projectid :data.projectid,
       vehicleid:data.vehicleid,
-      ownername:data.ownername,
       monthandyear:data.monthandyear,
-      enddate:data.enddate,
       extrakm:data.extrakm,
-      currentkm:data.currentkm,
+      currentkm:data.totalreading,
       fixedkm:data.fixedkm,
-      extraamountperkmafterfixedkm:data.extraamountperkmafterfixedkm,
+      extraamountperkmafterfixedkm:data.extrakmamount,
       fixedamount:data.fixedamount
     });
     this.onExtraChange();
@@ -210,9 +283,8 @@ public data: any;
             formsValue.enddate=this.vehicleForm.controls['enddate'].value;
             (this.vehicleForm.controls['monthandyear'].value).toISOString();
             formsValue.monthandyear=this.vehicleForm.controls['monthandyear'].value.toISOString();
-            console.log(formsValue);
           if(response && response.success)
-            this.dialogRef.close({ value: formsValue, valid: true });
+            this.dialogRef.close({ value: response, valid: true });
         },
         error: (err: any) => {
             this.dialogRef.close(err);
@@ -241,18 +313,12 @@ public data: any;
       }
       else{
         formsValue.project=this.projectName;
-        formsValue.vehiclename= this.vehicleList.find(x=>x.id== this.vehicleForm.get('vehicleid')?.value).name;
-        formsValue.vehicleno= this.vehicleList.find(x=>x.id== this.vehicleForm.get('vehicleid')?.value).number;  
-        this.vehicleForm.value.id=null;
-        console.log(this.vehicleForm.value);
+         this.vehicleForm.value.id=null;
         this.vehicleBillingService.createVehicleBilling(this.vehicleForm.value, '')
           .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false; })).subscribe({
             next:(response: any) => {
-            if (response && response.success) {
-              formsValue.id=response.data.id;
-              formsValue.currentkm= response.data.currentkm;
-              formsValue.levels= response.data.levels;
-              this.dialogRef.close({ value: formsValue,bulk:false, valid: true });
+            if (response && response.success) {             
+              this.dialogRef.close({ value: response.data,bulk:false, valid: true });
             } else {
              this.message= response.message;
             }
@@ -299,31 +365,8 @@ public data: any;
     pcontrol?.updateValueAndValidity();
     vcontrol?.updateValueAndValidity();
 
-    const invalidControls = this.findInvalidControls(this.vehicleForm);
-    console.log('Invalid Controls:', invalidControls);
-    
   }
-  findInvalidControls(form: FormGroup): string[] {
-    const invalid:any = [];
-  
-    const recurse = (formGroup: FormGroup | FormArray, path = '') => {
-      Object.keys(formGroup.controls).forEach(controlName => {
-        const control = formGroup.get(controlName);
-  
-        const controlPath = path ? `${path}.${controlName}` : controlName;
-  
-        if (control instanceof FormGroup || control instanceof FormArray) {
-          recurse(control, controlPath);
-        } else if (control && control.invalid) {
-          invalid.push(controlPath);
-        }
-      });
-    };
-  
-    recurse(form);
-  
-    return invalid;
-  }
+
   delete() {
       this.vehicleBillingService.deleteVehicleBilling({id:this.vehicleForm.value.id}, '')
        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
@@ -337,7 +380,11 @@ public data: any;
       });
   }
   dateChange(data:any){
-    this.vehicleForm.patchValue({monthandyear:data});   
+    this.vehicleForm.patchValue({
+      monthandyear:data,
+      vehicleid:'',
+    }); 
+    this.resetVehicleInfo();
   }
 
     getMonthandYear(data:any){

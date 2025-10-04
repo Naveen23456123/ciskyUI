@@ -23,7 +23,7 @@ import { finalize } from 'rxjs';
 export class ExpenseListComponent {
   expenseList:any[]= [];
     isLoading = true;
-    displayedColumns: string[] = ['serial','project','office','name','gamount','apramount','status', 'view','action'];
+    displayedColumns: string[] = ['serial','project','office','name','gamount','apramount', 'view','action'];
     dataSource!: MatTableDataSource<any[]>;
     activeOrgId='123';
   @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
@@ -68,7 +68,12 @@ export class ExpenseListComponent {
         this.stateDataService.stateDataSubject.next({});
       }else if (data.event == 'expclose'  && data.valid && data.value) {      
         this.updateRecord(data.value);
-      } 
+      } else if (data.event == 'expclaim' && data.valid && data.value) { 
+        this.addClaimedDetails(data.value);
+        this.addApprovedDetails(data.value);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      }
     });
     this.sessionService.approvalStatusSubject$.subscribe((statusresponse:any)=>{
       if(statusresponse){
@@ -99,11 +104,13 @@ export class ExpenseListComponent {
     this.expenseList = info;
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.pageSize= this.helperService.getPageSize();
     this.resultsLength= this.expenseList.length;   
   }
   addRowData(newdata: any) {
     const data1:any = {
       id:newdata.id,
+      imperestid:newdata.imperestid,
       companyid:newdata.companyid,
       projectid:newdata.projectid,
       officeid:newdata.officeid,
@@ -119,6 +126,46 @@ export class ExpenseListComponent {
     this.expenseList.unshift(data1);
     this.updateTable(this.expenseList); 
   }
+addClaimedDetails(data: any) {
+  if (data) {
+    const element: any = this.dataSource.data.find((x: any) => x.id == data.id);
+    if (element) {
+      element.claimed = this.mergeCategoryTotals(element.claimed || [], data.claimeddetails);
+      this.dataSource._updateChangeSubscription();
+      this.updateTable(this.expenseList);
+    }
+  }
+}
+addApprovedDetails(data: any) {
+  if (data) {
+    const element: any = this.dataSource.data.find((x: any) => x.id == data.id);
+    if (element) {
+      element.approved = this.mergeCategoryTotals(element.approved || [], data.approved);
+      this.dataSource._updateChangeSubscription();
+      this.updateTable(this.expenseList);
+    }
+  }
+}
+ mergeCategoryTotals(targetArray: any[], sourceDetails: any[]) {
+  if (!targetArray) {
+    targetArray = [];
+  }
+
+  sourceDetails.forEach((detail: any) => {
+    const existing = targetArray.find((c: any) => c.categoryid === detail.categoryid);
+    if (existing) {
+      existing.amount += detail.amount;
+    } else {
+      targetArray.push({
+        categoryid: detail.categoryid,
+        categoryname: detail.categoryname || detail.item,
+        amount: detail.amount
+      });
+    }
+  });
+
+  return targetArray;
+}
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
     if(element){

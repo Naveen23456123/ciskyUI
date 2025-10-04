@@ -13,6 +13,10 @@ export class ValidatorService {
   public pattern = {
     Email: new RegExp(/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/),
     numeric: new RegExp('^[0-9]*$'),
+    panno: new RegExp('^[A-Z]{5}[0-9]{4}[A-Z]$'),
+    gstno: new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]$'),
+    phoneno: new RegExp(/^[6-9]\d{9}$/),
+    ifsc: new RegExp('^[A-Z]{4}0[A-Z0-9]{6}$'),
     Time: new RegExp('^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])$')
   };
 
@@ -23,6 +27,58 @@ export class ValidatorService {
       Email: {
         valid: false
       }
+    }
+  }
+  public PhoneNumber = (c: FormControl) => {
+    if (!c.value)
+      return null;
+    return this.pattern.numeric.test(c.value) ? null : {
+      phoneno: {
+        valid: false
+      }
+    }
+  }
+  public PanNo = (c: FormControl) => {
+    if (!c.value)
+      return null;
+    return this.pattern.panno.test(c.value) ? null : {
+      panno: {
+        valid: false
+      }
+    }
+  }
+  public IfscCode = (c: FormControl) => {
+    if (!c.value)
+      return null;
+    return this.pattern.ifsc.test(c.value) ? null : {
+      ifsc: {
+        valid: false
+      }
+    }
+  }
+  public GstNo = (c: FormControl) => {
+    if (!c.value)
+      return null;
+    return this.pattern.gstno.test(c.value) ? null : {
+      gstno: {
+        valid: false
+      }
+    }
+  }
+  public dateAlreadyUsedValidator(usedDates: Date[]): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) return null;
+
+      const selected = new Date(control.value);
+      selected.setHours(0, 0, 0, 0);
+
+      const exists = usedDates.some(d => {
+        const used = new Date(d);
+        used.setHours(0, 0, 0, 0);
+        return used.getTime() === selected.getTime();
+      });
+
+      return exists ? { dateUsed: true } : null;
     }
   }
   public passwordMatchValidator(passwordField: string, confirmPasswordField: string): ValidatorFn {
@@ -82,6 +138,16 @@ export class ValidatorService {
       
       return null; // Validation passes
     };
+  }
+  public noSunday(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null;
+
+    const date = new Date(value);
+    if (date.getDay() === 0) {  
+      return { sundayNotAllowed: true };
+    }
+    return null;
   }
   public timeGreaterThan(fieldToCompare: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {

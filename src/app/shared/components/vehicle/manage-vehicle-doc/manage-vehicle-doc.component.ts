@@ -26,7 +26,6 @@ export class ManageVehicleDocComponent {
   displayedColumns: string[] = ['serial','name', 'doc', 'action'];
   defaultdialogOptionConfig: MatDialogConfig = {
     minWidth: '45vw',
-    disableClose: true,
     data: {}
   }
   constructor(@Inject(MAT_DIALOG_DATA) data: any,

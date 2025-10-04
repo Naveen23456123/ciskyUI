@@ -36,4 +36,14 @@
     margin-right: 10px;
     width: 30%;
   }
-
+ ::ng-deep .profile-menu{
+      border-radius: 10px !important;
+      padding: 10px !important;
+      background-color: white !important;
+}
+.br-10{
+  border-radius: 10px;
+}
+.mat-mdc-menu-item:hover mat-icon{
+  color: white !important;
+}

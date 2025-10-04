@@ -136,7 +136,7 @@ export class ContractorBillingDetailsComponent {
 
   download(){
     this.pdfStart=true;
-    this.pdfService.generateAndGetPDF(this.pdfContent, 'ProfitLoss_Commulative.pdf').then((pdf) => {
+    this.pdfService.generateAndGetPDF(this.pdfContent, 'Contractor_Bill.pdf').then((pdf) => {
       if (pdf) {
         this.pdfStart=false;        
         const config = this.defaultdialogoptions;

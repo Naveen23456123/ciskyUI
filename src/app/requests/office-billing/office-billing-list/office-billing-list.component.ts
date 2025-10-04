@@ -26,7 +26,7 @@ export class OfficeBillingListComponent {
 
   ofcBilling:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','ofc','project', 'month', 'year', 'amount','aamount','status', 'action'];
+  displayedColumns: string[] = ['serial','ofc','project', 'duration', 'amount','aamount','status', 'action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
@@ -104,6 +104,7 @@ export class OfficeBillingListComponent {
     this.ofcBilling = info;
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.pageSize= this.helperService.getPageSize();
     this.resultsLength= this.ofcBilling.length;   
   }
   updateRowData(data: any) {   

@@ -67,7 +67,7 @@ public data: any;
     if(items){ 
       return  items.map((level:any) => ({
           ...level,
-          status: this.statusList.find((x:any)=>x.id==level.statusid)?.name 
+          status: this.statusList.find((x:any)=>x.id==level.statusid)?.name
         }))
       }
     }
@@ -90,8 +90,10 @@ public data: any;
           this.wholeExpenses= response.data.billings;
           this.expenseList = response.data.billings.expenses.map((item:any) => ({
             ...item,
-            ...this.setLevelConfig(item.levels)
+            isedit:!item.inprocess,
+            levels:this.setLevel(item.levels)
           }));
+          console.log(this.expenseList);
           this.dataSource = new MatTableDataSource(this.expenseList);         
         }
     }});

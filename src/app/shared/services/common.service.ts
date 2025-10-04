@@ -15,14 +15,38 @@ export class CommonService {
     }
     return 0;
   }
+  addMonths(date: Date, months: number): Date {
+    const d = new Date(date);
+    const day = d.getDate();
 
+    if (day === 1) {
+      // When day is 1: return last day of the month before the target month
+      // targetMonthIndex = currentMonth + months
+      // new Date(year, targetMonthIndex, 0) => last day of targetMonthIndex-1
+      const year = d.getFullYear();
+      const targetMonthIndex = d.getMonth() + months; // 0-based months
+      return new Date(year, targetMonthIndex, 0);     // last day of previous month
+    }
+
+    // otherwise preserve day semantics
+    return this.addMonthsPreserveDay(d, months);
+  }
+  addMonthsPreserveDay(date: Date, months: number): Date {
+    const d = new Date(date);               // copy
+    const day = d.getDate();                // original day (1..31)
+    d.setDate(1);                           // avoid overflow while changing month
+    d.setMonth(d.getMonth() + months);      // move to target month (first day)
+    const daysInTarget = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+    d.setDate(Math.min(day, daysInTarget)); // pick original day or last day if not available
+    return d;
+  }
   getDaysDifference(startDate: string | Date, endDate: string | Date): number {
     if(startDate && endDate){
       const start = new Date(startDate);
       const end = new Date(endDate);
       
       const diffTime = Math.abs(end.getTime() - start.getTime());
-      return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24))+1; // Convert milliseconds to days
     }
     else
      return 0;
@@ -91,6 +115,7 @@ export class CommonService {
     return Object.values(row).every(value => value === null || value === undefined || value === '');
   }
   getVehicleBillingInfo(data:any){
+    console.log(data);
     let currentKm= +data.currentkm;
     let fixedkm= +data.fixedkm;
      if(currentKm>fixedkm){
@@ -249,5 +274,12 @@ export class CommonService {
     ) as keyof typeof BillType | undefined;
 
     return key ? BillPercentage[key] +"%" : undefined;
+  }
+  getOfficeRentAmount(amount:number){
+    if(amount && amount>19999){
+       amount += (amount * 10 / 100);
+       return {total:amount,tds:(amount * 10 / 100)};
+    }
+    return {total:amount,tds:0};
   }
 }

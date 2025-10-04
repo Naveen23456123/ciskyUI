@@ -87,5 +87,17 @@ export class VehicleBillingInterfaceService {
       action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
-  }
+  } 
+  getVehicleBillingById(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'VehicleBilling/GetDetails/'+request.id,
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  } 
+
 }

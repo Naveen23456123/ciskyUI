@@ -9,7 +9,7 @@ const routes: Routes = [
    {
       path:'',
       component:ImperestBillingListComponent,
-      data:{title:extractTitle('Imperest Billing Request(s)')},
+      data:{title:extractTitle('Imperest Request(s)')},
       children: [
         {
           path: 'edit/:billid',

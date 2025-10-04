@@ -9,14 +9,11 @@
                 <div class="row col-md-12   content-center">
                   <div class="col-md-11 ">
                     <div>
-                      <app-search-bar-controls [isSubCompany]="true" [isDateRange]="true" [isStartTime]="true" 
-                      [isEndTime]="true" [isVehicle]="true"
+                      <app-search-bar-controls [isSubCompany]="true" [isDateRange]="true" [isVehicle]="true"
                       [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Vehicle Name / Number / Purpose"
                       (OnProjectChange)="projectChange($event)" (OnSubCompanyChange)="compChange($event)" 
                        (OnAnyChange)="anyChange($event)"  (OnDateRangeChange)="dateRangeChange($event)"
-                       (OnVehicleChange)="vehicleChange($event)" 
-                       (OnStartTimeChange)="startTimeChange($event)"
-                       (OnEndTimeChange)="endTimeChange($event)"
+                       (OnVehicleChange)="vehicleChange($event)"
                        (OnClear)="clear()"
                       ></app-search-bar-controls>
                     </div>  
@@ -55,21 +52,14 @@
                     <!-- contractName Column -->
                     <ng-container matColumnDef="vehiclename">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Vehicle Name </th>
-                      <td mat-cell *matCellDef="let row"> {{row.vehiclename}} </td>
+                      <td mat-cell *matCellDef="let row"> {{row.vehiclenumber}}<br> {{row.vehiclename}} </td>
                     </ng-container>
-                
-                    <!-- Name Column -->
-                    <ng-container matColumnDef="vehicleno">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Vehicle Number </th>
-                      <td mat-cell *matCellDef="let row"> {{row.vehiclenumber}} </td>
-                    </ng-container>    
-                      <!-- Name Column -->
-                      <ng-container matColumnDef="date">
-                          <th mat-header-cell *matHeaderCellDef mat-sort-header> Used Date </th>
-                          <td mat-cell *matCellDef="let row"> 
-                            {{row.useddate | formatDate}}
-                          </td>
-                        </ng-container>  
+                    <ng-container matColumnDef="date">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Used Date </th>
+                        <td mat-cell *matCellDef="let row"> 
+                          {{row.useddate | formatDate}}
+                        </td>
+                      </ng-container>  
                     <ng-container matColumnDef="starttime">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Start </th>
                       <td mat-cell *matCellDef="let row">
@@ -82,7 +72,7 @@
                           <tr>
                             <td>Reading</td>
                             <td class="pad-right-1 pad-left-1">:</td>
-                            <td>{{row.initialreading}}</td>
+                            <td>{{row.initialreading }}</td>
                           </tr>
                         </table>
                       </td>
@@ -94,24 +84,30 @@
                           <tr>
                             <td>Time</td>
                             <td class="pad-right-1 pad-left-1">:</td>
-                            <td>{{row.totime}}</td>
+                            <td>{{row.totime }}</td>
                           </tr>
                           <tr>
                             <td>Reading</td>
                             <td class="pad-right-1 pad-left-1">:</td>
-                            <td>{{row.endreading}}</td>
+                            <td>{{row.endreading }}</td>
                           </tr>
                         </table>                             
                       </td>
                     </ng-container>                                      
                     <!-- Name Column -->
                     <ng-container matColumnDef="commencementoftrip">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Conclusion</th>
-                      <td mat-cell *matCellDef="let row">                              
-                        {{row.endreading-row.initialreading}} km
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Conclusion (Km)</th>
+                      <td mat-cell class="w-9" *matCellDef="let row">                              
+                        {{(row.endreading-row.initialreading)}}
                       </td>
                     </ng-container>    
-                  
+                   <ng-container matColumnDef="misc">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Add Ons</th>
+                      <td mat-cell class="add-on" *matCellDef="let row">                              
+                       <p class="mb-1 "><span class="sun " *ngIf="row.issunday">Sunday</span> <span class="nt" *ngIf="row.isnight">Night</span></p> 
+                       <span *ngIf="row.extrahours">Extra Hours : {{row.extrahours}}</span>
+                      </td>
+                    </ng-container> 
                     <!-- Name Column -->
                     <ng-container matColumnDef="purposeandplace">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Purpose and Place </th>
@@ -120,7 +116,7 @@
                   
                     <ng-container  matColumnDef="images">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Images </th>
-                      <td mat-cell class="action-col" *matCellDef="let row"> 
+                      <td mat-cell class="w-1" *matCellDef="let row"> 
                         <div class="button-row">
                           <div *ngIf="row.initialimageaddress || row.endimageaddress">
                             <app-view-btn (clickEvent)="viewImages(row)" ></app-view-btn>

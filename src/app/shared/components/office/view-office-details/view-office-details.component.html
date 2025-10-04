@@ -1,0 +1,141 @@
+<div class="dialog" >
+    <mat-card>        
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> Office Details 
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+            <mat-icon>close</mat-icon>
+          </button> 
+        </h3>        
+        <mat-dialog-content class="mat-typography">
+        <mat-card-content>
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="container mt-0">
+                <h3 class="sub-heading mt-0">Office  : {{ofcDetails?.officename}} </h3>
+                <hr class="vw-hr">
+                <div  class="row col-md-12 ml-0">                    
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> Location</span>
+                    </div>
+                    <div class="col-md-9">
+                    <span class="vw-details-val">{{ofcDetails?.officelocation}}</span>
+                    </div>
+                    <hr class="vw-hr">  
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> Basic Amount</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{ofcDetails?.basicamount}}</span>
+                    </div>
+                    <div  class="col-md-3">
+                    <span class="vw-details-text">TDS Percentage</span>
+                    </div>                     
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{ofcDetails?.tdspercentage }} %</span>
+                    </div>
+                    <hr class="vw-hr">  
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> TDS Amount</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{ofcDetails?.tds |formatCurrency}}</span>
+                    </div>                                     
+                    <div class="col-md-3">
+                        <span  class="vw-details-text"> Total Rent Amount</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{ofcDetails?.totalamount |formatCurrency}} </span>
+                    </div>
+                    <hr class="vw-hr">
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> Owner Name</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{ofcDetails?.ownername}}</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> Agreement Duration </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{ofcDetails?.agreementduration}} Months </span>
+                    </div>      
+                      
+                    <hr class="vw-hr">                
+                    <div class="col-md-3">
+                    <span class="vw-details-text">Agreement Start Date</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{ofcDetails?.startdate | formatDate }}  </span>
+                    </div> 
+                    <div class="col-md-3">
+                    <span class="vw-details-text">Agreement End Date </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val">{{ofcDetails?.enddate | formatDate }}  </span>
+                    </div> 
+                    <hr class="vw-hr">                
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> Mobile Number</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{ofcDetails?.phoneno}} </span>
+                    </div> 
+                    <div class="col-md-3">
+                    <span class="vw-details-text">PAN Card </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{ofcDetails?.panno}} </span>
+                    </div>
+                    <hr class="vw-hr">                
+                    
+                </div>
+                 <div class="col-md-12  mt-2">  
+                    <span class="sub-heading control-div ">Owner Bank Details</span>
+                </div>
+                <hr class="vw-hr">
+                <div class="row col-md-12 ml-0">
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> Bank Name</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{ofcDetails?.bankname  }} </span>
+                    </div>                   
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> Account Holder Name</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{ofcDetails?.accountholdername}} </span>
+                    </div> 
+                    <hr class="vw-hr">
+                    <div class="col-md-3">
+                    <span class="vw-details-text">Account Number</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{ofcDetails?.accountnumber }} </span>
+                    </div>                  
+                    <div class="col-md-3">
+                    <span class="vw-details-text"> IFSC Code</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{ofcDetails?.ifsccode}} </span>
+                    </div>   
+                   
+                    <hr class="vw-hr">
+                    <div class="col-md-3">
+                    <span class="vw-details-text">GST Number</span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{ofcDetails?.gstno }} </span>
+                    </div>                       
+                    <div class="col-md-3">
+                    <span class="vw-details-text">Address </span>
+                    </div>
+                    <div class="col-md-3">
+                    <span class="vw-details-val"> {{ofcDetails?.address}} </span>
+                    </div>                             
+                </div> 
+            </div>
+            </mat-card-content>
+        </mat-dialog-content>
+    </mat-card>
+</div>

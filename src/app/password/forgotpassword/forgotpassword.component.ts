@@ -44,12 +44,12 @@ passform:any;
           //this.router.navigate(['/dashboard']);
         } else {
           this.notifyBarService.showsnackbar(
-            "Something went wrong, Please try again !!."
+            "Something went wrong, Please try again !!.",true
           );
         }
       },
       error: (err) => {     
-        this.notifyBarService.showsnackbar("Something went wrong, Please try again !!.");
+        this.notifyBarService.showsnackbar("Something went wrong, Please try again !!.",true);
       }
     });
     

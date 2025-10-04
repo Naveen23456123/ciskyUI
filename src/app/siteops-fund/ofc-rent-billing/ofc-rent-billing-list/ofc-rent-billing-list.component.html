@@ -105,6 +105,7 @@
                         <td mat-cell class="action-col" *matCellDef="let row"> 
                           <div class="button-row">                             
                             <!-- <app-edit-btn [routerLink]="['/ofc-billing/edit',row.id]" [state]="row" ></app-edit-btn>                               -->
+                            <app-view-btn [state]="row" [routerLink]="['/ofc-billing/view',row.id]"></app-view-btn>
                             <app-delete-btn [state]="row" [routerLink]="['/ofc-billing/delete',row.id]" ></app-delete-btn>
                       </div>
                         </td>

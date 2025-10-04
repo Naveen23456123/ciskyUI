@@ -35,6 +35,7 @@ import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
 import { MatDialogModule } from '@angular/material/dialog';
 import { NgxMatSelectSearchModule} from 'ngx-mat-select-search'
 import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [], 
@@ -64,6 +65,7 @@ import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
     MatSnackBarModule,
     MatToolbarModule,
     MatDialogModule,
+    MatAutocompleteModule,
     MatIconModule,
     MatSidenavModule,
     MatButtonModule,
@@ -89,6 +91,7 @@ import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
     MatCheckboxModule,
     MatSelectModule,
     MatInputModule,
+    MatAutocompleteModule,
     MatFormFieldModule,
     MatCardModule,
     MatTooltipModule,

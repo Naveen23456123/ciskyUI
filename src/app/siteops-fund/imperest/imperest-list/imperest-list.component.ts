@@ -3,6 +3,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { InventoryControlService } from '@app/inventory-control/inventory-control.service';
 import { ApprovalStatus } from '@app/shared/models/constant.config';
 import { CommonService } from '@app/shared/services/common.service';
@@ -35,6 +36,7 @@ export class ImperestListComponent {
   resultsLength!:number;
   isSearching=false;
   statusList:any[]=[];
+  billingSummary:any;
   readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
@@ -45,7 +47,7 @@ export class ImperestListComponent {
 
  constructor(private siteopsService:SiteopsService,private helperService:HelperService,
   private stateDataService:StateDataService, private notifyBarService:NotifyBarService,
-  private sessionService:SessionService, private commonService:CommonService
+  private sessionService:SessionService, private commonService:CommonService,private router:Router
  ){
   this.dataSource = new MatTableDataSource(this.imperestList);
  }
@@ -61,7 +63,7 @@ export class ImperestListComponent {
       this.notifyBarService.showsnackbar(data.msg);
       this.stateDataService.stateDataSubject.next({});
     } else if(data.event == 'impdelete' && data.valid && data.value){
-      this.deleteRow(data.value.id);
+      this.deleteRow(data.value);
       this.notifyBarService.showsnackbar(data.msg);
       this.stateDataService.stateDataSubject.next({});
     }
@@ -92,20 +94,26 @@ export class ImperestListComponent {
     this.imperestList = info;
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.pageSize= this.helperService.getPageSize(); 
     this.resultsLength= this.imperestList.length;   
   }
 
-  updateRowData(data: any) {
+  updateRowData(updatedata: any) {
+    if(updatedata){
+    let data= updatedata.imperest;
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
     if(element){
     element.id = data.id;
     element.name = data.name;
-    element.date=data.date,
+    element.startdate=data.startdate,
+    element.enddate=data.enddate,
     element.days=data.days,
     element.remarks=data.remarks,
     element.details = data.details;
     this.dataSource._updateChangeSubscription();
     }
+    this.billingSummary= [...updatedata.summary];
+  }
   }
   addRowData(newdata: any) {
     const data1:any = {
@@ -116,7 +124,8 @@ export class ImperestListComponent {
       project:newdata.project,
       office:newdata.office,
       name:newdata.name,
-      date:newdata.date,
+      startdate:newdata.startdate,
+      enddate:newdata.enddate,
       days:newdata.days,
       remarks:newdata.remarks, 
       details:newdata.details,
@@ -126,9 +135,12 @@ export class ImperestListComponent {
     this.updateTable(this.imperestList); 
   }
   deleteRow(data: any) {
-    const index = this.dataSource.data.findIndex((x:any) => x.id == data);
+    if(data.deleted){
+    const index = this.dataSource.data.findIndex((x:any) => x.id == data.id);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
+    this.billingSummary= [...data.summary]
+    }
   }
   searchObj:any={
     projectid:'',   
@@ -164,7 +176,8 @@ export class ImperestListComponent {
       .pipe(finalize(() => {this.isLoading = false;this.isSearching=false}))
       .subscribe({next : (response: any) => {
         if (response && response.success) {
-          this.imperestList = response.data.map((item:any) => {
+          this.billingSummary= response.data.summary;
+          this.imperestList = response.data.imperests.map((item:any) => {
             return{
             ...item,
             ...this.setLevelConfig(item.levels)          
@@ -182,6 +195,12 @@ export class ImperestListComponent {
       status:overallstatus, 
       isedit:overallstatus==ApprovalStatus.PENDING
     }
+  }
+  edit(data:any){
+     this.router.navigate(['/imperest', 'edit', data.id], {state:{value :data,searchObj:this.searchObj}});
+  }
+  delete_row(data:any){
+     this.router.navigate(['/imperest', 'delete', data.id], {state:{value :data,searchObj:this.searchObj}});
   }
 }
 

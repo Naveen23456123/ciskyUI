@@ -93,7 +93,8 @@ export class ExpReqBillingListComponent {
   private updateTable(info: any) {
     this.expenseList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);
+    this.pageSize= this.helperService.getPageSize();   
     this.resultsLength= this.expenseList.length;   
   }
   updateRowData(updateddata: any) {
@@ -161,7 +162,7 @@ export class ExpReqBillingListComponent {
           this.billingSummary= response.data.summary;
           this.expenseList = response.data.billings.map((item:any) => ({
             ...item,
-            ...this.setLevelConfig(item.levels)
+            levels:this.setLevel(item.levels)
           }));
           this.updateTable(this.expenseList);
         }

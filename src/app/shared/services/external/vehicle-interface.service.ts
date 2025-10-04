@@ -662,6 +662,17 @@ export class VehicleInterfaceService {
       }
       return this.coreApi.standardService(standardAttribute);
   }
+  getVehiclePartialForLogsProjectId(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+        url: 'Vehicle/PartialForLog',
+        params: param,
+        headers: true,
+        guid: '',
+        request: {},
+        action: Operation.GET
+      }
+      return this.coreApi.standardService(standardAttribute);
+  }
   getVehicleInfoSummary(param: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
         url: 'Vehicle/InfoSummary',
@@ -761,6 +772,17 @@ export class VehicleInterfaceService {
       guid: '',
       request: {},
       action: Operation.DELETE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  getVehicleWithBillingByVehId(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Vehicle/VehBillingDetails',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
     }
     return this.coreApi.standardService(standardAttribute);
   }

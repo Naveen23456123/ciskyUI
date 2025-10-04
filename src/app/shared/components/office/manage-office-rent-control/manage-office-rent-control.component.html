@@ -14,7 +14,7 @@
                 <form [formGroup]="rentForm" >
                     <div class="row control-div">                       
                         <div class="col-md-3">
-                            <app-project-control  (onValueChange)="projectChange($event)"
+                            <app-project-control *ngIf="!isLoading"  (onValueChange)="projectChange($event)"
                             [defaultValue]="rentForm.get('projectid')?.value" ></app-project-control>
                         </div>
                         <div class="col-md-3" >
@@ -71,18 +71,6 @@
                                 <mat-error>Please select Agreement Date.</mat-error>
                               </mat-form-field>
                         </div>
-                        
-                       
-                        <div class="col-md-3">                          
-                            <mat-form-field class="example-full-width">
-                                <mat-label>Agreement End Date</mat-label>
-                                <input matInput  formControlName="agreementenddate" [matDatepicker]="agreementenddate">
-                              
-                                <mat-datepicker-toggle matIconSuffix [for]="agreementenddate"></mat-datepicker-toggle>
-                                <mat-datepicker #agreementenddate></mat-datepicker>
-                                <mat-error>Please select End date.</mat-error>
-                              </mat-form-field>
-                        </div>
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Agreement Duration (In Months)</mat-label>
@@ -90,6 +78,18 @@
                                 <mat-error></mat-error>
                             </mat-form-field>
                         </div>
+                       
+                        <div class="col-md-3">                          
+                            <mat-form-field class="example-full-width">
+                                <mat-label>Agreement End Date</mat-label>
+                                <input matInput  formControlName="agreementenddate" [matDatepicker]="agreementenddate" [disabled]="true">
+                              
+                                <mat-datepicker-toggle matIconSuffix [for]="agreementenddate"  [disabled]="true"></mat-datepicker-toggle>
+                                <mat-datepicker #agreementenddate></mat-datepicker>
+                                <mat-error>Please select End date.</mat-error>
+                              </mat-form-field>
+                        </div>
+                        
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Owner Name</mat-label>
@@ -97,6 +97,35 @@
                                 <mat-error>Please provide Name.</mat-error>
                             </mat-form-field>
                         </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>PAN Card</mat-label>
+                                <input matInput class="text-uppercase" formControlName="panno">
+                                <mat-error *ngIf="rentForm.get('panno')?.hasError('required')">
+                                    Please provide PAN card No.</mat-error>
+                                <mat-error *ngIf="rentForm.get('panno')?.hasError('panno')">
+                                    Please provide valid PAN card No.
+                                </mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Phone Number</mat-label>
+                                <input matInput maxlength="10"  formControlName="phoneno">
+                               
+                                <mat-error *ngIf="rentForm.get('phoneno')?.hasError('required')">
+                                    Please provide Phone Number.
+                                </mat-error>
+                                <mat-error *ngIf="rentForm.get('phoneno')?.hasError('phoneno')">
+                                    Enter a valid 10-digit phone number
+                                </mat-error>
+                            </mat-form-field>
+                        </div> 
+                        </div>
+                        <div class="col-md-12 ">  
+                            <span class="sub-heading control-div ">Bank Details</span>
+                        </div>
+                        <div class="row control-div">
                      
                         <div class="col-md-3">
                             <mat-form-field>
@@ -122,31 +151,28 @@
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>IFSC Code</mat-label>
-                                <input matInput formControlName="ifsccode">
-                                <mat-error></mat-error>
+                                <input matInput class="text-uppercase" formControlName="ifsccode">
+                                <mat-error *ngIf="rentForm.get('ifsccode')?.hasError('required')">
+                                  Please provide IFSC Code.
+                                </mat-error>
+                                <mat-error *ngIf="rentForm.get('ifsccode')?.hasError('ifsc')">
+                                    Please provide valid IFSC Code.
+                                </mat-error>
                             </mat-form-field>
                         </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>PAN Card</mat-label>
-                                <input matInput formControlName="panno">
-                                <mat-error>Please provide card No.</mat-error>
-                            </mat-form-field>
-                        </div> 
+                        
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>GST No.</mat-label>
                                 <input matInput formControlName="gstno">
-                                <mat-error>Please provide GST No.</mat-error>
+                                <mat-error *ngIf="rentForm.get('gstno')?.hasError('required')">
+                                    Please provide GST No.</mat-error>
+                                 <mat-error *ngIf="rentForm.get('gstno')?.hasError('gstno')">
+                                    Please provide valid GST No.
+                                </mat-error>
                             </mat-form-field>
                         </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>Phone Number</mat-label>
-                                <input matInput formControlName="phoneno">
-                                <mat-error>Please provide Phone Number.</mat-error>
-                            </mat-form-field>
-                        </div> 
+                        
                         <div class="col-md-6">
                             <mat-form-field>
                                 <mat-label>Address</mat-label>
@@ -156,7 +182,7 @@
                         </div> 
                         <div class="row col-md-12" *ngIf="!isEdit">
                             <div class="col-md-10 ">  
-                                <span class="sub-heading control-div ">Office Document(s)</span>
+                                <span class="sub-heading control-div ">Document(s)</span>
                             </div>
                             <div class="col-md-2">
                                 <div  class="table-title-row float-end">                               

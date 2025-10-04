@@ -320,6 +320,17 @@ export class OfficeInterfaceService {
       }
       return this.coreApi.standardService(standardAttribute);
   }
+  getOfficeBillingDetailsById(param: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+        url: 'OfficeBilling/Details/'+param.id,
+        params: {},
+        headers: true,
+        guid: '',
+        request: {},
+        action: Operation.GET
+      }
+      return this.coreApi.standardService(standardAttribute);
+  }
   createOfficeRentDocumentsById(request: any, guid: string) {
     console.log(request);
     const standardAttribute: ServiceAttributeModel = {

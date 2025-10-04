@@ -25,7 +25,7 @@ import { finalize } from 'rxjs';
 export class ImperestBillingListComponent {
   imperestList:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','project','office','name','date','gamount','apramount', 'view','action'];
+  displayedColumns: string[] = ['serial','project','office','name','gamount','apramount', 'view','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
@@ -95,17 +95,31 @@ export class ImperestBillingListComponent {
   private updateTable(info: any) {
     this.imperestList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length); 
+    this.pageSize= this.helperService.getPageSize();  
     this.resultsLength= this.imperestList.length;   
   }
 
   updateRowData(updatedata: any) {
     let data= updatedata.acted;
-    const index:any = this.dataSource.data.findIndex((x:any) => x.id == data.id);   
+    const index:any = this.dataSource.data.findIndex((x:any) => x.id == data.id); 
+    // const element:any = this.dataSource.data.find((x:any) => x.id == data.id);  
+    // if(element) {
+    //     let level = element.levels.find((x:any) => x.id == data.levelid); 
+    //     if(level){
+    //       level.totalamount=data.amount,
+    //       level.actedamount=data.amount,
+    //       level.statusid=data.statusid,
+    //       level.status= this.statusList.find((x:any)=>x.id==level.statusid)?.name;    
+    //     }
+    //     element.approved= data.approved;
+    //     this.dataSource._updateChangeSubscription();
+    //      this.billingSummary= [...data.summary];
+    //   }  
     if (index !== -1) {
       const updatedRow = {
         ...data,
-        ...this.setLevelConfig(this.setLevel(data.levels))
+        levels: this.setLevel(data.levels)
       };  
       this.dataSource.data[index] = updatedRow;          
     }
@@ -163,7 +177,7 @@ export class ImperestBillingListComponent {
           this.billingSummary= response.data.summary;
           this.imperestList = response.data.billings.map((item:any) => ({
             ...item,
-            ...this.setLevelConfig(item.levels)
+            levels: this.setLevel(item.levels)
           }));
           this.updateTable(this.imperestList);
         }

@@ -20,7 +20,7 @@
                         <div class="col-md-4">
                             <mat-form-field>
                                 <mat-label>Vehicle Name</mat-label>
-                                <mat-select formControlName="vehicleid">
+                                <mat-select (selectionChange)="vehicleChange()" formControlName="vehicleid">
                                     <mat-option  *ngFor="let field of vehicleList" [value]="field.id">
                                         {{field.name +' - '+field.number}}
                                     </mat-option>
@@ -38,11 +38,16 @@
                         <div class="col-md-4">
                             <mat-form-field class="example-full-width">
                                 <mat-label>Vehicle Used Date</mat-label>
-                                <input matInput  formControlName="useddate" [matDatepicker]="usedDate">
+                                <input matInput  formControlName="useddate" [min]="minDate" [max]="maxDate" [matDatepicker]="usedDate">
                                 
                                 <mat-datepicker-toggle matIconSuffix [for]="usedDate"></mat-datepicker-toggle>
                                 <mat-datepicker #usedDate></mat-datepicker>
-                                <mat-error>Please select Used Date</mat-error>
+                                <mat-error *ngIf="vehicleForm.get('useddate')?.hasError('required')">
+                                    Please select Used Date
+                                </mat-error>
+                                <mat-error *ngIf="vehicleForm.get('useddate')?.hasError('dateUsed')">
+                                    Log for Date is already present.
+                                </mat-error>
                               </mat-form-field>
                         </div> 
                         <div class="col-md-4">                           
@@ -98,10 +103,45 @@
                                 <mat-error>Please enter Initial Reading</mat-error>
                             </mat-form-field> 
                         </div>
+                       
+                        <div class="col-md-4">
+                        <mat-form-field >
+                            <mat-label>Night Duty</mat-label>
+                            <mat-select formControlName="isnight">
+                            <mat-option [value]="true">Yes</mat-option>
+                            <mat-option [value]="false">No</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        </div>
+                        <div class=" col-md-4">
+                            <mat-form-field  >
+                                <mat-label>Extra Hours</mat-label>
+                                <input type="number" matInput formControlName="extrahours">
+                                <mat-error></mat-error>
+                            </mat-form-field>  
+                        </div>
+                         <div *ngIf="isSunday" class="col-md-4">
+                        <mat-form-field >
+                            <mat-label>Sunday Duty</mat-label>
+                            <mat-select formControlName="issunday">
+                            <mat-option [value]="true">Yes</mat-option>
+                            <mat-option [value]="false">No</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row col-md-12">
                         <div class="col-md-4">
                             <mat-form-field>
                                 <mat-label>Purpose And Place</mat-label>
-                                <input matInput formControlName="purposeandplace">
+                                <input matInput formControlName="purposeandplace" [matAutocomplete]="auto">
+                                <mat-autocomplete #auto="matAutocomplete">
+                                    <ng-container *ngIf="purposeList && purposeList.length">
+                                    <mat-option *ngFor="let option of purposeList" [value]="option">
+                                        {{ option }}
+                                    </mat-option>
+                                    </ng-container>
+                                </mat-autocomplete>
                                 <mat-error>Please enter Purpose & Place</mat-error>
                             </mat-form-field>
                         </div> 

@@ -16,7 +16,7 @@
                         <div class="col-md-4"> 
                             <mat-form-field  class="example-full-width">
                                 <mat-label>Date</mat-label>
-                                <input matInput  formControlName="date" [matDatepicker]="startdate">
+                                <input matInput [min]="minDate" [max]="maxDate" formControlName="date" [matDatepicker]="startdate">
                                 
                                 <mat-datepicker-toggle matIconSuffix [for]="startdate"></mat-datepicker-toggle>
                                 <mat-datepicker #startdate></mat-datepicker>
@@ -30,8 +30,8 @@
                                 <mat-error>Please provide expense Name</mat-error>
                             </mat-form-field>
                         </div>
-                        <div class="col-md-4"  *ngIf="!isClaiming">
-                            <mat-form-field *ngIf="!isEdit">
+                        <div class="col-md-4"  >
+                            <mat-form-field *ngIf="!isClaiming && !isEdit">
                                 <mat-label>Against Imperest</mat-label>
                                 <mat-select (selectionChange)="onimperestChange($event)" formControlName="imperestid">
                                     <mat-option  *ngFor="let field of imperestList" [value]="field">
@@ -40,7 +40,7 @@
                                 </mat-select>
                                 <mat-error>Please select Imperest.</mat-error>
                             </mat-form-field>
-                             <mat-form-field *ngIf="isEdit && !separateEdit">
+                             <mat-form-field *ngIf="isClaiming ||(isEdit && !separateEdit)">
                                 <mat-label>Againse Imperest</mat-label>
                                 <input matInput readonly [value]="imperestName">
                                 <mat-error></mat-error>
@@ -70,14 +70,14 @@
                             <div class="wrapper pr-0" formArrayName="claimeddetails">
                                 <div *ngFor="let item of details.controls; let i = index" [formGroupName]="i">
                                     <div class="col-md-12 row control-div pr-0">   
-                                        <div class="col-md-2">
+                                        <div class="col-md-4">
                                             <mat-form-field>
                                                 <mat-label>Item Name</mat-label>
                                                 <input matInput  formControlName="item">
                                                 <mat-error>Please provide Name</mat-error>
                                             </mat-form-field>
                                         </div>                                  
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <mat-form-field appearance="fill" class="w-100">
                                                 <mat-label>Expense Category</mat-label>
                                                 <mat-select formControlName="categoryid">
@@ -90,19 +90,26 @@
                                                 </mat-error>
                                               </mat-form-field>
                                         </div> 
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <mat-form-field>
                                                 <mat-label> Amount</mat-label>
                                                 <input type="number" matInput formControlName="amount">
                                                 <mat-error *ngIf="details.at(i).get('amount')?.hasError('required')" >Please enter amount for item.</mat-error>                                                
                                             </mat-form-field>
                                         </div>    
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
+                                             <mat-form-field>
+                                                <mat-label> Remarks</mat-label>
+                                                <input  matInput formControlName="remarks">                                                
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-md-7">
                                             <app-file-uploader [required]="!isEdit" [title]="Uploadtitle" (onfileUpload)="onfileUploaded($event,i)" [title]="Uploadtitle"></app-file-uploader>
                                            </div>
                                         <div class="col-md-1 control-div content-center v-end">                                            
-                                            <app-delete-btn (clickEvent)="removeRow(i)" ></app-delete-btn>
+                                            <app-delete-btn class="mt-30" (clickEvent)="removeRow(i)" ></app-delete-btn>
                                         </div>
+                                        <hr class="mb-0">
                                 </div>
                             </div>
                         </div>

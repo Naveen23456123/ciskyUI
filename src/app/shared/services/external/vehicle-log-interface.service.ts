@@ -64,6 +64,27 @@ export class VehicleLogInterfaceService {
       action: Operation.DELETE
     }
     return this.coreApi.standardService(standardAttribute);
+  } 
+  ValidateLogByDate(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'VehicleLog/ValidateLog',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
   }
-
+  getVehiclePurposeByProjectId(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: `VehicleLog/GetPurpose`,
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
 }

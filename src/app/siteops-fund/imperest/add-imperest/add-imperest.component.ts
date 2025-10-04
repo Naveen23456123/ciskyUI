@@ -32,7 +32,7 @@ export class AddImperestComponent {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type']
     };
-    config.minWidth= '60vw';
+    config.minWidth= '65vw';
     const dialogRef = this.dialog.open(ManageImperestComponent, config);
     dialogRef.afterClosed().subscribe((data) => {
       if (data && data.valid) {

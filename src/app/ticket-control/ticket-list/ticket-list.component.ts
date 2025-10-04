@@ -82,6 +82,7 @@ export class TicketListComponent {
     this.ticketList = info;
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.pageSize= this.helperService.getPageSize();
     this.resultsLength= this.ticketList.length;   
   }
   updateRowData(data: any) {

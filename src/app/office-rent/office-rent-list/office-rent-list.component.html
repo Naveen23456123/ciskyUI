@@ -55,20 +55,35 @@
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
                       <td mat-cell *matCellDef="let row"> {{row.projectname}} </td>
                     </ng-container>
-              
+                  <ng-container matColumnDef="office">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Name/Location </th>
+                    <td mat-cell *matCellDef="let row"> {{row.name}}/{{row.location}} </td>
+                  </ng-container>
                   <!-- contractName Column -->
                   <ng-container matColumnDef="basicamount">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Basic Amount </th>
-                    <td mat-cell *matCellDef="let row"> {{row.basicamount}} </td>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Rent Amount </th>
+                    <td mat-cell *matCellDef="let row"> {{row.totalamount |formatCurrency}} </td>
                   </ng-container>
               
                   <!-- Name Column -->
                   <ng-container matColumnDef="agrdate">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Agreement Date </th>
-                    <td mat-cell *matCellDef="let row"> {{row.agreementstartdate | formatDate}} </td>
+                    <td mat-cell *matCellDef="let row">
+                      <table class="child-table">
+                        <tr>
+                          <td>Start </td>
+                          <td> : </td>
+                          <td> {{row.agreementstartdate | formatDate}}</td>
+                        </tr>
+                        <tr>
+                          <td>End </td>
+                          <td> : </td>
+                          <td> {{row.agreementenddate | formatDate}}</td>
+                        </tr>     
+                      </table>
+                    </td>
                   </ng-container>
-              
-                  <!-- con_personName Column -->
+                
                   <ng-container matColumnDef="ownername">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Owner Name </th>
                     <td mat-cell *matCellDef="let row"> {{row.ownername}} </td>
@@ -88,8 +103,9 @@
 
                   <ng-container matColumnDef="action">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                    <td class="action-col" mat-cell *matCellDef="let row"> 
-                      <div class="button-row">                               
+                    <td class="action-col-3" mat-cell *matCellDef="let row"> 
+                      <div class="button-row"> 
+                        <app-view-btn [state]="row" *ngIf="pagePermissions.canRead" [routerLink]="['/ofc-rent/view',row.id]" ></app-view-btn>                              
                         <app-edit-btn [state]="row" *ngIf="pagePermissions.canUpdate" [routerLink]="['/ofc-rent/edit',row.id]" ></app-edit-btn>                              
                         <app-delete-btn [state]="row" *ngIf="pagePermissions.canDelete" [routerLink]="['/ofc-rent/delete',row.id]"></app-delete-btn>
                       </div>

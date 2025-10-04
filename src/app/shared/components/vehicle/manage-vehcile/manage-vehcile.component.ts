@@ -3,10 +3,12 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
+import { CommonService } from '@app/shared/services/common.service';
 import { ProjectInterfaceService } from '@app/shared/services/external/project-interface.service';
 import { VehicleInterfaceService } from '@app/shared/services/external/vehicle-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
+import { ValidatorService } from '@app/shared/services/validator.service';
 import moment from 'moment';
 import { finalize, Subscription, take } from 'rxjs';
 
@@ -28,12 +30,13 @@ public data: any;
   isBtnClicked=false;
   isProject=true;
   projectName='';
+  projectInit=false;
   private subscription: Subscription = new Subscription();
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageVehicleComponent>, private formbuilder: FormBuilder,
-    private sessionservice: SessionService,  private router: Router,
+    private sessionservice: SessionService,  private router: Router,private commonService:CommonService,
     private notifibarservice: NotifyBarService, private projectService: ProjectInterfaceService,
-  private vehicleService:VehicleInterfaceService){
+  private vehicleService:VehicleInterfaceService, private validatorService :ValidatorService){
       this.data = data || {};
   }
   
@@ -74,9 +77,8 @@ public data: any;
       enddate:[,Validators.required],
       name:[,Validators.required],
       number:[,Validators.required],
+      agreementduration:[,Validators.required],
       fixedkm:[,Validators.required],
-      kmperliter:[],
-      fuelprice:[],
       sundaydutyrate:[,Validators.required],
       nightdutyrate:[,Validators.required],
       hourrate:[,Validators.required],
@@ -85,10 +87,10 @@ public data: any;
       bankname:[,Validators.required],
       accountholdername:[,Validators.required],
       accountnumber:[,Validators.required],
-      mobilenumber:[],
-      ifsccode:[],
-      pancard:[],
-      gstnumber:[,Validators.required],
+      mobilenumber:[,[this.validatorService.PhoneNumber,Validators.required]],
+      ifsccode:[,[Validators.required, this.validatorService.IfscCode]],
+      pancard:[, [this.validatorService.PanNo,Validators.required]],
+      gstnumber:[, this.validatorService.GstNo],
       address:[],
       files: this.formbuilder.array([])
     });
@@ -101,12 +103,21 @@ public data: any;
         else
           this.isProject=false;
           if (this.isEdit) {
-            this.setCompanyForm(this.data.element);
-            this.projectName= this.data.element.project;
-            this.projectChange();
+            this.vehicleService.getVehicleDetailsById({id:this.data.element.id},'')
+            .pipe(finalize(()=>{ this.isLoading=false;})).subscribe((response:any)=>{
+              if(response && response.success){
+                var data= response.data;
+                this.setCompanyForm(response.data);
+                this.projectInit=true;
+                this.projectName= this.data.element.project;
+                this.projectChange();
+              }
+            })
           }
-          else
+          else{
+            this.projectInit=true;
             this.addDocControls();
+          }
           this.isLoading=false;
       });     
    }
@@ -117,6 +128,11 @@ public data: any;
     });
     this.isLoading=false;
    }
+    this.vehicleForm.valueChanges.subscribe(values => {
+      const { startdate, agreementenddate,agreementduration } = values;   
+      this.vehicleForm.get('enddate')?.setValue(this.commonService.addMonths(startdate,+agreementduration), { emitEvent: false });   
+      
+    });
   }
 
   ngOnDestroy(): void {
@@ -131,11 +147,10 @@ public data: any;
       startdate:data.startdate,
       enddate:data.enddate,
       fixedkm : data.fixedkm,
+      agreementduration:data.agreementduration,
       sundaydutyrate : data.sundaydutyrate,
       nightdutyrate : data.nightdutyrate,
       hourrate : data.hourrate,
-      kmperliter : data.kmperliter,
-      fuelprice : data.fuelprice,
       fixedbillamount: data.fixedbillamount,
       extraamountafterfixedkm : data.extraamountafterfixedkm,
       bankname : data.bankname,

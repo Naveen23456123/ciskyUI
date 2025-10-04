@@ -5,6 +5,7 @@ import { extractTitle } from '@app/core/i18n.service';
 import { AddImperestComponent } from '../add-imperest/add-imperest.component';
 import { EditImperestComponent } from '../edit-imperest/edit-imperest.component';
 import { DeleteImperestComponent } from '../delete-imperest/delete-imperest.component';
+import { ViewImperestComponent } from '../view-imperest/view-imperest.component';
 
 const routes: Routes = [
   {
@@ -29,6 +30,12 @@ const routes: Routes = [
         component: DeleteImperestComponent,
         loadChildren:()=>import('app/siteops-fund/imperest/delete-imperest/delete-imperest.module').then(x=>x.DeleteImperestModule),
         data:{pageGuid:'',type:'delete'}
+      },
+      {
+        path: 'view/:impId',
+        component: ViewImperestComponent,
+        loadChildren:()=>import('app/siteops-fund/imperest/view-imperest/view-imperest.module').then(x=>x.ViewImperestModule),
+        data:{pageGuid:'',type:'view'}
       }
     ]
   }

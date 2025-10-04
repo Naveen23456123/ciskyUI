@@ -1,0 +1,99 @@
+<div class="dialog" >
+    <mat-card >   
+        <mat-dialog-content class="mat-typography">
+            <mat-card-content >
+                <div class="load-wrap" *ngIf="isLoading">
+                    <app-loader [IsLoading]="isLoading"></app-loader>
+                </div>
+                <div #pdfContent id="pdfContent" *ngIf="!isLoading">
+                    <div class="no-print content-center control-div container">
+                        <div class="button-row ">
+                        <app-download-pdf (clickEvent)="download()" ></app-download-pdf> 
+                        </div>                 
+                    </div>
+                    <div class="report-head">
+                        <h5 class="sub-heading content-center">Office Billing</h5>
+                        <hr>
+                        <div class="control-div pd-1">
+                            <span class="report-heading">Project : {{billing?.project}} </span>
+                            <span class="report-heading float-end" > Month-Year : {{ billing?.monthandyear | date:'MMM-yyyy'}}</span>
+                        </div>
+                        
+                        <div class="control-div">
+                            <span class="report-heading"> Name : {{billing?.name}}  </span>
+                        <span class="report-heading float-end" > Date : {{ billing?.today | formatDate}}</span>   
+                        </div>
+                        <div class="control-div">
+                            <span class="report-heading"> Location : {{billing?.location}}  </span>
+                            <span class="report-heading float-end" > </span>   
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                       <div class="watermark text-uppercase">{{ billing?.overallstatus }}</div>
+                    <table mat-table class="table-bordered " [dataSource]="dataSource" matSort multiTemplateDataRows>
+                        
+                            <ng-container matColumnDef="serial">
+                                <th mat-header-cell class="w-5" *matHeaderCellDef> Sr. No </th>
+                                <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                                <td mat-footer-cell *matFooterCellDef>  </td>
+                            </ng-container>
+                        
+                            
+                            <ng-container matColumnDef="desc">
+                                <th mat-header-cell  *matHeaderCellDef > Description of service </th>
+                                <td mat-cell class="w-40" *matCellDef="let row"> {{row.desc}} </td>
+                                <td mat-footer-cell *matFooterCellDef>  </td>                           
+                            </ng-container>
+                        
+                            <!-- con_personName Column -->
+                            <ng-container matColumnDef="entity">
+                                <th mat-header-cell *matHeaderCellDef > Days </th>
+                                <td mat-cell class="w-25" *matCellDef="let row">
+                                {{row.entity}} 
+                                </td>
+                                <td mat-footer-cell *matFooterCellDef>  </td>
+                            </ng-container>
+                           
+                            <ng-container matColumnDef="amount">
+                                <th mat-header-cell *matHeaderCellDef > Amount </th>
+                                <td mat-cell class="w-15" *matCellDef="let row"> {{row.amount | number:'1.2-2'}} </td>
+                                <td mat-footer-cell *matFooterCellDef class="text-center"> {{ billing?.billingamount | formatCurrency}} </td>
+                            </ng-container>
+                            
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns" ></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+                            <tr mat-footer-row *matFooterRowDef="displayedColumns;"></tr>
+                            <tr class="mat-row" *matNoDataRow>
+                                <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
+                                No Billing found at this moment.</td>
+                            </tr>
+                            </table>
+                            </div>
+                <div class="container mt-4">
+  <div class="row" >
+    <div class="col-md-12 mb-4" *ngIf="billing?.remarks">
+      <p class=" text-muted mb-0">
+        <strong>Remarks:</strong> {{billing?.remarks}}
+      </p>
+    </div>
+   <div class="col-md-8">
+      <p><strong>BANK DETAILS:</strong></p>
+                        <p class="mb-1"><strong>BANK NAME:</strong> {{billing?.bankname}}</p>
+                        <p class="mb-1"><strong>NAME:</strong> {{billing?.accountholdername}}</p>
+                        <p class="mb-1"><strong>ACCOUNT NO.:</strong> {{billing?.accountnumber}}</p>
+                        <p class="mb-1"><strong>IFSC CODE:</strong> {{billing?.ifsccode}}</p>
+    </div>
+    <div class="col-md-4 text-end">
+      <p class="mb-0"><strong>Authorized Signatory</strong></p>
+      <div class="border-top mt-5 pt-2 text-muted" style="width: 200px; margin-left: auto;">
+        (Signature & Seal)
+      </div>
+    </div>
+  </div>
+</div>
+                   
+                </div>
+            </mat-card-content>        
+        </mat-dialog-content>
+    </mat-card>
+</div>

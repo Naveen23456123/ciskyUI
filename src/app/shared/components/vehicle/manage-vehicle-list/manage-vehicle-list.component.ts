@@ -117,7 +117,8 @@ export class ManageVehicleListComponent {
   private updateTable(info: any) {
     this.vehicles = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);  
+    this.pageSize= this.helperService.getPageSize();  
     this.resultsLength= this.vehicles.length;   
   }
 
@@ -143,7 +144,7 @@ export class ManageVehicleListComponent {
     this.defaultdialogoptions.data = {
          pageGuid: this.route.snapshot.data['pageGuid'],
          type: DialogOperation.EDIT,
-         element: row
+        element:row
        };
        this.defaultdialogoptions.minWidth='75vw';
        const dialogRef = this.dialog.open(ManageVehicleComponent, this.defaultdialogoptions);
@@ -165,7 +166,7 @@ export class ManageVehicleListComponent {
     this.defaultdialogoptions.minWidth='45vw';
     const dialogRef = this.dialog.open(ManageVehicleComponent, this.defaultdialogoptions);
     dialogRef.afterClosed().subscribe((data) => {
-      if (data.valid) {
+      if (data && data.valid) {
         this.notifyBarService.showsnackbar('The vehicle removed successfully.');
         this.deleteRow(data.value);
       }
@@ -276,7 +277,7 @@ export class ManageVehicleListComponent {
     this.defaultdialogoptions.minWidth='75vw';
     const dialogRef = this.dialog.open(DetailVehicleComponent, this.defaultdialogoptions);
     dialogRef.afterClosed().subscribe((data) => {
-      if (data.valid) {
+      if (data && data.valid) {
        
       }
       else {

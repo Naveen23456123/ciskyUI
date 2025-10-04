@@ -53,77 +53,79 @@
                         </div>
                     </div>
                     <hr class="mt-0">
-                    <div class="row control-div" *ngIf="!isAllProject.value && !isAllVehicle.value">                       
-                        <div class="col-md-4">
-                            <mat-form-field>
-                                <mat-label>Vehicle Owner Name</mat-label>
-                                <input matInput  formControlName="ownername">
-                                <mat-error></mat-error>
-                            </mat-form-field>   
-                        </div>  
-                       
-                        <div class="col-md-4">                           
-                            
-                            <mat-form-field class="example-full-width">
-                                <mat-label>End Date</mat-label>
-                                <input matInput  formControlName="enddate" [matDatepicker]="enddate">
-                                
-                                <mat-datepicker-toggle matIconSuffix [for]="enddate"></mat-datepicker-toggle>
-                                <mat-datepicker #enddate></mat-datepicker>
-                                <mat-error>Please select End Date</mat-error>
-                              </mat-form-field>  
-                        </div>
-                        <div class=" col-md-4">
-                            <!-- <mat-form-field  >
-                                <mat-label>Logs Km</mat-label>
-                                <input type="number" readonly matInput formControlName="currentkm">
-                                <mat-error></mat-error>
-                            </mat-form-field>   -->
-                        </div> 
-                            <div class=" col-md-4">
+                    <div class="row control-div" *ngIf="vehicleForm.get('vehicleid')?.value && !isAllProject.value && !isAllVehicle.value">                       
+                            <div class=" col-md-3">
                                 <mat-form-field  >
                                     <mat-label>Fixed KM</mat-label>
                                     <input type="number" readonly matInput formControlName="fixedkm">
                                     <mat-error></mat-error>
                                 </mat-form-field>  
                             </div> 
-                            <div class="col-md-4">                           
-                                <mat-form-field >
-                                    <mat-label>Extra KM</mat-label>
-                                    <input type="number" (input)="onExtraChange()" matInput formControlName="extrakm">
-                                    <mat-error></mat-error>
-                               </mat-form-field>  
-                            </div> 
-                       
-                        <div class=" col-md-4">
-                            <mat-form-field  >
-                                <mat-label>Total KM</mat-label>
-                                <input type="number" [value]="totalkm" disabled="true" matInput>
-                                <mat-error></mat-error>
-                            </mat-form-field>  
-                        </div>    
-                        <div class="col-md-4">
+                            <div class="col-md-3">
                             <mat-form-field >
                                 <mat-label>Fixed Amount</mat-label>
                                 <input type="number" readonly matInput formControlName="fixedamount">
                                 <mat-error></mat-error>
                             </mat-form-field>  
-                        </div>                    
-                        <div class="col-md-4">
+                            </div> 
+                            <div class=" col-md-3">
+                                <mat-form-field  >
+                                    <mat-label>Total Readings</mat-label>
+                                    <input type="number" readonly matInput formControlName="totalreading">
+                                    <mat-error></mat-error>
+                                </mat-form-field>  
+                            </div> 
+                            
+                            <div class="col-md-3">
                             <mat-form-field >
-                                <mat-label>Extra Amt. Per KM. after Fixed KM.</mat-label>
+                                <mat-label>Extra Amt.(After Fixed Km)</mat-label>
                                 <input type="number" readonly matInput formControlName="extraamountperkmafterfixedkm">
                                 <mat-error></mat-error>
-                            </mat-form-field>  
-                        </div> 
-                        <div class=" col-md-4">
+                            </mat-form-field>
+                            </div>
+                            <div class=" col-md-3">
+                                <mat-form-field  >
+                                    <mat-label>Night Charges</mat-label>
+                                    <input type="number" readonly matInput formControlName="nightcharges">
+                                    <mat-error></mat-error>
+                                </mat-form-field>  
+                            </div> 
+                            <div class=" col-md-3">
+                                <mat-form-field  >
+                                    <mat-label>Sunday Charges</mat-label>
+                                    <input type="number" readonly matInput formControlName="sundaycharges">
+                                    <mat-error></mat-error>
+                                </mat-form-field>  
+                            </div> 
+                            <div class=" col-md-3">
+                                <mat-form-field  >
+                                    <mat-label>Extra Hour Charges</mat-label>
+                                    <input type="number" readonly matInput formControlName="hourcharges">
+                                    <mat-error></mat-error>
+                                </mat-form-field>  
+                            </div> 
+                         
+                        <div class=" col-md-3">
                             <mat-form-field  >
                                 <mat-label>Total Amount</mat-label>
                                 <input type="number" [value]="totalamount" disabled="true" matInput>
                                 <mat-error></mat-error>
                             </mat-form-field>  
-                        </div>                   
-                        
+                        </div>
+                        <div class=" col-md-4">
+                            <mat-form-field  >
+                                <mat-label>Add./Pre. Unbilled(If Any)</mat-label>
+                                <input type="number"   matInput formControlName="additionalcharges">
+                                <mat-error></mat-error>
+                            </mat-form-field>  
+                        </div>                    
+                        <div class=" col-md-8">
+                            <mat-form-field  >
+                                <mat-label>Remarks</mat-label>
+                                <input  matInput formControlName="remarks">
+                                <mat-error>Please provide remarks for the Additionl/Previous Unbilled amount. </mat-error>
+                            </mat-form-field>  
+                        </div>
                     </div>
                     <div class="row control-div" >
                         <div class="col-md-12 button-row" align="right">
@@ -152,11 +154,16 @@
                 <form [formGroup]="vehicleForm" (submit)="submit()">                   
                     <div class="row control-div" >
                         <div class="col-md-4">                           
-                            <app-project-control [required]="isProjectrequired" (onValueChange)="projectChange($event)"
-                            [defaultValue]="vehicleForm.get('projectid')?.value" ></app-project-control>
+                            <!-- <app-project-control [required]="isProjectrequired" (onValueChange)="projectChange($event)"
+                            [defaultValue]="vehicleForm.get('projectid')?.value" ></app-project-control> -->
+                            <mat-form-field>
+                                <mat-label>Project</mat-label>
+                                <input matInput readonly formControlName="project">
+                                <mat-error></mat-error>
+                            </mat-form-field>  
                         </div>
                         <div class="col-md-4">
-                            <mat-form-field>
+                            <!-- <mat-form-field>
                                 <mat-label>Vehicle Name</mat-label>
                                 <mat-select (selectionChange)="vehicleChange()" formControlName="vehicleid">
                                     <mat-option  *ngFor="let field of vehicleList" [value]="field.id">
@@ -164,36 +171,23 @@
                                     </mat-option>
                                 </mat-select>
                                 <mat-error *ngIf="!vehicleForm.get('projectid')?.value">Please select Project first</mat-error>
-                            </mat-form-field>
-                        </div>
-                        <div class="col-md-4">
+                            </mat-form-field> -->
                             <mat-form-field>
-                                <mat-label>Vehicle Owner Name</mat-label>
-                                <input matInput  formControlName="ownername">
+                                <mat-label>Vehicle Name</mat-label>
+                                <input matInput readonly formControlName="vehicle">
                                 <mat-error></mat-error>
-                            </mat-form-field>   
-                        </div>  
+                            </mat-form-field>  
+                        </div>
                         <div class="col-md-4">
-                          
-                            <app-month-and-year-picker [defaultValue]="vehicleForm.get('monthandyear')?.value" (onValueChange)="dateChange($event)"  ></app-month-and-year-picker> 
-                        </div>
-                        <div class="col-md-4">                           
-                            
-                            <mat-form-field class="example-full-width">
-                                <mat-label>End Date</mat-label>
-                                <input matInput  formControlName="enddate" [matDatepicker]="enddate">
-                                
-                                <mat-datepicker-toggle matIconSuffix [for]="enddate"></mat-datepicker-toggle>
-                                <mat-datepicker #enddate></mat-datepicker>
-                                <mat-error>Please select End Date</mat-error>
-                              </mat-form-field>  
-                        </div>
+                             <app-month-and-year-picker [defaultValue]="vehicleForm.get('monthandyear')?.value" (onValueChange)="dateChange($event)"  ></app-month-and-year-picker>
+                        </div>  
+                        
                         <div class=" col-md-4">
-                            <!-- <mat-form-field  >
+                            <mat-form-field  >
                                 <mat-label>Logs Km</mat-label>
                                 <input type="number" readonly matInput formControlName="currentkm">
                                 <mat-error></mat-error>
-                            </mat-form-field>   -->
+                            </mat-form-field>  
                         </div> 
                             <div class=" col-md-4">
                                 <mat-form-field  >

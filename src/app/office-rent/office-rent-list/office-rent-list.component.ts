@@ -23,7 +23,7 @@ import { CommonService } from '@app/shared/services/common.service';
 export class OfficeRentListComponent {
   rents:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','project','basicamount', 'agrdate', 'ownername','mobileno','docs','action'];
+  displayedColumns: string[] = ['serial','project','office','basicamount', 'agrdate', 'ownername','mobileno','docs','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
@@ -51,7 +51,8 @@ export class OfficeRentListComponent {
  }
 
  ngOnInit()  {
-  this.stateDataService.stateDataSubject.subscribe((data:any) => {   
+  this.stateDataService.stateDataSubject.subscribe((data:any) => {
+      
     if (data.event == 'rentedit'  && data.valid && data.value) {      
       this.updateRowData(data.value);
       this.notifyBarService.showsnackbar(data.msg);
@@ -99,15 +100,20 @@ export class OfficeRentListComponent {
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
     this.resultsLength= this.rents.length;   
+    this.pageSize= this.helperService.getPageSize();
   }
   updateRowData(data: any) {
     const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
       if(element){
         element.id=data.id,
         element.projectid =data.projectid,
+        element.totalamount =data.totalamount,
+        element.name=data.officename,
+        element.location=data.officelocation,
         element.basicamount=data.basicamount,
         element.agreementduration=data.agreementduration,
         element.agreementstartdate=data.agreementstartdate,
+        element.agreementenddate=data.agreementenddate,
         element.ownername=data.ownername,
         element.projectname=data.projectname,
         element.phoneno=data.phoneno,
@@ -118,9 +124,13 @@ export class OfficeRentListComponent {
     const data1:any = {
       id: data.id,
       projectid :data.projectid,
+      name:data.officename,
+      location:data.officelocation,
+      totalamount:data.totalamount,
       basicamount:data.basicamount,
       agreementduration:data.agreementduration,
       agreementstartdate:data.agreementstartdate,
+      agreementenddate:data.agreementenddate,
       ownername:data.ownername,
       projectname:data.projectname,
       phoneno:data.phoneno,

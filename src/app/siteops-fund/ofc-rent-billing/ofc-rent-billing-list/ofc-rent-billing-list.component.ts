@@ -72,17 +72,7 @@ export class OfcRentBillingListComponent {
      this.statusList= statusresponse;
     }
   })
-  this.officeService.searchOfficeBilling({}, '')
-  .pipe(finalize(() => this.isLoading = false))
-  .subscribe((response: any) => {
-    if (response && response.success) {      
-      this.ofcBilling = response.data.map((item:any) => ({
-        ...item,
-        levels: this.setLevel(item.levels) 
-      }));
-      this.updateTable(this.ofcBilling);
-    }
-  });
+  this.filterOfcBilling();
 }
  setLevel(items:any) {
   if(items){ 
@@ -125,10 +115,12 @@ export class OfcRentBillingListComponent {
   }
   addRowData(data: any) {
     const data1:any = {
-      id: data.id,
+      id: data.id,      
+      overallstatus:data.overallstatus,
       projectid :data.projectid,
       companyid :data.companyid,
       officeid:data.officeid,
+      office:data.office,
       monthandyear:data.monthandyear,
       project:data.project,
       totalamount:data.totalamount,
@@ -191,7 +183,7 @@ export class OfcRentBillingListComponent {
     .pipe(finalize(() => {this.isLoading = false; this.isSearchLoading=false}))
     .subscribe((response: any) => {
       if (response && response.success) {
-        this.ofcBilling = response.data.map((item:any) => ({
+        this.ofcBilling = response.data.billings.map((item:any) => ({
           ...item,
           levels: this.setLevel(item.levels) 
         }));

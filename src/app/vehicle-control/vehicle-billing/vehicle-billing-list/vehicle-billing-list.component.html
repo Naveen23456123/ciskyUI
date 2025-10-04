@@ -53,17 +53,16 @@
                   
                     <!-- Name Column -->
                     <ng-container matColumnDef="vehiclename">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Vehicle Name </th>
-                      <td mat-cell *matCellDef="let row"> {{row.vehiclename}} </td>
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Vehicle </th>
+                      <td mat-cell *matCellDef="let row"> {{row.vehicleno}} <br>{{row.vehiclename}} </td>
                     </ng-container>    
-                    <!-- Name Column -->
-                    <ng-container matColumnDef="vehiclenum">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Vehicle No. </th>
-                      <td mat-cell *matCellDef="let row"> {{row.vehicleno}} </td>
-                    </ng-container>    
+                    <ng-container matColumnDef="monthyear">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Bill Period </th>
+                      <td mat-cell *matCellDef="let row"> {{row.monthandyear | date:'MMM-yyyy'}} </td>
+                    </ng-container>     
                     <!-- Name Column -->
                     <ng-container matColumnDef="fixeddetails">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Fixed Details </th>
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Fixed Km & Amount </th>
                       <td mat-cell *matCellDef="let row">                              
                         <table class="child-table">
                           <tr>
@@ -79,44 +78,20 @@
                         </table>
                       </td>
                     </ng-container>    
-                    <!-- Name Column -->
-                    <ng-container matColumnDef="extraDetails">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Extra Details </th>
-                      <td mat-cell *matCellDef="let row"> 
-                        <table class="child-table">
-                          <tr>
-                            <td>Km</td>
-                            <td class="pad-right-1 pad-left-1">:</td>
-                            <td>
-                              <!-- {{row.extrakm}} -->
-                                {{getVehicleBilling(row).extrakm}}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>Amount</td>
-                            <td class="pad-right-1 pad-left-1">:</td>
-                            <td>{{ (getVehicleBilling(row).extrakm*row.extraamountperkmafterfixedkm) |formatCurrency}}</td>
-                          </tr>
-                        </table>
-                      </td>
-                    </ng-container> 
-                    <ng-container matColumnDef="extraamtkmabovefix">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Extra Amt./km </th>
-                      <td mat-cell *matCellDef="let row"> {{row.extraamountperkmafterfixedkm}} </td>
-                    </ng-container>    
+                   
                     <ng-container matColumnDef="totaldetails">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Total/Actual </th>
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Actual Km & Amount </th>
                       <td mat-cell *matCellDef="let row"> 
                         <table class="child-table">
                           <tr>
                             <td>Km</td>
                             <td class="pad-right-1 pad-left-1">:</td>
-                            <td>{{getVehicleBilling(row).totalkm}}</td>
+                            <td>{{row.currentkm}}</td>
                           </tr>
                           <tr>
                             <td>Amount</td>
                             <td class="pad-right-1 pad-left-1">:</td>
-                            <td>{{ getVehicleBilling(row).amount | formatCurrency}}</td>
+                            <td>{{row.billamount | formatCurrency}}</td>
                           </tr>
                         </table>
                       </td>
@@ -147,8 +122,9 @@
                     <ng-container  matColumnDef="action">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
                       <td mat-cell class="action-col" *matCellDef="let row"> 
-                        <div class="button-row">                             
-                          <app-edit-btn *ngIf="row.isedit" [routerLink]="['/vehicle-billing/edit',row.id]" [state]="row" ></app-edit-btn>                              
+                        <div class="button-row"> 
+                          <app-view-btn [state]="row" [routerLink]="['/vehicle-billing/view',row.id]"></app-view-btn>                            
+                          <!-- <app-edit-btn *ngIf="row.isedit" [routerLink]="['/vehicle-billing/edit',row.id]" [state]="row" ></app-edit-btn>                               -->
                           <app-delete-btn [state]="row" [routerLink]="['/vehicle-billing/delete',row.id]" ></app-delete-btn>
                     </div>
                       </td>

@@ -85,26 +85,7 @@
                         <span *ngIf="row.approved==0">-</span>  
                       </td>
                     </ng-container>  
-                    <!-- con_personName Column -->
-                    <ng-container matColumnDef="status">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-                      <td mat-cell *matCellDef="let row"> 
-                        <table class="status-child-table" >
-                          <tr *ngFor="let level of row.levels">
-                              <td>
-                              <span  [matTooltip]="'Level : ' + level.name + '\nApproval Name : ' + level.employeename"
-                              matTooltipClass="multiline-tooltip">
-                              {{ level.rolename }} 
-                              </span>
-                            </td>
-                            <td *ngIf="level.name">:</td>
-                              <td>
-                              <app-status-badge  [value]="level.status" [label]="level.status"></app-status-badge> 
-                              </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </ng-container>
+                    
                     <ng-container matColumnDef="view">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Manage </th>
                       <td mat-cell *matCellDef="let row"> 
@@ -119,7 +100,7 @@
                     <!-- con_personName Column -->
                     <ng-container matColumnDef="action">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                      <td mat-cell *matCellDef="let row"> 
+                      <td mat-cell class="action-col-3" *matCellDef="let row"> 
                         <div class="button-row">         
                           <button mat-icon-button type="button" matTooltip="New Expens(es)" [routerLink]="['/expense/claim',row.id]" [state]="row">
                               <mat-icon>add_circle</mat-icon>

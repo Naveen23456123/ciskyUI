@@ -24,7 +24,7 @@ readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
     panelClass: 'custom-dialog-container',
-    minWidth: '1000px',
+    minWidth: '70vw',
     position: { top: '20px' },
     disableClose: false,
     data: {},

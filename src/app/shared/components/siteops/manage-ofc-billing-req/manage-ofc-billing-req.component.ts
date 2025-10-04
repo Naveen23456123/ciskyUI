@@ -125,6 +125,10 @@ export class ManageOfcBillingReqComponent {
             this.approvalForm.value.summary= response.data.summary; 
             this.dialogRef.close({ value: this.approvalForm.value, valid: true });
           }
+          else{
+             this.dialogRef.close({ value: this.approvalForm.value, valid: false });
+            this.notifibarservice.showsnackbar(response.message);
+          }
       },
       error: (err: any) => {
           this.dialogRef.close(err);
@@ -138,7 +142,11 @@ export class ManageOfcBillingReqComponent {
       .pipe(finalize(() => { this.isLoading = false; })).subscribe({
       next:(response: any) => {
         if (response && response.success) 
-          this.dialogRef.close({ value: {id:this.selectedId,...response.data}, valid: true });       
+          this.dialogRef.close({ value: {id:this.selectedId,...response.data}, valid: true });
+        else {
+            this.dialogRef.close({ value: this.approvalForm.value, valid: false });
+            this.notifibarservice.showsnackbar(response.message);
+          }
     },
     error: (err: any) => {
         this.dialogRef.close(err);

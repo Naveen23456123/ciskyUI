@@ -27,16 +27,16 @@
                             <hr>
                             <div class="control-div pd-1">
                                 <span class="report-heading">Project : {{dataObj.project}} </span>
-                                <span class="report-heading float-end" > Month-Year : {{ dataObj.generatedate | date: 'MMMM - yyyy'}}</span>
+                                <span class="report-heading float-end" > Month-Year : {{ profitLossData?.monthandyear | date: 'MMMM - yyyy'}}</span>
                             </div>
                             
                             <div class="control-div">
                                 <span class="report-heading"> Income : {{dataObj.totalincome | formatCurrency}}  </span>
-                                <span class="report-heading float-end" > Date : {{ today | formatDate}}</span>   
+                                <span class="report-heading float-end" > Generated Date : {{ dataObj?.generatedate | formatDate}}</span>   
                             </div>
                             <div class="control-div">
                             <span class="report-heading">Expense : {{dataObj.totalexpense | formatCurrency}}  </span>
-                            <span class="report-heading float-end" > </span>    
+                            <span class="report-heading float-end" > Date : {{ today | formatDate}}</span>    
                             </div>
                             <div class="control-div">
                             <span  class="report-heading">

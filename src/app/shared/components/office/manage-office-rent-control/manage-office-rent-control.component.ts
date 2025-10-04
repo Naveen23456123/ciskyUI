@@ -9,6 +9,7 @@ import { ProjectInterfaceService } from '@app/shared/services/external/project-i
 import { SiteControlInterfaceService } from '@app/shared/services/external/site-control-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
+import { ValidatorService } from '@app/shared/services/validator.service';
 import { finalize, forkJoin } from 'rxjs';
 
 @Component({
@@ -33,7 +34,7 @@ export class ManageOfficeRentControlComponent {
   isBtnClicked=false;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageOfficeRentControlComponent>, private formbuilder: FormBuilder,
-    private sessionservice: SessionService,  private router: Router,
+    private sessionservice: SessionService,  private router: Router,private validatorService:ValidatorService,
     private notifibarservice: NotifyBarService, private commonService:CommonService,
   private projectService:ProjectInterfaceService, private officeRentService:OfficeInterfaceService){
       this.data = data || {};
@@ -83,22 +84,25 @@ export class ManageOfficeRentControlComponent {
       bankname:[,Validators.required],
       accountholdername:[,Validators.required],
       accountnumber:[,Validators.required],
-      ifsccode:[],
-      panno:[,Validators.required],
-      gstno:[,Validators.required],
-      phoneno:[,Validators.required],
+      ifsccode:[,[Validators.required, this.validatorService.IfscCode]],
+      panno:[,[Validators.required, this.validatorService.PanNo]],
+      gstno:[,[Validators.required, this.validatorService.GstNo]],
+      phoneno:[,[Validators.required, this.validatorService.PhoneNumber]],
       address:[],
       files: this.formbuilder.array([])
     });
     this.rentForm.valueChanges.subscribe(values => {
-      const { agreementstartdate, agreementenddate } = values;      
-      this.rentForm.get('agreementduration')?.setValue(this.commonService.getMonthsDifference(agreementstartdate,agreementenddate), { emitEvent: false });
+      const { agreementstartdate, agreementenddate,agreementduration } = values;   
+      this.rentForm.get('agreementenddate')?.setValue(this.commonService.addMonths(agreementstartdate,+agreementduration), { emitEvent: false });   
+      //this.rentForm.get('agreementduration')?.setValue(this.commonService.getMonthsDifference(agreementstartdate,agreementenddate), { emitEvent: false });
     });
     if(!this.deleteRent){
       let apiCalls: any = {};
 
       if(this.isEdit)
-        apiCalls.rentAPI= this.officeRentService.getOfficeRentsById({id:this.data.element.id},'')
+        apiCalls.rentAPI= this.officeRentService.getOfficeRentsById({id:this.data.element.id},'');
+      else
+        this.addDocControls();
 
       forkJoin(apiCalls)
       .pipe(finalize(() => { this.isLoading = false }))
@@ -190,7 +194,9 @@ export class ManageOfficeRentControlComponent {
   }
 
   projectChange(data:any=null){
+    console.log(data);
     if(data && data.value){
+      console.log(data);
       this.rentForm.patchValue({
         projectid:data.value.id,
         companyid:data.value.companyid
@@ -213,6 +219,7 @@ export class ManageOfficeRentControlComponent {
     });
     
     let formsValue= this.rentForm.value;
+    formsValue.totalamount= this.totalAmount;
     formsValue.projectname= this.projectName;  
     if (this.isEdit) {
       this.officeRentService.updateOfficeRent(this.rentForm.value, '')
@@ -233,6 +240,7 @@ export class ManageOfficeRentControlComponent {
         formData.append(`files[${index}].name`, item.name);
         formData.append(`files[${index}].file`, item.file);
       });
+      
       this.officeRentService.createOfficeRent(formData, '')
         .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked=false })).subscribe({
           next:(response: any) => {

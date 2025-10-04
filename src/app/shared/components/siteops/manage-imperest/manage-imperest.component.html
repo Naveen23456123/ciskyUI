@@ -10,14 +10,14 @@
                 <!-- <form [formGroup]="organizationForm" > -->
                 <form [formGroup]="imperestForm" (submit)="submit()">
                     <div class="row control-div">
-                        <div class="col-md-4" *ngIf="!isEdit">
+                        <div class="col-md-4" >
                             <app-project-control  (onValueChange)="projectChange($event)"
                             [defaultValue]="imperestForm.get('projectid')?.value" ></app-project-control>
                         </div>
-                        <div class="col-md-4" *ngIf="!isEdit">
+                        <div class="col-md-4" >
                             <mat-form-field>
                                 <mat-label>Select Office</mat-label>
-                                <mat-select formControlName="officeid">
+                                <mat-select (selectionChange)="officeChange()" formControlName="officeid">
                                
                                     @for (option of ofcList; track option) {
                                       <mat-option [value]="option.id">{{ option.name +' '+ option.location }}</mat-option>
@@ -34,21 +34,34 @@
                                 <mat-error>Please provide Name.</mat-error>
                             </mat-form-field>
                         </div> 
-
-                        <div class="col-md-4">                          
+                        <div class="col-md-4">
+                           <mat-form-field>
+                                <mat-label>Start Date - End Date</mat-label>
+                                <mat-date-range-input [rangePicker]="picker" [min]="minDate" [max]="maxDate">
+                                    <input matStartDate (dateChange)="onDateRangeChange($event)" formControlName="startdate">
+                                    <input matEndDate (dateChange)="onDateRangeChange($event)" formControlName="enddate">
+                                </mat-date-range-input>
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-date-range-picker  #picker></mat-date-range-picker>
+                                <mat-error *ngIf="imperestForm.get('startdate')?.hasError('required') || imperestForm.get('enddate')?.hasError('required')">
+                                   Please select both start and end dates.
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <!-- <div class="col-md-4">                          
                             <mat-form-field class="example-full-width">
                                 <mat-label>Date</mat-label>
-                                <input matInput  formControlName="date" [matDatepicker]="date">
+                                <input matInput  formControlName="date" [min]="minDate" [max]="maxDate" [matDatepicker]="date">
                                 
                                 <mat-datepicker-toggle matIconSuffix [for]="date"></mat-datepicker-toggle>
                                 <mat-datepicker #date></mat-datepicker>
                                 <mat-error>Please select Date.</mat-error>
                               </mat-form-field>
-                        </div> 
+                        </div>  -->
                         <div class="col-md-4">
                             <mat-form-field>
                                 <mat-label>Number of Day(s)</mat-label>
-                                <input matInput type="number" formControlName="days">
+                                <input matInput readonly type="number" formControlName="days">
                                 <mat-error>Please provide Days.</mat-error>
                             </mat-form-field>
                         </div> 

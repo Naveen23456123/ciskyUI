@@ -80,9 +80,8 @@ public data: any;
           this.userObj= response;
         }
       }) 
-      
       this.actedLevel = this.data.element.value.levels?.find((l:any) => l.employeeid==this.userObj.employeeid);  
-  
+     
       if(this.actedLevel){
         this.approvalForm = this.formbuilder.group({ 
           samount:[,[Validators.required]],
@@ -93,6 +92,7 @@ public data: any;
           id :[]
         });
         if (this.isEdit || this.deleteRequest) {
+           console.log(this.data.element.value);
           this.setApprovalForm(this.data.element.value);
         }
       }
@@ -112,9 +112,9 @@ public data: any;
   }
   tamount=0;
   setApprovalForm(data: any) { 
-  this.tamount= this.commonService.getVehicleBillingInfo(data)?.amount;
+    //this.tamount= this.commonService.getVehicleBillingInfo(data)?.amount;
     this.approvalForm.patchValue({
-      samount: this.tamount,
+      samount: data.billamount,
       amount:this.actedLevel.actedamount ?? data.totalamount,
       billingid:data.id,
       id:this.actedLevel?.id
@@ -131,6 +131,10 @@ public data: any;
             this.approvalForm.value.summary= response.data.summary; 
             this.dialogRef.close({ value: this.approvalForm.value, valid: true });
           }
+          else {
+             this.dialogRef.close({ value: this.approvalForm.value, valid: false });
+            this.notifibarservice.showsnackbar(response.message);
+          }
       },
       error: (err: any) => {
           this.dialogRef.close(err);
@@ -145,6 +149,10 @@ public data: any;
         next:(response: any) => {
           if (response && response.success){
             this.dialogRef.close({ value: {id:this.selectedId,...response.data}, valid: true });
+          }
+          else {
+             this.dialogRef.close({ value: this.approvalForm.value, valid: false });
+            this.notifibarservice.showsnackbar(response.message);
           }
       },
       error: (err: any) => {

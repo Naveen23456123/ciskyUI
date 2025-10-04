@@ -11,8 +11,10 @@ import { DialogOperation, TOTAL_PROFIT_LOSS_HEADING } from '@app/shared/models/c
 import { CommonService } from '@app/shared/services/common.service';
 import { ProfitLossInterfaceService } from '@app/shared/services/external/profit-loss-interface.service';
 import { HelperService } from '@app/shared/services/helper.service';
+import { StateDataService } from '@app/shared/services/state-data.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { delay, finalize, Subscription, take } from 'rxjs';
+import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 
 export type Row = { type: 'group'; label: string } | {
   id?:string;
@@ -56,10 +58,17 @@ export class ProfitLossListComponent {
     totaldataSource: Row[] = [];
     footerRow:string='totalfooter';
     constructor(private profitLossService:ProfitLossInterfaceService,private sessionService:SessionService,
-      private commonService:CommonService,private paymentService:PaymentService,private helperService:HelperService){
+      private commonService:CommonService,private paymentService:PaymentService,private helperService:HelperService,
+    private stateDataService:StateDataService,private notifyBarService:NotifyBarService){
     this.dataSource = new MatTableDataSource(this.itemsList);
    }
   ngOnInit(){
+    this.subscription= this.stateDataService.stateDataSubject.subscribe((data:any) => {   
+     if (data.event == 'pfladd' && data.valid && data.value) {        
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      }
+    });
     this.profitLossService.getProfitLossScopes({},'').pipe(finalize(()=> this.isLoading=false))
     .subscribe((response:any)=>{
       if(response && response.success){
@@ -266,7 +275,8 @@ ngOnDestroy(){
   private updateTable(info: any) {
     this.itemsList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length); 
+    this.pageSize= this.helperService.getPageSize();  
     this.resultsLength= this.itemsList.length;   
   }
     // Dynamically 

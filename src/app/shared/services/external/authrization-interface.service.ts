@@ -43,4 +43,26 @@ export class AuthrizationInterfaceService {
     }
     return this.coreApiService.standardService(standardAttribute);
   }
+  changePassword(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Auth/change-password',
+      params: false,
+      headers: true,
+      guid: guid,
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApiService.standardService(standardAttribute);
+  } 
+  getUserInfo(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Auth/UserInfo',
+      params: {},
+      headers: true,
+      guid: guid,
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApiService.standardService(standardAttribute);
+  }
 }

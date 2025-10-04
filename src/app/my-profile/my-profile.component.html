@@ -1,0 +1,64 @@
+<div class="container">
+    <div class="row">
+    <div class="wrapper col-md-4 pr-0 ">
+       <mat-card class="px-4 ht-100">
+     <span class="sub-heading">General Information</span>
+    <mat-card-content>
+      <div class="row  profile-info mt-3">
+        <hr>
+        <div class=" col-md-3 pad-0">
+            <span class="details-text"> Name</span>
+        </div>
+        <div class="col-md-9 pad-0">
+            <span class="details-val"> {{ userObj?.name }}</span>
+        </div>
+        <hr class="mt-3">
+        <div class=" col-md-3 pad-0">
+            <span class="details-text"> Email</span>
+        </div>
+        <div class="col-md-9 pad-0">
+            <span class="details-val">{{ userObj?.email }}</span>
+        </div>
+        <hr class="mt-3">
+        <div class=" col-md-3 pad-0">
+            <span class="details-text"> Role</span>
+        </div>
+        <div class="col-md-9 pad-0">
+            <span class="details-val">{{ userObj?.role }}</span>
+        </div>
+        
+      </div>
+    </mat-card-content>
+       </mat-card>
+    </div>
+    <div class="wrapper col-md-6 ">
+       <mat-card class="ht-100">
+        <span class="sub-heading px-4">Change Password</span>
+        <hr>
+    <mat-card-content>
+      <form [formGroup]="passwordForm" >
+        
+        <mat-form-field  class="full-width">
+          <mat-label>New Password</mat-label>
+          <input matInput type="password" formControlName="password" />
+          <mat-error>Please provide password.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field  class="full-width">
+          <mat-label>Confirm New Password</mat-label>
+          <input matInput type="password" formControlName="confirmPassword" />
+          <mat-error *ngIf="passwordForm.get('confirmPassword')?.hasError('required')">Please provide Confirm password.</mat-error>
+          <mat-error *ngIf="passwordForm.get('confirmPassword')?.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched">Password does not match.</mat-error>
+        </mat-form-field>
+
+        <button [ngClass]="passwordForm.valid? 'submit-btn':''" mat-flat-button [disabled]="!passwordForm.valid || isBtnClicked" (click)="onChangePassword()" color="primary">
+            <span [hidden]="isBtnClicked">Update Password</span> 
+            <app-btn-loader [IsLoading]="isBtnClicked"></app-btn-loader>
+        </button>
+      </form>
+    </mat-card-content>
+       </mat-card>
+       </div>
+  </div>
+  
+</div>

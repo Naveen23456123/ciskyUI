@@ -5,6 +5,7 @@ import { extractTitle } from '@app/core/i18n.service';
 import { AddOfcRentBillingComponent } from '../add-ofc-rent-billing/add-ofc-rent-billing.component';
 import { EditOfcRentBillingComponent } from '../edit-ofc-rent-billing/edit-ofc-rent-billing.component';
 import { DeleteOfcRentBillingComponent } from '../delete-ofc-rent-billing/delete-ofc-rent-billing.component';
+import { ViewOfficeBillingComponent } from '../view-office-billing/view-office-billing.component';
 
 const routes: Routes = [
   {
@@ -29,6 +30,12 @@ const routes: Routes = [
         component: DeleteOfcRentBillingComponent,
         loadChildren:()=>import('app/siteops-fund/ofc-rent-billing/delete-ofc-rent-billing/delete-ofc-rent-billing.module').then(x=>x.DeleteOfcRentBillingModule),
         data:{pageGuid:'',type:'delete'}
+      },
+      {
+        path: 'view/:ofcBillId',
+        component: ViewOfficeBillingComponent,
+        loadChildren:()=>import('app/siteops-fund/ofc-rent-billing/view-office-billing/view-office-billing.module').then(x=>x.ViewOfficeBillingModule),
+        data:{pageGuid:'',type:'view'}
       }
     ]
   }

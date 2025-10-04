@@ -11,7 +11,7 @@
                 <form [formGroup]="vehicleForm" >
                     <div class="row control-div">
                         <div class="col-md-3" *ngIf="!isProject">                           
-                            <app-project-control (onValueChange)="projectChange($event)"
+                            <app-project-control *ngIf="projectInit" (onValueChange)="projectChange($event)"
                             [defaultValue]="vehicleForm.get('projectid')?.value" ></app-project-control>
                         </div> 
                         <!-- <div class="col-md-3">
@@ -33,7 +33,7 @@
                             <mat-form-field>
                                 <mat-label>Vehicle Number</mat-label>
                                 <input matInput formControlName="number">
-                                <mat-error>Please provide Vehcicle Number.</mat-error>
+                                <mat-error>Please provide Vehicle Number.</mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-3">
@@ -45,7 +45,7 @@
                         </div> 
                             <div class="col-md-3">
                                 <mat-form-field class="example-full-width">
-                                <mat-label>Start Date</mat-label>
+                                <mat-label>Deployment Date</mat-label>
                                 <input matInput  formControlName="startdate" [matDatepicker]="startdate">
                                 
                                 <mat-datepicker-toggle matIconSuffix [for]="startdate"></mat-datepicker-toggle>
@@ -53,23 +53,24 @@
                                 <mat-error>Please select Date</mat-error>
                               </mat-form-field>
                             </div> 
+                             <div class="col-md-3">
+                            <mat-form-field>
+                                <mat-label>Agreement Duration (In Months)</mat-label>
+                                <input matInput formControlName="agreementduration">
+                                <mat-error>Please provide Duration.</mat-error>
+                                </mat-form-field>
+                            </div>
                             <div class="col-md-3">
                                 <mat-form-field class="example-full-width">
-                                <mat-label>End Date</mat-label>
+                                <mat-label>Deployment End Date</mat-label>
                                 <input matInput  formControlName="enddate" [matDatepicker]="enddate">
                                 
-                                <mat-datepicker-toggle matIconSuffix [for]="enddate"></mat-datepicker-toggle>
+                                <mat-datepicker-toggle matIconSuffix [for]="enddate" [disabled]="true"></mat-datepicker-toggle>
                                 <mat-datepicker #enddate></mat-datepicker>
                                 <mat-error>Please select  Date</mat-error>
                               </mat-form-field>
                             </div> 
-                        <div class="col-md-3">
-                            <mat-form-field>
-                                <mat-label>KM Per Liter</mat-label>
-                                <input type="number" matInput formControlName="kmperliter">
-                                <mat-error></mat-error>
-                            </mat-form-field>
-                        </div> 
+                       
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Fixed Bill Amount</mat-label>
@@ -140,29 +141,47 @@
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Mobile Number</mat-label>
-                                <input type="number" matInput formControlName="mobilenumber">
-                                <mat-error></mat-error>
+                                <input  matInput formControlName="mobilenumber">
+                                <mat-error *ngIf="vehicleForm.get('mobilenumber')?.hasError('required')">
+                                    Please provide phone number
+                                </mat-error>
+                                 <mat-error *ngIf="vehicleForm.get('mobilenumber')?.hasError('phoneno')">
+                                    Enter a valid 10-digit phone number
+                                </mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>IFSC Code</mat-label>
-                                <input matInput formControlName="ifsccode">
-                                <mat-error></mat-error>
+                                <input matInput class="text-uppercase"  formControlName="ifsccode">
+                                <mat-error *ngIf="vehicleForm.get('ifsccode')?.hasError('required')">
+                                    Provide provide IFSC Code.
+                                </mat-error>
+                                <mat-error *ngIf="vehicleForm.get('ifsccode')?.hasError('ifsc')">
+                                    Provide valid IFSC Code.
+                                </mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>PAN Card</mat-label>
-                                <input matInput formControlName="pancard">
-                                <mat-error></mat-error>
+                                <input matInput class="text-uppercase"  formControlName="pancard">
+                                <mat-error *ngIf="vehicleForm.get('pancard')?.hasError('required')">
+                                    Please provide PAN Number.
+                                </mat-error>
+                                 <mat-error *ngIf="vehicleForm.get('pancard')?.hasError('panno')">
+                                    Provide valid PAN Number.
+                                </mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>GST Number</mat-label>
-                                <input matInput formControlName="gstnumber">
-                                <mat-error>Please provide GST No.</mat-error>
+                                <input matInput class="text-uppercase"  formControlName="gstnumber">
+                                <mat-error *ngIf="vehicleForm.get('gstnumber')?.hasError('required')">Please provide GST No.</mat-error>
+                                <mat-error *ngIf="vehicleForm.get('gstnumber')?.hasError('gstno')">
+                                    Provide valid GST Number.
+                                </mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-3">

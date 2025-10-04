@@ -6,7 +6,7 @@ import { ExpenseInterfaceService } from '@app/shared/services/external/expense-i
 import { ImperestInterfaceService } from '@app/shared/services/external/imperest-interface.service';
 import { SessionService } from '@app/shared/services/session.service';
 import moment from 'moment';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin, Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-manage-expense',
@@ -21,6 +21,7 @@ export class ManageExpenseComponent {
   isLoading=true;
   isEdit: boolean = false;
   imperestList:any[]=[];
+  imperestDetails:any;
   expenseForm: FormGroup = new FormGroup({});
   title: string='';
   isClicked=false;
@@ -30,6 +31,8 @@ export class ManageExpenseComponent {
   imperestName='';
   separateEdit=false;
   isClaiming=false;
+  minDate:any;
+  maxDate:any;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,private formbuilder:FormBuilder,
       @Optional() private dialogRef: MatDialogRef<ManageExpenseComponent>,private expenseService:ExpenseInterfaceService,
     private imperestService:ImperestInterfaceService, private sessionService:SessionService){
@@ -59,17 +62,29 @@ export class ManageExpenseComponent {
       claimeddetails: this.formbuilder.array([])
     });
     if(!this.deleteRequest && !this.deleteExpense){
-      this.imperestService.getImperestDetails({},'').pipe(finalize(() => { this.isLoading = false; }))
-      .subscribe((response:any)=>{
-        if(response && response.success){
-          this.imperestList= response.data;
-          
+      const partial$ = this.imperestService.getImperestPartialDetails({}, '');
+
+    let details$: Observable<any> = of(null);
+    if (this.isEdit || this.isClaiming) {
+      this.selectedImperest = this.data.element.imperestid;
+      details$ = this.imperestService.getImperestDetailById({ id: this.selectedImperest }, '');
+    }
+    forkJoin({ partial: partial$, details: details$ })
+    .pipe(finalize(() => (this.isLoading = false)))
+    .subscribe(({ partial, details }: any) => {
+      if (partial?.success) {
+        this.imperestList = partial.data;
+
+        if (this.isEdit || this.isClaiming && details?.success) {
+          this.imperestDetails = details.data;
+          this.setExpenseForm(this.data.element);
+          this.setDates(this.selectedImperest);
+          this.imperestName = this.imperestList.find(
+            (x) => x.id === this.data.element.imperestid
+          )?.name;
         }
-        if(this.isEdit || this.isClaiming){
-        this.setExpenseForm(this.data.element);
-        this.imperestName= this.imperestList.find(x=>this.data.element.imperestid)?.name;
       }
-      });
+    });
     }
     else{
       this.expenseForm.patchValue({
@@ -127,7 +142,7 @@ export class ManageExpenseComponent {
         this.title = 'Add Expense';
         break;
       case 'claim':
-        this.title = 'Submit Expense';
+        this.title = 'New Expense';
         break;
     }
   }
@@ -140,6 +155,7 @@ export class ManageExpenseComponent {
       item:[data.itemname,Validators.required],
       categoryid:[data.categoryid,Validators.required],
       amount: [data.amount,Validators.required],
+      remarks: [data.remarks,Validators.required],
       file:[,fileValidators],
       id:[data.id]
     });
@@ -149,18 +165,42 @@ export class ManageExpenseComponent {
     const selectedIds = this.details.controls
       .map((ctrl, i) => i !== index && ctrl.get('categoryid')?.value)
       .filter(Boolean);
-  
-    return  this.imperestList.find((x:any)=> x.id==this.selectedImperest)?.details;
+      if(this.imperestDetails && this.imperestDetails[0])
+        return  this.imperestDetails[0]?.details;
+      else
+      return [];
   }
   onimperestChange(event:any){
+    console.log(event);
+    this.isLoading=true;
     if(event.value){
+      this.setDates(event.value.id);
       const claimeddetails = this.details;
       claimeddetails.clear();
       this.selectedImperest=event.value.id;
       this.expenseForm.patchValue({
         projectid:event.value.projectid,
-        companyid:event.value.companyid})
+        companyid:event.value.companyid,
+        date:''
+      });
+      this.getExpenseDetail();
     }
+  }
+  setDates(id:any){
+    let imperest= this.imperestList.find((x:any)=>x.id==id);
+      if(imperest){
+        this.minDate= imperest.startdate;
+        this.maxDate= imperest.enddate;
+      }
+  }
+  getExpenseDetail(){
+      this.imperestService.getImperestDetailById({id:this.selectedImperest},'')
+      .pipe(finalize(() => { this.isLoading = false; }))
+        .subscribe((response:any)=>{
+          if(response && response.success){
+            this.imperestDetails= response.data;
+          }
+      });
   }
   onfileUploaded(file:any,index:number){      
     this.details.at(index).patchValue({
@@ -199,12 +239,11 @@ export class ManageExpenseComponent {
             next:(response: any) => {
               if (response && response.success){
                 response.data.hasUpdated=true;
-                let catDetails=this.imperestList.find((x:any)=> x.id==this.selectedImperest)?.details;
-                console.log(catDetails);
+                let catDetails=this.imperestDetails.find((x:any)=> x.id==this.selectedImperest)?.details;
+               
                 response.data.updated.claimeddetails = response.data.updated.claimeddetails.map((detail:any) => {
                   const matched = catDetails.find((cat:any) => cat.id === detail.categoryid);
-                  console.log(detail.categoryid);
-                  console.log(matched);
+               
                   return {
                     ...detail,
                     categoryname: matched ? matched.expensename : 'Unknown'
@@ -244,8 +283,8 @@ export class ManageExpenseComponent {
           next:(response: any) => {
             if (response && response.success){
               let data= {...response.data};
-              let imperestObj= this.imperestList.find(x=>x.id==this.selectedImperest);
-              let catDetails=this.imperestList.find((x:any)=> x.id==this.selectedImperest)?.details;
+              let imperestObj= this.imperestDetails.find((x:any)=>x.id==this.selectedImperest);
+              let catDetails=this.imperestDetails.find((x:any)=> x.id==this.selectedImperest)?.details;
               data.project=imperestObj?.project; 
               data.officename=imperestObj?.officename; 
               data.officelocation=imperestObj?.officelocation;  

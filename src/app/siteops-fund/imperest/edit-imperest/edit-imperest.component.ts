@@ -27,7 +27,7 @@ constructor(private route: ActivatedRoute, private dialog: MatDialog,
       type: this.route.snapshot.data['type'],
       element: window.history.state
     };
-    this.defaultdialogOptionConfig.minWidth='60vw';
+    this.defaultdialogOptionConfig.minWidth='65vw';
     const dialogRef = this.dialog.open(ManageImperestComponent, this.defaultdialogOptionConfig);
     dialogRef.afterClosed().subscribe((data) => {
       if (data.valid) {

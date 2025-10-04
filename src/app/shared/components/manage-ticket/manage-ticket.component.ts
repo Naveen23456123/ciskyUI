@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
 import { TicketInterfaceService } from '@app/shared/services/external/ticket-interface.service';
+import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { ValidatorService } from '@app/shared/services/validator.service';
 import moment from 'moment';
 import { finalize, forkJoin } from 'rxjs';
@@ -31,7 +32,7 @@ export class ManageTicketComponent {
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageTicketComponent>, private formbuilder: FormBuilder,
     private employeeService: EmployeeInterfaceService, private ticketService:TicketInterfaceService,
-  private cdr:ChangeDetectorRef){
+    private notifibarservice:NotifyBarService,private cdr:ChangeDetectorRef){
       this.data = data || {};
   }
   
@@ -182,6 +183,10 @@ export class ManageTicketComponent {
           next: (response:any) => {
           if(response && response.success)
             this.dialogRef.close({ value: formsValue, valid: true });
+          else {
+            this.notifibarservice.showsnackbar(response.message,true);
+            this.dialogRef.close({ value: null, valid: false });
+          }
         },
         error: (err: any) => {
             this.dialogRef.close(err);
@@ -197,6 +202,7 @@ export class ManageTicketComponent {
             formsValue.proofaddress=response.data.proofaddress;
             this.dialogRef.close({ value: formsValue, valid: true });
           } else {
+            this.notifibarservice.showsnackbar(response.message,true);
             this.dialogRef.close({ value: null, valid: false });
           }
         },

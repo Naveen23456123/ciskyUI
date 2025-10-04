@@ -5,6 +5,7 @@ import { extractTitle } from '@app/core/i18n.service';
 import { AddVehicleBillingComponent } from '../add-vehicle-billing/add-vehicle-billing.component';
 import { EditVehicleBillingComponent } from '../edit-vehicle-billing/edit-vehicle-billing.component';
 import { DeleteVehicleBillingComponent } from '../delete-vehicle-billing/delete-vehicle-billing.component';
+import { ViewVehicleBillingComponent } from '../view-vehicle-billing/view-vehicle-billing.component';
 
 const routes: Routes = [
   {
@@ -28,6 +29,12 @@ const routes: Routes = [
         path: 'delete/:vehbilId',
         component: DeleteVehicleBillingComponent,
         loadChildren:()=>import('app/vehicle-control/vehicle-billing/delete-vehicle-billing/delete-vehicle-billing.module').then(x=>x.DeleteVehicleBillingModule),
+        data:{pageGuid:'',type:'delete'}
+      },
+      {
+        path: 'view/:vehbilId',
+        component: ViewVehicleBillingComponent,
+        loadChildren:()=>import('app/vehicle-control/vehicle-billing/view-vehicle-billing/view-vehicle-billing.module').then(x=>x.ViewVehicleBillingModule),
         data:{pageGuid:'',type:'delete'}
       }
     ]

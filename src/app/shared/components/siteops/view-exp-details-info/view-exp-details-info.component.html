@@ -1,6 +1,6 @@
 <div class="dialog" >
     <mat-card >
-        <h3 mat-dialog-title class="justify-content-between align-items-center"> Expense Details 
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> Expense(s)
             <button class="popup-close-btn float-end" mat-icon-button (click)="onCloseClick()">
             <mat-icon>close</mat-icon>
           </button> 
@@ -25,13 +25,13 @@
                          
                           <ng-container matColumnDef="date">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Expense Date </th>
-                            <td mat-cell *matCellDef="let row"> {{row.date | formatDate}} </td>
+                            <td mat-cell class="w-10" *matCellDef="let row"> {{row.date | formatDate}} </td>
                           </ng-container>                       
                           
                           <ng-container matColumnDef="gamount">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Submitted Amount </th>
                             <td mat-cell *matCellDef="let row"> 
-                              <table class="child-table">
+                              <table class="child-table align-center">
                                  <tr *ngFor="let item of row.claimeddetails">
                                   <td>{{item.itemname}}</td>
                                   <td>:</td>
@@ -44,7 +44,7 @@
                           <ng-container matColumnDef="apramount">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Approved Amount </th>
                             <td mat-cell *matCellDef="let row"> 
-                              <table *ngIf="row.approveddetails && row.approveddetails.length>0" class="child-table">
+                              <table *ngIf="row.approveddetails && row.approveddetails.length>0" class="child-table align-center">
                                 <tr  *ngFor="let item of row.approveddetails">
                                  <td>{{item.itemname}}</td>
                                  <td>:</td>
@@ -58,7 +58,7 @@
                           <ng-container matColumnDef="status">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
                             <td mat-cell *matCellDef="let row"> 
-                              <table class="status-child-table" >
+                              <table class="status-child-table align-center" >
                                 <tr *ngFor="let level of row.levels">
                                    <td>
                                     <span  [matTooltip]="'Level : ' + level.name + '\nApproval Name : ' + level.employeename"
@@ -76,7 +76,7 @@
                           </ng-container>
                           <ng-container matColumnDef="action">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                            <td mat-cell *matCellDef="let row"> 
+                            <td mat-cell class="action-col" *matCellDef="let row"> 
                               <div class="button-row">                              
                                 <app-edit-btn *ngIf="row.isedit" (clickEvent)="edit(row)" ></app-edit-btn>                              
                                 <app-delete-btn (clickEvent)="delete(row)" ></app-delete-btn>

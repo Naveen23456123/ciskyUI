@@ -112,7 +112,7 @@
                     <!-- con_personName Column -->
                     <ng-container matColumnDef="action">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                      <td mat-cell *matCellDef="let row"> 
+                      <td mat-cell class="action-col" *matCellDef="let row"> 
                         <div class="button-row">                              
                           <app-edit-btn (clickEvent)="edit(row)" ></app-edit-btn>                              
                           <app-delete-btn (clickEvent)="delete_row(row)" ></app-delete-btn>

@@ -52,6 +52,7 @@ export class GeneratePdfService {
 
      return new Promise((resolve, reject) => {
       setTimeout(() => {
+        console.log(content);
         html2canvas(content, { scale: 1.2 })
           .then(canvas => {
             const imgData = canvas.toDataURL('image/png');

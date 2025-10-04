@@ -28,7 +28,7 @@ export class LoginComponent {
     this.isForgotPassword=false;
     this.loginform= this.formbuilder.group({ 
       id:[''],
-      username:['Naveen.kumar12@gmail.com',Validators.required],
+      username:['Naveen.kumar161290@gmail.com',Validators.required],
       password:['password',Validators.required]
     });
   }
@@ -53,12 +53,12 @@ export class LoginComponent {
           this.router.navigate(['/dashboard']);
         } else {
           this.notifyBarService.showsnackbar(
-            "Please provide valid Email Id and Password."
+            "Please provide valid Email Id and Password.",true
           );
         }
       },
       error: (err) => {     
-        this.notifyBarService.showsnackbar("Please provide valid Email Id and Password."
+        this.notifyBarService.showsnackbar("Please provide valid Email Id and Password.",true
         );
       }
     });

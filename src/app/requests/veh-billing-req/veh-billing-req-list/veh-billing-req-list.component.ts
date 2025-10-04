@@ -23,7 +23,7 @@ import { finalize } from 'rxjs';
 export class VehBillingReqListComponent {
  vehicleBilings:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','vehiclename', 'vehiclenum', 'extraamtkmabovefix', 'fixeddetails', 'extraDetails','totaldetails','aaproved','status', 'action'];
+  displayedColumns: string[] = ['serial','monthyear','vehicle', 'fixeddetails', 'totaldetails','aaproved','status', 'action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
@@ -102,6 +102,7 @@ export class VehBillingReqListComponent {
     this.vehicleBilings = info;
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.pageSize= this.helperService.getPageSize();
     this.resultsLength= this.vehicleBilings.length;   
   }
   updateRowData(data: any) {

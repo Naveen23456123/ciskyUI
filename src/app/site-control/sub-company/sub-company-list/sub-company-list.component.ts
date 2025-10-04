@@ -66,6 +66,7 @@ export class SubCompanyListComponent {
         if (response && response.success) {
           this.subCompanies = response.data;
           this.updateTable(this.subCompanies);
+          console.log(this.dataSource.data);
         }
     });
   }

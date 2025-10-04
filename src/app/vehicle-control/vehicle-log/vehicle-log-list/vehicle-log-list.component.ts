@@ -20,7 +20,7 @@ import { finalize } from 'rxjs';
 export class VehicleLogListComponent {
   vehicleLogs:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','vehiclename','vehicleno', 'date','starttime','endtime','commencementoftrip','purposeandplace','images', 'action'];
+  displayedColumns: string[] = ['serial','vehiclename', 'date','starttime','endtime','commencementoftrip','misc','purposeandplace','images', 'action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
@@ -86,15 +86,7 @@ export class VehicleLogListComponent {
      this.searchObj.projectid= data.projectid ?? '';
      this.filterVehicleLogs();
    }
-   startTimeChange(data:any){
-    this.searchObj.starttime= data.value ?? '';
-    this.filterVehicleLogs();
-   }
-   endTimeChange(data:any){
-    console.log(data);
-    this.searchObj.endtime= data.value ?? '';
-    this.filterVehicleLogs();
-   }
+   
    dateRangeChange(data:any){
     if(data){
       this.searchObj.startdate= data.start ?? '';
@@ -149,7 +141,8 @@ export class VehicleLogListComponent {
   private updateTable(info: any) {
     this.vehicleLogs = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length); 
+    this.pageSize= this.helperService.getPageSize();   
     this.resultsLength= this.vehicleLogs.length;   
   }
   updateRowData(data: any) {
@@ -163,6 +156,9 @@ export class VehicleLogListComponent {
         element.useddate=data.useddate,
         element.fromtime=data.fromtime,
         element.totime=data.totime,
+        element.issunday=data.issunday,
+        element.isnight=data.isnight,
+        element.extrahours=data.extrahours,
         element.initialreading=data.initialreading,
         element.initialimageaddress=data.initialimageaddress,
         element.endreading=data.endreading,
@@ -182,6 +178,9 @@ export class VehicleLogListComponent {
       useddate:data.useddate,
       fromtime:data.fromtime,
       totime:data.totime,
+      issunday:data.issunday,
+      isnight:data.isnight,
+      extrahours:data.extrahours,
       initialreading:data.initialreading,
       initialimageaddress:data.initialimageaddress,
       endreading:data.endreading,

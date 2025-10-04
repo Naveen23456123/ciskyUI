@@ -15,14 +15,14 @@ export class BillingInfoSummaryComponent {
   ngOnChanges() {
     if (this.summary && Array.isArray(this.summary)) {
       this.summaryInfo = this.summary.reduce((acc: any, curr: any) => {
-        acc[curr.status] = curr.totalamount;
+        acc[curr.status.toLowerCase()] = curr.totalamount;
         return acc;
       }, {} as Record<string, number>);
 
-      this.summaryInfo.total = this.summary.reduce(
-        (sum: number, curr: any) => sum + curr.totalamount,
-        0
-      );
+      // this.summaryInfo.total = this.summary.reduce(
+      //   (sum: number, curr: any) => sum + curr.totalamount,
+      //   0
+      // );
     }
     this.cd.markForCheck(); 
   }

@@ -5,6 +5,7 @@ import { extractTitle } from '@app/core/i18n.service';
 import { AddOfficeRentComponent } from '../add-office-rent/add-office-rent.component';
 import { EditOfficeRentComponent } from '../edit-office-rent/edit-office-rent.component';
 import { DeleteOfficeRentComponent } from '../delete-office-rent/delete-office-rent.component';
+import { ViewOfficeRentComponent } from '../view-office-rent/view-office-rent.component';
 
 const routes: Routes = [
   {
@@ -29,6 +30,12 @@ const routes: Routes = [
         component: DeleteOfficeRentComponent,
         loadChildren:()=>import('app/office-rent/delete-office-rent/delete-office-rent.module').then(x=>x.DeleteOfficeRentModule),
         data:{pageGuid:'',type:'delete'}
+      },
+      {
+        path: 'view/:ofcId',
+        component: ViewOfficeRentComponent,
+        loadChildren:()=>import('app/office-rent/view-office-rent/view-office-rent.module').then(x=>x.ViewOfficeRentModule),
+        data:{pageGuid:'',type:'view'}
       }
     ]
   }

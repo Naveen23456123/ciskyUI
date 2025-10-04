@@ -73,6 +73,7 @@ public data: any;
   ngOnInit(){
     this.checkMode(this.data.type);
     this.getTitle(this.data.type);
+    console.log(this.data.element);
     if(!this.deleteRequest){
       this.sessionservice.approvalStatusSubject$.subscribe((response:any)=>{
         if(response){
@@ -95,6 +96,7 @@ public data: any;
           remarks:[this.actedLevel.remarks,[Validators.required]],
           statusid:[this.actedLevel.statusid,[Validators.required]],
           id:[this.data.element.value.id],
+          pid:[this.data.element.value.pid],
           billingid:[this.actedLevel.id],
           acteddetails: this.formbuilder.array([])
         });
@@ -117,7 +119,6 @@ public data: any;
     return this.approvalForm.get('acteddetails') as FormArray;
   }
   addDetailsControlswithValue(data:any) {
-    console.log(data);
     const group = this.formbuilder.group({
       category:[data.itemname],
       samount: [this.sdetails.find((x:any)=>x.id==data.id)?.amount],
@@ -145,6 +146,10 @@ public data: any;
         next:(response: any) => {
           if (response && response.success) 
             this.dialogRef.close({ value: response.data, valid: true });
+          else{
+            this.dialogRef.close({ value: null, valid: true });
+            this.notifibarservice.showsnackbar(response.message,true);
+          }
       },
       error: (err: any) => {
           this.dialogRef.close(err);
@@ -159,6 +164,10 @@ public data: any;
         next:(response: any) => {
           if (response && response.success) 
             this.dialogRef.close({ value: {...this.deleteobj,summary:response.data.summary}, valid: true });
+          else {
+            this.dialogRef.close({ value: null, valid: true });
+            this.notifibarservice.showsnackbar(response.message,true);
+          }
       },
       error: (err: any) => {
           this.dialogRef.close(err);

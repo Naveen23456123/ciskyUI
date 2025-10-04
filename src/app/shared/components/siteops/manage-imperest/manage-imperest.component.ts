@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { ApprovalStatus } from '@app/shared/models/constant.config';
+import { CommonService } from '@app/shared/services/common.service';
 import { ImperestInterfaceService } from '@app/shared/services/external/imperest-interface.service';
 import { OfficeInterfaceService } from '@app/shared/services/external/office-interface.service';
 import { ProjectInterfaceService } from '@app/shared/services/external/project-interface.service';
@@ -32,10 +33,12 @@ public data: any;
   projectName='';
   ofcList:any[]=[];
   statusList:any[]=[];
+  minDate:any;
+  maxDate:any;
   private subscription: Subscription = new Subscription();
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageImperestComponent>, private formbuilder: FormBuilder,
-    private sessionservice: SessionService,  private router: Router,
+    private sessionservice: SessionService,  private commonService: CommonService,
     private notifibarservice: NotifyBarService, private projectService: ProjectInterfaceService,
   private imperestService:ImperestInterfaceService, private officeService:OfficeInterfaceService){
       this.data = data || {};
@@ -74,8 +77,9 @@ public data: any;
       officeid:[,Validators.required],
       companyid:[],
       name :[,Validators.required],
-      date:[,Validators.required],
-      days:[,Validators.required],
+      startdate:[,Validators.required],
+      enddate:[,Validators.required],
+      days:[],
       remarks:[], 
       moduleid:[this.data.pageGuid],
       statusid:[],    
@@ -88,7 +92,8 @@ public data: any;
     })
     if(!this.deleteImperest){ 
           if (this.isEdit) {
-            this.setCompanyForm(this.data.element);           
+            this.setCompanyForm(this.data.element.value);          
+            this.projectChange(); 
           }
           else
             this.addDetailsControls();
@@ -96,8 +101,8 @@ public data: any;
    }
    else{    
     this.imperestForm.patchValue({
-      id:this.data.element.id,
-      name :this.data.element.name
+      id:this.data.element.value.id,
+      name :this.data.element.value.name
     });
     this.isLoading=false;
    }
@@ -107,19 +112,39 @@ public data: any;
       this.imperestForm.patchValue({
         projectid:data.value.id,
         companyid:data.value.companyid,
-        officeid:''
+        officeid:this.imperestForm.get('officeid')?.value
     });
       this.projectName= data.value.projectshortname;
       this.officeService.getOfficeRentPartialList([data.value.id],'')
       .pipe(finalize(()=> this.isLoading=false)).subscribe((response:any)=>{
        if(response && response.success)
          this.ofcList= response.data;
+        if(this.isEdit)
+          this.officeChange(false);
       });
     } 
   }
   ngOnDestroy(): void {
     
   }
+
+  officeChange(reset=true){
+    if(reset){
+      this.imperestForm.patchValue({
+        startdate:'',
+        enddate:''
+      });
+    }
+    let officeid= this.imperestForm.get('officeid')?.value;
+    if(officeid){
+      let ofcItem= this.ofcList.find((x:any)=>x.id==officeid);
+      if(ofcItem){
+        this.minDate = ofcItem.startdate;
+        this.maxDate= ofcItem.enddate;
+      }
+    }
+  }
+
   setCompanyForm(data: any) {    
     this.imperestForm.patchValue({
       projectid:data.projectid,
@@ -127,13 +152,15 @@ public data: any;
       officeid:data.officeid,
       id:data.id,
       name :data.name,
-      date:data.date,
+      startdate: data.startdate ? new Date(data.startdate) : null,
+      enddate: data.enddate ? new Date(data.enddate) : null,
       days:data.days,
       remarks:data.remarks,      
     });
     data.details.forEach((element:any) => {
       this.addDetailsControlswithValue(element);
     });
+
   }
   
 
@@ -166,21 +193,30 @@ public data: any;
       name:value
     });
   }
-
+  onDateRangeChange(event: any) {
+    const start = this.imperestForm.get('startdate')?.value;
+    const end = this.imperestForm.get('enddate')?.value;
+   
+    if (start && end) {
+      // do something when both are selected
+      this.imperestForm.patchValue({
+        days:this.commonService.getDaysDifference(start,end)
+      })
+    }
+  }
   removeDocControl(index: number) {
     this.details.removeAt(index);
   }
 
   submit(){  
     this.isBtnClicked=true;
-    if (this.isEdit) {  
-      console.log(this.imperestForm.getRawValue());   
-      this.imperestService.updateImperest(this.imperestForm.getRawValue(), '')
+    if (this.isEdit) {
+      this.imperestService.updateImperest({imperest:this.imperestForm.value,searchObj:this.data.element.searchObj}, '')
         .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
           next: (response:any) => {
           if(response && response.success){
             this.imperestForm.value.details= response.data.details;
-            this.dialogRef.close({ value: this.imperestForm.value, valid: true });
+            this.dialogRef.close({ value: response.data, valid: true });
           }
         },
         error: (err: any) => {
@@ -189,7 +225,7 @@ public data: any;
         });
     } else {
       this.imperestForm.patchValue({statusid:this.statusList.find((x:any)=>x.name.toLowerCase()==ApprovalStatus.PENDING)?.id});
-      this.imperestForm.value.id=null;       
+      this.imperestForm.value.id=null;  
       this.imperestService.createImperest(this.imperestForm.value, '')
         .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked=false })).subscribe({
           next:(response: any) => {
@@ -206,6 +242,7 @@ public data: any;
             this.dialogRef.close({ value: this.imperestForm.value, valid: true });
           } else {
             this.dialogRef.close({ value: null, valid: false });
+            this.notifibarservice.showsnackbar(response.message,true);
           }
         },
          error: (err: any) => {
@@ -216,11 +253,11 @@ public data: any;
   }
 
   delete() {
-      this.imperestService.deleteImperest({id:this.imperestForm.value.id}, '')
+      this.imperestService.deleteImperest({id:this.imperestForm.value.id,searchObj:this.data.element.searchObj}, '')
        .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked=false })).subscribe({
         next:(response: any) => {
           if (response && response.success) 
-           this.dialogRef.close({ value: this.imperestForm.value, valid: true });
+           this.dialogRef.close({value:{id:this.imperestForm.value.id,...response.data}, valid: true });
       },
       error: (err: any) => {
           this.dialogRef.close(err);

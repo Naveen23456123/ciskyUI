@@ -27,8 +27,8 @@ export class ManageOfcRentBillingComponent {
   deleteOfc=false;
   subCompanyList:any[] = [];
   isClicked=false;
-  isAllProject = new FormControl(true);
-  isAllOffice = new FormControl(true);
+  isAllProject = new FormControl(false);
+  isAllOffice = new FormControl(false);
   isProjectrequired:boolean=false;
   isAllOfcDisabled=false;
   ofcList:any[]=[];
@@ -36,7 +36,8 @@ export class ManageOfcRentBillingComponent {
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageOfcRentBillingComponent>, private formbuilder: FormBuilder,
     private sessionservice: SessionService,  private router: Router,private cdr:ChangeDetectorRef,
-    private officeService: OfficeInterfaceService, private companyService:SubCompanyInterfaceService){
+    private officeService: OfficeInterfaceService, private companyService:SubCompanyInterfaceService,
+  private notifibarservice:NotifyBarService){
       this.data = data || {};
   }
   
@@ -161,60 +162,48 @@ export class ManageOfcRentBillingComponent {
   bulkBillingObj:any={};
   submit(){   
     this.isClicked=true;
-    if (this.isEdit) {
-      // this.officeService.updateItem(this.ofcForm.value, '')
-      //   .pipe(finalize(() => { this.isLoading = false; this.isClicked=false })).subscribe({
-      //     next:(response: any) => {
-      //       if (response && response.success) 
-      //         this.dialogRef.close({ value: this.ofcForm.value, valid: true });
-      //   },
-      //   error: (err: any) => {
-      //       this.dialogRef.close(err);
-      //     }
-      //   });
-    } else {
-      this.sessionservice.approvalStatusSubject$.subscribe((response:any)=>{
-        if(response){
-          this.bulkBillingObj.statusid=response.find((x:any)=>x.name.toLowerCase()==ApprovalStatus.PENDING)?.id;
-        }
-      })
-      this.ofcForm.value.id=null;
-      this.bulkBillingObj.monthandyear=this.ofcForm.get('monthandyear')?.value;
-      this.bulkBillingObj.allproject=this.isAllProject.value;
-      this.bulkBillingObj.moduleid=this.data.pageGuid;
-      this.bulkBillingObj.alloffice=this.isAllOffice.value;
-      if(this.isAllProject.value && this.isAllProject.value){
-       
+    this.sessionservice.approvalStatusSubject$.subscribe((response:any)=>{
+      if(response){
+        this.bulkBillingObj.statusid=response.find((x:any)=>x.name.toLowerCase()==ApprovalStatus.PENDING)?.id;
       }
-      else if (!this.isAllProject.value && this.isAllOffice.value){       
-      this.bulkBillingObj.projectid=this.ofcForm.get('projectid')?.value;
-      this.bulkBillingObj.companyid=this.ofcForm.get('companyid')?.value;      
+    })
+    this.ofcForm.value.id=null;
+    this.bulkBillingObj.monthandyear=this.ofcForm.get('monthandyear')?.value;
+    this.bulkBillingObj.allproject=this.isAllProject.value;
+    this.bulkBillingObj.moduleid=this.data.pageGuid;
+    this.bulkBillingObj.alloffice=this.isAllOffice.value;
+    if(this.isAllProject.value && this.isAllProject.value){
       
-      }
-      else {
-        this.bulkBillingObj.projectid=this.ofcForm.get('projectid')?.value;
-        this.bulkBillingObj.companyid=this.ofcForm.get('companyid')?.value;    
-        this.bulkBillingObj.officeid=this.ofcForm.get('officeid')?.value;    
-      }
-      this.officeService.bulkOfficeBilling(this.bulkBillingObj, '')
-        .pipe(finalize(() => { this.isLoading = false;this.isClicked=false })).subscribe({
-          next:(response: any) => {
-            if (response && response.success)  {     
-              if(!this.isAllProject.value){
-                response.data.forEach((element:any) => {
-                  element.project= this.projectName;
-                });
-              }         
-              this.dialogRef.close({ value: response.data, valid: true });
-          } else {
-            this.dialogRef.close({ value: null, valid: false });
-          }
-        },
-         error: (err: any) => {
-            this.dialogRef.close(err);
-          }
-      });
     }
+    else if (!this.isAllProject.value && this.isAllOffice.value){       
+    this.bulkBillingObj.projectid=this.ofcForm.get('projectid')?.value;
+    this.bulkBillingObj.companyid=this.ofcForm.get('companyid')?.value;      
+    
+    }
+    else {
+      this.bulkBillingObj.projectid=this.ofcForm.get('projectid')?.value;
+      this.bulkBillingObj.companyid=this.ofcForm.get('companyid')?.value;    
+      this.bulkBillingObj.officeid=this.ofcForm.get('officeid')?.value;    
+    }
+    this.officeService.bulkOfficeBilling(this.bulkBillingObj, '')
+      .pipe(finalize(() => { this.isLoading = false;this.isClicked=false })).subscribe({
+        next:(response: any) => {
+          if (response && response.success)  {     
+            if(!this.isAllProject.value){
+              response.data.forEach((element:any) => {
+                element.project= this.projectName;
+              });
+            }         
+            this.dialogRef.close({ value: response.data, valid: true });
+        } else {
+          this.notifibarservice.showsnackbar(response.message,true);
+          this.dialogRef.close({ value: null, valid: false });
+        }
+      },
+        error: (err: any) => {
+          this.dialogRef.close(err);
+        }
+    });
   }
 
   delete() {

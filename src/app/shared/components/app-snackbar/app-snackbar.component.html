@@ -1,0 +1,15 @@
+<div class="custom-snackbar d-flex align-items-center">
+  <div class="checkmark-wrapper">
+  <svg *ngIf="!dataMessage.iserror" class="checkmark" viewBox="0 0 52 52">
+    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+    <path class="checkmark__check" fill="none" d="M14 27l7 7 16-16"/>
+  </svg>
+  <svg *ngIf="dataMessage.iserror" class="crossmark" viewBox="0 0 52 52">
+    <circle class="crossmark__circle" cx="26" cy="26" r="25" fill="none"/>
+    <path class="crossmark__cross crossmark__line1" fill="none" d="M16 16 36 36"/>
+    <path class="crossmark__cross crossmark__line2" fill="none" d="M36 16 16 36"/>
+   </svg>
+
+  </div>
+  <span class="snackbar-message">{{ dataMessage.message }}</span>
+</div>

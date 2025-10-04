@@ -76,7 +76,8 @@ public data: any;
       }
     })
     this.sdetails = this.data.element.value.details;
-    this.actedLevel = this.data.element.value.levels?.find((l:any) => l.acteddetails?.length > 0);
+    this.actedLevel = this.data.element.value.levels?.find((l:any) => l.employeeid==this.userObj.employeeid);
+    console.log(this.actedLevel);
       if(this.actedLevel){
       const actedDetail = this.actedLevel?.acteddetails;
       this.isRejected =  this.statusList.find(x=>x.id==this.actedLevel.statusid)?.name.toLocaleLowerCase()==ApprovalStatus.REJECTED;
@@ -125,7 +126,11 @@ public data: any;
       .pipe(finalize(() => { this.isLoading = false; this.isClicked=false; })).subscribe({
         next:(response: any) => {
           if (response && response.success) 
-            this.dialogRef.close({ value: response.data, valid: true });
+            this.dialogRef.close({ value: {...response.data,levelid:this.actedLevel.id}, valid: true });
+          else {
+          this.notifibarservice.showsnackbar(response.message,true);
+          this.dialogRef.close({ value: null, valid: false });
+        }
       },
       error: (err: any) => {
           this.dialogRef.close(err);
@@ -140,6 +145,10 @@ public data: any;
         next:(response: any) => {
           if (response && response.success) 
             this.dialogRef.close({ value: {id:this.approvalForm.value.id,...response.data}, valid: true });
+          else {
+            this.notifibarservice.showsnackbar(response.message,true);
+            this.dialogRef.close({ value: null, valid: false });
+        }
       },
       error: (err: any) => {
           this.dialogRef.close(err);

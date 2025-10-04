@@ -97,4 +97,27 @@ export class ImperestInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
+  getImperestPartialDetails(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Imperest/Partial',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+
+  getImperestDetailById(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Imperest/DetailsWithLevel/'+request.id,
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
 }

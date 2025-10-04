@@ -199,6 +199,11 @@ const baseroutes: Routes = [
       path: 'permission',
       loadChildren:()=>import('app/app-permission/app-permission-list/app-permission-list.module').then(x=>x.AppPermissionListModule),
       data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'my-profile',
+      loadChildren:()=>import('app/my-profile/my-profile.module').then(x=>x.MyProfileModule),
+      data:{pageGuid:'',type:'view'}
     }
     //{ path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
   ]),

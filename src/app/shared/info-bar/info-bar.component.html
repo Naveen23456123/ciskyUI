@@ -47,9 +47,22 @@
         <button mat-icon-button class="example-icon float-end" aria-label="Example icon-button with share icon">
           <mat-icon>notifications</mat-icon>
         </button>
-        <button mat-icon-button (click)="logout()" class="example-icon favorite-icon float-end" aria-label="Example icon-button with heart icon">
-          <mat-icon>logout</mat-icon>
-        </button>
+        <button mat-icon-button [matMenuTriggerFor]="profileMenu" aria-label="Profile">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+
+    <!-- Menu definition -->
+    <mat-menu class="profile-menu" #profileMenu="matMenu">
+      <button mat-menu-item class="br-10" [routerLink]="'/my-profile'">
+        <mat-icon class="hover-icon" >person</mat-icon>
+        <span>My Profile</span>
+      </button>
+      <hr class="m-0">
+      <button mat-menu-item class="br-10" (click)="logout()">
+        <mat-icon class="hover-icon">logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
       </div>         
     </mat-card-content>      
   </mat-card>

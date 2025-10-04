@@ -1177,7 +1177,8 @@ export class DashboardComponent {
       incomeAPI:this.projectService.getProjectIncomeSummary(apiObj,''),
       expenseAPI:this.projectService.getProjectExpenseSummary(apiObj,'')
     }).pipe(finalize(()=> {this.isfinanceLoading=false; this.isexpenseLoading=false})).subscribe((response:any)=>{
-      const prevMonth = this.getLastThreeMonths();     
+      const prevMonth = this.getLastMonths(6);   
+      console.log(prevMonth);  
       if(response && response.incomeAPI.success){
         //this.finance= response.data;
         this.finance.inc_latestMonth= this.monthNames[prevMonth[0].month-1]+"-"+prevMonth[0].year;
@@ -1305,7 +1306,10 @@ export class DashboardComponent {
           type: 'category',
           data: [this.monthNames[prevMonth[0].month-1]+"-"+prevMonth[0].year,
           this.monthNames[prevMonth[1].month-1]+"-"+prevMonth[1].year,
-          this.monthNames[prevMonth[2].month-1]+"-"+prevMonth[2].year]
+          this.monthNames[prevMonth[2].month-1]+"-"+prevMonth[2].year,
+          this.monthNames[prevMonth[3].month-1]+"-"+prevMonth[3].year,
+          this.monthNames[prevMonth[4].month-1]+"-"+prevMonth[4].year,
+          this.monthNames[prevMonth[5].month-1]+"-"+prevMonth[5].year]
         },
         series: []
       };
@@ -1330,7 +1334,15 @@ export class DashboardComponent {
           stack: 'total',
           barHeight: '20%',
           label: {
-            show: true
+            show: true,
+            formatter: function (params: any) {
+              const value = params.value;
+              if (value === 0) return '';
+              if (value >= 10000000) return (value / 10000000).toFixed(1) + ' Cr.';
+              if (value >= 1000000) return (value / 1000000).toFixed(1) + ' M';
+              if (value >= 1000) return (value / 1000).toFixed(1) + ' K';
+              return value;
+            }
           },
           emphasis: {
             focus: 'series'
@@ -1338,6 +1350,7 @@ export class DashboardComponent {
           data: (items as Array<any>).map((item:any) => item.totalamount)
         });     
       });
+      console.log(expenseObj);
       this.expenseoption['series']=expenseObj;
     });
   }
@@ -1359,11 +1372,11 @@ export class DashboardComponent {
     }
   }
 
-  getLastThreeMonths(): { month: number, year: number }[] {
+  getLastMonths(count:number): { month: number, year: number }[] {
     const today = new Date();
     const result = [];
   
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= count; i++) {
       const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
       result.push({
         month: date.getMonth() + 1, // +1 because getMonth() is zero-based

@@ -3,6 +3,8 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
+import { ManageViewVehicleBillingComponent } from '@app/shared/components/vehicle/manage-view-vehicle-billing/manage-view-vehicle-billing.component';
 import { ApprovalStatus } from '@app/shared/models/constant.config';
 import { CommonService } from '@app/shared/services/common.service';
 import { HelperService } from '@app/shared/services/helper.service';
@@ -10,6 +12,7 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { StateDataService } from '@app/shared/services/state-data.service';
 import { VehicleService } from '@app/vehicle-control/vehicle.service';
+import { filter } from 'lodash';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -21,7 +24,7 @@ import { finalize } from 'rxjs';
 export class VehicleBillingListComponent {
   vehicleBilings:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','vehiclename', 'vehiclenum', 'extraamtkmabovefix', 'fixeddetails', 'extraDetails','totaldetails','aaproved','status', 'action'];
+  displayedColumns: string[] = ['serial','monthyear','vehiclename',  'fixeddetails', 'totaldetails','aaproved','status', 'action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
@@ -36,13 +39,13 @@ export class VehicleBillingListComponent {
   readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
-    minWidth: '900px', 
-    disableClose: false,
+    minWidth: '900px',
     data: {},
   };
 
  constructor(private vehicleService:VehicleService,private helperService:HelperService,
   private stateDataService:StateDataService, private notifyBarService:NotifyBarService,
+  private route:ActivatedRoute,
   private cdr : ChangeDetectorRef, private sessionService:SessionService, private commonService:CommonService
  ){
   this.dataSource = new MatTableDataSource(this.vehicleBilings);
@@ -71,17 +74,7 @@ export class VehicleBillingListComponent {
   this.sessionService.approvalStatusSubject$.subscribe((statusresponse:any)=>{
     if(statusresponse){
      this.statusList= statusresponse;
-     this.vehicleService.getVehicleBillingDetailsByOrgId({}, '')
-      .pipe(finalize(() => this.isLoading = false))
-      .subscribe((response: any) => {
-        if (response && response.success) {        
-        this.vehicleBilings = response.data.map((item:any) => ({
-          ...item,
-          ...this.setLevelConfig(item.levels) 
-        }));
-        this.updateTable(this.vehicleBilings);
-        }
-    });
+     this.filterVehicleBillings();
     }
   })
     
@@ -94,15 +87,7 @@ export class VehicleBillingListComponent {
       }))
     }
   }
-  setLevelConfig(levels:any){
-    const overallstatus=this.commonService.getOverallStatus(levels);
-    return {
-      levels:overallstatus==ApprovalStatus.REJECTED ? levels?.filter((x:any)=>x.status.toLowerCase()==ApprovalStatus.REJECTED.toLocaleLowerCase()):levels,
-      hasRejected:overallstatus==ApprovalStatus.REJECTED,
-      status:overallstatus, 
-      isedit:overallstatus==ApprovalStatus.PENDING
-    }
-  }
+
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
     this.cdr.detectChanges();
@@ -119,7 +104,8 @@ export class VehicleBillingListComponent {
   private updateTable(info: any) {
     this.vehicleBilings = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);  
+    this.pageSize= this.helperService.getPageSize(); 
     this.resultsLength= this.vehicleBilings.length;   
   }
 
@@ -143,19 +129,16 @@ export class VehicleBillingListComponent {
       }
   }
   addRowData(data: any) {
+    console.log(data);
     const data1:any = {
       id: data.id,
-      projectid :data.projectid,
       vehicleid:data.vehicleid,
-      ownername:data.ownername,
+      billamount:data.billamount,
       monthandyear:data.monthandyear,
       enddate:data.enddate,
-      extrakm:data.extrakm,
       currentkm:data.currentkm,
       fixedkm:data.fixedkm,
-      extraamountperkmafterfixedkm:data.extraamountperkmafterfixedkm,
       fixedamount:data.fixedamount,
-      project:data.project,
       vehicleno:data.vehicleno,
       vehiclename:data.vehiclename,
       levels: this.setLevel(data.levels)
@@ -214,7 +197,10 @@ export class VehicleBillingListComponent {
     .pipe(finalize(() => {this.isLoading = false; this.isSearchLoading=false}))
     .subscribe((response: any) => {
       if (response && response.success) {
-      this.vehicleBilings = response.data;
+        this.vehicleBilings = response.data.map((item:any) => ({
+          ...item,
+          levels: this.setLevel(item.levels)  
+        }));
       this.dataSource = new MatTableDataSource(this.vehicleBilings);
       }
       this.cdr.detectChanges();
@@ -223,6 +209,7 @@ export class VehicleBillingListComponent {
    getVehicleBilling(data:any){
     return this.commonService.getVehicleBillingInfo(data);
   }
+
 }
 
 
