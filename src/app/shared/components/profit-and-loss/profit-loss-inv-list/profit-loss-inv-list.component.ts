@@ -1,5 +1,5 @@
 import { Component, inject, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
@@ -30,7 +30,8 @@ export class ProfitLossInvListComponent {
     };
 
  constructor(@Inject(MAT_DIALOG_DATA) data: any,private profitlossService:ProfitLossInterfaceService,
- private route: ActivatedRoute,private notifyBarService:NotifyBarService
+ private route: ActivatedRoute,private notifyBarService:NotifyBarService, private router:Router,
+ private dialogRef: MatDialogRef<ProfitLossInvListComponent>
  ){
   this.data= data|| {};
   this.dataSource = new MatTableDataSource(this.employees);
@@ -67,8 +68,10 @@ export class ProfitLossInvListComponent {
         pageGuid: this.route.snapshot.data['pageGuid'],
         type: this.route.snapshot.data['type'],
         element:data
-      };
-      this.dialog.open(ProfitLossInvDetailsComponent,config);
+      };  
+      this.dialogRef.close();
+      this.router.navigate(['/profit-loss-details'],{state: { value: data} });
+      //this.dialog.open(ProfitLossInvDetailsComponent,config);
   }
   deleteClick(data:any){
   const config = this.defaultdialogoptions;

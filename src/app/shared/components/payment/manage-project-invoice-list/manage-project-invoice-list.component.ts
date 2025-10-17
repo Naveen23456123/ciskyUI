@@ -23,7 +23,7 @@ export class ManageProjectInvoiceListComponent {
   public data: any;
 invoiceList:any[]= [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','invno','month','year', 'view','action'];
+  displayedColumns: string[] = ['serial','invno','month','year', 'view','releaseview','action'];
   dataSource!: MatTableDataSource<any[]>;
   activeOrgId='123';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -103,6 +103,11 @@ invoiceList:any[]= [];
     this.dialogRef.close({ valid: true ,redirect:true});
     this.sessionService.setInvoiceEntity({invoiceId:data.id, projectId:data.projectid,invoiceData:data});
     this.router.navigate(['/consultancy-invoice']);
+  } 
+  releasedetails(data:any){
+    this.dialogRef.close({ valid: true ,redirect:true});
+    this.sessionService.setInvoiceEntity({invoiceId:data.id, projectId:data.projectid,invoiceData:data});
+    this.router.navigate(['/consultancy-release-invoice']);
   }
 }
 

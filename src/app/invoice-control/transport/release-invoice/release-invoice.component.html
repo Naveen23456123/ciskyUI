@@ -1,0 +1,98 @@
+<div class="container">   
+    <div class="load-wrap" *ngIf="isLoading">
+        <app-loader [IsLoading]="isLoading"></app-loader>
+    </div>
+        <div class="wrapper" *ngIf="!isLoading">                
+            <div class="mat-elevation-z8">
+                <div class="no-print div-center container">
+                    <div class="button-row">
+                    <button class="print-btn" onclick="window.print()" mat-fab extended>
+                        <mat-icon>print</mat-icon>
+                        Print
+                      </button>
+                      
+                </div>
+                </div>
+                <mat-card>
+                    <div class="wrapper report-head mx-3">
+                        <h5 class="sub-heading content-center">Invoice (Final Detailed Summary) </h5>
+                        <hr>
+                         <div class="control-div pd-1">
+                            <span class="report-heading">Invoice No. : {{invoiceData.number}} </span>
+                            <span class="report-heading float-end" > Invoice Date : {{invoiceData.monthandyear | date: 'MMMM - yyyy'}}</span>
+                        </div>
+                        <div class="control-div pd-1">
+                            <span class="report-heading">Project : {{invoiceData.projectname}} </span>
+                            <span class="report-heading float-end" > Date : {{today | formatDate}}</span>
+                        </div>
+                        
+                      </div>
+                    <mat-card-content>
+                      
+                        <table mat-table [dataSource]="dataSource" >
+                      
+                            <ng-container matColumnDef="serial">
+                              <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                              <td mat-cell *matCellDef="let row"> {{row.srno}} </td>                             
+                            </ng-container>
+                        
+                           
+                            <ng-container matColumnDef="value">
+                              <th mat-header-cell *matHeaderCellDef > Description </th>
+                              <td  mat-cell class="heading-desc" *matCellDef="let row">
+                                <span class="align-left">
+                                  {{row.value}} 
+                                </span> </td>
+                            </ng-container>                      
+                            <ng-container matColumnDef="amount">
+                              <th mat-header-cell *matHeaderCellDef > Amount </th>
+                              <td mat-cell *matCellDef="let row">
+                                <span class="float-end">
+                                  {{row.amount | formatAmount}}
+                                </span>  </td> 
+                            </ng-container>
+                            <ng-container matColumnDef="contract_amount">
+                                <th mat-header-cell *matHeaderCellDef > Contract Value </th>
+                                <td mat-cell *matCellDef="let row">
+                                  <span class="float-end">
+                                    {{row.contract_amount | formatAmount}}
+                                  </span>  </td> 
+                              </ng-container>
+                              <ng-container matColumnDef="previous_amount">
+                                <th mat-header-cell *matHeaderCellDef > Up to Previous </th>
+                                <td mat-cell *matCellDef="let row">
+                                  <span class="float-end">
+                                    {{row.previous_amount | formatAmount}}
+                                  </span>  </td> 
+                              </ng-container>
+                              <ng-container matColumnDef="current_amount">
+                                <th mat-header-cell *matHeaderCellDef > This Bill </th>
+                                <td mat-cell *matCellDef="let row">
+                                  <span class="float-end">
+                                    {{row.current_amount | formatAmount}}
+                                  </span>  </td> 
+                              </ng-container> 
+                              <ng-container matColumnDef="commulated">
+                                <th mat-header-cell *matHeaderCellDef > Cummulative Bill </th>
+                                <td mat-cell *matCellDef="let row">
+                                  <span class="float-end">
+                                    {{row.commulative_amt | formatAmount}}
+                                  </span>  </td> 
+                              </ng-container> 
+                              <ng-container matColumnDef="remaining">
+                                <th mat-header-cell *matHeaderCellDef > Remaining  </th>
+                                <td mat-cell *matCellDef="let row">
+                                  <span class="float-end">
+                                    {{row.remaining_amt | formatAmount}}
+                                  </span>  </td>
+                              </ng-container> 
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row [ngClass]="row.footer? 'mat-mdc-footer-row':''" *matRowDef="let row; columns: displayedColumns;"></tr>
+                          </table>
+                    </mat-card-content>
+                </mat-card> 
+              
+            </div>
+        </div>
+</div>
+<router-outlet></router-outlet>

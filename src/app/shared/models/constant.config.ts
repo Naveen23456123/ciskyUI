@@ -1,3 +1,4 @@
+import { group } from '@angular/animations';
 import { InjectionToken } from '@angular/core';
 
 export let CONSTANTS = new InjectionToken('constants.config');
@@ -101,9 +102,10 @@ export enum BOQ_INVOICE{
 }
 
 export const TOTAL_PROFIT_LOSS_HEADING = [
-    { Name: "Revenue", ispersonal: false,isadmin: false, isincome:true },
-    { Name: "Personal expense", ispersonal: true,isadmin: false,isincome:false  },
-    { Name: "Admin expense", isadmin: true,ispersonal: false,isincome:false  }   
+    { Name: "Revenue", ispersonal: false,isadmin: false, isincome:true, key:'INCOME' },
+    { Name: "Personal Expense", ispersonal: true,isadmin: false,isincome:false, key:'PERSONAL'  },
+    { Name: "Admin Expense", isadmin: true,ispersonal: false,isincome:false, key:'ADMIN'  }    ,
+    { Name: "Overhead Expenses", isadmin: true,ispersonal: false,isincome:false, key:'OVERHEAD_DEDUCTIONS'  }
    
   ];
 
@@ -219,3 +221,7 @@ export const DECIMAL_LIMIT = {
   TAX: 2,          // example: allow 2 digits after decimal
   WEIGHT: 4        // example: allow 4 digits
 };
+
+export const BOQ_TBN={
+  TBN:'TBN'
+}

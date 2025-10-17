@@ -3,7 +3,8 @@ import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
-import { BOQ_INVOICE } from '@app/shared/models/constant.config';
+import { BOQ_INVOICE, BOQ_TBN } from '@app/shared/models/constant.config';
+import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
 import { InvStaffInterfaceService } from '@app/shared/services/external/invoice/inv-staff-interface.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, take } from 'rxjs';
@@ -20,28 +21,30 @@ export class ManageConsultancyStaffComponent {
   isLoading = true;
   isEdit: boolean = false;
   pageGuid: any;
-  title: string='Add';
+  title: string = 'Add';
   staffForm: FormGroup = new FormGroup({});
-  deleteStaff=false;
+  deleteStaff = false;
   readonly dialog = inject(MatDialog);
-  professionaList:any[]=[];
-  professionalid:string='';
-   empty_message='';
-   isBtnClicked=false;
-  boqList:any[]=[];
-   private defaultdialogoptions:  MatDialogConfig = {
-        minWidth: '700px', 
-        disableClose: false,
-        data: {},
+  professionaList: any[] = [];
+  professionalid: string = '';
+  empty_message = '';
+  projectId: string = '';
+  isBtnClicked = false;
+  empList: any = [];
+  boqList: any[] = [];
+  private defaultdialogoptions: MatDialogConfig = {
+    minWidth: '700px',
+    disableClose: false,
+    data: {},
   };
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageConsultancyStaffComponent>, private formbuilder: FormBuilder,
-    private sessionService: SessionService, private router: Router,private route: ActivatedRoute,
-    private staffervice: InvStaffInterfaceService){
-      this.data = data || {};
+    private sessionService: SessionService, private router: Router, private route: ActivatedRoute,
+    private staffervice: InvStaffInterfaceService, private employeeService: EmployeeInterfaceService) {
+    this.data = data || {};
   }
-  
+
   checkMode(type: string) {
     if (type === 'edit' && !this.data.separate)
       this.isEdit = true;
@@ -67,73 +70,77 @@ export class ManageConsultancyStaffComponent {
     }
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.checkMode(this.data.type);
     this.getTitle(this.data.type);
-    this.staffForm = this.formbuilder.group({ 
+    this.staffForm = this.formbuilder.group({
       id: [''],
-      invoiceid:[],
+      invoiceid: [],
       controls: this.formbuilder.array([])
     });
-    this.sessionService.staffTypeSubject$.subscribe((response:any)=>{
-      if(response){        
-        this.professionaList= response;
+    this.sessionService.staffTypeSubject$.subscribe((response: any) => {
+      if (response) {
+        this.professionaList = response;
       }
     })
-    if(!this.deleteStaff){      
-    this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((projectEntity:any)=>{
-      if(projectEntity && projectEntity.projectId){
-        if (!this.isEdit) {
-          this.staffervice.getBoqStaffListForInsertByProjectId({invid:projectEntity.invoiceId,id:projectEntity.projectId }, '')
+    if (!this.deleteStaff) {
+      this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((projectEntity: any) => {
+        if (projectEntity && projectEntity.projectId) {
+          this.projectId = projectEntity.projectId;
+          if (!this.isEdit) {
+            this.staffervice.getBoqStaffListForInsertByProjectId({ invid: projectEntity.invoiceId, id: projectEntity.projectId }, '')
               .pipe(finalize(() => this.isLoading = false))
               .subscribe((response: any) => {
-                if(response && response.success){
-                  this.boqList=response.data;
-                  response.data.forEach((element:any) => {
-                    this.addControls(element,projectEntity.invoiceId);
+                if (response && response.success) {
+                  this.boqList = response.data;
+                  response.data.forEach((element: any) => {
+                    this.addControls(element, projectEntity.invoiceId);
                   });
                   this.subscribeChange();
                 }
-                this.empty_message= BOQ_INVOICE.ALL_RECORD_INSERTED_MESSAGE;
-          });
+                this.empty_message = BOQ_INVOICE.ALL_RECORD_INSERTED_MESSAGE;
+              });
+          }
+          else {
+            this.addControls(this.data.element, projectEntity.invoiceId);
+            this.boqList = [this.data.element];
+            this.subscribeChange();
+            this.isLoading = false;
+          }
         }
-        else {
-          this.addControls(this.data.element,projectEntity.invoiceId);
-          this.boqList=[this.data.element];
-          this.subscribeChange();
-          this.isLoading=false;
-        }        
-      }
-    });
+      });
+    }
+    else {
+      this.setStaffForm(this.data.element);
+      this.professionalid = this.data.element.professionalid;
+      this.isLoading = false;
+    }
   }
-  else {
-    this.setStaffForm(this.data.element);    
-    this.professionalid= this.data.element.professionalid;
-    this.isLoading=false;
-  }
-  }
-  subscribeChange(){   
+  subscribeChange() {
     (this.staffForm.get('controls') as FormArray).controls.forEach((group: AbstractControl, index: number) => {
       const quantityControl = group.get('currentbillmonths');
       if (quantityControl) {
         quantityControl.statusChanges.subscribe(value => {
-          setTimeout(() => { 
-           group.get('currentbillamount')?.setValue(quantityControl.value*(this.boqList.find(x=>x.id==group.get('boqid')?.value).rate), { emitEvent: false });
+          setTimeout(() => {
+            group.get('currentbillamount')?.setValue(quantityControl.value * (this.boqList.find(x => x.id == group.get('boqid')?.value).rate), { emitEvent: false });
           });
-        });       
+        });
       }
     });
   }
-  addControls(data:any,invId:any) {
-    this.professionalid= data.professionalid;
+  addControls(data: any, invId: any) {
+    this.professionalid = data.professionalid;
     const group = this.formbuilder.group({
-      id:[data.pid],
-      boqid:[data.id],
-      designation:[data.designation],
-      employeename:[data.employeename],
-      invoiceid:[invId],
-      currentbillmonths: [data.currentbillmonths,[Validators.required, Validators.min(0), Validators.max(1)]],
-      currentbillamount: [data.currentbill]
+      id: [data.pid],
+      boqid: [data.id],
+      designation: [data.designation],
+      employeename: [data.employeename && data.employeename.trim() !== ''
+        ? data.employeename
+        : BOQ_TBN.TBN],
+      invoiceid: [invId],
+      currentbillmonths: [data.currentbillmonths, [Validators.required, Validators.min(0), Validators.max(1)]],
+      currentbillamount: [data.currentbill],
+      isEditing: [false]
     });
     this.controls.push(group);
   }
@@ -141,83 +148,101 @@ export class ManageConsultancyStaffComponent {
   get controls() {
     return this.staffForm.get('controls') as FormArray;
   }
-  setStaffForm(data: any) {    
+  setStaffForm(data: any) {
     this.staffForm.patchValue({
       id: data.id
     });
   }
 
-  ngOnDestroy(){}
-
-  submit(){ 
-    this.isBtnClicked=true;
-    this.sessionService.invoiceEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
-      if(response && response.invoiceId){
-        this.staffForm.patchValue({invoiceid:response.invoiceId});
+  ngOnDestroy() { }
+  toggleEdit(index: number) {
+    this.isLoading=true;
+    const control = this.controls.at(index);
+    const isEditing = control.get('isEditing')?.value;
+    if (isEditing) {
+      control.get('employeename')?.setValue(BOQ_TBN.TBN);
+    }
+    control.get('isEditing')?.setValue(!isEditing);
+    if (!isEditing) {
+      this.employeeService.getSiteEmployeeParital({ projectid: this.projectId }, '')
+        .pipe(finalize(() => this.isLoading = false)).subscribe((response: any) => {
+          if (response && response.success) {
+            this.empList = response.data;
+          }
+        })
+    }
+    else
+      this.isLoading=false;
+  }
+  submit() {
+    this.isBtnClicked = true;
+    this.sessionService.invoiceEntitySubject$.pipe(take(1), untilDestroyed(this)).subscribe((response: any) => {
+      if (response && response.invoiceId) {
+        this.staffForm.patchValue({ invoiceid: response.invoiceId });
         if (this.isEdit) {
-          let form =this.staffForm.get('controls')?.value[0];
+          let form = this.staffForm.get('controls')?.value[0];
           this.staffervice.updateConsultantStaff(form, '')
-            .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked=false })).subscribe({
-              next: (response:any) => {
-              if(response && response.success){                
-                form.professionalid= this.professionalid;
-                form.previousbillmonths=this.boqList.find((x:any)=>x.id==form.id)?.uptolastbill
-                this.dialogRef.close({ value:form,professionalData: this.professionaList, valid: true });
-              }
-            },
-            error: (err: any) => {
+            .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked = false })).subscribe({
+              next: (response: any) => {
+                if (response && response.success) {
+                  form.professionalid = this.professionalid;
+                  form.previousbillmonths = this.boqList.find((x: any) => x.id == form.id)?.uptolastbill
+                  this.dialogRef.close({ value: form, professionalData: this.professionaList, valid: true });
+                }
+              },
+              error: (err: any) => {
                 this.dialogRef.close(err);
               }
             });
         } else {
-          this.staffForm.value.id=null;
+          this.staffForm.value.id = null;
           this.staffervice.createConsultantStaff(this.staffForm.get('controls')?.value, '')
-            .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked=false })).subscribe({
-              next:(response: any) => {
-              if (response && response.success) {
-                let responseData:any[]=[];
-                response.data.forEach((element:any) => {
-                  responseData.push({
-                    id:element.boqid,
-                    currentbillmonths:element.currentbillmonths,
-                    invoiceid:element.id,
-                    designation :this.boqList.find((x:any)=>x.id==element.boqid)?.designation,
-                    professionalid:this.boqList.find((x:any)=>x.id==element.boqid)?.professionalid,
-                    name :this.boqList.find((x:any)=>x.id==element.boqid)?.employeename,
-                    rate:this.boqList.find((x:any)=>x.id==element.boqid)?.rate,
-                    constructionperiod:this.boqList.find((x:any)=>x.id==element.boqid)?.constructionperiod,
-                    oandmperiod:this.boqList.find((x:any)=>x.id==element.boqid)?.oandmperiod,
-                    previousbillmonths:this.boqList.find((x:any)=>x.id==element.boqid)?.uptolastbill
-                  });                  
-                });
-                console.log(responseData);
-                this.dialogRef.close({ value: responseData,professionalData: this.professionaList, valid: true });
-              } else {
-                this.dialogRef.close({ value: null, valid: false });
-              }
-            },
-             error: (err: any) => {
+            .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked = false })).subscribe({
+              next: (response: any) => {
+                if (response && response.success) {
+                  let responseData: any[] = [];
+                  response.data.forEach((element: any) => {
+                    responseData.push({
+                      id: element.boqid,
+                      currentbillmonths: element.currentbillmonths,
+                      invoiceid: element.id,
+                      designation: this.boqList.find((x: any) => x.id == element.boqid)?.designation,
+                      professionalid: this.boqList.find((x: any) => x.id == element.boqid)?.professionalid,
+                      name: this.boqList.find((x: any) => x.id == element.boqid)?.employeename,
+                      rate: this.boqList.find((x: any) => x.id == element.boqid)?.rate,
+                      constructionperiod: this.boqList.find((x: any) => x.id == element.boqid)?.constructionperiod,
+                      oandmperiod: this.boqList.find((x: any) => x.id == element.boqid)?.oandmperiod,
+                      previousbillmonths: this.boqList.find((x: any) => x.id == element.boqid)?.uptolastbill
+                    });
+                  });
+                  console.log(responseData);
+                  this.dialogRef.close({ value: responseData, professionalData: this.professionaList, valid: true });
+                } else {
+                  this.dialogRef.close({ value: null, valid: false });
+                }
+              },
+              error: (err: any) => {
                 this.dialogRef.close(err);
               }
-          });
-        }    
+            });
+        }
       }
-    }) 
+    })
   }
 
   delete() {
-      this.staffervice.deleteConsultantStaff({id:this.staffForm.value.id}, '')
-       .pipe(finalize(() => { this.isLoading = false; })).subscribe({
-        next:(response: any) => {
+    this.staffervice.deleteConsultantStaff({ id: this.staffForm.value.id }, '')
+      .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        next: (response: any) => {
           if (response && response.success) {
-            this.staffForm.value.professionalid= this.professionalid;
-            this.dialogRef.close({ value: this.staffForm.value,professionalData: this.professionaList, valid: true });
+            this.staffForm.value.professionalid = this.professionalid;
+            this.dialogRef.close({ value: this.staffForm.value, professionalData: this.professionaList, valid: true });
           }
-      },
-      error: (err: any) => {
+        },
+        error: (err: any) => {
           this.dialogRef.close(err);
         }
-    });
+      });
   }
 
 }

@@ -42,9 +42,15 @@
                           </ng-container> 
                           <!-- con_personName Column -->
                           <ng-container matColumnDef="view">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> View </th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Invoice </th>
                             <td mat-cell *matCellDef="let row">
                             <app-view-btn (clickEvent)="details(row)"></app-view-btn>
+                            </td>
+                          </ng-container>
+                           <ng-container matColumnDef="releaseview">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Payment Released </th>
+                            <td mat-cell *matCellDef="let row">
+                            <app-view-btn (clickEvent)="releasedetails(row)"></app-view-btn>
                             </td>
                           </ng-container>
                           <!-- con_personName Column -->

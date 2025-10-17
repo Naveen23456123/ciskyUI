@@ -1,0 +1,54 @@
+<div class="date-filter-container">
+    <mat-form-field
+        *ngIf="(showFinancial && showQuarterly) || (showFinancial && showCustom) || (showQuarterly && showCustom)">
+        <mat-label>Select Range Type</mat-label>
+        <mat-select [(value)]="selectedType" (selectionChange)="onTypeChange()">
+            <mat-option *ngIf="showFinancial" value="financial">Financial Year</mat-option>
+            <mat-option *ngIf="showQuarterly" value="quarterly">Quarterly</mat-option>
+            <mat-option *ngIf="showCustom" value="custom">Custom</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <!-- Financial Year -->
+    <mat-form-field *ngIf="selectedType === 'financial' || selectedType === 'quarterly'">
+        <mat-label>Select Financial Year</mat-label>
+        <mat-select [(value)]="selectedFinancialYear" (selectionChange)="onFinancialYearChange()">
+            <mat-option *ngFor="let year of financialYears" [value]="year">
+                {{ year.label }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <!-- Quarter -->
+    <mat-form-field *ngIf="selectedType === 'quarterly' && quarters.length">
+        <mat-label>Select Quarter</mat-label>
+        <mat-select [(value)]="selectedQuarter" (selectionChange)="onQuarterChange()">
+            <mat-option *ngFor="let q of quarters" [value]="q">
+                {{ q.label }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <!-- Custom Date Range -->
+    <div *ngIf="selectedType === 'custom'" class="custom-date-range">
+        <mat-form-field>
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="pickerStart" [(ngModel)]="customStartDate">
+            <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+            <mat-datepicker #pickerStart></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>End Date</mat-label>
+            <input matInput [matDatepicker]="pickerEnd" [(ngModel)]="customEndDate">
+            <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+            <mat-datepicker #pickerEnd></mat-datepicker>
+        </mat-form-field>
+    </div>
+
+    <!-- Apply Button -->
+    <!-- <button mat-raised-button color="primary" (click)="emitDateRange()">Apply</button> -->
+     <button mat-icon-button class="search-btn"  type="button" matTooltip="Search" (click)="emitDateRange()">
+                                        <mat-icon>search</mat-icon>
+                                    </button> 
+</div>

@@ -39,7 +39,7 @@ registerLocaleData(localeIn, 'en-IN');
     SharedModule,
     MaterialModule,
     NgIdleKeepaliveModule.forRoot(),
-    TranslateModule.forRoot(),
+    TranslateModule.forRoot()
   ],
   providers: [
     provideAnimationsAsync(), provideHttpClient( withInterceptorsFromDi()),

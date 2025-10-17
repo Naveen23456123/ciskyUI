@@ -1,0 +1,27 @@
+.date-filter-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* Optional: keeps it responsive */
+  gap: 1rem; /* spacing between fields */
+  width: 100%;
+}
+
+.date-filter-container mat-form-field {
+  width: 220px; /* consistent size */
+  min-width: 200px;
+}
+
+.custom-date-range {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.custom-date-range mat-form-field {
+  width: 200px;
+}
+.search-btn{
+    background-color: var(--mdc-fab-small-container-color);
+    color: white;
+    border-radius: 16%;
+}

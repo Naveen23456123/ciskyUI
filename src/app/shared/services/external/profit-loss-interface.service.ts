@@ -152,5 +152,16 @@ export class ProfitLossInterfaceService {
       action: Operation.DELETE
     }
     return this.coreApi.standardService(standardAttribute);
+  } 
+  getExpenseSummary(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ProfitLoss/ExpenseSummary',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
   }
 }

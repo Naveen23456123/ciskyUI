@@ -15,7 +15,7 @@ export enum BOQInvoice{
     DUTY_TRAVEL_SITE_KEY='dt',
     OFFICE_RENT_KEY='or',
     OFFICE_SUPPLY_UTILITY_COMM_KEY='os',
-    OFFICE_FURN_EPUIP_KEY='Office Furniture and Equipment',
+    OFFICE_FURN_EPUIP_KEY='of',
     REPORT_DOCUMENT_REPORTING_KEY='rd',
     ROAD_SURVEY_EQUIP_KEY='rs',
     CONTINGENCIES_KEY='cont',

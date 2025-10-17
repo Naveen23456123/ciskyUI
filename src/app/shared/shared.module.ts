@@ -97,7 +97,6 @@ import { ViewLetterDetailsComponent } from './components/letters/view-letter-det
 import { ViewEmployeeListComponent } from './components/employee/view-employee-list/view-employee-list.component';
 import { ViewBtnComponent } from './view-btn/view-btn.component';
 import { ProjectControlComponent } from './components/project-control/project-control.component';
-import { ContractorLetterListComponent } from '@app/contractor/contractor-letter-list/contractor-letter-list.component';
 import { FormatCurrencyPipe } from './pipes/format-currency.pipe';
 import { EditBtnComponent } from './components/edit-btn/edit-btn.component';
 import { DeleteBtnComponent } from './components/delete-btn/delete-btn.component';
@@ -164,7 +163,6 @@ import { EmptyTableSkltnComponent } from './components/empty-table-skltn/empty-t
 import { DownloadPdfComponent } from './components/btn/download-pdf/download-pdf.component';
 import { ManageMiscComponent } from './components/manage-misc/manage-misc.component';
 import { ProjectSubshellComponent } from './components/projects/project-subshell/project-subshell.component';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ManageSupervisionComponent } from './components/projects/transport-infra/supervision/manage-supervision/manage-supervision.component';
 import { ManageDprComponent } from './components/projects/transport-infra/dpr/manage-dpr/manage-dpr.component';
 import { ManageSupervisionListComponent } from './components/projects/transport-infra/supervision/manage-supervision-list/manage-supervision-list.component';
@@ -188,6 +186,18 @@ import { ManageViewOfficeBillingComponent } from './components/siteops/office/ma
 import { ViewOfficeDetailsComponent } from './components/office/view-office-details/view-office-details.component';
 import { ManageViewImperestComponent } from './components/siteops/imperest/manage-view-imperest/manage-view-imperest.component';
 import { AppSnackbarComponent } from './components/app-snackbar/app-snackbar.component';
+import { ExpenseChartViewComponent } from './components/expenses/expense-chart-view/expense-chart-view.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { NgxEchartsModule } from 'ngx-echarts';
+// import echarts core
+import * as echarts from 'echarts/core';
+// import necessary echarts components
+import { BarChart, LineChart, PieChart } from 'echarts/charts';
+import { GraphicComponent, GridComponent, LegendComponent, TitleComponent, ToolboxComponent, TooltipComponent } from 'echarts/components';
+import { CanvasRenderer } from 'echarts/renderers';
+import { AppCancelBtnComponent } from './components/btn/app-cancel-btn/app-cancel-btn.component';
+import { FinancialDateFiltersComponent } from './components/financial-date-filters/financial-date-filters.component';
+echarts.use([BarChart,LineChart,TooltipComponent,TitleComponent,ToolboxComponent, GraphicComponent, LegendComponent,PieChart, GridComponent, CanvasRenderer]);
 
 @NgModule({
   declarations: [NotifyBarComponent, AlertComponent, LoaderComponent,  
@@ -204,13 +214,14 @@ import { AppSnackbarComponent } from './components/app-snackbar/app-snackbar.com
     ManageVehicleListComponent, ManageEmployeeListComponent, ManageInventoryListComponent, ManageConsultantComponent, ManageBoqAttendenceComponent, ContactListComponent, ManageContactComponent, ContractorBillingDetailsComponent, ManageCircularComponent, ManageBoqInvoiceComponent, ManageConsultancyInvoiceComponent,
      ManageSupportStaffComponent, ManageTransportationComponent, ManageDutyTravelComponent, 
      ManageOfficeRentComponent, ManageOfficeSuppliesComponent, ManageOfficeFurnitureComponent, ManageReportDocComponent, ManageRoadSurveyComponent, ManageContingenciesComponent, ManageConsultancyStaffComponent, ManageConsultancyContingenciesComponent, ManageConsultancyReportDocComponent, ManageConsultancyOfficeFurnitureComponent, ManageConsultancyOfficeSuppliesComponent, ManageConsultancyOfficeRentComponent, ManageConsultancyDutyTravelComponent, ManageConsultancyTransportationComponent, ManageOfficeRentControlComponent, 
-     FileIconComponent, BreadCrumComponent, SearchBarControlsComponent, ViewLetterDetailsComponent, ViewEmployeeListComponent, ViewBtnComponent, ProjectControlComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent, ManageVehicleDocComponent, DeleteVehicleDocComponent, NoDataComponent, ViewEmployeeDetailsComponent, ManageEmployeeDocComponent, DeleteEmployeeDocComponent, DocumentManageBtnComponent, DetailVehicleComponent, ManageProfitLossComponent, ManageTicketComponent, ManageImperestComponent, ManageExpenseComponent, ManageApprovalComponent, ExploreMilestoneComponent, ExploreSiteProgressComponent, ExploreEotComponent, ExploreCosComponent, ManageOfficeDocComponent, DeleteOfficeDocComponent, ExploreBankGuaranteeComponent, ExploreInsuranceComponent, SubmitLoadBtnComponent, FormatAmountPipe, ManageUploadEmpComponent, UploadDataComponent, ManageUploadInventoryComponent, AddIconBtnComponent, ManageUploadLettersComponent, ItemEmployeesComponent, ManageUploadVehicleComponent, ViewReadingImageComponent, ManageLetterDocComponent, DeleteLetterDocComponent, AlertBadgeComponent, EditIconBtnComponent, ConsultentListSummaryComponent, LetterInfoSummaryComponent, EotInfoSummaryComponent, CosInfoSummaryComponent, EmployeeInfoSummaryComponent, ManageOfcRentBillingComponent, ManageProfitLossSheetComponent, ProfitLossInvListComponent, ProfitLossInvDetailsComponent, ProfitLossCommulativeComponent, FinanicalYearComponent, StatusBadgeComponent, ManageUploadConsultantComponent, ManageOfcBillingReqComponent, ManageImperestBillingReqComponent, ManageVehBillingReqComponent, BillingInfoSummaryComponent, ManageExpBillingReqComponent, ViewExpDetailsInfoComponent, ProjectReportsListComponent, ManageProjectReportsComponent, ExploreProjectReportsComponent, LetterCountSummaryComponent, ManageProjectInvoiceListComponent, EmptyTableSkltnComponent, DownloadPdfComponent, ManageMiscComponent, ProjectSubshellComponent,  ManageSupervisionComponent,ManageSupervisionListComponent,ManageDprListComponent, ManageDprComponent, SubShellTabHostDirective, ManageUploadSupervisionComponent, ManageUploadDprComponent, NetworkGlitchComponent, ManageBankGuaranteeUploadComponent, ManageInsuranceUploadComponent, ProjectShellComponent, ManageSupervisionInvoiceListComponent, ManageDprInvoiceListComponent, ManageDprBoqListComponent, ManageSupervisionBoqListComponent, PdfViewerComponent, DecimalLimitDirective, ManageViewVehicleBillingComponent, ManageViewOfficeBillingComponent, ViewOfficeDetailsComponent, ManageViewImperestComponent, AppSnackbarComponent],
+     FileIconComponent, BreadCrumComponent, SearchBarControlsComponent, ViewLetterDetailsComponent, ViewEmployeeListComponent, ViewBtnComponent, ProjectControlComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent, ManageVehicleDocComponent, DeleteVehicleDocComponent, NoDataComponent, ViewEmployeeDetailsComponent, ManageEmployeeDocComponent, DeleteEmployeeDocComponent, DocumentManageBtnComponent, DetailVehicleComponent, ManageProfitLossComponent, ManageTicketComponent, ManageImperestComponent, ManageExpenseComponent, ManageApprovalComponent, ExploreMilestoneComponent, ExploreSiteProgressComponent, ExploreEotComponent, ExploreCosComponent, ManageOfficeDocComponent, DeleteOfficeDocComponent, ExploreBankGuaranteeComponent, ExploreInsuranceComponent, SubmitLoadBtnComponent, FormatAmountPipe, ManageUploadEmpComponent, UploadDataComponent, ManageUploadInventoryComponent, AddIconBtnComponent, ManageUploadLettersComponent, ItemEmployeesComponent, ManageUploadVehicleComponent, ViewReadingImageComponent, ManageLetterDocComponent, DeleteLetterDocComponent, AlertBadgeComponent, EditIconBtnComponent, ConsultentListSummaryComponent, LetterInfoSummaryComponent, EotInfoSummaryComponent, CosInfoSummaryComponent, EmployeeInfoSummaryComponent, ManageOfcRentBillingComponent, ManageProfitLossSheetComponent, ProfitLossInvListComponent, ProfitLossInvDetailsComponent, ProfitLossCommulativeComponent, FinanicalYearComponent, StatusBadgeComponent, ManageUploadConsultantComponent, ManageOfcBillingReqComponent, ManageImperestBillingReqComponent, ManageVehBillingReqComponent, BillingInfoSummaryComponent, ManageExpBillingReqComponent, ViewExpDetailsInfoComponent, ProjectReportsListComponent, ManageProjectReportsComponent, ExploreProjectReportsComponent, LetterCountSummaryComponent, ManageProjectInvoiceListComponent, EmptyTableSkltnComponent, DownloadPdfComponent, ManageMiscComponent, ProjectSubshellComponent,  ManageSupervisionComponent,ManageSupervisionListComponent,ManageDprListComponent, ManageDprComponent, SubShellTabHostDirective, ManageUploadSupervisionComponent, ManageUploadDprComponent, NetworkGlitchComponent, ManageBankGuaranteeUploadComponent, ManageInsuranceUploadComponent, ProjectShellComponent, ManageSupervisionInvoiceListComponent, ManageDprInvoiceListComponent, ManageDprBoqListComponent, ManageSupervisionBoqListComponent, PdfViewerComponent, DecimalLimitDirective, ManageViewVehicleBillingComponent, ManageViewOfficeBillingComponent, ViewOfficeDetailsComponent, ManageViewImperestComponent, AppSnackbarComponent, ExpenseChartViewComponent, AppCancelBtnComponent, FinancialDateFiltersComponent],
   imports: [
     CommonModule, 
     //LockerModule, 
     FormsModule,
     NgxExtendedPdfViewerModule,
-    MaterialModule, RouterModule,  ReactiveFormsModule, TranslateModule,NgxMatSelectSearchModule,NgxChartsModule
+    MaterialModule, RouterModule,  ReactiveFormsModule, TranslateModule,NgxMatSelectSearchModule, NgxChartsModule,
+    NgxEchartsModule.forRoot({ echarts }),
     //NgxMatColorPickerModule, 
     // AgmCoreModule.forRoot({
     //   apiKey: 'AIzaSyDhRiG4iUpth-xrOgZwLYXGFmrrk-g1av8',
@@ -239,6 +250,7 @@ ViewBtnComponent, FormatCurrencyPipe, EditBtnComponent, DeleteBtnComponent,NoDat
 ExploreSiteProgressComponent, ExploreEotComponent, ExploreCosComponent, DocumentManageBtnComponent, ExploreBankGuaranteeComponent,ExploreInsuranceComponent,
 FormatAmountPipe,UploadFileComponent, AddIconBtnComponent,EditIconBtnComponent, FinanicalYearComponent, ProjectControlComponent, StatusBadgeComponent,
 BillingInfoSummaryComponent,ProjectReportsListComponent, ExploreProjectReportsComponent,LetterCountSummaryComponent,EmptyTableSkltnComponent,
-ProjectSubshellComponent,ManageSupervisionListComponent,ManageDprListComponent,SubShellTabHostDirective,SubmitLoadBtnComponent, ProjectShellComponent,ContractorBillingDetailsComponent, DownloadPdfComponent]
+ProjectSubshellComponent,ManageSupervisionListComponent,ManageDprListComponent,SubShellTabHostDirective,SubmitLoadBtnComponent, ProjectShellComponent,ContractorBillingDetailsComponent, DownloadPdfComponent,
+AppCancelBtnComponent, FinancialDateFiltersComponent]
 })
 export class SharedModule { }

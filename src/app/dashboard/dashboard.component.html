@@ -19,46 +19,47 @@
 
 
 <div class="container ">
-        <!-- Row 1: 3 columns -->
-        <div class="row mb-3 " >
-          <div class="col-md-4 wrapper pr-0">
-            <mat-card class="ht-100">  
-                <mat-dialog-content class="mat-typography">
-                <mat-card-content class="pad-0">
-                    <div class="load-wrap" *ngIf="isProjectCountLoading">
-                        <app-loader [IsLoading]="isProjectCountLoading"></app-loader>
-                    </div>
-                    <div class="wrapper" >
-                       
-                        <div echarts [options]="projectCountOption" (chartClick)="onProjectCountClick($event)" class="demo-chart"></div>
-                    </div>
-                </mat-card-content>
-                </mat-dialog-content>
-            </mat-card>
-          </div>
-          <div class="col-md-2 wrapper pr-0">
-            <mat-card class=" ht-100">  
-                <mat-dialog-content class="mat-typography">
-                <mat-card-content class="pad-0">
-                    <div class="load-wrap" *ngIf="isOurRoleLoading">
-                        <app-loader [IsLoading]="isOurRoleLoading"></app-loader>
-                    </div>
-                    <div class="wrapper" >                        
-                        <div echarts  [options]="ourRoleOption" (chartClick)="onOurRoleClick($event)" class="demo-chart"></div>
-                    </div>
-                </mat-card-content>
-                </mat-dialog-content>
-            </mat-card>
-          </div>
-          <div class="col-md-6 wrapper">
-            <mat-card class=" ht-100">  
-                <mat-dialog-content class="mat-typography">
-                <mat-card-content class="" style="padding-left:4%;">
-                    <div class="load-wrap" *ngIf="isfinanceLoading">
-                        <app-loader [IsLoading]="isfinanceLoading"></app-loader>
-                    </div>
-                    <div class="row" >
-                        <div class="col-md-3 d-flex flex-column justify-content-between pr-0">
+  <!-- Row 1: 3 columns -->
+  <div class="row mb-3 ">
+    <div class="col-md-4 wrapper pr-0">
+      <mat-card class="ht-100">
+        <mat-dialog-content class="mat-typography">
+          <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="isProjectCountLoading">
+              <app-loader [IsLoading]="isProjectCountLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+
+              <div echarts [options]="projectCountOption" (chartClick)="onProjectCountClick($event)" class="demo-chart">
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-dialog-content>
+      </mat-card>
+    </div>
+    <div class="col-md-2 wrapper pr-0">
+      <mat-card class=" ht-100">
+        <mat-dialog-content class="mat-typography">
+          <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="isOurRoleLoading">
+              <app-loader [IsLoading]="isOurRoleLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+              <div echarts [options]="ourRoleOption" (chartClick)="onOurRoleClick($event)" class="demo-chart"></div>
+            </div>
+          </mat-card-content>
+        </mat-dialog-content>
+      </mat-card>
+    </div>
+    <div class="col-md-6 wrapper">
+      <mat-card class=" ht-100">
+        <mat-dialog-content class="mat-typography">
+          <mat-card-content class="" style="padding-left:4%;">
+            <div class="load-wrap" *ngIf="isfinanceLoading">
+              <app-loader [IsLoading]="isfinanceLoading"></app-loader>
+            </div>
+            <div class="row">
+              <!-- <div class="col-md-3 d-flex flex-column justify-content-between pr-0">
                             <div echarts class="demo-chart" [options]="incomeoptions" (chartClick)="onChartClick($event)" ></div>
                           </div>
                         <div class="col-md-9">
@@ -130,252 +131,314 @@
                                     </div>
                                   </div>
                               </div>
-                          </div>
+                          </div> -->
+              <div class="">
+                <div class="row g-4 align-items-center">
+
+                  <div class="col-md-3 text-center">
+                    <div echarts class="demo-chart" [options]="incomeoptions" (chartClick)="onChartClick($event)"></div>
+                  </div>
+
+                  <div class="col-md-9">
+                    <!-- <div class="finance-title">Finances</div> -->
+
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <div class="sub-label">Total Project(s) Cost</div>
+                        <div class="amount">{{finance?.totalcost ??0 | formatCurrency}}</div>
+                      </div>
                     </div>
-                   
-                </mat-card-content>
-                </mat-dialog-content>
+
+                    <div class="divider"></div>
+
+                    <div class="row text-center">
+                      <div class="col-6 border-end">
+                        <div class="sub-label">Total Income</div>
+                        <div class="amount text-primary">{{finance?.totalincome ??0 | formatCurrency}}</div>
+                      </div>
+                      <div class="col-6">
+                        <div class="sub-label">Total Expense</div>
+                        <div class="amount text-danger">{{finance?.expenseTotal ??0 | formatCurrency}}</div>
+                      </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="row text-center">
+                      <div class="col-6">
+                        <div class="sub-label">{{finance?.inc_latestMonth}} Income</div>
+                        <div class="amount">{{finance?.inc_latestTotal ??0 | formatCurrency}} <span
+                            class="highlight">0%</span></div>
+                        <div class="sub-label mt-1">{{finance?.inc_lastTotal ??0 | formatCurrency}}
+                          ({{finance?.inc_lastMonth}})</div>
+                      </div>
+                      <div class="col-6">
+                        <div class="sub-label">{{finance?.exp_latestMonth}} Expense</div>
+                        <div class="amount">{{finance.exp_latestTotal ??0 | formatCurrency}} <span
+                            class="down">100%</span></div>
+                        <div class="sub-label mt-1">{{finance.exp_lastTotal ??0 | formatCurrency}}
+                          ({{finance?.exp_lastMonth}})</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </mat-card-content>
+        </mat-dialog-content>
+      </mat-card>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-md-9 wrapper pr-0">
+      <mat-card>
+        <mat-dialog-content class="mat-typography">
+          <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="isexpenseLoading">
+              <app-loader [IsLoading]="isexpenseLoading"></app-loader>
+            </div>
+            <div class="">
+              <div class="d-flex align-items-center justify-content-between">
+                <h4 class="text-center flex-grow-1 mb-0 gph-head">Expense(s)</h4>
+                <!-- <button class="btn btn-primary ms-3">Add Expense</button> -->
+                <button color="primary me-3" (click)="expenseDetails()" mat-icon-button>
+                  <mat-icon class="wd-auto">visibility</mat-icon>
+                </button>
+              
+              </div>
+
+              <div echarts #chartRef class="expense-chart" [options]="expenseoption"
+                (chartClick)="onChartClick($event)"></div>
+
+            </div>
+          </mat-card-content>
+        </mat-dialog-content>
+      </mat-card>
+    </div>
+
+    <div class="col-md-3 wrapper">
+      <mat-card class=" ht-100">
+        <mat-dialog-content class="mat-typography">
+          <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="isletterStatusLoading">
+              <app-loader [IsLoading]="isletterStatusLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+              <div echarts [options]="letterStatusOption" class="demo-chart"></div>
+            </div>
+          </mat-card-content>
+        </mat-dialog-content>
+      </mat-card>
+    </div>
+  </div>
+
+
+  <div class="row mb-3">
+    <div class="col-md-12 wrapper ">
+      <mat-card>
+        <mat-dialog-content class="">
+          <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="isLetterCountLoading">
+              <app-loader [IsLoading]="isLetterCountLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+
+              <div echarts class="letter-chart" [options]="letterCountOptions" (chartClick)="onLetterTypeClick($event)">
+              </div>
+
+            </div>
+          </mat-card-content>
+        </mat-dialog-content>
+      </mat-card>
+    </div>
+
+  </div>
+
+  <!-- Row 3: 1 full-width column -->
+  <div class="row mb-3">
+    <div class="col-md-3 wrapper pr-0">
+      <mat-card class="ht-100">
+        <mat-dialog-content class="mat-typography">
+          <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="isEotLoading">
+              <app-loader [IsLoading]="isEotLoading"></app-loader>
+            </div>
+            <div class="">
+              <div class="row align-items-center ps-3">
+                <div class="col">
+                  <h5 class="m-0 gph-head">Total EOT</h5>
+                </div>
+                <div class="col-auto">
+                  <button color="primary" mat-icon-button aria-label="Example icon button with a open in new tab icon">
+                    <mat-icon class="wd-auto">visibility</mat-icon>
+                  </button>
+
+                </div>
+              </div>
+              <hr class="pad-0 m-0">
+              <div echarts #eotChartInstance (chartClick)="onEOTClick($event)" [options]="eotoption" class="demo-chart">
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-dialog-content>
+      </mat-card>
+    </div>
+    <div class="col-md-3 wrapper pr-0">
+      <mat-card class=" ht-100">
+        <mat-dialog-content class="mat-typography">
+          <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="isCosLoading">
+              <app-loader [IsLoading]="isCosLoading"></app-loader>
+            </div>
+            <div class="">
+              <div class="row align-items-center ps-3">
+                <div class="col">
+                  <h5 class="m-0 gph-head">Total COS</h5>
+                </div>
+                <div class="col-auto">
+                  <button color="primary" mat-icon-button aria-label="Example icon button with a open in new tab icon">
+                    <mat-icon class="wd-auto">visibility</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <hr class="pad-0 m-0">
+              <div echarts [options]="cosoption" (chartClick)="onCOSClick($event)" class="demo-chart"></div>
+            </div>
+          </mat-card-content>
+        </mat-dialog-content>
+      </mat-card>
+    </div>
+    <div class="col-md-3 wrapper pr-0">
+      <mat-card class=" ht-100">
+        <mat-dialog-content class="mat-typography">
+          <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="isEmpTypeLoading">
+              <app-loader [IsLoading]="isEmpTypeLoading"></app-loader>
+            </div>
+            <div class="">
+              <div class="row align-items-center ps-3">
+                <div class="col">
+                  <h5 class="m-0 gph-head">Employee(s)</h5>
+                </div>
+                <div class="col-auto">
+                  <button color="primary" mat-icon-button aria-label="Example icon button with a open in new tab icon">
+                    <mat-icon class="wd-auto">visibility</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <hr class="pad-0 m-0">
+              <div echarts [options]="empTypeOption" (chartClick)="onemptypeClick($event)" class="demo-chart"></div>
+            </div>
+          </mat-card-content>
+        </mat-dialog-content>
+      </mat-card>
+    </div>
+    <div class="col-md-3 wrapper ">
+      <mat-card class=" h-100 scrollable-div">
+
+        <mat-card-content class="pad-0">
+          <div class="load-wrap" *ngIf="isVehicleDataLoading">
+            <app-loader [IsLoading]="isVehicleDataLoading"></app-loader>
+          </div>
+          <div class="row align-items-center no-scroll pb-0 m-0">
+            <div class="col">
+              <h5 class="m-0 gph-head">Recent Vehicle</h5>
+            </div>
+            <div class="col-auto">
+              <button color="primary" mat-icon-button aria-label="Example icon button with a open in new tab icon">
+                <mat-icon class="wd-auto">visibility</mat-icon>
+              </button>
+
+            </div>
+          </div>
+          <div class="wrapper">
+
+            <hr class="pad-0 m-0">
+            <mat-card *ngFor="let veh of vehicles">
+              <mat-card-content class="p-3 mb-0 pb-0 mt-0 pt-0">
+
+                <div class="row">
+                  <div class="col-md-6 pr-0">
+                    <span class="opacity-50 fs-08">Vehicle</span>
+                    <h6>{{veh.name }}</h6>
+                    <h6>{{veh.number}}</h6>
+                  </div>
+                  <div class="col-md-6 pr-0">
+                    <span class="opacity-50 fs-08">Project Code</span>
+                    <h6>{{veh.projectcode}}</h6>
+                  </div>
+
+                </div>
+                <hr class="ps-0 mt-0">
+              </mat-card-content>
             </mat-card>
           </div>
-        </div>
-        <div class="row mb-3" >
-            <div class="col-md-6 wrapper pr-0">
-              <mat-card>  
-                  <mat-dialog-content class="mat-typography">
-                  <mat-card-content class="pad-0">
-                      <div class="load-wrap" *ngIf="isexpenseLoading">
-                          <app-loader [IsLoading]="isexpenseLoading"></app-loader>
-                      </div>
-                      <div class="wrapper" >
-                        
-                        <div echarts #chartRef class="expense-chart" [options]="expenseoption" (chartClick)="onChartClick($event)" ></div>
-                       
-                      </div>
-                  </mat-card-content>
-                  </mat-dialog-content>
+        </mat-card-content>
+
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Row 4: 2 columns, 6 + 6 -->
+  <div class="row mb-3">
+    <div class="col-md-3 wrapper pr-0 ">
+      <mat-card class=" ht-100 scrollable-div">
+        <mat-dialog-content class="mat-typography">
+          <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="isProjectDataLoading">
+              <app-loader [IsLoading]="isProjectDataLoading"></app-loader>
+            </div>
+            <div class="row align-items-center no-scroll pb-0 m-0">
+              <div class="col">
+                <h5 class="m-0 gph-head">Recent Project(s)</h5>
+              </div>
+              <div class="col-auto">
+                <button color="primary" mat-icon-button aria-label="Example icon button with a open in new tab icon">
+                  <mat-icon class="wd-auto">visibility</mat-icon>
+                </button>
+
+              </div>
+            </div>
+            <div class="wrapper">
+
+              <hr class="pad-0 m-0">
+              <mat-card *ngFor="let project of projects">
+                <mat-card-content class="p-3 mb-0 pb-0 mt-0 pt-0">
+                  <span class="opacity-50 pr-0 fs-08">Project Name</span>
+                  <h6 class="mb-0">{{project.name}}</h6>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <span class="opacity-50 pr-0 fs-08">Duration(In Months)</span>
+                      <h6>{{project.duration}}</h6>
+                    </div>
+                    <div class="col-md-6">
+                      <span class="opacity-50 pr-0 fs-08">Cost</span>
+                      <h6>{{project.cost}}</h6>
+                    </div>
+                  </div>
+                  <hr class="ps-0 mt-0">
+                </mat-card-content>
               </mat-card>
             </div>
-            <div class="col-md-3 wrapper pr-0 ">
-              <mat-card class=" h-100 scrollable-div">  
-                  <mat-dialog-content class="mat-typography">
-                  <mat-card-content class="pad-0">
-                      <div class="load-wrap" *ngIf="isProjectDataLoading">
-                          <app-loader [IsLoading]="isProjectDataLoading"></app-loader>
-                      </div>
-                      <div class="row align-items-center no-scroll pb-0 m-0">
-                        <div class="col">
-                          <h5 class="m-0 gph-head">Recent Project(s)</h5>
-                        </div>
-                        <div class="col-auto">
-                            <button color="primary" mat-icon-button aria-label="Example icon button with a open in new tab icon">
-                                <mat-icon class="wd-auto">visibility</mat-icon>
-                              </button>
-                              
-                        </div>
-                      </div>
-                      <div class="wrapper" >  
-                        
-                          <hr class="pad-0 m-0">                        
-                        <mat-card *ngFor="let project of projects">                                      
-                            <mat-card-content class="p-3 mb-0 pb-0 mt-0 pt-0">
-                                <span class="opacity-50 pr-0 fs-08">Project Name</span>
-                                <h6 class="mb-0">{{project.name}}</h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <span class="opacity-50 pr-0 fs-08">Duration(In Months)</span>
-                                        <h6>{{project.duration}}</h6>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <span class="opacity-50 pr-0 fs-08">Cost</span>
-                                        <h6>{{project.cost}}</h6>
-                                    </div>
-                                </div> 
-                                <hr class="ps-0 mt-0">                               
-                            </mat-card-content>                                    
-                        </mat-card>
-                      </div>
-                  </mat-card-content>
-                  </mat-dialog-content>
-              </mat-card>
+          </mat-card-content>
+        </mat-dialog-content>
+      </mat-card>
+    </div>
+    <div class="col-md-6 ">
+      <mat-card class=" ht-100">
+        <mat-dialog-content class="mat-typography">
+          <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="isLoading">
+              <app-loader [IsLoading]="isLoading"></app-loader>
             </div>
-            <div class="col-md-3 wrapper">
-                <mat-card class=" ht-100">  
-                    <mat-dialog-content class="mat-typography">
-                    <mat-card-content class="pad-0">
-                        <div class="load-wrap" *ngIf="isletterStatusLoading">
-                            <app-loader [IsLoading]="isletterStatusLoading"></app-loader>
-                        </div>
-                        <div class="wrapper" >                        
-                            <div echarts  [options]="letterStatusOption" class="demo-chart"></div>
-                        </div>
-                    </mat-card-content>
-                    </mat-dialog-content>
-                </mat-card>
-              </div>
-          </div>
-        
-        
-        <div class="row mb-3">
-          <div class="col-md-12 wrapper ">
-            <mat-card>  
-                <mat-dialog-content class="">
-                <mat-card-content class="pad-0">
-                    <div class="load-wrap" *ngIf="isLetterCountLoading">
-                        <app-loader [IsLoading]="isLetterCountLoading"></app-loader>
-                    </div>
-                    <div class="wrapper" >
-                      
-                      <div echarts class="letter-chart" [options]="letterCountOptions" (chartClick)="onLetterTypeClick($event)" ></div>
-                     
-                    </div>
-                </mat-card-content>
-                </mat-dialog-content>
-            </mat-card>
-          </div>
-         
-        </div>
-      
-        <!-- Row 3: 1 full-width column -->
-        <div class="row mb-3">
-            <div class="col-md-3 wrapper pr-0">
-                <mat-card class="ht-100">  
-                    <mat-dialog-content class="mat-typography">
-                    <mat-card-content class="pad-0">
-                        <div class="load-wrap" *ngIf="isEotLoading">
-                            <app-loader [IsLoading]="isEotLoading"></app-loader>
-                        </div>
-                        <div class="" > 
-                            <div class="row align-items-center ps-3">
-                                <div class="col">
-                                  <h5 class="m-0 gph-head">Total EOT</h5>
-                                </div>
-                                <div class="col-auto">
-                                    <button color="primary" mat-icon-button aria-label="Example icon button with a open in new tab icon">
-                                        <mat-icon class="wd-auto">visibility</mat-icon>
-                                      </button>
-                                      
-                                </div>
-                              </div>
-                              <hr class="pad-0 m-0">                   
-                            <div echarts #eotChartInstance (chartClick)="onEOTClick($event)"  [options]="eotoption" class="demo-chart"></div>
-                        </div>
-                    </mat-card-content>
-                    </mat-dialog-content>
-                </mat-card>
-              </div>
-              <div class="col-md-3 wrapper pr-0">
-                <mat-card class=" ht-100">  
-                    <mat-dialog-content class="mat-typography">
-                    <mat-card-content class="pad-0">
-                        <div class="load-wrap" *ngIf="isCosLoading">
-                            <app-loader [IsLoading]="isCosLoading"></app-loader>
-                        </div>
-                        <div class="" >    
-                            <div class="row align-items-center ps-3">
-                                <div class="col">
-                                  <h5 class="m-0 gph-head">Total COS</h5>
-                                </div>
-                                <div class="col-auto">
-                                    <button color="primary" mat-icon-button aria-label="Example icon button with a open in new tab icon">
-                                        <mat-icon class="wd-auto">visibility</mat-icon>
-                                      </button>
-                                </div>
-                              </div>
-                              <hr class="pad-0 m-0">                    
-                            <div echarts  [options]="cosoption" (chartClick)="onCOSClick($event)" class="demo-chart"></div>
-                        </div>
-                    </mat-card-content>
-                    </mat-dialog-content>
-                </mat-card>
-              </div>
-              <div class="col-md-3 wrapper pr-0">
-                <mat-card class=" ht-100">  
-                    <mat-dialog-content class="mat-typography">
-                    <mat-card-content class="pad-0">
-                        <div class="load-wrap" *ngIf="isEmpTypeLoading">
-                            <app-loader [IsLoading]="isEmpTypeLoading"></app-loader>
-                        </div>
-                        <div class="" >    
-                            <div class="row align-items-center ps-3">
-                                <div class="col">
-                                  <h5 class="m-0 gph-head">Employee(s)</h5>
-                                </div>
-                                <div class="col-auto">
-                                    <button color="primary" mat-icon-button aria-label="Example icon button with a open in new tab icon">
-                                        <mat-icon class="wd-auto">visibility</mat-icon>
-                                      </button>
-                                </div>
-                              </div>
-                              <hr class="pad-0 m-0">                    
-                            <div echarts [options]="empTypeOption" (chartClick)="onemptypeClick($event)" class="demo-chart"></div>
-                        </div>
-                    </mat-card-content>
-                    </mat-dialog-content>
-                </mat-card>
-              </div>
-              <div class="col-md-3 wrapper ">
-                <mat-card class=" h-100 scrollable-div">  
-                   
-                    <mat-card-content class="pad-0">
-                        <div class="load-wrap" *ngIf="isVehicleDataLoading">
-                            <app-loader [IsLoading]="isVehicleDataLoading"></app-loader>
-                        </div>
-                        <div class="row align-items-center no-scroll pb-0 m-0">
-                          <div class="col">
-                            <h5 class="m-0 gph-head">Recent Vehicle</h5>
-                          </div>
-                          <div class="col-auto">
-                              <button color="primary" mat-icon-button aria-label="Example icon button with a open in new tab icon">
-                                  <mat-icon class="wd-auto">visibility</mat-icon>
-                                </button>
-                                
-                          </div>
-                        </div>
-                        <div class="wrapper" >  
-                          
-                            <hr class="pad-0 m-0">                        
-                          <mat-card *ngFor="let veh of vehicles">                                      
-                              <mat-card-content class="p-3 mb-0 pb-0 mt-0 pt-0">
-                                 
-                                  <div class="row">
-                                    <div class="col-md-6 pr-0">
-                                        <span class="opacity-50 fs-08">Vehicle</span>
-                                        <h6>{{veh.name }}</h6> 
-                                        <h6>{{veh.number}}</h6> 
-                                    </div>
-                                      <div class="col-md-6 pr-0">
-                                          <span class="opacity-50 fs-08">Project Code</span>
-                                          <h6>{{veh.projectcode}}</h6>
-                                      </div>
-                                    
-                                  </div> 
-                                  <hr class="ps-0 mt-0">                               
-                              </mat-card-content>                                    
-                          </mat-card>
-                        </div>
-                    </mat-card-content>
-                   
-                </mat-card>
-              </div>
-        </div>
-      
-        <!-- Row 4: 2 columns, 6 + 6 -->
-        <div class="row mb-3">
-          <div class="col-md-6 ">
-            <mat-card class=" ht-100">  
-                <mat-dialog-content class="mat-typography">
-                <mat-card-content class="pad-0">
-                    <div class="load-wrap" *ngIf="isLoading">
-                        <app-loader [IsLoading]="isLoading"></app-loader>
-                    </div>
-                    <div class="wrapper" >                         
-                        <div echarts  [options]="progressoption" class="demo-chart"></div>
-                    </div>
-                </mat-card-content>
-                </mat-dialog-content>
-            </mat-card>
-          </div>
-       
-        </div>
+            <div class="wrapper">
+              <div echarts [options]="progressoption" class="demo-chart"></div>
+            </div>
+          </mat-card-content>
+        </mat-dialog-content>
+      </mat-card>
+    </div>
+   
+  </div>
 </div>
-      

@@ -96,6 +96,7 @@
                                 
                                 <mat-datepicker-toggle matIconSuffix [for]="joiningdate"></mat-datepicker-toggle>
                                 <mat-datepicker #joiningdate></mat-datepicker>
+                                <mat-error>Please select date.</mat-error>
                               </mat-form-field>
                         </div>
                         
@@ -107,6 +108,7 @@
                               
                                 <mat-datepicker-toggle matIconSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
                                 <mat-datepicker #dateOfBirth></mat-datepicker>
+                                 <mat-error>Please select date.</mat-error>
                               </mat-form-field>
                         </div>
                         <div class="col-md-3">
@@ -117,6 +119,7 @@
                                         {{field.name}}
                                     </mat-option>
                                 </mat-select>
+                                 <mat-error>Please select Gender.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">
@@ -134,22 +137,25 @@
                                         {{field.name}}
                                     </mat-option>
                                 </mat-select>
+                                <mat-error>Please select Maritial Status.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Email Id</mat-label>
                                 <input matInput formControlName="emailId">
-                                <mat-error>Please provide Email-Id.</mat-error>
-                                 <mat-error *ngIf="employeeForm.hasError('Email', 'email')">Please enter Valid Email Id.
+                                 <mat-error *ngIf="employeeForm.get('emailId')?.hasError('Email')">Please enter Valid Email Id.
                                 </mat-error>
+                                <mat-error *ngIf="employeeForm.get('emailId')?.hasError('required')">Please provide EmailId.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-3">
                             <mat-form-field>
                                 <mat-label>Phone Number</mat-label>
                                 <input matInput formControlName="PhoneNumber">
-                                <mat-error>Please provide Phone Number.</mat-error>
+                                <mat-error *ngIf="employeeForm.get('PhoneNumber')?.hasError('required')">Please provide Phone Number.</mat-error>
+                                <mat-error *ngIf="employeeForm.get('PhoneNumber')?.hasError('phoneno')">Please enter Valid Phone Number.
+                                </mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
@@ -201,7 +207,8 @@
                             <mat-form-field>
                                 <mat-label>IFSC Code</mat-label>
                                 <input matInput formControlName="ifscCode">
-                                <mat-error></mat-error>
+                                <mat-error *ngIf="employeeForm.get('ifscCode')?.hasError('ifsc')">Please enter Valid IFSC Code.
+                                </mat-error>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-3">
@@ -236,7 +243,8 @@
                             <mat-form-field>
                                 <mat-label>PAN Card Number</mat-label>
                                 <input matInput formControlName="PanNumber">
-                                <mat-error></mat-error>
+                                <mat-error *ngIf="employeeForm.get('PanNumber')?.hasError('panno')">Please enter Valid PAN No.
+                                </mat-error>
                             </mat-form-field>
                         </div> 
                      

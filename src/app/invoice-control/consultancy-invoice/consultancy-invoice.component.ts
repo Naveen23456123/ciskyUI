@@ -42,16 +42,16 @@ export class ConsultancyInvoiceComponent {
   columnsList:any[]=[this.subTotalKey,this.billingKey,this.totalKey,this.gstKey,this.grandTotalKey];
 
   consultancyList:any[]=[
-    {srno:1, value:BOQInvoice.LOCALSTAFF, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
-    {srno:2, value:BOQInvoice.SUPPORTSTAF, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
-    {srno:3, value:BOQInvoice.TRANSPORTATION, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
-    {srno:4, value:BOQInvoice.DUTY_TRAVEL_SITE, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},    
-    {srno:5, value:BOQInvoice.OFFICE_RENT, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
-    {srno:6, value:BOQInvoice.OFFICE_SUPPLY_UTILITY_COMM, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
-    {srno:7, value:BOQInvoice.OFFICE_FURN_EPUIP, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
-    {srno:8, value:BOQInvoice.REPORT_DOCUMENT_REPORTING, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
-    {srno:9, value:BOQInvoice.ROAD_SURVEY_EQUIP, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
-    {srno:10, value:BOQInvoice.CONTINGENCIES, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
+    {srno:1,key:BOQInvoice.LOCALSTAFF_KEY, value:BOQInvoice.LOCALSTAFF, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
+    {srno:2,key:BOQInvoice.SUPPORTSTAF_KEY, value:BOQInvoice.SUPPORTSTAF, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
+    {srno:3,key:BOQInvoice.TRANSPORTATION_KEY, value:BOQInvoice.TRANSPORTATION, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
+    {srno:4,key:BOQInvoice.DUTY_TRAVEL_SITE_KEY, value:BOQInvoice.DUTY_TRAVEL_SITE, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},    
+    {srno:5,key:BOQInvoice.OFFICE_RENT_KEY, value:BOQInvoice.OFFICE_RENT, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
+    {srno:6,key:BOQInvoice.OFFICE_SUPPLY_UTILITY_COMM_KEY, value:BOQInvoice.OFFICE_SUPPLY_UTILITY_COMM, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
+    {srno:7,key:BOQInvoice.OFFICE_FURN_EPUIP_KEY, value:BOQInvoice.OFFICE_FURN_EPUIP, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
+    {srno:8,key:BOQInvoice.REPORT_DOCUMENT_REPORTING_KEY, value:BOQInvoice.REPORT_DOCUMENT_REPORTING, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
+    {srno:9,key:BOQInvoice.ROAD_SURVEY_EQUIP_KEY, value:BOQInvoice.ROAD_SURVEY_EQUIP, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
+    {srno:10,key:BOQInvoice.CONTINGENCIES_KEY, value:BOQInvoice.CONTINGENCIES, contract_amount:0 ,previous_amount:0 ,current_amount:0,commulative_amt:0,remaining_amt:0},
   ];
   tpList:any[]=[];
 
@@ -69,10 +69,23 @@ export class ConsultancyInvoiceComponent {
             
            }
         })
+        this.invoiceService.getProjectBoqAmountSummary({id:projectEntity.projectId},'')
+          .pipe(finalize(() => this.isLoading = false)).subscribe((response:any)=>{
+            if(response && response.success){
+              response.data.forEach((d: any) => {
+                const match = this.consultancyList.find(c => c.key === d.name);
+                  if (match) {
+                    match.contract_amount = d.amount;
+                  }
+                });
+                this.dataSource = new MatTableDataSource(this.consultancyList);
+                this.cdr.detectChanges();   
+                console.log(this.consultancyList);
+              }
+          })
       }
     });
-    this.dataSource = new MatTableDataSource(this.consultancyList);
-    this.cdr.detectChanges();        
+     
   }
   
   constructor( private cdr:ChangeDetectorRef, private invoiceService:InvoiceService, private sessionService:SessionService){    
@@ -114,7 +127,7 @@ export class ConsultancyInvoiceComponent {
   bindAmount(valueKey:any,event:any){
     const element:any = this.dataSource.data.find((x:any) => x.value==valueKey);    
     if(element && event){
-      element.contract_amount=event.total;
+      //element.contract_amount=event.total;
       element.previous_amount=event.previous;
       element.current_amount=event.current;
       element.commulative_amt=event.commulative;
@@ -126,7 +139,7 @@ export class ConsultancyInvoiceComponent {
   bindLocalStaffAmount(event:any){
     const element:any = this.dataSource.data.find((x:any) => x.value==BOQInvoice.LOCALSTAFF);    
     if(element && event){
-      element.contract_amount=event.kp.total+event.sps.total;
+      //element.contract_amount=event.kp.total+event.sps.total;
       element.previous_amount=event.kp.previous+event.sps.previous;
       element.current_amount=event.kp.current+event.sps.current;
       element.commulative_amt=event.kp.commulative+event.sps.commulative;

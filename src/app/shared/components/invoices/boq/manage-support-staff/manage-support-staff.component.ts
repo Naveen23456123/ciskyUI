@@ -1,9 +1,9 @@
-import { Component, inject, Inject, Optional } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Inject, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
-import { LetterType } from '@app/shared/models/constant.config';
+import { BOQ_TBN, LetterType } from '@app/shared/models/constant.config';
 import { BoqStaffInterfaceService } from '@app/shared/services/external/boq/boq-staff-interface.service';
 import { CommonInterfaceService } from '@app/shared/services/external/common-interface.service';
 import { DesignationInterfaceService } from '@app/shared/services/external/designation-interface.service';
@@ -49,7 +49,7 @@ export class ManageSupportStaffComponent {
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageSupportStaffComponent>, private formbuilder: FormBuilder,
-    private router: Router,private route: ActivatedRoute,
+    private router: Router,private route: ActivatedRoute, private cdrservice:ChangeDetectorRef,
     private staffService: InvStaffInterfaceService, private sessionService:SessionService,
   private employeeService:EmployeeInterfaceService, private designationService:DesignationInterfaceService){
       this.data = data || {};
@@ -133,8 +133,8 @@ export class ManageSupportStaffComponent {
                 }));
                 this.empList.push({
                   id:'id',
-                  name:'TBN',
-                  empname:'TBN'
+                  name:BOQ_TBN.TBN,
+                  empname:BOQ_TBN.TBN
                 });
                 this.renumerationForm.patchValue({
                   employeeid:'id'
@@ -168,11 +168,12 @@ export class ManageSupportStaffComponent {
       id: data.id,
       designationid :data.designationid,
       professionalid:data.professionalid,
-      employeeid:data.employeeid,
+      employeeid:data.employeeid??'id',
       rate:data.rate,
       constructionperiod:data.constructionperiod,
       oandmperiod:data.oandmperiod,
     });
+    this.cdrservice.detectChanges();
   }
 
   desgSelect(data:any){
@@ -191,7 +192,7 @@ export class ManageSupportStaffComponent {
   submit(){ 
     this.isBtnClicked=true;
     let formData=this.renumerationForm.value;
-    formData.employeename= this.empList.find(x=>x.id==this.renumerationForm.get('employeeid')?.value).empname;
+    formData.employeename= this.empList.find(x=>x.id==this.renumerationForm.get('employeeid')?.value)?.empname;
     formData.designation= this.designationList.find(x=>x.id==this.renumerationForm.get('designationid')?.value).name;
     formData.professionalid = this.renumerationForm.get('professionalid')?.value;
 
@@ -200,6 +201,8 @@ export class ManageSupportStaffComponent {
         this.renumerationForm.patchValue({projectid:response.projectId});
         formData.projectid=response.projectId;
         if (this.isEdit) {
+          if(this.renumerationForm.value.employeeid=='id')
+            this.renumerationForm.value.employeeid='';
           this.staffService.updateBoqStaff(this.renumerationForm.value, '')
             .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next: (response:any) => {

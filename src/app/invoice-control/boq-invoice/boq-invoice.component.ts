@@ -8,6 +8,8 @@ import { StaffType } from '@app/shared/models/constant.config';
 import { BOQInvoice } from '@app/shared/models/Invoice';
 import { CommonService } from '@app/shared/services/common.service';
 import { SessionService } from '@app/shared/services/session.service';
+import { InvoiceService } from '../invoice.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-boq-invoice',
@@ -55,7 +57,7 @@ export class BoqInvoiceComponent {
     } 
     this.sessionService.setProjectEntity(projectEntity);
     this.dataSource = new MatTableDataSource(this.boqList);
-  
+    
     }
 
     constructor(private route: ActivatedRoute,private router: Router,private sessionService:SessionService,

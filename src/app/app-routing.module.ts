@@ -4,6 +4,7 @@ import { RouterModule, Routes, PreloadAllModules } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Shell } from './shell/shell.service';
 import { authGuard } from './shared/guards/auth.guard';
+import { extractTitle } from './core/i18n.service';
 
 function protectRoutes(routes: Routes): Routes {
   return routes.map(route => ({
@@ -121,9 +122,9 @@ const baseroutes: Routes = [
       data:{pageGuid:'',type:'view'}
     },
     {
-      path: 'profit-loss-details',
-      loadChildren:()=>import('app/profit-loss/profit-loss-details/profit-loss-details.module').then(x=>x.ProfitLossDetailsModule),
-      data:{pageGuid:'',type:'view'}
+      path: 'consultancy-release-invoice',
+      loadChildren:()=>import('app/invoice-control/transport/release-invoice/release-invoice.module').then(x=>x.ReleaseInvoiceModule),
+      data:{pageGuid:'',type:'view', title:extractTitle('Release Detail(s)')}
     }, 
     {
       path: 'ofc-rent',
@@ -133,6 +134,11 @@ const baseroutes: Routes = [
     {
       path: 'profit-loss',
       loadChildren:()=>import('app/profit-loss/profit-loss-list/profit-loss-list.module').then(x=>x.ProfitLossListModule),
+      data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'profit-loss-details',
+      loadChildren:()=>import('app/profit-loss/profit-loss-detailed/profit-loss-detailed.module').then(x=>x.ProfitLossDetailedModule),
       data:{pageGuid:'',type:'view'}
     },
     {

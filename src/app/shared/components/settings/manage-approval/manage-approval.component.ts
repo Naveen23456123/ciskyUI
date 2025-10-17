@@ -7,6 +7,7 @@ import { CommonInterfaceService } from '@app/shared/services/external/common-int
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
 import { SettingInterfaceService } from '@app/shared/services/external/setting-interface.service';
 import { SubCompanyInterfaceService } from '@app/shared/services/external/sub-company-interface.service';
+import { UserInterfaceService } from '@app/shared/services/external/user-interface.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, forkJoin } from 'rxjs';
 
@@ -38,7 +39,7 @@ export class ManageApprovalComponent {
     private sessionService: SessionService,  private router: Router,
     private adminService: AdminInterfaceService, private commomService:CommonInterfaceService,
     private approvalService:SettingInterfaceService, private employeeService:EmployeeInterfaceService,
-  private companyService:SubCompanyInterfaceService){
+  private companyService:SubCompanyInterfaceService, private userService:UserInterfaceService){
       this.data = data || {};
   }
   
@@ -90,7 +91,7 @@ export class ManageApprovalComponent {
     this.company= this.data?.element?.company;
     if(!this.deleteItem){
       forkJoin({
-        roleAPI: this.commomService.getApprovalRoles(),
+        roleAPI: this.commomService.getAppRoles(),
         companyAPI: this.companyService.getSubCompanyListByOrgId({},'')
       }).pipe(finalize(()=> this.isLoading=false)).subscribe((response:any)=>{
         if(response && response.roleAPI && response.roleAPI.success){
@@ -135,14 +136,14 @@ export class ManageApprovalComponent {
         rolename:this.roleList.find(x=>x.id==value).name,
         employeeid:''
        })
-      this.employeeService.getSiteEmployeeParital({roleId:value,companyid:this.approvalForm.get('companyid')?.value},'').subscribe((response:any)=>{
+      this.userService.getUserPartialDetails({roleId:value,companyid:this.approvalForm.get('companyid')?.value},'').subscribe((response:any)=>{
         if(response && response.success){
          const employeeIds = this.levels.controls.map((group: AbstractControl) => {
           return group.get('employeeid')?.value;
         });
          let list= response.data.filter((item: any) =>!employeeIds.includes(item.id)).map((item:any)=>({          
           id:item.id,
-          name:item.code+ ' - '+item.name ,
+          name:item.emailid+ ' - '+item.name ,
           empname:item.name       
          }));
          group.patchValue({
@@ -172,12 +173,12 @@ export class ManageApprovalComponent {
       group.patchValue({
         empInit:false
        })
-      this.employeeService.getSiteEmployeeParital({roleId:value,companyid:this.approvalForm.get('companyid')?.value},'').subscribe((response:any)=>{
+      this.userService.getUserPartialDetails({roleId:value,companyid:this.approvalForm.get('companyid')?.value},'').subscribe((response:any)=>{
         if(response && response.success){
          
          let list= response.data.map((item:any)=>({ 
           id:item.id,
-          name:item.code+ ' - '+item.name ,
+          name:item.emailid+ ' - '+item.name ,
           empname:item.name,       
          }));
          group.patchValue({

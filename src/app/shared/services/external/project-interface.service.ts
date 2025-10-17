@@ -234,6 +234,18 @@ export class ProjectInterfaceService {
     return this.coreApi.standardService(standardAttribute);
   
   }
+  getProjectBoqAmountSummary(params: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Consultant/BoqAmount/'+params.id,
+      params: {},
+      headers: true,
+      guid: '',
+      request: {},
+      action: Operation.GET
+    }
+    return this.coreApi.standardService(standardAttribute);
+  
+  }
   getProjectRoleCountSummary(params: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Consultant/RoleSummary',

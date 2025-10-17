@@ -64,13 +64,10 @@ export class MonthAndYearPickerComponent implements OnInit {
     this.diabledNextBtn();
     if(this.setValueDefault){
       this.date.setValue(moment().startOf('month'));
-      console.log(moment().startOf('month').utc());
     }
     if(this.defaultValue){
       this.date.setValue(moment(this.defaultValue));
-      console.log('Inside 2');
     }
-    console.log(this.date);
     this.onValueChange.emit(this.date.value);
   }
 

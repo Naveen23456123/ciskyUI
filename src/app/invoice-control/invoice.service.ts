@@ -98,4 +98,7 @@ export class InvoiceService {
   getConsultantContingencyListByProjectId(param: any, guid: string) {
     return this.contigencyService.getConsultantContingencyListByProjectId(param,guid);
   }
+    getProjectBoqAmountSummary(param: any, guid: string) {
+    return this.projectService.getProjectBoqAmountSummary(param,guid);
+  }
 }
