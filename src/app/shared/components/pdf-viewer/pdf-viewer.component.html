@@ -4,9 +4,12 @@
     <p>Loading PDF, please wait...</p>
   </div>
 </div> -->
-
-<ngx-extended-pdf-viewer useBrowserLocale="true" [textLayer]="true" 
-[showUnverifiedSignatures]="true"
-(pdfLoadingStarts)="onPdfLoading(true)"
-(pdfLoadingEnds)="onPdfLoading(false)"
-[src]="pdfFile"></ngx-extended-pdf-viewer>
+<div class="pdf-container">
+  <!-- Loader -->
+  <div class="load-wrap" *ngIf="isLoading">
+    <app-loader [IsLoading]="isLoading"></app-loader>
+  </div>
+  <ngx-extended-pdf-viewer useBrowserLocale="true" [textLayer]="true" [showUnverifiedSignatures]="true"
+    (pdfLoadingStarts)="onPdfLoading(true)" (pdfLoadingEnds)="onPdfLoading(false)" (pagesLoaded)="onPagesLoaded()"
+    [src]="pdfFile"></ngx-extended-pdf-viewer>
+</div>

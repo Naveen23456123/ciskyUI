@@ -7,11 +7,14 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './financial-date-filters.component.scss'
 })
 export class FinancialDateFiltersComponent {
-  selectedType: 'financial' | 'quarterly' | 'custom' = 'financial';
+  @Input() selectedType: 'financial' | 'quarterly' | 'custom' = 'financial';
   @Input() showFinancial: boolean = true;
   @Input() showQuarterly: boolean = true;
   @Input() showCustom: boolean = true;
   @Input() initialEmit: boolean = false;
+  @Input() emitOnFinanceChange: boolean = false;
+  @Input() emitOnQuaterlyChange: boolean = false;
+  @Input() isSearchBtn: boolean = true;
   financialYears: { label: string; startYear: number; endYear: number }[] = [];
   quarters: { label: string; start: Date; end: Date }[] = [];
 
@@ -29,8 +32,8 @@ export class FinancialDateFiltersComponent {
     if (this.showFinancial) this.selectedType = 'financial';
     else if (this.showQuarterly) this.selectedType = 'quarterly';
     else if (this.showCustom) this.selectedType = 'custom';
-    if(this.initialEmit)
-       this.emitDateRange();
+    if (this.initialEmit)
+      this.emitDateRange();
   }
 
   /** Generate all financial years from 2000 till current */
@@ -75,31 +78,45 @@ export class FinancialDateFiltersComponent {
       {
         label: `Q1 (Apr–Jun ${fy.startYear})`,
         start: new Date(fy.startYear, 3, 1), // Apr 1
-        end: new Date(Date.UTC(fy.startYear, 5, 30))   // Jun 30
+        end: this.getUTCEndOfMonth(fy.startYear, 4)     // Jun 30
       },
       {
         label: `Q2 (Jul–Sep ${fy.startYear})`,
         start: new Date(fy.startYear, 6, 1), // Jul 1
-        end: new Date(Date.UTC(fy.startYear, 8, 30))   // Sep 30
+        end: this.getUTCEndOfMonth(fy.startYear, 7)  // Sep 30
       },
       {
         label: `Q3 (Oct–Dec ${fy.startYear})`,
         start: new Date(fy.startYear, 9, 1),  // Oct 1
-        end: new Date(Date.UTC(fy.startYear, 11, 31))   // Dec 31
+        end: this.getUTCEndOfMonth(fy.startYear, 10)  // Dec 31
       },
       {
         label: `Q4 (Jan–Mar ${fy.endYear})`,
         start: new Date(fy.endYear, 0, 1),   // Jan 1
-        end: new Date(Date.UTC(fy.endYear, 2, 31))     // Mar 31
+        end: this.getUTCEndOfMonth(fy.startYear+1, 1)     // Mar 31
       }
     ];
+    if (this.emitOnFinanceChange) {
+      this.emitDateRange();
+    }
   }
+  getUTCEndOfMonth(year: number, month: number): Date {
+    // month is 0-based (0=Jan, 5=Jun)
+    const last = new Date(Date.UTC(year, month + 1, 0)); // Last day at 00:00 UTC
 
+    // Add 18:30 offset so final UTC is equal to 00:00 in IST
+    last.setUTCHours(18, 30, 0, 0);
+
+    return last;
+  }
   /** When user selects quarter, set the date range */
   onQuarterChange() {
     if (this.selectedQuarter) {
       this.customStartDate = this.selectedQuarter.start;
       this.customEndDate = this.selectedQuarter.end;
+      if (this.emitOnQuaterlyChange) {
+        this.emitDateRange();
+      }
     }
   }
 
@@ -119,7 +136,9 @@ export class FinancialDateFiltersComponent {
       payload = {
         type: 'quarterly',
         startDate: this.selectedQuarter.start.toISOString(),
-        endDate: this.subtractOneMonth(this.selectedQuarter.end).toISOString(),
+        //endDate: this.subtractOneMonth(this.selectedQuarter.end).toISOString(),
+        //endDate: this.subtractOneMonthUTC(this.selectedQuarter.end.toISOString()).toISOString(),
+        endDate: this.selectedQuarter.end.toISOString(),
         year: this.selectedFinancialYear.startYear
       };
     } else if (this.selectedType === 'custom' && this.customStartDate && this.customEndDate) {
@@ -134,6 +153,7 @@ export class FinancialDateFiltersComponent {
     console.log('Selected Filter:', payload);
     return payload;
   }
+
   getFinancialYearCustomISO(selectedYear: number) {
     // Start date = 31st March of the selected year
     const startDate = new Date(Date.UTC(selectedYear, 2, 31, 0, 0, 0)); // March = 2

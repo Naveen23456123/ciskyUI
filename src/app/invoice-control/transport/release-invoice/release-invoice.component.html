@@ -1,98 +1,219 @@
-<div class="container">   
-    <div class="load-wrap" *ngIf="isLoading">
-        <app-loader [IsLoading]="isLoading"></app-loader>
-    </div>
-        <div class="wrapper" *ngIf="!isLoading">                
-            <div class="mat-elevation-z8">
-                <div class="no-print div-center container">
-                    <div class="button-row">
-                    <button class="print-btn" onclick="window.print()" mat-fab extended>
-                        <mat-icon>print</mat-icon>
-                        Print
-                      </button>
-                      
+<div class="container">
+
+  <div class="wrapper">
+    <div class="mat-elevation-z8">
+      <div class="no-print container">
+
+      </div>
+      <mat-card>
+        <mat-tab-group mat-stretch-tabs="false" (selectedTabChange)="onTabChange($event)" animationDuration="0ms">
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="example-tab-icon no-print">article</mat-icon>
+              <span class=" no-print"> Summary </span>
+            </ng-template>
+            <mat-card>
+              <div *ngIf="!isLoading" class="no-print d-flex justify-content-end align-items-center gap-2">
+                <app-download-pdf *ngIf="pagePermissions?.canRead" [loading]="isPdfGenerating"
+                  (clickEvent)="printPage()"></app-download-pdf>
+                <app-edit-btn *ngIf="pagePermissions?.canUpdate" class="me-4"
+                  (clickEvent)="manageRelease()"></app-edit-btn>
+              </div>
+              <div #pdfContent id="pdfContent">
+                <div class="wrapper report-head mx-3 mb-2">
+                  <h5 class="sub-heading content-center">Release (Final Detailed Summary) </h5>
+                  <hr>
+                  <div class="control-div pd-1">
+                    <span class="report-heading">Invoice No. : {{invDetails.number}} </span>
+                    <span class="report-heading float-end"> Invoice's Month : {{invDetails.monthandyear | date: 'MMMM - yyyy'}}</span>
+                  </div>
+                  <div class="control-div pd-1">
+                    <span class="report-heading">Project : {{invDetails.projectname}} </span>
+                    <span class="report-heading float-end"> Date : {{today | formatDate}}</span>
+                  </div>
+
                 </div>
-                </div>
-                <mat-card>
-                    <div class="wrapper report-head mx-3">
-                        <h5 class="sub-heading content-center">Invoice (Final Detailed Summary) </h5>
-                        <hr>
-                         <div class="control-div pd-1">
-                            <span class="report-heading">Invoice No. : {{invoiceData.number}} </span>
-                            <span class="report-heading float-end" > Invoice Date : {{invoiceData.monthandyear | date: 'MMMM - yyyy'}}</span>
-                        </div>
-                        <div class="control-div pd-1">
-                            <span class="report-heading">Project : {{invoiceData.projectname}} </span>
-                            <span class="report-heading float-end" > Date : {{today | formatDate}}</span>
-                        </div>
-                        
-                      </div>
-                    <mat-card-content>
-                      
-                        <table mat-table [dataSource]="dataSource" >
-                      
-                            <ng-container matColumnDef="serial">
-                              <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                              <td mat-cell *matCellDef="let row"> {{row.srno}} </td>                             
-                            </ng-container>
-                        
-                           
-                            <ng-container matColumnDef="value">
-                              <th mat-header-cell *matHeaderCellDef > Description </th>
-                              <td  mat-cell class="heading-desc" *matCellDef="let row">
-                                <span class="align-left">
-                                  {{row.value}} 
-                                </span> </td>
-                            </ng-container>                      
-                            <ng-container matColumnDef="amount">
-                              <th mat-header-cell *matHeaderCellDef > Amount </th>
-                              <td mat-cell *matCellDef="let row">
-                                <span class="float-end">
-                                  {{row.amount | formatAmount}}
-                                </span>  </td> 
-                            </ng-container>
-                            <ng-container matColumnDef="contract_amount">
-                                <th mat-header-cell *matHeaderCellDef > Contract Value </th>
-                                <td mat-cell *matCellDef="let row">
-                                  <span class="float-end">
-                                    {{row.contract_amount | formatAmount}}
-                                  </span>  </td> 
-                              </ng-container>
-                              <ng-container matColumnDef="previous_amount">
-                                <th mat-header-cell *matHeaderCellDef > Up to Previous </th>
-                                <td mat-cell *matCellDef="let row">
-                                  <span class="float-end">
-                                    {{row.previous_amount | formatAmount}}
-                                  </span>  </td> 
-                              </ng-container>
-                              <ng-container matColumnDef="current_amount">
-                                <th mat-header-cell *matHeaderCellDef > This Bill </th>
-                                <td mat-cell *matCellDef="let row">
-                                  <span class="float-end">
-                                    {{row.current_amount | formatAmount}}
-                                  </span>  </td> 
-                              </ng-container> 
-                              <ng-container matColumnDef="commulated">
-                                <th mat-header-cell *matHeaderCellDef > Cummulative Bill </th>
-                                <td mat-cell *matCellDef="let row">
-                                  <span class="float-end">
-                                    {{row.commulative_amt | formatAmount}}
-                                  </span>  </td> 
-                              </ng-container> 
-                              <ng-container matColumnDef="remaining">
-                                <th mat-header-cell *matHeaderCellDef > Remaining  </th>
-                                <td mat-cell *matCellDef="let row">
-                                  <span class="float-end">
-                                    {{row.remaining_amt | formatAmount}}
-                                  </span>  </td>
-                              </ng-container> 
-                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                            <tr mat-row [ngClass]="row.footer? 'mat-mdc-footer-row':''" *matRowDef="let row; columns: displayedColumns;"></tr>
-                          </table>
-                    </mat-card-content>
-                </mat-card> 
+
+                <mat-card-content>
+                  <ng-container *ngIf="isLoading; else checkNoData">
+                    <app-empty-table-skltn></app-empty-table-skltn>
+                  </ng-container>
+                  <ng-template #checkNoData>
+                    <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+                      <app-no-data message="No Release(s) found at this moment !!"></app-no-data>
+                    </ng-container>
+                  </ng-template>
+                  <ng-template #showTable>
+                    <table class="table table-bordered invoice-table">
+
+                      <!-- Custom header with two rows -->
+                      <thead class="group-header">
+                        <tr>
+                          <th rowspan="2" class="align-middle text-center">Sr.<br>No.</th>
+                          <th rowspan="2" class="align-middle">Description</th>
+                          <th rowspan="2" class="align-middle text-right">Contract Value<br>(in Rs)</th>
+                          <th rowspan="2" class="align-middle text-right">Actual paid upto last bill (in Rs.)</th>
+                          <th colspan="2" class="text-center">{{invDetails.monthandyear | date: 'MMMM - yyyy'}}</th>
+                          <th rowspan="2" class="align-middle text-right">Up to date amount till this invoice (in Rs.)
+                          </th>
+                          <th rowspan="2" class="align-middle text-right">Net Amount for this bill (in Rs.)</th>
+                        </tr>
+                        <tr>
+                          <th class="text-right">Amount Claimed by AE (in Rs.)</th>
+                          <th class="text-right">Amount recommended by PIU (in Rs.)</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        <tr *ngFor="let row of dataSource.data" [ngClass]="{
+                  'row-subtotal': row.type === 'subtotal',
+                  'row-deduction': row.type === 'deduction',
+                  'row-grandtotal': row.type === 'grandtotal',
+                  'row-final': row.type === 'final'
+                }">
+                          <ng-container *ngIf="!isSingleCellRow(row); else singleCellRow">
+                            <td class="text-center">{{ row.srno }}</td>
+                            <td>{{ row.value }}</td>
+                            <td class="text-right">{{ formatAmount(row.contract_amount) }}</td>
+                            <td class="text-right">{{ formatAmount(row.previous_amount) }}</td>
+                            <td class="text-right">{{ formatAmount(row.current_amount) }}</td>
+                            <td class="text-right">{{ formatAmount(row.current_release) }}</td>
+                            <td class="text-right">{{ formatAmount(row.commulative_amt) }}</td>
+                            <td class="text-right">{{ formatAmount(row.net_amount) }}</td>
+                          </ng-container>
+
+                          <!-- 👇 Summary rows (merged cells with one total column) -->
+                          <ng-template #singleCellRow>
+                            <td class="text-center">{{ row.srno }}</td>
+                            <td>{{ row.value }}</td>
+                            <td colspan="5"></td>
+                            <td class="text-right fw-bold">{{ formatAmount(row.net_amount) }}</td>
+                          </ng-template>
+                        </tr>
+                      </tbody>
+
+                    </table>
+                  </ng-template>
+
+                </mat-card-content>
+              </div>
+            </mat-card>
+          </mat-tab>
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="example-tab-icon no-print">format_list_numbered</mat-icon>
+              <span class=" no-print"> Detailed </span>
+            </ng-template>
+            <ng-template matTabContent>
+              <mat-card>
+                <div *ngIf="!isLoading"
+                  class="no-print mb-2 row d-flex justify-content-between align-items-center stick-bar">
+                  <div class="col-md-12 d-flex justify-content-end align-items-center">
+                    <app-download-pdf [loading]="isPdfGenerating" class="me-2"
+                      (clickEvent)="printScopePage()"></app-download-pdf>
+                    <app-download-csv *ngIf="pagePermissions?.canCreate && !isEditMode" class="me-4" toolTip="Download Template"
+                      (clickEvent)="downloadTemplate()"></app-download-csv>
+
+                    <app-file-uploader *ngIf="pagePermissions?.canCreate && showUpload " UploadType="csv"
+                      (onfileUpload)="fileuploaded($event)">
+                    </app-file-uploader>
+                    
+                    <app-edit-btn class="me-4" *ngIf="pagePermissions?.canUpdate && !showUpload && !isEditMode" (clickEvent)="manageDetailedRelease()"></app-edit-btn>
               
-            </div>
-        </div>
+                    <app-submit-load-btn *ngIf="(pagePermissions?.canCreate ||pagePermissions?.canUpdate) && (isEditMode || showUpload)" class="me-2" [isClicked]="isBtnClicked"
+                      (clickEvent)="submit()" [isValid]="!isBtnClicked" text="Submit">
+                    </app-submit-load-btn>
+                    
+                    <button class="cancel-btn me-4" *ngIf="(isEditMode || showUpload)" (click)="manageDetailedRelease()" mat-stroked-button color="default">
+                      Cancel
+                    </button>
+                       </div>
+
+                </div>
+                <div #scopePdfContent id="scopePdfContent">
+                  <div class="wrapper report-head mx-3 mb-2">
+                    <h5 class="sub-heading content-center">Release (Detailed Summary) </h5>
+                    <hr>
+                    <div class="control-div pd-1">
+                      <span class="report-heading">Invoice No. : {{invDetails.number}} </span>
+                      <span class="report-heading float-end"> Invoice's Month : {{invDetails.monthandyear | date: 'MMMM - yyyy'}}</span>
+                    </div>
+                    <div class="control-div pd-1">
+                      <span class="report-heading">Project : {{invDetails.projectname}} </span>
+                      <span class="report-heading float-end"> Date : {{today | formatDate}}</span>
+                    </div>
+                  </div>
+                  <mat-card-content>
+                    <ng-container *ngIf="isLoading; else checkNoData">
+                      <app-empty-table-skltn></app-empty-table-skltn>
+                    </ng-container>
+                    <ng-template #checkNoData>
+                      <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+                        <app-no-data message="No Release(s) found at this moment !!"></app-no-data>
+                      </ng-container>
+                    </ng-template>
+                    <ng-template #showTable>
+                      <table class="table table-bordered invoice-table">
+                        <thead>
+                          <tr>
+                            <th *ngFor="let header of tableheaders" class="border px-2 py-1">
+                              <ng-container *ngIf="isDate(header.label); else normalLabel">
+                                {{ header.label | date:'MMM-yyyy' }}
+                              </ng-container>
+
+                              <ng-template #normalLabel>
+                                {{ header.label }}
+                              </ng-template>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of tableRows" [ngClass]="{'row-grandtotal': row.type === 'head',
+                'row-final': row.type === 'total'
+              }">
+                            <ng-container *ngIf="row.type === 'head'; else normalRow">
+                              <td class="border px-2 py-1">{{ row.srNo }}</td>
+                              <td class="border px-2 py-1 w-40">{{ row.position }}</td>
+                              <td class="border px-2 py-1" [attr.colspan]="monthKeys.length + 3"></td>
+                            </ng-container>
+
+                            <!-- Normal row -->
+                            <ng-template #normalRow>
+                              <td class="border px-2 py-1">{{ row.srNo }}</td>
+                              <td class="border px-2 py-1 w-40">{{ row.position }}</td>
+                              <td class="border px-2 py-1">{{ row.name }}</td>
+                              <td class="border px-2 py-1">
+                                {{ row.contractAmount | formatAmount}}
+
+                              </td>
+
+                              <td *ngFor="let mk of monthKeys" class="border px-2 py-1">
+                                <span *ngIf="row.type === 'total'">{{ row[mk] ?? 0 | formatAmount}}</span>
+                                <!-- <span *ngIf="row.type !== 'total'" class="print-value">{{ row[mk] ?? 0 | formatAmount }}</span> -->
+                                <span *ngIf="row.type !== 'total' && !isEditMode">{{ row[mk] ?? 0 | formatAmount
+                                  }}</span>
+                                <input *ngIf="row.type !== 'total' && isEditMode"
+                                  (ngModelChange)="onCellChange(row, mk, $event)" matInput type="number"
+                                  [(ngModel)]="row[mk]" />
+                              </td>
+                            </ng-template>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </ng-template>
+                  </mat-card-content>
+                </div>
+              </mat-card>
+
+            </ng-template>
+          </mat-tab>
+
+        </mat-tab-group>
+
+      </mat-card>
+
+
+    </div>
+  </div>
 </div>
 <router-outlet></router-outlet>

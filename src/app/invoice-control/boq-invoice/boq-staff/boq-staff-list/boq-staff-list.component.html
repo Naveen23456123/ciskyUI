@@ -1,245 +1,255 @@
-
 <div class="container">
-<mat-card>
+  <mat-card>
     <mat-card-title>
-        <h6>Appendix C-3:Breakdown of Costs 
-            <button  class="title-btn float-end no-print " routerLink="staff-create"  type="button"  mat-mini-fab color="primary">
-                <mat-icon>add box</mat-icon> Staff
-            </button>
-           
-        </h6>
+      <h6>Appendix C-3:Breakdown of Costs
+        <button *ngIf="pagePermissions.canCreate" class="title-btn float-end no-print " routerLink="staff-create"
+          type="button" mat-mini-fab color="primary">
+          <mat-icon>add box</mat-icon> Staff
+        </button>
+
+      </h6>
     </mat-card-title>
     <mat-card-content>
-        <div class="load-wrap" *ngIf="isLoading">
-            <app-loader [IsLoading]="isLoading"></app-loader>
-        </div>
-        <div class="wrapper" *ngIf="!isLoading">                
+      <div class="load-wrap" *ngIf="isLoading">
+        <app-loader [IsLoading]="isLoading"></app-loader>
+      </div>
+      <div class="wrapper" *ngIf="!isLoading">
 
         <h6>I-Renumeration for Local Professional Staff</h6>
         <h6>A. Key Personal</h6>
-        <table mat-table [dataSource]="dataSource" >
-                  
-            <ng-container matColumnDef="serial">
-              <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-              <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
-              <td mat-footer-cell *matFooterCellDef colspan="7"> Total </td>
-            </ng-container>            
-                        <!-- contractName Column -->
-               <ng-container matColumnDef="position">
-                <th mat-header-cell *matHeaderCellDef > Position </th>
-                <td mat-cell *matCellDef="let row"> {{row.designation}} </td>
-              </ng-container>         
-            <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef > Name </th>
-              <td mat-cell *matCellDef="let row"> {{row.employeename}} </td>
-            </ng-container>
-             
+        <table mat-table [dataSource]="dataSource">
 
-            <ng-container matColumnDef="constperiod">
-                <th mat-header-cell *matHeaderCellDef>Const. Period (MM) </th>
-                <td mat-cell *matCellDef="let row">
-                  <span class="content-center">{{row.constructionperiod}}</span>  
-                </td>
-              </ng-container>
-          
-              <!-- contractName Column -->
-              <ng-container matColumnDef="omperiod">
-                <th mat-header-cell *matHeaderCellDef > O&M Period (MM) </th>
-                <td mat-cell *matCellDef="let row" > 
-                  <span class="content-center">{{row.oandmperiod}}</span> 
-                </td>
-              </ng-container>       
-              <ng-container matColumnDef="manmonth">
-                <th mat-header-cell *matHeaderCellDef > Total (MM) </th>
-                <td mat-cell *matCellDef="let row"> 
-                  <span class="content-center">{{row.constructionperiod + row.oandmperiod}} </span>
-                </td>
-              </ng-container>                      
-              <ng-container matColumnDef="rate">
-                <th mat-header-cell *matHeaderCellDef > Rate(INR) </th>
-                <td mat-cell *matCellDef="let row"> 
-                  <span class="content-center">{{row.rate | formatAmount}} </span>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="amount">
-                <th mat-header-cell class="amt" *matHeaderCellDef > Amount(INR) </th>
-                <td mat-cell class="amt" *matCellDef="let row"> 
-                  <span class="content-center">{{row.totalamount | formatAmount}} </span>
-                </td>
-                <td mat-footer-cell *matFooterCellDef > 
-                  <span class="content-center">{{getkpTotalAmount() | formatCurrency}} </span>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="action"  >
-                <th mat-header-cell class="no-print" *matHeaderCellDef > Action </th>
-                <td mat-cell class="no-print action-col" *matCellDef="let row">  
-                  <div class="button-row">                   
-                    <app-edit-btn [state]="row" [routerLink]="['boq-staff-edit',row.id]" ></app-edit-btn>                              
-                    <app-delete-btn [state]="row" [routerLink]="['boq-staff-delete',row.id]"></app-delete-btn>
-                  </div>
-                </td>
-               <td mat-footer-cell class="no-print" *matFooterCellDef >  </td>
-              </ng-container>             
-
-            <tr mat-header-row *matHeaderRowDef="kpsDataColumn"></tr>
-            <tr mat-row *matRowDef="let row; columns: kpsDataColumn;"></tr>  
-            <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>
-          </table>
-        </div>
-    </mat-card-content>
-</mat-card> 
-</div>
-<div class="container">
-<mat-card>
-  <mat-card-title>
-      <h6>B. Sub Professional Staff</h6>
-  </mat-card-title>
-  <mat-card-content>
-      <table mat-table [dataSource]="spsdataSource" >
-          
           <ng-container matColumnDef="serial">
             <th mat-header-cell *matHeaderCellDef> Sr. No </th>
             <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
             <td mat-footer-cell *matFooterCellDef colspan="7"> Total </td>
-          </ng-container>            
-                    
-             <ng-container matColumnDef="position">
-              <th mat-header-cell *matHeaderCellDef > Position </th>
-              <td mat-cell *matCellDef="let row"> {{row.designation}} </td>
-            </ng-container>         
+          </ng-container>
+          <!-- contractName Column -->
+          <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef> Position </th>
+            <td mat-cell *matCellDef="let row"> {{row.designation}} </td>
+          </ng-container>
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef > Name </th>
+            <th mat-header-cell *matHeaderCellDef> Name </th>
             <td mat-cell *matCellDef="let row"> {{row.employeename}} </td>
           </ng-container>
-           
+
 
           <ng-container matColumnDef="constperiod">
-              <th mat-header-cell *matHeaderCellDef>Const. Period (MM) </th>
-              <td mat-cell *matCellDef="let row"> 
-                <span class="content-center">{{row.constructionperiod}} </span>
-              </td>
-            </ng-container>
-        
-           
-            <ng-container matColumnDef="omperiod">
-              <th mat-header-cell *matHeaderCellDef > O&M Period (MM) </th>
-              <td mat-cell *matCellDef="let row"> 
-                <span class="content-center">{{row.oandmperiod}} </span>
-              </td>
-            </ng-container>       
-            <ng-container matColumnDef="manmonth">
-              <th mat-header-cell *matHeaderCellDef > Total (MM) </th>
-              <td mat-cell *matCellDef="let row"> 
-                <span class="content-center">{{row.constructionperiod + row.oandmperiod}}</span>
-               </td>
-            </ng-container>                      
-            <ng-container matColumnDef="rate">
-              <th mat-header-cell *matHeaderCellDef > Rate(INR) </th>
-              <td mat-cell *matCellDef="let row"> 
-                <span class="content-center">{{row.rate  | formatAmount}} </span>
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="amount">
-              <th mat-header-cell class="amt" *matHeaderCellDef > Amount(INR) </th>
-              <td mat-cell class="amt" *matCellDef="let row"> 
-                <span class="content-center">{{row.totalamount  | formatAmount}}</span>
-               </td>
-              <td mat-footer-cell  *matFooterCellDef > 
-                <span class="content-center">{{getspsTotalAmount() | formatCurrency}}</span>
-               </td>
-            </ng-container>
-            <ng-container matColumnDef="action">
-              <th mat-header-cell class="no-print" *matHeaderCellDef > Action </th>
-              <td mat-cell class="no-print action-col" *matCellDef="let row"> 
-                <div class="button-row">                   
-                  <app-edit-btn [state]="row" [routerLink]="['boq-staff-edit',row.id]" ></app-edit-btn>                              
-                  <app-delete-btn [state]="row" [routerLink]="['boq-staff-delete',row.id]"></app-delete-btn>
-                </div>
-              </td>
-              <td mat-footer-cell class="no-print" *matFooterCellDef >  </td>
-            </ng-container>
-          <tr mat-header-row *matHeaderRowDef="spsdataColumn"></tr>
-          <tr mat-row *matRowDef="let row; columns: spsdataColumn;"></tr> 
-          <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>                       
+            <th mat-header-cell *matHeaderCellDef>Const. Period (MM) </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="content-center">{{row.constructionperiod}}</span>
+            </td>
+          </ng-container>
+
+          <!-- contractName Column -->
+          <ng-container matColumnDef="omperiod">
+            <th mat-header-cell *matHeaderCellDef> O&M Period (MM) </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="content-center">{{row.oandmperiod}}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="manmonth">
+            <th mat-header-cell *matHeaderCellDef> Total (MM) </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="content-center">{{row.constructionperiod + row.oandmperiod}} </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="rate">
+            <th mat-header-cell *matHeaderCellDef> Rate(INR) </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="content-center">{{row.rate | formatAmount}} </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell class="amt" *matHeaderCellDef> Amount(INR) </th>
+            <td mat-cell class="amt" *matCellDef="let row">
+              <span class="content-center">{{row.totalamount | formatAmount}} </span>
+            </td>
+            <td mat-footer-cell *matFooterCellDef>
+              <span class="content-center">{{getkpTotalAmount() | formatCurrency}} </span>
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="action">
+
+            <th mat-header-cell class="no-print" *matHeaderCellDef> Action </th>
+            <td mat-cell class="no-print action-col" *matCellDef="let row">
+              <div class="button-row">
+                <app-edit-btn *ngIf="pagePermissions?.canUpdate" [state]="row"
+                  [routerLink]="['boq-staff-edit',row.id]"></app-edit-btn>
+
+                <app-delete-btn *ngIf="pagePermissions?.canDelete" [state]="row"
+                  [routerLink]="['boq-staff-delete',row.id]"></app-delete-btn>
+              </div>
+            </td>
+            <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="kpsDataColumn"></tr>
+          <tr mat-row *matRowDef="let row; columns: kpsDataColumn;"></tr>
+          <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>
         </table>
-  </mat-card-content>
-</mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>
 <div class="container">
   <mat-card>
-      <mat-card-title>
-          <h6>II-Support Staff</h6>
-      </mat-card-title>
-      <mat-card-content>
-          <table mat-table [dataSource]="ssdataSource" >
-            
-              <ng-container matColumnDef="serial">
-                <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
-                <td mat-footer-cell *matFooterCellDef colspan="7"> Total </td>
-              </ng-container>            
-                          <!-- contractName Column -->
-                 <ng-container matColumnDef="position">
-                  <th mat-header-cell *matHeaderCellDef > Position </th>
-                  <td mat-cell *matCellDef="let row"> {{row.designation}} </td>
-                </ng-container>         
-              <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef > Name </th>
-                <td mat-cell *matCellDef="let row"> {{row.employeename}} </td>
-              </ng-container>
-               
+    <mat-card-title>
+      <h6>B. Sub Professional Staff</h6>
+    </mat-card-title>
+    <mat-card-content>
+      <table mat-table [dataSource]="spsdataSource">
 
-              <ng-container matColumnDef="constperiod">
-                  <th mat-header-cell *matHeaderCellDef>Const. Period (MM) </th>
-                  <td mat-cell *matCellDef="let row"> 
-                    <span class="content-center">{{row.constructionperiod}}</span>
-                  </td>
-                </ng-container>
-            
-                <!-- contractName Column -->
-                <ng-container matColumnDef="omperiod">
-                  <th mat-header-cell *matHeaderCellDef > O&M Period (MM) </th>
-                  <td mat-cell *matCellDef="let row"> 
-                    <span class="content-center">{{row.oandmperiod}} </span>
-                  </td>
-                </ng-container>       
-                <ng-container matColumnDef="manmonth">
-                  <th mat-header-cell *matHeaderCellDef > Total (MM) </th>
-                  <td mat-cell *matCellDef="let row"> 
-                    <span class="content-center">{{row.constructionperiod + row.oandmperiod}}</span>
-                   </td>
-                </ng-container>                      
-                <ng-container matColumnDef="rate">
-                  <th mat-header-cell *matHeaderCellDef > Rate(INR) </th>
-                  <td mat-cell *matCellDef="let row"> 
-                    <span class="content-center">{{row.rate  | formatAmount}}</span>
-                   </td>
-                </ng-container>
-                <ng-container matColumnDef="amount">
-                  <th mat-header-cell class="amt" *matHeaderCellDef > Amount(INR) </th>
-                  <td mat-cell class="amt" *matCellDef="let row"> 
-                    <span class="content-center">{{row.totalamount  | formatAmount}}</span> 
-                  </td>
-                  <td mat-footer-cell *matFooterCellDef> 
-                    <span class="content-center">{{getssTotalAmount() | formatCurrency}}</span>
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="action">
-                  <th mat-header-cell class="no-print" *matHeaderCellDef > Action </th>
-                  <td mat-cell class="no-print action-col" *matCellDef="let row"> 
-                    <div class="button-row">                   
-                      <app-edit-btn [state]="row" [routerLink]="['boq-staff-edit',row.id]" ></app-edit-btn>                              
-                      <app-delete-btn [state]="row" [routerLink]="['boq-staff-delete',row.id]"></app-delete-btn>
-                    </div>  
-                  </td>
-                  <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
-                </ng-container>
-              <tr mat-header-row *matHeaderRowDef="ssdataColumn"></tr>
-              <tr mat-row *matRowDef="let row; columns: ssdataColumn;"></tr> 
-              <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>                      
-            </table>
+        <ng-container matColumnDef="serial">
+          <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+          <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
+          <td mat-footer-cell *matFooterCellDef colspan="7"> Total </td>
+        </ng-container>
 
-      </mat-card-content>
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef> Position </th>
+          <td mat-cell *matCellDef="let row"> {{row.designation}} </td>
+        </ng-container>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Name </th>
+          <td mat-cell *matCellDef="let row"> {{row.employeename}} </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="constperiod">
+          <th mat-header-cell *matHeaderCellDef>Const. Period (MM) </th>
+          <td mat-cell *matCellDef="let row">
+            <span class="content-center">{{row.constructionperiod}} </span>
+          </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="omperiod">
+          <th mat-header-cell *matHeaderCellDef> O&M Period (MM) </th>
+          <td mat-cell *matCellDef="let row">
+            <span class="content-center">{{row.oandmperiod}} </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="manmonth">
+          <th mat-header-cell *matHeaderCellDef> Total (MM) </th>
+          <td mat-cell *matCellDef="let row">
+            <span class="content-center">{{row.constructionperiod + row.oandmperiod}}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="rate">
+          <th mat-header-cell *matHeaderCellDef> Rate(INR) </th>
+          <td mat-cell *matCellDef="let row">
+            <span class="content-center">{{row.rate | formatAmount}} </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell class="amt" *matHeaderCellDef> Amount(INR) </th>
+          <td mat-cell class="amt" *matCellDef="let row">
+            <span class="content-center">{{row.totalamount | formatAmount}}</span>
+          </td>
+          <td mat-footer-cell *matFooterCellDef>
+            <span class="content-center">{{getspsTotalAmount() | formatCurrency}}</span>
+          </td>
+        </ng-container>
+        <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="action">
+          <th mat-header-cell class="no-print" *matHeaderCellDef> Action </th>
+          <td mat-cell class="no-print action-col" *matCellDef="let row">
+            <div class="button-row">
+              <app-edit-btn *ngIf="pagePermissions?.canUpdate" [state]="row"
+                [routerLink]="['boq-staff-edit',row.id]"></app-edit-btn>
+
+              <app-delete-btn *ngIf="pagePermissions?.canDelete" [state]="row"
+                [routerLink]="['boq-staff-delete',row.id]"></app-delete-btn>
+            </div>
+          </td>
+          <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="spsdataColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: spsdataColumn;"></tr>
+        <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>
+<div class="container">
+  <mat-card>
+    <mat-card-title>
+      <h6>II-Support Staff</h6>
+    </mat-card-title>
+    <mat-card-content>
+      <table mat-table [dataSource]="ssdataSource">
+
+        <ng-container matColumnDef="serial">
+          <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+          <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
+          <td mat-footer-cell *matFooterCellDef colspan="7"> Total </td>
+        </ng-container>
+        <!-- contractName Column -->
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef> Position </th>
+          <td mat-cell *matCellDef="let row"> {{row.designation}} </td>
+        </ng-container>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Name </th>
+          <td mat-cell *matCellDef="let row"> {{row.employeename}} </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="constperiod">
+          <th mat-header-cell *matHeaderCellDef>Const. Period (MM) </th>
+          <td mat-cell *matCellDef="let row">
+            <span class="content-center">{{row.constructionperiod}}</span>
+          </td>
+        </ng-container>
+
+        <!-- contractName Column -->
+        <ng-container matColumnDef="omperiod">
+          <th mat-header-cell *matHeaderCellDef> O&M Period (MM) </th>
+          <td mat-cell *matCellDef="let row">
+            <span class="content-center">{{row.oandmperiod}} </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="manmonth">
+          <th mat-header-cell *matHeaderCellDef> Total (MM) </th>
+          <td mat-cell *matCellDef="let row">
+            <span class="content-center">{{row.constructionperiod + row.oandmperiod}}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="rate">
+          <th mat-header-cell *matHeaderCellDef> Rate(INR) </th>
+          <td mat-cell *matCellDef="let row">
+            <span class="content-center">{{row.rate | formatAmount}}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell class="amt" *matHeaderCellDef> Amount(INR) </th>
+          <td mat-cell class="amt" *matCellDef="let row">
+            <span class="content-center">{{row.totalamount | formatAmount}}</span>
+          </td>
+          <td mat-footer-cell *matFooterCellDef>
+            <span class="content-center">{{getssTotalAmount() | formatCurrency}}</span>
+          </td>
+        </ng-container>
+        <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="action">
+          <th mat-header-cell class="no-print" *matHeaderCellDef> Action </th>
+          <td mat-cell class="no-print action-col" *matCellDef="let row">
+            <div class="button-row">
+              <app-edit-btn *ngIf="pagePermissions?.canUpdate" [state]="row"
+                [routerLink]="['boq-staff-edit',row.id]"></app-edit-btn>
+
+              <app-delete-btn *ngIf="pagePermissions?.canDelete" [state]="row"
+                [routerLink]="['boq-staff-delete',row.id]"></app-delete-btn>
+            </div>
+          </td>
+          <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="ssdataColumn"></tr>
+        <tr mat-row *matRowDef="let row; columns: ssdataColumn;"></tr>
+        <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>
+      </table>
+
+    </mat-card-content>
   </mat-card>
 
 </div>

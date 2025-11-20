@@ -1,0 +1,8 @@
+<div class="pdf-upload-container">
+  <input type="file" accept="application/pdf" (change)="onFileSelected($event)" />
+  
+  <div class="pdf-content" *ngIf="pdfText">
+    <h3>Extracted Text:</h3>
+    <pre>{{ pdfText }}</pre>
+  </div>
+</div>

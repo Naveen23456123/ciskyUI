@@ -1,141 +1,189 @@
-.pr-0{
-    padding-right: 0;
-}
-.demo-chart{
-    height: 280px;
+.pr-0 {
+  padding-right: 0;
 }
 
-.expense-chart{
-    height: 320px;
+.demo-chart {
+  height: 280px;
 }
-.letter-chart{
-    height: 350px;
+
+.expense-chart {
+  height: 320px;
 }
-.total-cost-val{
-    font-size: 1.4em;
-    font-weight: 700;
-    letter-spacing: -0.07em;
-    padding-left: 12px;
+
+.letter-chart {
+  height: 350px;
 }
-.lm-val{
-    font-size: 1em;
-    font-weight: 500;
-    opacity: 0.7;
-    padding: 12px;
+
+.total-cost-val {
+  font-size: 1.4em;
+  font-weight: 700;
+  letter-spacing: -0.07em;
+  padding-left: 12px;
 }
-.cm-val{
-    font-size: 1em;
-    font-weight: 500;   
-    padding: 0px 5px 0px 11px;
+
+.lm-val {
+  font-size: 1em;
+  font-weight: 500;
+  opacity: 0.7;
+  padding: 12px;
 }
-.cost-val{
-    font-size: 1.2em;
-    font-weight: 700;  
-    letter-spacing: -0.07em;
-    padding-left: 12px;
+
+.cm-val {
+  font-size: 1em;
+  font-weight: 500;
+  padding: 0px 5px 0px 11px;
 }
-.cost-txt{
-    font-size: 0.9em;
-    font-weight: 500;
-    opacity: 0.7;
-    padding: 12px;
+
+.cost-val {
+  font-size: 1.2em;
+  font-weight: 700;
+  letter-spacing: -0.07em;
+  padding-left: 12px;
 }
-.up{
-    color: rgb(2 192 36);
-    font-weight: 700;
-    font-size: 1rem;
+
+.cost-txt {
+  font-size: 0.9em;
+  font-weight: 500;
+  opacity: 0.7;
+  padding: 12px;
 }
-.down{
-    color: red;
-    font-weight: 700;
-    font-size: 1rem;
+
+.up {
+  color: rgb(2 192 36);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.down {
+  color: red;
+  font-weight: 700;
+  font-size: 1rem;
 }
 
 .card {
-    min-height: 100%;
-  }
-  .echart-container {
-    width: 100%;
-    
-  }
-  .ht-100{
-    height: 100%;
-  }
-  .last-txt{
-    font-size: 0.8em;
-  }
-  .prgs-chart{
-    height: 400px;
-  }
-  .gph-head{
-    font-weight: 700;
-  }
-  .wd-auto{
-    width: auto;
-  }
-  .scrollable-div {
-    max-height: 330px;     /* or any fixed height */
-         /* Enables vertical scrolling */
-    overflow-x: hidden;    /* Optional: hide horizontal scroll */
-    scroll-behavior: smooth;
-    overflow-y: scroll;       /* Enables mouse wheel scrolling */
-  scrollbar-width: none;    /* Firefox */
-  -ms-overflow-style: none; 
-  }
-  .no-scroll {
-    position: sticky;
-    top: 0;
-    background: white; /* Optional: to hide what's behind when scrolling */
-    z-index: 1; /* Keep it above scrollable content */
-  }
-  .fs-08 {
-    font-size: 0.8em;
-  }
+  min-height: 100%;
+}
 
-  .finance-card {
-      background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-      padding: 1.5rem;
-    }
-    .finance-title {
-      font-weight: 600;
-      color: #2d2f91;
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
-    }
-    .divider {
-      height: 1px;
-      background-color: #eee;
-      margin: 1rem 0;
-    }
-    .amount {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #111;
-    }
-    .sub-label {
-      font-size: 0.9rem;
-      color: #888;
-    }
-    .highlight {
-      color: #2d2f91;
-      font-weight: 600;
-    }
-    .down {
-      color: red;
-      font-weight: 600;
-    }
-    .bar-legend span {
-      display: inline-block;
-      margin-right: 15px;
-    }
-    .legend-box {
-      width: 15px;
-      height: 15px;
-      display: inline-block;
-      border-radius: 3px;
-      margin-right: 5px;
-    }
-    .legend-income { background: #4a63e7; }
-    .legend-expense { background: #8dd36f; }
+.echart-container {
+  width: 100%;
+
+}
+
+.ht-100 {
+  height: 100%;
+}
+
+.last-txt {
+  font-size: 0.8em;
+}
+
+.prgs-chart {
+  height: 400px;
+}
+
+.gph-head {
+  font-weight: 700;
+}
+
+.wd-auto {
+  width: auto;
+}
+
+.scrollable-div {
+  max-height: 330px;
+  /* or any fixed height */
+  /* Enables vertical scrolling */
+  overflow-x: hidden;
+  /* Optional: hide horizontal scroll */
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+  /* Enables mouse wheel scrolling */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+}
+
+.no-scroll {
+  position: sticky;
+  top: 0;
+  background: white;
+  /* Optional: to hide what's behind when scrolling */
+  z-index: 1;
+  /* Keep it above scrollable content */
+}
+
+.fs-08 {
+  font-size: 0.8em;
+}
+
+.finance-card {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+}
+
+.finance-title {
+  font-weight: 600;
+  color: #2d2f91;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.divider {
+  height: 1px;
+  background-color: #eee;
+  margin: 1rem 0;
+}
+
+.amount {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111;
+}
+
+.sub-label {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.highlight {
+  color: #2d2f91;
+  font-weight: 600;
+}
+
+.down {
+  color: red;
+  font-weight: 600;
+}
+
+.bar-legend span {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.legend-box {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  border-radius: 3px;
+  margin-right: 5px;
+}
+
+.legend-income {
+  background: #4a63e7;
+}
+
+.legend-expense {
+  background: #8dd36f;
+}
+
+.hover-border {
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.hover-border:hover {
+  border-color: rgba(185, 219, 255, 0.911); /* Bootstrap success color */
+  box-shadow: 0 8px 20px rgba(61, 152, 255, 0.35);
+}

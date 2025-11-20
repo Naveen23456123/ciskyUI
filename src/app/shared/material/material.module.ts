@@ -36,6 +36,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { NgxMatSelectSearchModule} from 'ngx-mat-select-search'
 import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [], 
@@ -70,6 +71,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatSidenavModule,
     MatButtonModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule
   ],
   exports: [
     MatBottomSheetModule,
@@ -103,7 +105,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatButtonModule,
     MatProgressSpinnerModule,
     NgxMatSelectSearchModule,
-    NgxMatTimepickerModule
+    NgxMatTimepickerModule,
+    MatProgressBarModule
   ]
 })
 export class MaterialModule {}

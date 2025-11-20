@@ -5,6 +5,7 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { BOQ_INVOICE } from '@app/shared/models/constant.config';
 import { BoqTransportationInterfaceService } from '@app/shared/services/external/boq/boq-transportation-interface.service';
+import { InvoiceInterfaceService } from '@app/shared/services/external/invoice-interface.service';
 import { InvTransportInterfaceService } from '@app/shared/services/external/invoice/inv-transport-interface.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
@@ -17,31 +18,32 @@ import { finalize, take } from 'rxjs';
   styleUrl: './manage-consultancy-transportation.component.scss'
 })
 export class ManageConsultancyTransportationComponent {
-public data: any;
+  public data: any;
   isLoading = true;
   isEdit: boolean = false;
   pageGuid: any;
-  title: string='Add';
+  title: string = 'Add';
   tpForm: FormGroup = new FormGroup({});
-  deletetp=false;
-  boqList:any[]=[];
-  empty_message= '';
-  isBtnClicked=false;
+  deletetp = false;
+  boqList: any[] = [];
+  empty_message = '';
+  isBtnClicked = false;
   readonly dialog = inject(MatDialog);
 
-   private defaultdialogoptions:  MatDialogConfig = {
-        minWidth: '700px', 
-        disableClose: false,
-        data: {},
+  private defaultdialogoptions: MatDialogConfig = {
+    minWidth: '700px',
+    disableClose: false,
+    data: {},
   };
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageConsultancyTransportationComponent>, private formbuilder: FormBuilder,
-    private sessionService: SessionService, private router: Router,private route: ActivatedRoute,
-    private boqService: InvTransportInterfaceService, private transportService:InvTransportInterfaceService){
-      this.data = data || {};
+    private sessionService: SessionService, private router: Router, private route: ActivatedRoute,
+    private boqService: InvTransportInterfaceService, private transportService: InvTransportInterfaceService,
+    private invoiceService: InvoiceInterfaceService) {
+    this.data = data || {};
   }
-  
+
   checkMode(type: string) {
     if (type === 'edit' && !this.data.separate)
       this.isEdit = true;
@@ -67,63 +69,63 @@ public data: any;
     }
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.checkMode(this.data.type);
     this.getTitle(this.data.type);
-    this.tpForm = this.formbuilder.group({ 
+    this.tpForm = this.formbuilder.group({
       id: [''],
-      invoiceid:[],
+      invoiceid: [],
       controls: this.formbuilder.array([])
     });
-    if(!this.deletetp){     
-        this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((projectEntity:any)=>{
-          if(projectEntity && projectEntity.projectId){
-            if(!this.isEdit){  
-            this.boqService.getBoqTransportationListForInsertByProjectId({invid:projectEntity.invoiceId,id:projectEntity.projectId }, '')
-                .pipe(finalize(() => this.isLoading = false))
-                .subscribe((response: any) => {
-                  if(response && response.success){
-                    this.boqList= response.data;
-                    response.data.forEach((element:any) => {
-                      this.addControls(element,projectEntity.invoiceId);
-                    });
-                    this.subscribeChange();
-                    this.empty_message= BOQ_INVOICE.ALL_RECORD_INSERTED_MESSAGE;
-                  }
-                });
-              } else{
-                this.addControls(this.data.element,projectEntity.invoiceId);
-                this.boqList=[this.data.element];
-                this.subscribeChange();
-                this.isLoading=false;
-              }
-            }
-        });      
+    if (!this.deletetp) {
+      this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((projectEntity: any) => {
+        if (projectEntity && projectEntity.projectId) {
+          if (!this.isEdit) {
+            this.boqService.getBoqTransportationListForInsertByProjectId({ invid: projectEntity.invoiceId, id: projectEntity.projectId }, '')
+              .pipe(finalize(() => this.isLoading = false))
+              .subscribe((response: any) => {
+                if (response && response.success) {
+                  this.boqList = response.data;
+                  response.data.forEach((element: any) => {
+                    this.addControls(element, projectEntity.invoiceId);
+                  });
+                  this.subscribeChange();
+                  this.empty_message = BOQ_INVOICE.ALL_RECORD_INSERTED_MESSAGE;
+                }
+              });
+          } else {
+            this.addControls(this.data.element, projectEntity.invoiceId);
+            this.boqList = [this.data.element];
+            this.subscribeChange();
+            this.isLoading = false;
+          }
+        }
+      });
     }
-    else{
-      this.settpForm(this.data.element);      
-      this.isLoading=false;
-    }    
+    else {
+      this.settpForm(this.data.element);
+      this.isLoading = false;
+    }
   }
-  subscribeChange(){   
+  subscribeChange() {
     (this.tpForm.get('controls') as FormArray).controls.forEach((group: AbstractControl, index: number) => {
       const quantityControl = group.get('currentmonth');
       if (quantityControl) {
         quantityControl.statusChanges.subscribe(value => {
           setTimeout(() => {
-           group.get('currentbillamount')?.setValue(quantityControl.value*(this.boqList.find(x=>x.id==group.get('boqid')?.value).rate));
+            group.get('currentbillamount')?.setValue(quantityControl.value * (this.boqList.find(x => x.id == group.get('boqid')?.value).rate));
           });
         });
       }
     });
   }
-  addControls(data:any,invId:any) {
+  addControls(data: any, invId: any) {
     const group = this.formbuilder.group({
-      id:[data.pid],
-      boqid:[data.id],
-      invoiceid:[invId],
-      description: [data.description], 
-      currentmonth: [data.currentmonth,Validators.required],
+      id: [data.pid],
+      boqid: [data.id],
+      invoiceid: [invId],
+      description: [data.description],
+      currentmonth: [data.currentmonth, Validators.required],
       currentbillamount: [data.currentbill]
     });
     this.controls.push(group);
@@ -133,72 +135,73 @@ public data: any;
     return this.tpForm.get('controls') as FormArray;
   }
 
-  settpForm(data: any) {    
+  settpForm(data: any) {
     this.tpForm.patchValue({
       id: data.id
     });
   }
 
-  ngOnDestroy(){}
+  ngOnDestroy() { }
 
-  submit(){ 
-    this.isBtnClicked=true;
-    this.sessionService.invoiceEntitySubject$.pipe(take(1),untilDestroyed(this)).subscribe((response:any)=>{
-      if(response && response.invoiceId){
-        this.tpForm.patchValue({invoiceid:response.invoiceId});
+  submit() {
+    this.isBtnClicked = true;
+    this.sessionService.invoiceEntitySubject$.pipe(take(1), untilDestroyed(this)).subscribe((response: any) => {
+      if (response && response.invoiceId) {
+        this.tpForm.patchValue({ invoiceid: response.invoiceId });
         if (this.isEdit) {
-          this.transportService.updateConsultantTransportation(this.tpForm.get('controls')?.value[0], '')
-            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
-              next: (response:any) => {
-              if(response && response.success){
-                this.dialogRef.close({ value: this.tpForm.get('controls')?.value[0], valid: true });
-              }
-            },
-            error: (err: any) => {
+          this.invoiceService.upsertTransportInvoiceScope(this.tpForm.get('controls')?.value, '')
+            .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked = false })).subscribe({
+              next: (response: any) => {
+                if (response && response.success) {
+                  this.dialogRef.close({ value: this.tpForm.get('controls')?.value[0], valid: true });
+                }
+              },
+              error: (err: any) => {
                 this.dialogRef.close(err);
               }
             });
         } else {
-          this.tpForm.value.id=null;
-          this.transportService.createConsultantTransportation(this.tpForm.get('controls')?.value, '')
-            .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
-              next:(response: any) => {
-              if (response && response.success) {
-                let responseData:any[]=[];
-                response.data.forEach((element:any) => {
-                  responseData.push({
-                    id:element.boqid,
-                    currentbillmonths:element.currentmonth,
-                    invoiceid:element.id,
-                    description:this.boqList.find((x:any)=>x.id==element.boqid)?.description,
-                    rate:this.boqList.find((x:any)=>x.id==element.boqid)?.rate,
-                    constructionperiod:this.boqList.find((x:any)=>x.id==element.boqid)?.constructionperiod,
-                    dlpoandmperiod:this.boqList.find((x:any)=>x.id==element.boqid)?.dlpoandmperiod,
-                    uptolastbill:this.boqList.find((x:any)=>x.id==element.boqid)?.uptolastbill
-                  })
-                });
-                this.dialogRef.close({ value: responseData, valid: true });
-              } else {
-                this.dialogRef.close({ value: null, valid: false });
-              }
-            },
-             error: (err: any) => {
+          this.tpForm.value.id = null;
+          this.invoiceService.upsertTransportInvoiceScope(this.tpForm.get('controls')?.value, '')
+            .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked = false })).subscribe({
+              next: (response: any) => {
+                if (response && response.success) {
+                  let responseData: any[] = [];
+                  response.data.forEach((element: any) => {
+                    responseData.push({
+                      id: element.id,
+                      boqid: element.boqid,
+                      currentbillmonths: element.currentmonth,
+                      invoiceid: element.invoiceid,
+                      description: this.boqList.find((x: any) => x.id == element.boqid)?.description,
+                      rate: this.boqList.find((x: any) => x.id == element.boqid)?.rate,
+                      constructionperiod: this.boqList.find((x: any) => x.id == element.boqid)?.constructionperiod,
+                      dlpoandmperiod: this.boqList.find((x: any) => x.id == element.boqid)?.dlpoandmperiod,
+                      uptolastbill: this.boqList.find((x: any) => x.id == element.boqid)?.uptolastbill
+                    })
+                  });
+                  this.dialogRef.close({ value: responseData, valid: true });
+                } else {
+                  this.dialogRef.close({ value: null, valid: false });
+                }
+              },
+              error: (err: any) => {
                 this.dialogRef.close(err);
               }
-          });
-        }    
+            });
+        }
       }
-    }) 
+    })
   }
 
   delete() {
-      this.transportService.deleteConsultantTransportation({id:this.tpForm.value.id}, '')
-       .pipe(finalize(() => { this.isLoading = false; })).subscribe({
-        next:(response: any) => {
-          if (response && response.success) 
-           this.dialogRef.close({ value: this.tpForm.value, valid: true });
-      },
-      error: (err: any) => {
+    this.invoiceService.deleteInvoiceTransportationScope(this.data.element, '')
+      .pipe(finalize(() => { this.isLoading = false; })).subscribe({
+        next: (response: any) => {
+          if (response && response.success)
+            this.dialogRef.close({ value: this.data.element, valid: true });
+        },
+        error: (err: any) => {
           this.dialogRef.close(err);
         }
       });

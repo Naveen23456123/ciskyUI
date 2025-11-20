@@ -39,32 +39,32 @@ const baseroutes: Routes = [
     {
       path: 'sub-company',
       loadChildren:()=>import('app/site-control/sub-company/sub-company-list/sub-company-list.module').then(x=>x.SubCompanyListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2733682904bdd6e9aa4',type:'view'}
     },
     {
       path: 'department',
       loadChildren:()=>import('app/site-control/department/department-list/department-list.module').then(x=>x.DepartmentListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2933682904bdd6e9aa6',type:'view'}
     },
     {
       path: 'designation',
       loadChildren:()=>import('app/site-control/designation/designation-list/designation-list.module').then(x=>x.DesignationListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2933682904bdd6e9aa5',type:'view'}
     },
     {
       path: 'con-account',
       loadChildren:()=>import('app/site-control/consultant-account/consultant-account-list/consultant-account-list.module').then(x=>x.ConsultantAccountListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2933682904bdd6e9aa7',type:'view'}
     },
     {
       path: 'items',
       loadChildren:()=>import('app/inventory-control/items/item-list/item-list.module').then(x=>x.ItemListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2733682904bdd6e9ab4',type:'view'}
     },
     {
       path: 'inventory',
       loadChildren:()=>import('app/inventory-control/site-inventory/inventory-list/inventory-list.module').then(x=>x.InventoryListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2933682904bdd6e9ab5',type:'view'}
     },
     {
       path: 'employees',
@@ -94,7 +94,7 @@ const baseroutes: Routes = [
     {
       path: 'letters',
       loadChildren:()=>import('app/letter-control/letter-list/letter-list.module').then(x=>x.LetterListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd1bd3682904bdd6e9ac1',type:'view'}
     },
     {
       path: 'circular',
@@ -104,27 +104,27 @@ const baseroutes: Routes = [
     {
       path: 'invoice',
       loadChildren:()=>import('app/payments/invoice/invoice-list/invoice-list.module').then(x=>x.InvoiceListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2933682904bdd6e9ac4',type:'view'}
     },
     {
       path: 'boq-list',
       loadChildren:()=>import('app/payments/boq/boq-list/boq-list.module').then(x=>x.BoqListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2733682904bdd6e9ac3',type:'view'}
     },
     {
       path: 'boq-invoice',
       loadChildren:()=>import('app/invoice-control/boq-invoice/boq-invoice.module').then(x=>x.BoqInvoiceModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2733682904bdd6e9ac3',type:'view'}
     },
     {
       path: 'consultancy-invoice',
       loadChildren:()=>import('app/invoice-control/consultancy-invoice/consultancy-invoice.module').then(x=>x.ConsultancyInvoiceModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2933682904bdd6e9ac4',type:'view'}
     },
     {
       path: 'consultancy-release-invoice',
       loadChildren:()=>import('app/invoice-control/transport/release-invoice/release-invoice.module').then(x=>x.ReleaseInvoiceModule),
-      data:{pageGuid:'',type:'view', title:extractTitle('Release Detail(s)')}
+      data:{pageGuid:'680dd2933682904bdd6e9ac4',type:'view', title:extractTitle('Release Detail(s)')}
     }, 
     {
       path: 'ofc-rent',
@@ -139,6 +139,11 @@ const baseroutes: Routes = [
     {
       path: 'profit-loss-details',
       loadChildren:()=>import('app/profit-loss/profit-loss-detailed/profit-loss-detailed.module').then(x=>x.ProfitLossDetailedModule),
+      data:{pageGuid:'',type:'view'}
+    },
+    {
+      path: 'profit-loss-expense',
+      loadChildren:()=>import('app/profit-loss/profit-loss-expense/profit-loss-expense.module').then(x=>x.ProfitLossExpenseModule),
       data:{pageGuid:'',type:'view'}
     },
     {

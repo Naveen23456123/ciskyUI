@@ -9,7 +9,7 @@
                 <div  *ngIf="!isLoading && !emptyData">
                     <div class="no-print content-center control-div container">
                         <div class="button-row ">
-                        <app-download-pdf (clickEvent)="download()" ></app-download-pdf> 
+                        <app-download-pdf [loading]="isPdfGenerating" (clickEvent)="download()" ></app-download-pdf> 
                         </div>                 
                     </div>
                     <div #pdfContent id="pdfContent" >
@@ -42,7 +42,7 @@
                         </div>
                         <div id="print-section" class="dialog-print mat-elevation-z8"> 
                         
-                            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" multiTemplateDataRows>
+                            <table mat-table class="invoice-table" [dataSource]="dataSource" class="mat-elevation-z8" multiTemplateDataRows>
 
                                 <!-- Group Header Row -->
                                 <ng-container matColumnDef="groupHeader">

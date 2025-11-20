@@ -19,6 +19,8 @@ import * as echarts from 'echarts/core';
 import { ExpenseChartViewComponent } from '@app/shared/components/expenses/expense-chart-view/expense-chart-view.component';
 import moment from 'moment';
 import { ProfitLossInterfaceService } from '@app/shared/services/external/profit-loss-interface.service';
+import { IncomeDetailsChartComponent } from './dialog/income-details-chart/income-details-chart.component';
+import { TokenService } from '@app/shared/services/token.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -46,28 +48,18 @@ export class DashboardComponent {
   isVehicleDataLoading = true;
   isfinanceLoading = true;
   isexpenseLoading = true;
+  inIncExpLoading = true;
   finance: any = {};
   activeProjectId: any = null;
   getDataObj: any = {};
+  financialYear = 0;
+  totalIncome = 0;
+  totalexpense = 0;
   private monthNames = [
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
-  @ViewChild('eotChartInstance') eotChart: any;
-  single: any[] = [
-    {
-      "name": "Germany",
-      "value": 23
-    },
-    {
-      "name": "USA",
-      "value": 423
-    },
-    {
-      "name": "France",
-      "value": 23
-    }
-  ]
+
   ECHART_COLORS = [
     '#5470C6',
     '#91CC75',
@@ -89,6 +81,7 @@ export class DashboardComponent {
   ourRoleOption!: EChartsCoreOption;
   incomeoptions!: EChartsCoreOption;
   expenseoption!: EChartsCoreOption;
+  incomeExpenseOption!: EChartsCoreOption;
   @ViewChild('chartRef') chartRef!: ElementRef;
   chartInstance: echarts.ECharts | null = null;
   view: [number, number] = [200, 220];
@@ -100,48 +93,30 @@ export class DashboardComponent {
   };
   projects: any[] = [];
   vehicles: any[] = [];
-  // options
-  showLegend: boolean = true;
-  showLabels: boolean = true;
 
-  colorScheme = {
-    domain: ['#5AA454', '#7aa3e5', '#CFC0BB', '#E44D25', '#a8385d', '#aae3f5']
-  };
   private destroy$ = new Subject<void>();
-  cardColor: string = '#000';
   constructor(private commonService: CommonService, private employeeService: EmployeeInterfaceService,
     private eotService: EotInterfaceService, private cosService: CosInterfaceService,
     private projectService: ProjectInterfaceService, private letterService: LetterInterfaceService,
     private vehicleService: VehicleInterfaceService, private sessionService: SessionService,
-    private profitLossService: ProfitLossInterfaceService
+    private profitLossService: ProfitLossInterfaceService, private tokenService: TokenService
   ) {
-    Object.assign(this, { single: this.single });
 
   }
 
   ngOnInit() {
-    // this.projects = [
-    //   { id: 1, name: 'Jaiput Four Lane Highway', cost: this.commonService.costFormatter(8582723434) },
-    //   { id: 2, name: 'Delhi Jaipur 8 lane highway', cost: this.commonService.costFormatter(2323232323) },
-    //   { id: 3, name: 'Jaiput Four Lane Highway Jaiput Four Lane Highway', cost: this.commonService.costFormatter(23232323) }
-    // ];
-    this.vehicles = [
-      { id: 1, projectcode: 'PJ-1234', name: 'HR10AL6756', km: 23 },
-      { id: 2, projectcode: 'PJ-5367', name: 'DL10AL4236', km: 98 },
-      { id: 3, projectcode: 'PJ-975445', name: 'RJ10AL9623', km: 56 }
-    ];
+    const decoded = this.tokenService.getDecodedToken();
     if (this.activeProjectId == null) {
       this.updateChartData();
-
     }
     this.sessionService.dashBoardProjectSubject$.pipe(takeUntil(this.destroy$)).subscribe((response: any) => {
-
       if (response && response.value)
         this.getDataObj.pid = response.value.id;
       else
         this.getDataObj.pid = '';
       this.activeProjectId = this.getDataObj.pid;
       this.updateChartData();
+      this.getIncExpenseData();
     })
 
   }
@@ -175,8 +150,8 @@ export class DashboardComponent {
         this.empTypeOption = {
           title: {
             text: '',
-            left: 'center',        // center the title
-            top: 0,               // distance from top (you can adjust)
+            left: 'center',
+            top: 0,
             textStyle: {
               fontSize: 18,
               fontWeight: 'bold'
@@ -328,8 +303,8 @@ export class DashboardComponent {
         this.letterStatusOption = {
           title: {
             text: 'Letter Status',
-            left: 'center',        // center the title
-            top: 0,               // distance from top (you can adjust)
+            left: 'center',
+            top: 0,
             textStyle: {
               fontSize: 18,
               fontWeight: 'bold'
@@ -399,8 +374,8 @@ export class DashboardComponent {
           title: {
             text: `Total Letter(s) : ` + this.letterTypeCountData.map(x => (x.count?.consultant || 0) + (x.count?.contractor || 0))
               .reduce((a, b) => a + b, 0),
-            left: 'center',        // center the title
-            top: 10,               // distance from top (you can adjust)
+            left: 'center',
+            top: 10,
             textStyle: {
               fontSize: 18,
               fontWeight: 'bold'
@@ -473,8 +448,8 @@ export class DashboardComponent {
           color: this.ECHART_COLORS,
           title: {
             text: 'Project(s)',
-            left: 'center',        // center the title
-            top: 0,               // distance from top (you can adjust)
+            left: 'center',
+            top: 0,
             textStyle: {
               fontSize: 18,
               fontWeight: 'bold'
@@ -547,7 +522,6 @@ export class DashboardComponent {
           },
           legend: {
             orient: 'horizontal',
-            //  bottom:'bottom',
             bottom: 0
           },
           series: [
@@ -555,7 +529,6 @@ export class DashboardComponent {
               name: 'Our Role',
               type: 'pie',
               radius: '75%',
-              //radius: ['50%', '70%'],
               data: this.ourRoleData,
               label: {
                 show: true,
@@ -599,18 +572,18 @@ export class DashboardComponent {
       projectid: this.getDataObj.pid
     }
     const lastthreeMonths = this.commonService.getLastNMonthsEndISO(3);
-    let expenseObj = {...apiObj,
+    let expenseObj = {
+      ...apiObj,
       startdate: lastthreeMonths[2],
       enddate: lastthreeMonths[0]
     }
     forkJoin({
       incomeAPI: this.projectService.getProjectIncomeSummary(apiObj, ''),
       expenseAPI: this.projectService.getProjectExpenseSummary(expenseObj, ''),
-      expenseSummaryAPI: this.profitLossService.getExpenseSummary(summaryObj, '')
+      expenseSummaryAPI: this.profitLossService.getExpenseSummary(summaryObj, ''),
     }).pipe(finalize(() => { this.isfinanceLoading = false; this.isexpenseLoading = false })).subscribe((response: any) => {
       const prevMonth = this.commonService.getLastMonths(8);
       if (response && response.incomeAPI.success) {
-        //this.finance= response.data;
         this.finance.inc_latestMonth = this.monthNames[prevMonth[0].month - 1] + "-" + prevMonth[0].year;
         this.finance.inc_lastMonth = this.monthNames[prevMonth[1].month - 1] + "-" + prevMonth[1].year;
         this.finance.totalcost = response.incomeAPI.data.find((x: any) => x.month === -1)?.totalamount || 0;
@@ -627,12 +600,11 @@ export class DashboardComponent {
         this.finance.exp_lastTotal = response.expenseSummaryAPI.data.find((x: any) => x.type === 'Month' && (x.month == prevMonth[1].month))?.totalamount || 0;
 
       }
-      //income and expense
       this.incomeoptions = {
         title: {
           text: `Finances`,
-          left: 'center',        // center the title
-          top: 0,               // distance from top (you can adjust)
+          left: 'center',
+          top: 0,
           textStyle: {
             fontSize: 18,
             fontWeight: 'bold'
@@ -640,7 +612,7 @@ export class DashboardComponent {
         },
         color: this.ECHART_COLORS,
         grid: {
-          bottom: '20%', // Give enough space for the legend
+          bottom: '20%',
           top: '15%',
           left: '0%',
           right: '4%',
@@ -697,11 +669,6 @@ export class DashboardComponent {
       };
 
       this.expenseoption = {
-        // title: {
-        //   text: 'Expense(s)',
-        //   subtext: '',
-        //   left: 'center'
-        // },
         color: this.ECHART_COLORS,
         legend: {
           orient: 'horizontal',
@@ -710,8 +677,7 @@ export class DashboardComponent {
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            // Use axis to trigger tooltip
-            type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
+            type: 'shadow'
           }
         },
 
@@ -778,9 +744,9 @@ export class DashboardComponent {
           data: (items as Array<any>).map((item: any) => item.totalamount)
         });
       });
-      console.log(expenseObj);
       this.expenseoption['series'] = expenseObj;
     });
+    //this.getIncExpenseData();
   }
   addSeries() {
     if (this.chartInstance) {
@@ -799,8 +765,164 @@ export class DashboardComponent {
       });
     }
   }
+  dateChange(data: any) {
+    if (data) {
+      this.financialYear = data.value.year;
+      this.getIncExpenseData();
+    }
+  }
+  getIncExpenseData() {
+    this.inIncExpLoading = true;
+    this.profitLossService.getIncomeExpenseByFinancialYear({ year: this.financialYear, projectid: this.activeProjectId ?? '' }, '')
+      .pipe(finalize(() => this.inIncExpLoading = false))
+      .subscribe((response: any) => {
+        if (response && response && response.success) {
+          let incExpData = response.data;
+          this.totalIncome = incExpData
+            .reduce((sum: number, x: any) => sum + Number(x.income.toFixed(2)), 0)
+            .toFixed(2)
 
+          this.totalexpense = incExpData
+            .reduce((sum: number, x: any) => sum + Number(x.expense.toFixed(2)), 0)
+            .toFixed(2)
 
+          this.incomeExpenseOption = {
+            grid: {
+              left: 20,
+              right: 40,
+              top: 40,
+              bottom: 50,
+              containLabel: true   // keeps axis labels visible
+            },
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                type: 'shadow'
+              }
+            },
+            toolbox: {
+              feature: {
+                saveAsImage: { show: true }
+              }
+            },
+            legend: {
+              data: ['Income', 'Expense'],
+              bottom: 10,
+              textStyle: {
+                fontSize: 14,
+                fontWeight: 'bold'
+              },
+            },
+            xAxis: [
+              {
+                type: 'category',
+                axisTick: {
+                  alignWithLabel: true
+                },
+                // prettier-ignore
+                //data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                data: incExpData.map((x: any) =>
+                  new Date(x.year, x.month - 1, 1).toLocaleString('en-US', { month: 'short' }) + '-' + x.year
+                )
+              }
+            ],
+            yAxis: [
+              {
+                type: 'value',
+                name: 'Income',
+                position: 'left',
+                alignTicks: true,
+                axisLine: {
+                  show: true,
+                  lineStyle: {
+                    //color: this.colors[0]
+                  }
+                },
+                axisLabel: {
+                  fontWeight: 'bold',
+                  formatter: function (value: number) {
+                    if (value >= 10000000) return value / 10000000 + 'Cr.';
+                    if (value >= 1000000) return value / 1000000 + 'M';
+                    if (value >= 1000) return value / 1000 + 'K';
+                    return value;
+                  }
+                }
+              },
+              {
+                type: 'value',
+                name: 'Expense',
+                position: 'right',
+                alignTicks: true,
+                offset: 10,
+                axisLine: {
+                  show: true,
+                  lineStyle: {
+                    //color: this.colors[1]
+                  }
+                },
+                axisLabel: {
+                  fontWeight: 'bold',
+                  formatter: function (value: number) {
+                    if (value >= 10000000) return value / 10000000 + 'Cr.';
+                    if (value >= 1000000) return value / 1000000 + 'M';
+                    if (value >= 1000) return value / 1000 + 'K';
+                    return value;
+                  }
+                }
+              }
+            ],
+            series: [
+              {
+                name: 'Income',
+                type: 'line',
+                smooth: true,
+                showSymbol: false,
+                emphasis: {
+                  focus: 'series'
+                },
+                data: incExpData.map((x: any) => Number(x.income.toFixed(2))),
+                areaStyle: {
+                  color: {
+                    type: 'linear',
+                    x: 0, y: 0, x2: 0, y2: 1,
+                    colorStops: [
+                      { offset: 0, color: 'rgba(0, 136, 212, 0.6)' }, // top color
+                      { offset: 1, color: 'rgba(0, 136, 212, 0.3)' }  // bottom fade
+                    ]
+                  }
+                }
+              },
+              {
+                name: 'Expense',
+                type: 'line',
+                smooth: true,
+                showSymbol: false,
+                yAxisIndex: 1,
+                areaStyle: {
+                  color: {
+                    type: 'linear',
+                    x: 0, y: 0, x2: 0, y2: 1,
+                    colorStops: [
+                      { offset: 0, color: 'rgba(102, 205, 0, 0.6)' }, // bright green (top)
+                      { offset: 1, color: 'rgba(102, 255, 102, 0.4)' } // light green (bottom)
+                    ]
+                  }
+                },
+                lineStyle: {
+                  color: '#66CD00',
+                  width: 2
+                },
+                emphasis: {
+                  focus: 'series'
+                },
+                data: incExpData.map((x: any) => Number(x.expense.toFixed(2))),
+              }
+            ]
+          };
+        }
+      })
+
+  }
 
   getPercentageChange(current: number, previous: number): { status: string, percent: number } {
     if (!previous || previous === 0) {
@@ -825,22 +947,15 @@ export class DashboardComponent {
     }
   };
 
-
-
-
-
-  onSelect(event: any) {
-    console.log(event);
-  }
   projectSearchObj: any = {};
   letterSearchObj: any = {};
   eotSearchObj: any = {};
   cosSearchObj: any = {};
   empSerachObj: any = {};
   onChartClick(event: any): void {
-    console.log('Bar clicked:', event);
-    console.log('Clicked value:', event.value);     // value (e.g. 120)
-    console.log('Clicked name:', event.name);       // category name (e.g. Mon)
+    // console.log('Bar clicked:', event);
+    // console.log('Clicked value:', event.value);    
+    // console.log('Clicked name:', event.name);      
   }
   onProjectCountClick(event: any) {
     this.projectSearchObj.projectid = this.activeProjectId;
@@ -854,8 +969,6 @@ export class DashboardComponent {
     this.getProjectList();
   }
   getProjectList() {
-    //this.projectService.getProjectInfoSummary(this.projectSearchObj,'').pipe(finalize(()=> this.isLoading=false))
-
     this.defaultdialogoptions.data = {
       element: this.projectSearchObj
     };
@@ -914,7 +1027,6 @@ export class DashboardComponent {
     this.defaultdialogoptions.minWidth = '80vw';
     const dialogRef = this.dialog.open(EmployeeInfoSummaryComponent, this.defaultdialogoptions);
   }
-  // This example requires ECharts v5.5.0 or later
 
   progressoption = {
     title: {
@@ -967,6 +1079,13 @@ export class DashboardComponent {
     };
     this.defaultdialogoptions.minWidth = '80vw';
     const dialogRef = this.dialog.open(ExpenseChartViewComponent, this.defaultdialogoptions);
+  }
+  incomeDetails() {
+    this.defaultdialogoptions.data = {
+      element: this.getDataObj
+    };
+    this.defaultdialogoptions.minWidth = '80vw';
+    const dialogRef = this.dialog.open(IncomeDetailsChartComponent, this.defaultdialogoptions);
   }
 
 }

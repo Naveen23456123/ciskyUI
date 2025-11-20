@@ -10,7 +10,7 @@ export class GeneratePdfService {
 
   constructor() { }
 
-   generatePDF(contentRef: ElementRef, fileName: string = 'form-data.pdf') {
+  generatePDF(contentRef: ElementRef, fileName: string = 'form-data.pdf') {
     const content = contentRef?.nativeElement;
 
     if (!content) {
@@ -37,69 +37,124 @@ export class GeneratePdfService {
         // Remove export styling
         content.classList.remove('export-pdf-mode');
       });
-    }, 100); 
+    }, 100);
   }
 
-  generateAndGetPDF(contentRef: ElementRef,fileName: string = 'form-data.pdf'): Promise<File | null> {
-    const content = contentRef?.nativeElement;
+  // generateAndGetPDF(contentRef: ElementRef,fileName: string = 'form-data.pdf'): Promise<File | null> {
+  //   const content = contentRef?.nativeElement;
 
+  //   if (!content) {
+  //     console.error('PDF content element not found.');
+  //     return Promise.resolve(null);
+  //   }
+
+  //   content.classList.add('export-pdf-mode');
+
+  //    return new Promise((resolve, reject) => {
+  //     setTimeout(() => {
+  //       console.log(content);
+  //       html2canvas(content, { scale: 1.2 })
+  //         .then(canvas => {
+  //           const imgData = canvas.toDataURL('image/png');
+  //           const pdf = new jsPDF('p', 'mm', 'a4');
+
+  //           const pageWidth = pdf.internal.pageSize.getWidth();
+  //           const pageHeight = pdf.internal.pageSize.getHeight();
+
+  //           const margin = 3; 
+  //           const usableWidth = pageWidth - margin * 2;
+
+  //           const imgProps = pdf.getImageProperties(imgData);
+  //           const imgWidth = usableWidth;
+  //           const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+  //           let heightLeft = imgHeight;
+  //           let position = 0;
+
+  //           // Add first page with margin
+  //           pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+  //           heightLeft -= pageHeight;
+
+  //           // Add more pages with same margins
+  //           while (heightLeft > 0) {
+  //             position -= pageHeight;
+  //             pdf.addPage();
+  //             pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+  //             heightLeft -= pageHeight;
+  //           }
+
+  //           const pdfBlob = pdf.output('blob');
+  //           const pdfFile = new File([pdfBlob], fileName, {
+  //             type: 'application/pdf',
+  //           });
+
+  //           content.classList.remove('export-pdf-mode');
+  //           resolve(pdfFile);
+  //         })
+  //         .catch(err => {
+  //           console.error('Error generating PDF:', err);
+  //           content.classList.remove('export-pdf-mode');
+  //           reject(err);
+  //         });
+  //     }, 100);
+  //   });
+  // }
+  async generateAndGetPDF(contentRef: ElementRef, fileName: string = 'form-data.pdf'): Promise<File | null> {
+    const content = contentRef?.nativeElement;
     if (!content) {
       console.error('PDF content element not found.');
-      return Promise.resolve(null);
+      return null;
     }
 
     content.classList.add('export-pdf-mode');
 
-     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log(content);
-        html2canvas(content, { scale: 1.2 })
-          .then(canvas => {
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
+    try {
+      // Wait for browser to settle layout (very short)
+      await new Promise(r => setTimeout(r, 50));
 
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
+      const canvas = await html2canvas(content, {
+        scale: window.devicePixelRatio > 1 ? 1 : 0.8, // adjust for balance
+        useCORS: true, // improves performance for remote images
+        logging: false, // disable console logs
+        allowTaint: false,
+        backgroundColor: '#ffffff',
+      });
 
-            const margin = 3; 
-            const usableWidth = pageWidth - margin * 2;
+      const imgData = canvas.toDataURL('image/jpeg', 0.8); // JPEG = smaller & faster
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 3;
+      const usableWidth = pageWidth - margin * 2;
 
-            const imgProps = pdf.getImageProperties(imgData);
-            const imgWidth = usableWidth;
-            const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+      const imgProps = pdf.getImageProperties(imgData);
+      const imgWidth = usableWidth;
+      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
 
-            let heightLeft = imgHeight;
-            let position = 0;
+      let heightLeft = imgHeight;
+      let position = 0;
 
-            // Add first page with margin
-            pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
+      pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight, undefined, 'FAST');
 
-            // Add more pages with same margins
-            while (heightLeft > 0) {
-              position -= pageHeight;
-              pdf.addPage();
-              pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
-              heightLeft -= pageHeight;
-            }
+      while (heightLeft > pageHeight) {
+        heightLeft -= pageHeight;
+        position -= pageHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight, undefined, 'FAST');
+      }
 
-            const pdfBlob = pdf.output('blob');
-            const pdfFile = new File([pdfBlob], fileName, {
-              type: 'application/pdf',
-            });
+      const blob = pdf.output('blob');
+      const pdfFile = new File([blob], fileName, { type: 'application/pdf' });
 
-            content.classList.remove('export-pdf-mode');
-            resolve(pdfFile);
-          })
-          .catch(err => {
-            console.error('Error generating PDF:', err);
-            content.classList.remove('export-pdf-mode');
-            reject(err);
-          });
-      }, 100);
-    });
+      return pdfFile;
+    } catch (err) {
+      console.error('Error generating PDF:', err);
+      return null;
+    } finally {
+      content.classList.remove('export-pdf-mode');
+    }
   }
-  
+
 }
 
 

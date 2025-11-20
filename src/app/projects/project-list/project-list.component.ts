@@ -121,7 +121,8 @@ pagePermissions:any;
     this.projects = info;
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
-    this.resultsLength= this.projects.length;   
+    this.pageSize= this.helperService.getPageSize();
+    this.resultsLength= this.projects.length;     
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

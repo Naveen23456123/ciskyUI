@@ -1,6 +1,8 @@
 export enum BOQInvoice{
     LOCALSTAFF='Remuneration for Local Professional Staff',
     SUPPORTSTAF='Supporting Staff',
+    KEYPROFESSIONAL='Key Professional',
+    SUB_PROFESSIONAL='Sub Professional',
     TRANSPORTATION='Transportation',
     DUTY_TRAVEL_SITE='Duty Travel to Site',
     OFFICE_RENT='Office Rent',
@@ -19,6 +21,9 @@ export enum BOQInvoice{
     REPORT_DOCUMENT_REPORTING_KEY='rd',
     ROAD_SURVEY_EQUIP_KEY='rs',
     CONTINGENCIES_KEY='cont',
+    KEYPROFESSIONAL_KEY='kps',
+    SUB_PROFESSIONAL_KEY='sps',
+    ESC_KEY=`Billing rates shall increase by @ {esc}% every 12 months to cover all items as per SCC clause.`
 }
 
 

@@ -1,0 +1,110 @@
+<div class="container">
+
+    <div class="wrapper">
+        <div class="mat-elevation-z8">
+            <div class="no-print container">
+
+            </div>
+            <mat-card>
+                <div *ngIf="!isLoading" class="mt-2 row d-flex justify-content-between  stick-bar">
+
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <app-download-pdf [loading]="isPdfGenerating" class="me-2" (clickEvent)="printScopePage()"></app-download-pdf>
+                        <app-download-csv *ngIf="isInvoice" class="me-2" toolTip="Download Template"
+                            (clickEvent)="downloadTemplate()"></app-download-csv>
+
+                        <app-file-uploader *ngIf="showUpload" UploadType="csv" (onfileUpload)="fileuploaded($event)">
+                        </app-file-uploader>
+                        <app-submit-load-btn *ngIf="showUpload" class="me-2" [isClicked]="isBtnClicked"
+                            (clickEvent)="submit()" [isValid]="!isBtnClicked" text="Submit">
+                        </app-submit-load-btn>
+                        <app-alert-badge class="me-3" *ngIf="!isInvoice" [isError]="true"
+                            [message]="'Invoice not found for the month of : ' + (invoiceData.invoice.monthandyear | date:'MMM-yyyy') +'!!.'">
+                        </app-alert-badge>
+                    </div>
+
+                </div>
+                <div #scopePdfContent id="scopePdfContent">
+                    <div class=" report-head mx-3 mb-2">
+                        <h5 class="sub-heading content-center">Expense (Detailed Summary) </h5>
+                        <hr>
+                        <div class="control-div pd-1">
+                            <span class="report-heading">Project : </span>
+                            <span class="report-heading float-end"> Invoice's Month :
+                                {{invoiceData.invoice.monthandyear | date:
+                                'MMMM - yyyy'}}</span>
+                        </div>
+                        <div class="control-div pd-1">
+                            <span class="report-heading"> {{invoiceData.project.projectshortname}} </span>
+                            <span class="report-heading float-end"> Date : {{today | formatDate}}</span>
+                        </div>
+                    </div>
+                    <mat-card-content>
+
+                        <ng-container *ngIf="isLoading; else checkNoData">
+                            <app-empty-table-skltn></app-empty-table-skltn>
+                        </ng-container>
+                        <ng-template #checkNoData>
+                            <ng-container *ngIf="tableRows?.length === 0; else showTable">
+                                <app-no-data message="No Release(s) found at this moment !!"></app-no-data>
+                            </ng-container>
+                        </ng-template>
+                        <ng-template #showTable>
+                            <table class="table table-bordered invoice-table">
+                                <thead>
+                                    <tr>
+                                        <th *ngFor="let header of tableheaders" class="border px-2 py-1">
+                                            <ng-container *ngIf="isDate(header.label); else normalLabel">
+                                                {{ header.label | date:'MMM-yyyy' }} (Expense)
+                                            </ng-container>
+
+                                            <ng-template #normalLabel>
+                                                {{ header.label }}
+                                            </ng-template>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of tableRows" [ngClass]="{'row-grandtotal': row.type === 'head',
+                'row-final': row.type === 'total'
+              }">
+                                        <ng-container *ngIf="row.type === 'head'; else normalRow">
+                                            <td class="border px-2 py-1">{{ row.srNo }}</td>
+                                            <td class="border px-2 py-1 w-40">{{ row.position }}</td>
+                                            <td class="border px-2 py-1" [attr.colspan]="monthKeys.length + 3"></td>
+                                        </ng-container>
+
+                                        <!-- Normal row -->
+                                        <ng-template #normalRow>
+                                            <td class="border px-2 py-1">{{ row.srNo }}</td>
+                                            <td class="border px-2 py-1 w-40">{{ row.position }}</td>
+                                            <td class="border px-2 py-1">{{ row.name }}</td>
+                                            <td class="border px-2 py-1">
+                                                {{ row.contractAmount | formatAmount}}
+
+                                            </td>
+                                            <td class="border px-2 py-1">
+                                                {{ row.release | formatAmount}}
+
+                                            </td>
+
+                                            <td *ngFor="let mk of monthKeys" class="border px-2 py-1">
+                                                <span class="no-print" *ngIf="row.type === 'total'"> {{ row[mk] ?? 0 |
+                                                    formatAmount}}</span>
+                                                <span *ngIf="row.type !== 'total'" class="print-value">{{ row[mk] ?? 0 |
+                                                    formatAmount }}</span>
+                                                <input *ngIf="row.type !== 'total'"
+                                                    (ngModelChange)="onCellChange(row, mk, $event)" matInput
+                                                    type="number" [(ngModel)]="row[mk]" />
+                                            </td>
+                                        </ng-template>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ng-template>
+                    </mat-card-content>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+</div>

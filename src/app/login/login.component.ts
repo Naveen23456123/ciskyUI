@@ -7,6 +7,7 @@ import { AuthrizationInterfaceService } from '@app/shared/services/external/auth
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { StorageService } from '@app/shared/services/storage.service';
+import { TokenService } from '@app/shared/services/token.service';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -21,7 +22,8 @@ export class LoginComponent {
   isForgotPassword=false;
   constructor(private formbuilder: FormBuilder, private router:Router, private sessionService:SessionService,
     private authService:AuthrizationInterfaceService, private notifyBarService:NotifyBarService,
-    private storageService:StorageService, private commonService:CommonService
+    private storageService:StorageService, private commonService:CommonService,
+    private tokenService:TokenService
   ){}
 
   ngOnInit(){
@@ -33,7 +35,6 @@ export class LoginComponent {
     });
   }
   submit(){
-    console.log('submit');
     this.isBtnClicked=true;
     this.authService.login(this.loginform.value, '')
     .pipe(finalize(() => {  this.isBtnClicked = false;}))
@@ -50,6 +51,7 @@ export class LoginComponent {
             employeeid: response.data.userid,
             modules: response.data.modules
           });
+          this.sessionService.setUserPriviliges(JSON.parse(this.tokenService.getClaim("response"))?.Modules);
           this.router.navigate(['/dashboard']);
         } else {
           this.notifyBarService.showsnackbar(

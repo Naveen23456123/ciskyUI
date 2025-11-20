@@ -16,81 +16,92 @@ import { NotifyBarService } from '@app/shared/services/notify-bar.service';
   styleUrl: './profit-loss-inv-list.component.scss'
 })
 export class ProfitLossInvListComponent {
-  employees:any[]= [];
-  data:any;
+  employees: any[] = [];
+  data: any;
   isLoading = true;
-  displayedColumns: string[] = ['serial','name', 'monthly','action'];
+  displayedColumns: string[] = ['serial', 'name', 'monthly','expense', 'action'];
   dataSource!: MatTableDataSource<any[]>;
-  title:string='';
-  titleValue:string='';
+  title: string = '';
+  titleValue: string = '';
   readonly dialog = inject(MatDialog);
-  private defaultdialogoptions:  MatDialogConfig = {       
-      disableClose: false,
-      data: {},
-    };
+  private defaultdialogoptions: MatDialogConfig = {
+    disableClose: false,
+    data: {},
+  };
 
- constructor(@Inject(MAT_DIALOG_DATA) data: any,private profitlossService:ProfitLossInterfaceService,
- private route: ActivatedRoute,private notifyBarService:NotifyBarService, private router:Router,
- private dialogRef: MatDialogRef<ProfitLossInvListComponent>
- ){
-  this.data= data|| {};
-  this.dataSource = new MatTableDataSource(this.employees);
- }
- filterChange(event:any){
-  if(event){ 
-    this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase()
+  constructor(@Inject(MAT_DIALOG_DATA) data: any, private profitlossService: ProfitLossInterfaceService,
+    private route: ActivatedRoute, private notifyBarService: NotifyBarService, private router: Router,
+    private dialogRef: MatDialogRef<ProfitLossInvListComponent>
+  ) {
+    this.data = data || {};
+    this.dataSource = new MatTableDataSource(this.employees);
   }
-  else{
-    this.dataSource.filter = '';
-  }
-  if (this.dataSource.paginator) {
-    this.dataSource.paginator.firstPage();
-  }
-}
- ngOnInit()  {
-  if(this.data){
-    this.title= this.data.element.projectshortname; 
-      this.profitlossService.getProfitLossListByOrgId({pid:this.data.element.id}, '')
-            .pipe(finalize(() => this.isLoading = false))
-            .subscribe({next : (response: any) => {
-              if (response && response.success) {
-                this.employees = response.data;
-                this.dataSource = new MatTableDataSource(this.employees);
-              }
-        }});
+  filterChange(event: any) {
+    if (event) {
+      this.dataSource.filter = (event.target as HTMLInputElement).value.trim().toLowerCase()
+    }
+    else {
+      this.dataSource.filter = '';
+    }
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
   }
-  viewClick(data:any){
+  ngOnInit() {
+    if (this.data) {
+      console.log(this.data);
+      this.title = this.data.element.projectshortname;
+      this.profitlossService.getProfitLossListByOrgId({ pid: this.data.element.id }, '')
+        .pipe(finalize(() => this.isLoading = false))
+        .subscribe({
+          next: (response: any) => {
+            if (response && response.success) {
+              this.employees = response.data;
+              this.dataSource = new MatTableDataSource(this.employees);
+            }
+          }
+        });
+    }
+  }
+  viewClick(data: any) {
     const config = this.defaultdialogoptions;
-      config.minWidth='80vw';
-      config.minHeight= '10vh',
+    config.minWidth = '80vw';
+    config.minHeight = '10vh',
       config.data = {
         pageGuid: this.route.snapshot.data['pageGuid'],
         type: this.route.snapshot.data['type'],
-        element:data
-      };  
-      this.dialogRef.close();
-      this.router.navigate(['/profit-loss-details'],{state: { value: data} });
-      //this.dialog.open(ProfitLossInvDetailsComponent,config);
+        element: data
+      };
+    this.dialogRef.close();
+    this.router.navigate(['/profit-loss-details'], { state: { value: data } });
+    //this.dialog.open(ProfitLossInvDetailsComponent,config);
   }
-  deleteClick(data:any){
-  const config = this.defaultdialogoptions;
-    config.minWidth='45vw';
-    config.minHeight= '10vh',
-    config.data = {
-      pageGuid: this.route.snapshot.data['pageGuid'],
-      type: DialogOperation.DELETE,
-      element:data
-    };
-   let dialogRef=  this.dialog.open(ProfitLossInvDetailsComponent,config);
-   dialogRef.afterClosed().subscribe((data:any)=>{
-      if(data && data.valid){
-        const index = this.dataSource.data.findIndex((x:any) => x.id == data.value);
+  viewExpense(data: any) {
+    let obj={
+      project:this.data.element,
+      invoice:data
+    }
+    this.dialogRef.close();
+    this.router.navigate(['/profit-loss-expense'], { state: { value: obj } });
+  }
+  deleteClick(data: any) {
+    const config = this.defaultdialogoptions;
+    config.minWidth = '45vw';
+    config.minHeight = '10vh',
+      config.data = {
+        pageGuid: this.route.snapshot.data['pageGuid'],
+        type: DialogOperation.DELETE,
+        element: data
+      };
+    let dialogRef = this.dialog.open(ProfitLossInvDetailsComponent, config);
+    dialogRef.afterClosed().subscribe((data: any) => {
+      if (data && data.valid) {
+        const index = this.dataSource.data.findIndex((x: any) => x.id == data.value);
         this.dataSource.data.splice(index, 1);
         this.dataSource._updateChangeSubscription();
         this.notifyBarService.showsnackbar('Profit Loss removed successfully');
       }
-   })
+    })
   }
 }
 

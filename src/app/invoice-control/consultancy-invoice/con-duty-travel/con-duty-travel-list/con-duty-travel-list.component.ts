@@ -1,4 +1,4 @@
-import { Component,EventEmitter,Output,ViewChild,inject} from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';;
 import { InvoiceService } from '@app/invoice-control/invoice.service';
@@ -15,32 +15,33 @@ import { finalize, take } from 'rxjs';
   styleUrl: './con-duty-travel-list.component.scss'
 })
 export class ConDutyTravelListComponent {
-data:any[]=[];
+  data: any[] = [];
   isLoading = true;
-
-  dataColumn: string[] =['serial','desc','contract_rate','trip','totalamt','prev_month','prev_amt','curr_month','curr_amt','comlt_month','comlt_amt','rem_month','rem_amt','action'];
-  footerColumns: string[] = ['serial', 'amount','action'];
+  headerColumn: string[] = ['no', 'descth', 'ctrtamt', 'previousinvc', 'currentinvc', 'cumulativeinvc', 'reminvc'];
+  dataColumn: string[] = ['serial', 'desc', 'contract_rate', 'trip', 'totalamt', 'prev_month', 'prev_amt', 'curr_month', 'curr_amt', 'comlt_month', 'comlt_amt', 'rem_month', 'rem_amt'];
+  footerColumns: string[] = ['serial', 'amount'];
   dataSource!: MatTableDataSource<any[]>;
-  @Output() onAmountChange: EventEmitter<any> = new EventEmitter(); 
+  @Output() onAmountChange: EventEmitter<any> = new EventEmitter();
   readonly dialog = inject(MatDialog);
-  amount:any|null;
+  @Input() pagePermissions: any;
+  amount: any | null;
 
-    private defaultdialogoptions:  MatDialogConfig = {
-      minWidth: '900px', 
-      disableClose: false,
-      data: {},
-    };
-  
-   constructor(private invoiceService:InvoiceService,private helperService:HelperService,
-    private stateDataService :StateDataService, private notifyBarService :NotifyBarService,
-    private sessionService:SessionService
-   ){
-    
-   }
-  
-   ngOnInit()  {
-    this.stateDataService.stateDataSubject.subscribe((data) => {   
-      if (data.event == 'condtedit'  && data.valid && data.value) {      
+  private defaultdialogoptions: MatDialogConfig = {
+    minWidth: '900px',
+    disableClose: false,
+    data: {},
+  };
+
+  constructor(private invoiceService: InvoiceService, private helperService: HelperService,
+    private stateDataService: StateDataService, private notifyBarService: NotifyBarService,
+    private sessionService: SessionService
+  ) {
+
+  }
+
+  ngOnInit() {
+    this.stateDataService.stateDataSubject.subscribe((data) => {
+      if (data.event == 'condtedit' && data.valid && data.value) {
         this.updateRowData(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
@@ -48,115 +49,120 @@ data:any[]=[];
         this.addBulkData(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
-      } else if(data.event == 'condtdelete' && data.valid && data.value){
-        this.deleteRow(data.value.id);
+      } else if (data.event == 'condtdelete' && data.valid && data.value) {
+        this.deleteRow(data);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       }
-      this.getTotalAmount();  
+      this.getTotalAmount();
     });
-    this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((invEntity:any)=>{
-      if(invEntity && invEntity.invoiceId){
-        this.invoiceService.getConsultantDutyTravelListByProjectId({id:invEntity.invoiceId,projectid:invEntity.projectId }, '')
-        .pipe(finalize(() => this.isLoading = false))
-        .subscribe((response: any) => {
-          if (response && response.success) {
-            let dtData = response.data.map((data:any)=>({
-              id: data.id,
-              description : data.description,
-              rate: data.rate,
-              trips: data.trips,
-              invoiceid:data.invoiceid,
-              previousbilltrips: data.previousbilltrips,
-              currentbilltrips: data.currentbilltrips,
-              contractamount:this.getattributes(data).contractamount,
-              previousbill:this.getattributes(data).previousbill,
-              currentbill:this.getattributes(data).currentbill,
-              commulativetrips:this.getattributes(data).commulativetrips,
-              commulativeamount:this.getattributes(data).commulativeamount,
-              remainingtrip:this.getattributes(data).remainingtrip,
-              remainingamount:this.getattributes(data).remainingamount
-            }));
-           this.data = dtData;
-           this.dataSource = new MatTableDataSource(this.data);
-           this.getTotalAmount();              
-         }
-        });
+    if (this.pagePermissions?.canUpdate || this.pagePermissions?.canDelete) {
+      this.headerColumn.push('actionth');
+      this.dataColumn.push('action');
+      this.footerColumns.push('action');
+    }
+    this.sessionService.invoiceEntitySubject$.pipe(take(1)).subscribe((invEntity: any) => {
+      if (invEntity && invEntity.invoiceId) {
+        this.invoiceService.getDutyTravelScopeByProjectId({ id: invEntity.invoiceId, projectid: invEntity.projectId }, '')
+          .pipe(finalize(() => this.isLoading = false))
+          .subscribe((response: any) => {
+            if (response && response.success) {
+              let dtData = response.data.map((data: any) => ({
+                id: data.id,
+                description: data.description,
+                rate: data.rate,
+                trips: data.trips,
+                invoiceid: data.invoiceid,
+                previousbilltrips: data.previousbilltrips,
+                currentbilltrips: data.currentbilltrips,
+                contractamount: this.getattributes(data).contractamount,
+                previousbill: this.getattributes(data).previousbill,
+                currentbill: this.getattributes(data).currentbill,
+                commulativetrips: this.getattributes(data).commulativetrips,
+                commulativeamount: this.getattributes(data).commulativeamount,
+                remainingtrip: this.getattributes(data).remainingtrip,
+                remainingamount: this.getattributes(data).remainingamount
+              }));
+              this.data = dtData;
+              this.dataSource = new MatTableDataSource(this.data);
+              this.getTotalAmount();
+            }
+          });
       }
-    });    
-  } 
+    });
+  }
 
-  getattributes(data:any){
+  getattributes(data: any) {
     return {
-      contractamount:(data.trips)*data.rate,
-      previousbill:data.previousbilltrips*data.rate,
-      currentbill:data.currentbilltrips*data.rate,
-      commulativetrips:data.previousbilltrips+data.currentbilltrips,
-      commulativeamount:(data.previousbilltrips+data.currentbilltrips)*data.rate,
-      remainingtrip:(data.trips)-(data.previousbilltrips+data.currentbilltrips),
-      remainingamount:((data.trips)*data.rate)-((data.previousbilltrips+data.currentbilltrips)*data.rate)
+      contractamount: (data.trips) * data.rate,
+      previousbill: data.previousbilltrips * data.rate,
+      currentbill: data.currentbilltrips * data.rate,
+      commulativetrips: data.previousbilltrips + data.currentbilltrips,
+      commulativeamount: (data.previousbilltrips + data.currentbilltrips) * data.rate,
+      remainingtrip: (data.trips) - (data.previousbilltrips + data.currentbilltrips),
+      remainingamount: ((data.trips) * data.rate) - ((data.previousbilltrips + data.currentbilltrips) * data.rate)
     }
   }
 
   updateRowData(data: any) {
-    const element:any = this.dataSource.data.find((x:any) => x.invoiceid == data.id);
-    if(element){
-    element.currentbilltrips=data.currentbilltrips;
+    const element: any = this.dataSource.data.find((x: any) => x.id == data.boqid);
+    if (element) {
+      element.currentbilltrips = data.currentbilltrips;
     }
     this.bindBilling(element);
     this.dataSource._updateChangeSubscription();
   }
   addRowData(data: any) {
-    const data1:any = {
-      id: data.id,
-      description : data.description,
+    const data1: any = {
+      id: data.boqid,
+      description: data.description,
       rate: data.rate,
       trips: data.trips,
       previousbilltrips: data.previousbilltrips,
       currentbilltrips: data.currentbilltrips,
-      invoiceid:data.invoiceid,
-    }  
-    this.bindBilling(data1);    
-    this.dataSource.data.unshift(data1);  
-    this.dataSource._updateChangeSubscription();   
+      invoiceid: data.invoiceid,
+    }
+    this.bindBilling(data1);
+    this.dataSource.data.unshift(data1);
+    this.dataSource._updateChangeSubscription();
   }
   deleteRow(data: any) {
-    const index = this.dataSource.data.findIndex((x:any) => x.invoiceid == data);
+    const index = this.dataSource.data.findIndex((x: any) => x.id == data.value.scopeid);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }
 
-  bindBilling(data:any){
-    data.contractamount=(data.trips)*data.rate,
-    data.previousbill=data.previousbilltrips*data.rate,
-    data.currentbill=data.currentbilltrips*data.rate,
-    data.commulativetrips=data.previousbilltrips+data.currentbilltrips,
-    data.commulativeamount=(data.previousbilltrips+data.currentbilltrips)*data.rate,
-    data.remainingtrip=(data.trips)-(data.previousbilltrips+data.currentbilltrips),
-    data.remainingamount=((data.trips)*data.rate)-((data.previousbilltrips+data.currentbilltrips)*data.rate)   
+  bindBilling(data: any) {
+    data.contractamount = (data.trips) * data.rate,
+      data.previousbill = data.previousbilltrips * data.rate,
+      data.currentbill = data.currentbilltrips * data.rate,
+      data.commulativetrips = data.previousbilltrips + data.currentbilltrips,
+      data.commulativeamount = (data.previousbilltrips + data.currentbilltrips) * data.rate,
+      data.remainingtrip = (data.trips) - (data.previousbilltrips + data.currentbilltrips),
+      data.remainingamount = ((data.trips) * data.rate) - ((data.previousbilltrips + data.currentbilltrips) * data.rate)
   }
-  addBulkData(data:any){
-    
-    data.forEach((element:any) => {
+  addBulkData(data: any) {
+
+    data.forEach((element: any) => {
       this.addRowData(element);
     });
-  }  
-  getTotalAmount() : any|null {
-    if(this.dataSource && this.dataSource.data){
-    this.amount ={
-        total:this.dataSource.data.map((t:any) => t.contractamount).reduce((acc, value) => acc + value, 0),
-        previous:this.dataSource.data.map((t:any) => t.previousbill).reduce((acc, value) => acc + value, 0),
-        current:this.dataSource.data.map((t:any) => t.currentbill).reduce((acc, value) => acc + value, 0),
-        commulative:this.dataSource.data.map((t:any) => t.commulativeamount).reduce((acc, value) => acc + value, 0),
-        remaining:this.dataSource.data.map((t:any) => t.remainingamount).reduce((acc, value) => acc + value, 0)
+  }
+  getTotalAmount(): any | null {
+    if (this.dataSource && this.dataSource.data) {
+      this.amount = {
+        total: this.dataSource.data.map((t: any) => t.contractamount).reduce((acc, value) => acc + value, 0),
+        previous: this.dataSource.data.map((t: any) => t.previousbill).reduce((acc, value) => acc + value, 0),
+        current: this.dataSource.data.map((t: any) => t.currentbill).reduce((acc, value) => acc + value, 0),
+        commulative: this.dataSource.data.map((t: any) => t.commulativeamount).reduce((acc, value) => acc + value, 0),
+        remaining: this.dataSource.data.map((t: any) => t.remainingamount).reduce((acc, value) => acc + value, 0)
       }
     }
     this.onAmountChange.emit(this.amount);
     return this.amount;
   }
-  
-}  
-  
+
+}
+
 
 
 

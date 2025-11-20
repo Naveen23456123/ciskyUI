@@ -4,9 +4,11 @@
     }
     body,.wrapper {
       background-color: white !important;
+      font-size: 8px !important;
     }
     table, th, td {
       border: 1px solid black;
+       font-size: 10px !important;
     }
   
     th {
@@ -14,8 +16,8 @@
       color: black; /* Header text color */
     }
      th{
-      background-color: #09002d !important;
-      color: white !important;
+      background-color: lightgray !important;
+      color: black !important;
     }
   }
 
@@ -97,3 +99,67 @@
     padding: 0px 5px !important;
     text-align: center !important;
 }
+
+//
+/* invoice-table.component.scss */
+
+/* Keep bootstrap border table look; add Excel-like header merge visuals */
+
+
+/* group header top row */
+.group-header th {
+  border: 1px solid #ccc;
+  background: #f6f6f6;
+  padding: 6px 8px;
+  font-weight: 600;
+}
+
+/* second header row (sub-columns) */
+.group-header tr + tr th {
+  background: #ffffff;
+  border-top: none;
+  padding: 6px 8px;
+  font-weight: 600;
+}
+
+/* data cells */
+.mat-cell, td {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  vertical-align: top;
+}
+
+/* description cell word-wrap */
+.description-cell {
+  white-space: normal;
+}
+
+
+/* right alignment for numeric cells */
+.text-right {
+  text-align: right !important;
+}
+
+/* small tweaks for sticky or printed look */
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* make the header two rows adhere visually */
+thead.group-header th[rowspan="2"] {
+  vertical-align: middle;
+  text-align: center;
+}
+.w-40{
+  width: 40%;
+}
+:host ::ng-deep .control-div{
+  margin-bottom: 0px !important;
+}
+:host  ::ng-deep app-download-csv button {
+ height: 2.6rem !important
+}
+.sub-heading {
+    margin-top: 6px;
+}
+

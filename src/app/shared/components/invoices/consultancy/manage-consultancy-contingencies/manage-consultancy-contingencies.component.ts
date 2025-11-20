@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angu
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { BOQ_INVOICE } from '@app/shared/models/constant.config';
+import { InvoiceInterfaceService } from '@app/shared/services/external/invoice-interface.service';
 import { InvContingencyInterfaceService } from '@app/shared/services/external/invoice/inv-contingency-interface.service';
 import { InvDutyTravelInterfaceService } from '@app/shared/services/external/invoice/inv-duty-travel-interface.service';
 import { SessionService } from '@app/shared/services/session.service';
@@ -33,7 +34,8 @@ export class ManageConsultancyContingenciesComponent {
   isBtnClicked=false;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageConsultancyContingenciesComponent>, private formbuilder: FormBuilder,
-    private sessionService: SessionService, private router: Router,private route: ActivatedRoute, private contingencyService:InvContingencyInterfaceService){
+    private sessionService: SessionService, private router: Router,private route: ActivatedRoute, private contingencyService:InvContingencyInterfaceService,
+  private invoiceService:InvoiceInterfaceService){
       this.data = data || {};
   }
   
@@ -141,7 +143,7 @@ export class ManageConsultancyContingenciesComponent {
       if(response && response.invoiceId){
         this.contForm.patchValue({invoiceid:response.invoiceId});
         if (this.isEdit) {
-          this.contingencyService.updateConsultantContingency(this.contForm.get('controls')?.value[0], '')
+          this.invoiceService.upsertContingencyInvoiceScope(this.contForm.get('controls')?.value, '')
             .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next: (response:any) => {
               if(response && response.success){
@@ -154,7 +156,7 @@ export class ManageConsultancyContingenciesComponent {
             });
         } else {
           this.contForm.value.id=null;
-          this.contingencyService.createConsultantContingency(this.contForm.get('controls')?.value, '')
+          this.invoiceService.upsertContingencyInvoiceScope(this.contForm.get('controls')?.value, '')
             .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
@@ -162,8 +164,9 @@ export class ManageConsultancyContingenciesComponent {
                 response.data.forEach((element:any) => {
                   responseData.push({
                     id:element.boqid,
+                    boqid: element.boqid,
                     currentbillamount:element.currentbillamount,
-                    invoiceid:element.id,
+                    invoiceid:element.invoiceid,
                     description:this.boqList.find((x:any)=>x.id==element.boqid)?.description,
                     previousbillamount:this.boqList.find((x:any)=>x.id==element.boqid)?.uptolastbill,   
                     totalamount:this.boqList.find((x:any)=>x.id==element.boqid)?.totalamount,              
@@ -184,11 +187,11 @@ export class ManageConsultancyContingenciesComponent {
   }
 
   delete() {
-      this.contingencyService.deleteConsultantContingency({id:this.contForm.value.id}, '')
+      this.invoiceService.deleteContingencyScope(this.data.element, '')
        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
         next:(response: any) => {
           if (response && response.success) 
-           this.dialogRef.close({ value: this.contForm.value, valid: true });
+           this.dialogRef.close({ value: this.data.element, valid: true });
       },
       error: (err: any) => {
           this.dialogRef.close(err);

@@ -13,6 +13,7 @@ import html2canvas from 'html2canvas';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { ActivatedRoute } from '@angular/router';
 import { ManageAdminExpenseComponent } from './dialog/manage-admin-expense/manage-admin-expense.component';
+import { PdfViewerComponent } from '@app/shared/components/pdf-viewer/pdf-viewer.component';
 
 export type Row = { type: 'group'; label: string, id: string, key: string } | {
   id?: string;
@@ -36,6 +37,7 @@ export type Row = { type: 'group'; label: string, id: string, key: string } | {
 export class ProfitLossDetailedComponent {
   readonly dialog = inject(MatDialog);
   public data: any;
+  isPdfGenerating = false; 
   displayedColumns: string[] = ['name', 'actualamount', 'action'];
   isLoading = true;
   scopes: any[] = [];
@@ -94,7 +96,20 @@ export class ProfitLossDetailedComponent {
     }
   }
   download() {
-    this.pdfService.generatePDF(this.pdfContent, 'Profit_Loss.pdf');
+    this.isPdfGenerating = true; 
+    this.pdfService.generateAndGetPDF(this.pdfContent, 'Profit_Loss.pdf').then((pdf) => {
+      if (pdf) {
+        const config = this.defaultdialogoptions;
+        config.minWidth = '80vw';
+        config.data = {
+          url: false,
+          element: pdf
+        };
+        this.dialog.open(PdfViewerComponent, config);
+      }
+    }).finally(() => {
+      this.isPdfGenerating = false; 
+    });
   }
 
   buildGroupedRows(data: any[]): Row[] {
@@ -206,10 +221,10 @@ export class ProfitLossDetailedComponent {
       const dialogRef = this.dialog.open(ManageAdminExpenseComponent, config);
       dialogRef.afterClosed().subscribe((response) => {
         if (response && response.valid) {
-          let highestIndex= this.getHighestIndex(this.dataRecords);
+          let highestIndex = this.getHighestIndex(this.dataRecords);
           let records = response.value.map((item: any) => ({
             sid: item.id,
-            scopeid:item.id,// added to decide its a new item and grab scopeid from this to sent for addition 
+            scopeid: item.id,// added to decide its a new item and grab scopeid from this to sent for addition 
             pid: '',
             isNew: true,
             isadmin: item.isadmin,
@@ -308,7 +323,7 @@ export class ProfitLossDetailedComponent {
     let expFooter: any = this.dataSource.find((x: any) => !x.isincome && x.type == 'totalfooter');
     //expFooter.actualamount = expenses.map((t: any) => t.actualamount).reduce((acc: number, value: number) => acc + value, 0);
     expFooter.actualamount = this.getTotalCurrentExpense();
-    this.dataSource = [...this.dataSource]; 
+    this.dataSource = [...this.dataSource];
   }
   findByIndex(records: any[], targetIndex: number): any | undefined {
     for (const record of records) {
@@ -493,13 +508,13 @@ export class ProfitLossDetailedComponent {
       return {
         id: scope.id,
         name: scope.name,
-        scopeid:scope.scopeid,
+        scopeid: scope.scopeid,
         total: scope.actualamount,
         items: filteredItems,
         isedited: scope.isEdited,
         isdeleted: scope.isdeleted
       };
-    }).filter(x => x.id!=null);
+    }).filter(x => x.id != null);
     this.profitLossService.updateProfitLossById({ id: this.profitLossData.id, scopes: updateobj }, '')
       .pipe(finalize(() => { this.isLoading = false; this.isClicked = false; }))
       .subscribe({

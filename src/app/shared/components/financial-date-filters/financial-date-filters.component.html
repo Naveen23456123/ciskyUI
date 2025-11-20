@@ -48,7 +48,7 @@
 
     <!-- Apply Button -->
     <!-- <button mat-raised-button color="primary" (click)="emitDateRange()">Apply</button> -->
-     <button mat-icon-button class="search-btn"  type="button" matTooltip="Search" (click)="emitDateRange()">
+     <button *ngIf="isSearchBtn" mat-icon-button class="search-btn"  type="button" matTooltip="Search" (click)="emitDateRange()">
                                         <mat-icon>search</mat-icon>
                                     </button> 
 </div>

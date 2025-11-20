@@ -34,7 +34,8 @@ ngOnInit(): void {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: this.route.snapshot.data['type'],
       element: {
-        id:window.history.state.invoiceid
+        id:window.history.state.invoiceid,
+        scopeid:window.history.state.id
       }
     };
     const dialogRef = this.dialog.open(ManageConsultancyReportDocComponent, this.defaultdialogOptionConfig);

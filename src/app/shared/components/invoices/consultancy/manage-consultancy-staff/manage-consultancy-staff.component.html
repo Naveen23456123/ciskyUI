@@ -29,7 +29,7 @@
                                                 <mat-label>Name</mat-label>
                                                 <input *ngIf="!item.get('isEditing')?.value" matInput readonly
                                                     formControlName="employeename">
-                                                <mat-select *ngIf="item.get('isEditing')?.value"
+                                                <mat-select (selectionChange)="empSelection($event,i)" *ngIf="item.get('isEditing')?.value"
                                                     formControlName="employeename">
                                                     <mat-option *ngFor="let emp of empList" [value]="emp.id">
                                                         {{ emp.code+' - ' +emp.name }}

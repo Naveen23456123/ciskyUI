@@ -7,7 +7,7 @@ import { Component, EventEmitter,Input,Output } from '@angular/core';
   styleUrl: './download-pdf.component.scss'
 })
 export class DownloadPdfComponent {
-
+  @Input() loading=false;
   @Input() toolTip:string='';
   @Output() clickEvent: EventEmitter<any> = new EventEmitter();
 

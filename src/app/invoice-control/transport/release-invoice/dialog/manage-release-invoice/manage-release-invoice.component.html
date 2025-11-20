@@ -1,0 +1,364 @@
+<div class="dialog">
+    <mat-card>
+        <h3 mat-dialog-title class="justify-content-center"> Manage Release Payment</h3>
+        <mat-dialog-content class="mat-typography">
+            <mat-card-content>
+                <div class="load-wrap" *ngIf="isLoading">
+                    <app-loader [IsLoading]="isLoading"></app-loader>
+                </div>
+                <form [formGroup]="invoiceForm">
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                            <tr>
+                                <th>Sr No</th>
+                                <th>Description</th>
+                                <th>Amount recommended by PIU (in Rs.)</th>
+                            </tr>
+                        </thead>
+
+                        <tbody formArrayName="scopes">
+                            <tr *ngFor="let row of rowControls.controls; let i = index" [formGroupName]="i">
+                                <td>{{ row.get('srno')?.value }}</td>
+                                <td>{{ row.get('value')?.value }}</td>
+                                <td>
+                                    {{ row.get('amount')?.value | formatAmount}}
+                                    <!-- <input type="text" appCurrencyFormat (input)="totalRows()" formControlName="amount"
+                                        class="form-control text-right" /> -->
+                                </td>
+
+                            </tr>
+                            <tr class="fw-bold">
+                                <td colspan="2" class="text-end">Total</td>
+                                <td>{{totalCurrentRelease | formatCurrency}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                        <h5 class="mb-0">Release</h5>
+                        <button type="button" class="btn submit-btn btn-sm" (click)="addReleaseRow()">
+                            + Add Release
+                        </button>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <form [formGroup]="releaseForm">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice</th>
+                                        <th>Heading</th>
+                                        <th class="w-20">Amount</th>
+                                        <th class="w-10">Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody formArrayName="releases">
+                                    <tr *ngFor="let group of releases.controls; let i = index" [formGroupName]="i">
+                                        <td>
+                                            <select class="form-select" formControlName="invoiceId">
+                                                <option value="" disabled>Select Invoice</option>
+                                                <option *ngFor="let inv of invlist" [value]="inv.id">{{ inv.number }}
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td>
+
+                                            <textarea class="form-control" formControlName="key" placeholder="Heading"
+                                                rows="3"></textarea>
+                                        </td>
+                                        <td>
+                                            <input type="number" appCurrencyFormat (input)="totalRows()"
+                                                class="form-control text-end" formControlName="amount" />
+                                        </td>
+                                        <td class="text-center">
+                                            <app-delete-btn (clickEvent)="removeRow(i)"></app-delete-btn>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="releases.length === 0">
+                                        <td colspan="4" class="text-center text-muted py-3">No Releases Added</td>
+                                    </tr>
+                                    <tr *ngIf="releases.length>0" class="fw-bold">
+                                        <td colspan="2" class="text-end">Total</td>
+                                        <td colspan="2">{{totalRelease | formatCurrency}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </form>
+                    </div>
+
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                        <h5 class="mb-0">Deductions</h5>
+                        <button type="button" class="btn submit-btn btn-sm" (click)="addDeductionRow()">
+                            + Add Deduction
+                        </button>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <form [formGroup]="deductionForm">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Heading</th>
+                                        <th class="w-20">Amount</th>
+                                        <th class="w-10">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody formArrayName="deductions">
+                                    <tr *ngFor="let group of deductions.controls; let j = index" [formGroupName]="j">
+                                        <td>
+                                            <textarea class="form-control" formControlName="key" placeholder="Heading"
+                                                rows="3"></textarea>
+                                        </td>
+                                        <td>
+                                            <input type="number" (input)="totalRows()" class="form-control text-end"
+                                                formControlName="amount" />
+                                        </td>
+                                        <td class="text-center">
+
+                                            <app-delete-btn (clickEvent)="removeDeductionRow(j)"></app-delete-btn>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="deductions.length === 0">
+                                        <td colspan="3" class="text-center text-muted py-3">No Deductions Added</td>
+                                    </tr>
+                                    <tr *ngIf="deductions.length>0" class="fw-bold">
+                                        <td class="text-end">Total</td>
+                                        <td colspan="2">{{totalDeduction | formatCurrency}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                        <h5 class="mb-0">With Held</h5>
+                        <button type="button" class="btn submit-btn btn-sm" (click)="addHeldRow()">
+                            + Add With Held
+                        </button>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <form [formGroup]="withHeldForm">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice</th>
+                                        <th>Heading</th>
+                                        <th class="w-20">Amount</th>
+                                        <th class="w-10">Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody formArrayName="helds">
+                                    <tr *ngFor="let group of helds.controls; let i = index" [formGroupName]="i">
+                                        <td>
+                                            <select class="form-select" formControlName="invoiceId">
+                                                <option value="" disabled>Select Invoice</option>
+                                                <option *ngFor="let inv of invlist" [value]="inv.id">{{ inv.number }}
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td>
+
+                                            <textarea class="form-control" formControlName="key" placeholder="Heading"
+                                                rows="3"></textarea>
+                                        </td>
+                                        <td>
+                                            <input type="number" appCurrencyFormat (input)="totalRows()"
+                                                class="form-control text-end" formControlName="amount" />
+                                        </td>
+                                        <td class="text-center">
+                                            <app-delete-btn (clickEvent)="removeHeldRow(i)"></app-delete-btn>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="helds.length === 0">
+                                        <td colspan="4" class="text-center text-muted py-3">No With Held Added</td>
+                                    </tr>
+                                    <tr *ngIf="helds.length>0" class="fw-bold">
+                                        <td colspan="2" class="text-end">Total</td>
+                                        <td colspan="2">{{totalHeld | formatCurrency}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </form>
+                    </div>
+
+                </div>
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                        <h5 class="mb-0">Recovers</h5>
+                        <button type="button" class="btn submit-btn btn-sm" (click)="addRecoverRow()">
+                            + Add Recover
+                        </button>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <form [formGroup]="recoverForm">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice</th>
+                                        <th>Heading</th>
+                                        <th class="w-20">Amount</th>
+                                        <th class="w-10">Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody formArrayName="recovers">
+                                    <tr *ngFor="let group of recovers.controls; let i = index" [formGroupName]="i">
+                                        <td>
+                                            <select class="form-select" formControlName="invoiceId">
+                                                <option value="" disabled>Select Invoice</option>
+                                                <option *ngFor="let inv of invlist" [value]="inv.id">{{ inv.number }}
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td>
+
+                                            <textarea class="form-control" formControlName="key" placeholder="Heading"
+                                                rows="3"></textarea>
+                                        </td>
+                                        <td>
+                                            <input type="number" appCurrencyFormat (input)="totalRows()"
+                                                class="form-control text-end" formControlName="amount" />
+                                        </td>
+                                        <td class="text-center">
+                                            <app-delete-btn (clickEvent)="removeRecoverRow(i)"></app-delete-btn>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="recovers.length === 0">
+                                        <td colspan="4" class="text-center text-muted py-3">No Recover Added</td>
+                                    </tr>
+                                    <tr *ngIf="recovers.length>0" class="fw-bold">
+                                        <td colspan="2" class="text-end">Total</td>
+                                        <td colspan="2">{{totalRecover | formatCurrency}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </form>
+                    </div>
+
+                </div>
+                <div *ngIf="billingYears>0" class="card shadow-sm mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                        <h5 class="mb-0">Escalation(s)</h5>
+                        <!-- <button type="button" class="btn submit-btn btn-sm" (click)="addEscRow()">
+                            + Add Escalation
+                        </button> -->
+                    </div>
+
+                    <div class="card-body p-0">
+                        <form [formGroup]="escForm">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Heading</th>
+                                        <th class="w-20">Amount</th>
+                                        <!-- <th class="w-10">Action</th> -->
+                                    </tr>
+                                </thead>
+
+                                <tbody formArrayName="escalations">
+                                    <tr *ngFor="let group of escalations.controls; let i = index" [formGroupName]="i">
+
+                                        <td>
+                                            <span class="ml-4">{{ group.value.key }}</span>
+                                        </td>
+                                        <td>
+                                            <input type="number" appCurrencyFormat (input)="totalRows()"
+                                                class="form-control text-end" formControlName="amount" />
+                                        </td>
+                                        <!-- <td class="text-center">
+                                            <app-delete-btn (clickEvent)="removeEscRow(i)"></app-delete-btn>
+                                        </td> -->
+                                    </tr>
+                                    <tr *ngIf="escalations.length === 0">
+                                        <td colspan="3" class="text-center text-muted py-3">No Escalation(s) Added</td>
+                                    </tr>
+                                    <tr *ngIf="escalations.length>0" class="fw-bold">
+                                        <td class="text-end">Total</td>
+                                        <td colspan="2">{{totalEsc | formatCurrency}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </form>
+                    </div>
+                </div>
+                <form [formGroup]="invoiceForm">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>GST Percentage</mat-label>
+                                <input matInput (input)="totalRows()" type="number" formControlName="gst">
+                                <mat-error>Please provide GST percentage.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>TDS Percentage</mat-label>
+                                <input matInput (input)="totalRows()" type="number" formControlName="tds">
+                                <mat-error>Please provide TDS percentage.</mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-4">
+                            <mat-form-field>
+                                <mat-label>TDS GST Percentage</mat-label>
+                                <input matInput (input)="totalRows()" type="number" formControlName="tdsgst">
+                                <mat-error>Please provide TDS GST percentage.</mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                </form>
+                <table class="table table-bordered invoice-table">
+
+                    <tbody>
+                        <tr *ngFor="let row of computeRows" [ngClass]="{
+                  'row-subtotal': row.type === 'subtotal',
+                  'row-deduction': row.type === 'deduction',
+                  'row-grandtotal': row.type === 'grandtotal',
+                  'row-final': row.type === 'final'
+                }">
+                            <td>{{ row.srno }}</td>
+                            <td>{{ row.key }}</td>
+                            <td class="w-20">{{ row.value | formatAmount}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </mat-card-content>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <div class="row control-div">
+                <div class="button-row d-flex align-items-center justify-content-end gap-2">
+
+                    <h5 [ngClass]="invoiceForm.get('totalrelease')?.value >= 0 ? 'text-success' : 'text-danger'"
+                        class="mb-0 me-3">Net Payable : {{invoiceForm.get('totalrelease')?.value | formatAmount}}</h5>
+
+                    <button class="cancel-btn" mat-stroked-button mat-dialog-close color="default">
+                        Cancel
+                    </button>
+
+                    <button [ngClass]="invoiceForm.valid? 'submit-btn':''" mat-flat-button
+                        [disabled]="!invoiceForm.valid || isBtnClicked" (click)="onSubmit()" color="primary">
+
+                        <span [hidden]="isBtnClicked">Submit</span>
+                        <app-btn-loader [IsLoading]="isBtnClicked"></app-btn-loader>
+                    </button>
+
+                </div>
+            </div>
+
+        </mat-dialog-actions>
+    </mat-card>
+</div>

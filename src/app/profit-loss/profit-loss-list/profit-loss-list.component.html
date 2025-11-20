@@ -58,7 +58,9 @@
                           <th mat-header-cell *matHeaderCellDef mat-sort-header> Monthly </th>
                           <td mat-cell *matCellDef="let row">
                             <app-view-btn (clickEvent)="viewClick(row)"></app-view-btn>
+
                           </td>
+
                         </ng-container>
                         <!-- con_personName Column -->
                         <ng-container matColumnDef="commulative">
@@ -102,127 +104,130 @@
                   <app-finanical-year (onValueChange)="yearChange($event)"></app-finanical-year>
 
                 </div>
-                
-              </div>
-              <div class="row heading">
-                <div class="no-print content-center control-div container">
-                  <div class="button-row ">
-                    <button class="print-btn" onclick="window.print()" mat-fab extended>
-                      <mat-icon>print</mat-icon>
-                      Print
-                    </button>
-                  </div>
+                <div  class="col-md-4 justify-content-between">
+                  <app-download-pdf [loading]="isPdfGenerating" class="float-end me-2" (clickEvent)="download()"></app-download-pdf>
                 </div>
-                <div class="report-head">
-                  <h5 class="sub-heading content-center">Profit & Loss</h5>
-                  <hr>
-                  <div class="control-div pd-1">
-                    <span class="report-heading">Project : {{detailsObj.projectname??'All'}} </span>
-                    <span class="report-heading float-end"> Financial Year : {{ detailsObj.financialyear}}</span>
-                  </div>
+              </div>
+              
+              <div #pdfContent id="pdfContent">
+                <div class="row heading">
+                  <div class="report-head">
+                    <h5 class="sub-heading content-center">Profit & Loss</h5>
+                    <hr>
+                    <div class="control-div pd-1">
+                      <span class="report-heading">Project : {{detailsObj.projectname??'All'}} </span>
+                      <span class="report-heading float-end"> Financial Year : {{ detailsObj.financialyear}}</span>
+                    </div>
 
-                  <div class="control-div">
-                    <span class="report-heading"> Income : {{detailsObj.totalincome | formatCurrency}} </span>
-                    <span class="report-heading float-end"> Date : {{ detailsObj.today | formatDate}}</span>
-                  </div>
-                  <div class="control-div">
-                    <span class="report-heading">Expense : {{detailsObj.totalexpense | formatCurrency}} </span>
-                    <span class="report-heading float-end"> </span>
-                  </div>
-                  <div class="control-div">
-                    <span class="report-heading">
-                      Net Gain/Loss :
-                      <span [ngClass]="{
+                    <div class="control-div">
+                      <span class="report-heading"> Income : {{detailsObj.totalincome | formatCurrency}} </span>
+                      <span class="report-heading float-end"> Date : {{ detailsObj.today | formatDate}}</span>
+                    </div>
+                    <div class="control-div">
+                      <span class="report-heading">Expense : {{detailsObj.totalexpense | formatCurrency}} </span>
+                      <span class="report-heading float-end"> </span>
+                    </div>
+                    <div class="control-div">
+                      <span class="report-heading">
+                        Net Gain/Loss :
+                        <span [ngClass]="{
                           ' positive': (detailsObj.totalincome - detailsObj.totalexpense) > 0,
                           ' negative': (detailsObj.totalincome - detailsObj.totalexpense) < 0
                           }">{{(detailsObj.totalincome-detailsObj.totalexpense) | formatCurrency}}
-                        ({{detailsObj.percentage}})</span>
-                    </span>
-                    <span class="report-heading float-end"> </span>
+                          ({{detailsObj.percentage}})</span>
+                      </span>
+                      <span class="report-heading float-end"> </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="col-md-12">
-                <div class="load-wrap" *ngIf="isfinancialLoading">
-                  <app-loader [IsLoading]="isfinancialLoading"></app-loader>
-                </div>
-                <app-no-data *ngIf="isNoRecordForFY" icon="find_in_page" message="No details found at this moment!!.">
-                </app-no-data>
+                <div class="col-md-12">
+                  <div class="load-wrap" *ngIf="isfinancialLoading">
+                    <app-loader [IsLoading]="isfinancialLoading"></app-loader>
+                  </div>
+                  <app-no-data *ngIf="isNoRecordForFY" icon="find_in_page" message="No details found at this moment!!.">
+                  </app-no-data>
 
-                <table mat-table *ngIf="!isNoRecordForFY" [dataSource]="scopeRows" class="report-table">
-                  <!-- Row Number -->
-                  <ng-container matColumnDef="srno">
-                    <th mat-header-cell *matHeaderCellDef>#</th>
-                    <td class="report-cell" mat-cell *matCellDef="let row">{{ row.srno }}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="groupHeader">
-                    <td mat-cell *matCellDef="let row; let i = index" [attr.colspan]="totaldisplayedColumns.length">
-                      <div class="item-center">
-                        <strong>{{ row.label }}</strong>
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- Name -->
-                  <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef>Name</th>
-                    <td class="report-cell" mat-cell *matCellDef="let row">{{ row.name }}</td>
-                  </ng-container>
+                  <table mat-table *ngIf="!isNoRecordForFY" [dataSource]="scopeRows" class="report-table">
+                    <!-- Row Number -->
+                    <ng-container matColumnDef="srno">
+                      <th mat-header-cell *matHeaderCellDef>#</th>
+                      <td class="report-cell" mat-cell *matCellDef="let row">{{ row.srno }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="groupHeader">
+                      <td mat-cell *matCellDef="let row; let i = index" [attr.colspan]="totaldisplayedColumns.length">
+                        <div class="item-center">
+                          <strong>{{ row.label }}</strong>
+                        </div>
+                      </td>
+                    </ng-container>
+                    <!-- Name -->
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef>Name</th>
+                      <td class="report-cell" mat-cell *matCellDef="let row">{{ row.name }}</td>
+                    </ng-container>
 
-                  <!-- Month Columns -->
-                  <ng-container *ngFor="let month of months" [matColumnDef]="month">
-                    <th mat-header-cell *matHeaderCellDef>{{ month }}</th>
-                    <td class="report-cell" mat-cell *matCellDef="let row" [ngClass]="{
+                    <!-- Month Columns -->
+                    <ng-container *ngFor="let month of months" [matColumnDef]="month">
+                      <th mat-header-cell *matHeaderCellDef>{{ month }}</th>
+                      <td class="report-cell" mat-cell *matCellDef="let row" [ngClass]="{
         'alert-success': row.type === 'netsummary' && row[month]>0,
         'alert-danger': row.type === 'netsummary' && row[month]<0
-      }"> <span *ngIf="row.type!='spacer'">  {{ row[month] || '-' }}</span></td>
-                  </ng-container>
-                  <ng-container matColumnDef="total">
-                    <th mat-header-cell *matHeaderCellDef> Total </th>
-                    <td mat-cell *matCellDef="let row" [ngClass]="{
+      }"> <span *ngIf="row.type!='spacer'"> {{ row[month] || '-' }}</span></td>
+                    </ng-container>
+                    <ng-container matColumnDef="total">
+                      <th mat-header-cell *matHeaderCellDef> Total </th>
+                      <td mat-cell *matCellDef="let row" [ngClass]="{
   'alert-success': (row.type === 'totalinfo' && row.isincome) || 
                    (row.type === 'netsummary' && row.total > 0),
   'alert-danger': (row.type === 'totalinfo' && !row.isincome) || 
                   (row.type === 'netsummary' && row.total < 0)
 }">
-                      {{ row.total || '-' }}
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="totalHeader">
-                    <td class="report-cell" mat-cell class="pd-4" *matCellDef="let row" [attr.colspan]="12">
-                      <strong>{{ row.name }}</strong>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="totalcurrent">
-                    <td mat-cell *matCellDef="let row">
-                      <!-- <strong> {{(row.isincome ? ' (+) ':' (-) ')+(row.actualamount |formatCurrency) }}</strong> -->
-                    </td>
-                  </ng-container>
-                  <!-- Header and Data Rows -->
-                  <tr mat-header-row *matHeaderRowDef="totaldisplayedColumns"></tr>
-                  <tr mat-row *matRowDef="let row; columns: totaldisplayedColumns;" [ngClass]="{
+                        {{ row.total || '-' }}
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="totalHeader">
+                      <td class="report-cell" mat-cell class="pd-4" *matCellDef="let row" [attr.colspan]="12">
+                        <strong>{{ row.name }}</strong>
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="totalcurrent">
+                      <td mat-cell *matCellDef="let row">
+                        <!-- <strong> {{(row.isincome ? ' (+) ':' (-) ')+(row.actualamount |formatCurrency) }}</strong> -->
+                      </td>
+                    </ng-container>
+                    <!-- Header and Data Rows -->
+                    <tr mat-header-row *matHeaderRowDef="totaldisplayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: totaldisplayedColumns;" [ngClass]="{
                         'group-row': row.type === 'group',
                         'group-summary-row': row.type === 'summary',
                         'group-total-row': row.type === 'totalinfo'
                       }"></tr>
-                  <tr mat-row *matRowDef="let row; columns: ['groupHeader']; when: isGroup" class="group-header-row">
-                  </tr>
-                  <tr mat-row *matRowDef="let row; columns: totaldisplayedColumns; when: isTotalInfo"
-                    class="group-total-row"></tr>
-                  <tr mat-row *matRowDef="let row; columns: ['totalHeader','totalcurrent']; when: isGroup"
-                    class="group-header-row"></tr>
-                </table>
-              </div>
+                    <tr mat-row *matRowDef="let row; columns: ['groupHeader']; when: isGroup" class="group-header-row">
+                    </tr>
+                    <tr mat-row *matRowDef="let row; columns: totaldisplayedColumns; when: isTotalInfo"
+                      class="group-total-row"></tr>
+                    <tr mat-row *matRowDef="let row; columns: ['totalHeader','totalcurrent']; when: isGroup"
+                      class="group-header-row"></tr>
+                  </table>
 
+                </div>
+              </div>
 
             </div>
           </ng-template>
         </mat-tab>
-
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="example-tab-icon no-print">difference</mat-icon>
+            <span class=" no-print"> Variance </span>
+          </ng-template>
+          <ng-template matTabContent>
+            <div class="mat-elevation-z8 wrapper">
+              <app-profit-loss-margin></app-profit-loss-margin>
+            </div>
+          </ng-template>
+        </mat-tab>
       </mat-tab-group>
-
-
-
-
     </mat-card-content>
   </mat-card>
 

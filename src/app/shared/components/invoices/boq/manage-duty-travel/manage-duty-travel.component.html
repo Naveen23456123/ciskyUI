@@ -61,7 +61,7 @@
             <div class="wrapper">
                 <mat-dialog-content>
                     <span class="mat-typography alert-content">
-                        Are you sure you want to delete <span class="vw-lbl">{{dtForm.controls['name'].value}}</span> ?. This operation can
+                        Are you sure you want to delete <span class="vw-lbl">{{dtForm.get('description')?.value}}</span> ?. This operation can
                         not be un-done once performed sucessfully.
                     </span>
                 </mat-dialog-content>

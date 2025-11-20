@@ -1,4 +1,4 @@
-import { Component,EventEmitter,Output,ViewChild,inject, output} from '@angular/core';
+import { Component,EventEmitter,Input,Output,ViewChild,inject, output} from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';;
 import { InvoiceService } from '@app/invoice-control/invoice.service';
@@ -22,9 +22,11 @@ export class BoqTransportationListComponent {
   professionaList:any[]=[];
   isLoading = true;
   description='';
-  tpdataColumn: string[] = ['serial','desc','constperiod','dlpomperiod','total','vehpermonthrate','amount','action' ];
-  footerColumns: string[] = ['serial', 'amount','action']; 
+  headerColumn:string[]=['no','descth','qty','totalth','vehpermonthth','amountth'];
+  tpdataColumn: string[] = ['serial','desc','constperiod','dlpomperiod','total','vehpermonthrate','amount' ];
+  footerColumns: string[] = ['serial', 'amount']; 
   dataSource!: MatTableDataSource<any[]>;
+  @Input() pagePermissions:any;
   @Output() onAmountChange: EventEmitter<any> = new EventEmitter();
     readonly dialog = inject(MatDialog);
     
@@ -57,6 +59,11 @@ export class BoqTransportationListComponent {
         this.stateDataService.stateDataSubject.next({});
       }
     });
+    if (this.pagePermissions?.canUpdate || this.pagePermissions?.canDelete) {
+      this.headerColumn.push('actionth');
+      this.tpdataColumn.push('action');
+      this.footerColumns.push('action');
+    }
     this.sessionService.projectEntitySubject$.pipe(take(1)).subscribe((projectEntity:any)=>{
       if(projectEntity && projectEntity.projectId){
         this.invoiceService.getBoqTransportationListByProjectId({id:projectEntity.projectId }, '')

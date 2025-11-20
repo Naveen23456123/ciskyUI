@@ -1,0 +1,127 @@
+<div class="container">
+    <mat-card>
+
+        <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="isLoading">
+                <app-loader [IsLoading]="isLoading"></app-loader>
+            </div>
+            <div class="wrapper" *ngIf="!isLoading">
+                <div class="row  d-flex justify-content-between align-items-center stick-bar">
+                    <div class="col-md-8">
+                        <app-financial-date-filters [initialEmit]="true" [showFinancial]="false" [showQuarterly]="true"
+                            [showCustom]="false" (onValueChange)="dateChange($event)"></app-financial-date-filters>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center justify-content-between  gap-2">
+                        <div class="flex-grow-1" >
+                            <app-project-control [isAllLabel]="true" [required]="false"
+                                (onValueChange)="projectChange($event)">
+                            </app-project-control>
+                        </div>
+
+                        <app-download-pdf [loading]="isPdfGenerating" *ngIf="tableRows" (clickEvent)="printPage()"></app-download-pdf>
+                    </div>
+                </div>
+                <hr class="mt-0">
+                <ng-container *ngIf=" isSearching else checkNoData">
+                    <app-empty-table-skltn></app-empty-table-skltn>
+                </ng-container>
+                <ng-template #checkNoData>
+                    <ng-container *ngIf="!tableRows; else showTable">
+                        <app-no-data message="No Variance found at this moment !!"></app-no-data>
+                    </ng-container>
+                </ng-template>
+                <ng-template #showTable>
+                    <!-- <div class="col-md-12 d-flex justify-content-center">
+                        <app-download-pdf class="me-2" (clickEvent)="printPage()"></app-download-pdf>
+                    </div> -->
+                    <div #pdfContent id="pdfContent">
+                        <div class=" report-head mx-3 mb-2">
+                            <h5 class="sub-heading mt-2 content-center">Project Variance (Detailed Summary) </h5>
+                            <hr>
+                            <div class="control-div report-row pd-1">
+                                <span class="report-heading"></span>
+                                <span class="report-heading float-end"> Period :
+                                    {{apiObj.startdate | date:
+                                    'MMMM - yyyy'}} to {{apiObj.enddate | date:
+                                    'MMMM - yyyy'}}</span>
+                            </div>
+                            <div class="control-div report-row pd-1">
+                                <span class="report-heading"> Project : {{projectObj?.projectshortname ?? 'All'}}
+                                </span>
+                                <span class="report-heading float-end"> Date : {{today | formatDate}}</span>
+                            </div>
+                        </div>
+                        <div class="row col-md-12 control-div">
+                            <div class="d-flex justify-content-end align-items-center summary-wrapper">
+
+                                <div class=" sumry-div  content-center">
+                                    <span class="sumry-lbl">Total Income:</span>
+                                    <span class="sumry-val">{{totalActual | formatAmount}}</span>
+                                </div>
+                                <div class="sumry-div content-center ">
+                                    <mat-icon class="count-icon bi bi-person-fill fs-4  text-warning">pending</mat-icon>
+                                    <span class="sumry-lbl">Total Expense : </span>
+                                    <span class="sumry-val">{{totalExpected | formatAmount}}</span>
+                                </div>
+                                <div class=" sumry-div content-center mx-0">
+                                    <mat-icon
+                                        class="count-icon bi bi-person-fill fs-4  text-danger">compare_arrows</mat-icon>
+                                    <span class="sumry-lbl">Total Variance : </span>
+                                    <span class="sumry-val">{{totalMargin | formatAmount}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered invoice-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Sr. No.</th>
+                                    <th rowspan="2">Category</th>
+
+                                    <th class="text-center" [attr.colspan]="months?.length">Income</th>
+                                    <th class="text-center" [attr.colspan]="months?.length">Expense</th>
+                                    <th class="text-center" [attr.colspan]="months?.length">Variance</th>
+                                    <th class="text-center" rowspan="2">Total Income</th>
+                                    <th class="text-center" rowspan="2">Total Expense</th>
+                                    <th class="text-center" rowspan="2">Total Variance</th>
+                                </tr>
+                                <tr>
+                                    <ng-container *ngFor="let m of months">
+                                        <th>{{ m.label }}</th>
+                                    </ng-container>
+                                    <ng-container *ngFor="let m of months">
+                                        <th>{{ m.label }}</th>
+                                    </ng-container>
+                                    <ng-container *ngFor="let m of months">
+                                        <th>{{ m.label }}</th>
+                                    </ng-container>
+
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr *ngFor="let row of tableRows" [ngClass]="{
+                            'row-grandtotal': row.category === 'total',
+                            }">
+                                    <td>{{ row.srno }}</td>
+                                    <td>{{ row.value | titlecase }}</td>
+
+                                    <td *ngFor="let m of months">{{ row[m.label + '_Actual'] | formatAmount}}</td>
+                                    <td *ngFor="let m of months">{{ row[m.label + '_Expected'] | formatAmount}}</td>
+                                    <td *ngFor="let m of months" [ngClass]="{
+                                    'alert-danger':  row[m.label + '_Margin']<0
+                                }">{{ row[m.label + '_Margin'] | formatAmount}}</td>
+                                    <td>{{ row.Total_Actual | number }}</td>
+                                    <td>{{ row.Total_Expected | number }}</td>
+                                    <td>{{ row.Total_Margin | number }}</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                </ng-template>
+            </div>
+        </mat-card-content>
+
+    </mat-card>
+</div>

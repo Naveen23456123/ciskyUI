@@ -7,7 +7,7 @@ import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef }
   styleUrl: './download-csv.component.scss'
 })
 export class DownloadCsvComponent {
-
+  @Input() toolTip:string="Download Records";
   @Output() clickEvent: EventEmitter<any> = new EventEmitter();
     
       clicked(){

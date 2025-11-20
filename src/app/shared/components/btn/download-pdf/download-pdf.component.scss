@@ -4,6 +4,20 @@
     height: 28px;
     font-size: 28px;
 }
-.pdf-btn{
-   
+.pdf-container {
+  display: flex;
+  flex-direction: column; /* Stack button and progress bar vertically */
+  align-items: center; /* Center button horizontally */
+  width: fit-content;
 }
+
+.pdf-btn {
+  color: #d32f2f;
+}
+
+.loader-below {
+  width: 30px; /* Same or slightly wider than button */
+  margin-top: 4px; /* Gap between button and loader */
+  height: 3px; /* Thin progress bar look */
+}
+

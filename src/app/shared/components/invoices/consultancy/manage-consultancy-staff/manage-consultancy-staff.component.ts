@@ -5,6 +5,7 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { BOQ_INVOICE, BOQ_TBN } from '@app/shared/models/constant.config';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
+import { InvoiceInterfaceService } from '@app/shared/services/external/invoice-interface.service';
 import { InvStaffInterfaceService } from '@app/shared/services/external/invoice/inv-staff-interface.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, take } from 'rxjs';
@@ -41,7 +42,8 @@ export class ManageConsultancyStaffComponent {
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageConsultancyStaffComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService, private router: Router, private route: ActivatedRoute,
-    private staffervice: InvStaffInterfaceService, private employeeService: EmployeeInterfaceService) {
+    private staffervice: InvStaffInterfaceService, private employeeService: EmployeeInterfaceService,
+    private invoiceService: InvoiceInterfaceService) {
     this.data = data || {};
   }
 
@@ -133,11 +135,13 @@ export class ManageConsultancyStaffComponent {
     const group = this.formbuilder.group({
       id: [data.pid],
       boqid: [data.id],
+      employeeid: [data.employeeid],
       designation: [data.designation],
       employeename: [data.employeename && data.employeename.trim() !== ''
         ? data.employeename
         : BOQ_TBN.TBN],
       invoiceid: [invId],
+      projectid: [data.projectid],
       currentbillmonths: [data.currentbillmonths, [Validators.required, Validators.min(0), Validators.max(1)]],
       currentbillamount: [data.currentbill],
       isEditing: [false]
@@ -156,7 +160,7 @@ export class ManageConsultancyStaffComponent {
 
   ngOnDestroy() { }
   toggleEdit(index: number) {
-    this.isLoading=true;
+    this.isLoading = true;
     const control = this.controls.at(index);
     const isEditing = control.get('isEditing')?.value;
     if (isEditing) {
@@ -172,22 +176,32 @@ export class ManageConsultancyStaffComponent {
         })
     }
     else
-      this.isLoading=false;
+      this.isLoading = false;
+  }
+  empSelection(data:any,index:number){
+    console.log(data,index);
+     const control = this.controls.at(index);
+    const isEditing = control.get('isEditing')?.value;
+    if (isEditing) {
+      control.get('employeeid')?.setValue(data.value);
+      control.get('employeename')?.setValue(this.empList.find((x:any)=> x.id==data.value)?.name);
+    }
   }
   submit() {
     this.isBtnClicked = true;
+    console.log(this.staffForm.get('controls')?.value);
     this.sessionService.invoiceEntitySubject$.pipe(take(1), untilDestroyed(this)).subscribe((response: any) => {
       if (response && response.invoiceId) {
         this.staffForm.patchValue({ invoiceid: response.invoiceId });
         if (this.isEdit) {
-          let form = this.staffForm.get('controls')?.value[0];
-          this.staffervice.updateConsultantStaff(form, '')
+          let form = this.staffForm.get('controls')?.value;
+          this.invoiceService.upsertStaffInvoiceScope(form, '')
             .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked = false })).subscribe({
               next: (response: any) => {
                 if (response && response.success) {
-                  form.professionalid = this.professionalid;
-                  form.previousbillmonths = this.boqList.find((x: any) => x.id == form.id)?.uptolastbill
-                  this.dialogRef.close({ value: form, professionalData: this.professionaList, valid: true });
+                  form[0].professionalid = this.professionalid;
+                  form[0].previousbillmonths = this.boqList.find((x: any) => x.id == form.id)?.uptolastbill
+                  this.dialogRef.close({ value: form[0], professionalData: this.professionaList, valid: true });
                 }
               },
               error: (err: any) => {
@@ -196,7 +210,7 @@ export class ManageConsultancyStaffComponent {
             });
         } else {
           this.staffForm.value.id = null;
-          this.staffervice.createConsultantStaff(this.staffForm.get('controls')?.value, '')
+          this.invoiceService.upsertStaffInvoiceScope(this.staffForm.get('controls')?.value, '')
             .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked = false })).subscribe({
               next: (response: any) => {
                 if (response && response.success) {
@@ -204,8 +218,9 @@ export class ManageConsultancyStaffComponent {
                   response.data.forEach((element: any) => {
                     responseData.push({
                       id: element.boqid,
+                      boqid: element.boqid,
                       currentbillmonths: element.currentbillmonths,
-                      invoiceid: element.id,
+                      invoiceid: element.invoiceid,
                       designation: this.boqList.find((x: any) => x.id == element.boqid)?.designation,
                       professionalid: this.boqList.find((x: any) => x.id == element.boqid)?.professionalid,
                       name: this.boqList.find((x: any) => x.id == element.boqid)?.employeename,
@@ -231,12 +246,12 @@ export class ManageConsultancyStaffComponent {
   }
 
   delete() {
-    this.staffervice.deleteConsultantStaff({ id: this.staffForm.value.id }, '')
+    this.invoiceService.deleteInvoiceStaffScope(this.data.element, '')
       .pipe(finalize(() => { this.isLoading = false; })).subscribe({
         next: (response: any) => {
           if (response && response.success) {
             this.staffForm.value.professionalid = this.professionalid;
-            this.dialogRef.close({ value: this.staffForm.value, professionalData: this.professionaList, valid: true });
+            this.dialogRef.close({ value: this.data.element, professionalData: this.professionaList, valid: true });
           }
         },
         error: (err: any) => {

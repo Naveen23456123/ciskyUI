@@ -1,180 +1,25 @@
-
 <div class="container hscroll-container">
-    <mat-card>
-        <mat-card-title>
-            <h6>Appendix C-3:Breakdown of Costs 
-                <button  class="title-btn float-end no-print " routerLink="staff-create"  type="button"  mat-mini-fab color="primary">
-                    <mat-icon>add box</mat-icon> Staff
-                </button>
-               
-            </h6>
-        </mat-card-title>
-        <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading">
-                <app-loader [IsLoading]="isLoading"></app-loader>
-            </div>
-            <div class="wrapper" *ngIf="!isLoading">                
-    
-            <h6>I-Renumeration for Local Professional Staff</h6>
-            <h6>A. Key Personal</h6>
-            <section class="inv-container mat-elevation-z8" tabindex="0">
-            <table mat-table [dataSource]="dataSource" >
-        
-                <ng-container matColumnDef="serial">
-                  <th mat-header-cell *matHeaderCellDef class="hide">Sr. No</th>
-                  <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
-                  <td mat-footer-cell *matFooterCellDef> </td>
-                </ng-container>
-                <ng-container matColumnDef="no">
-                  <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Sr. No</th>
-                </ng-container>       
-             
-                <ng-container matColumnDef="desg">
-                  <th mat-header-cell *matHeaderCellDef class="hide"> Position </th>
-                  <td mat-cell *matCellDef="let element"> {{element.designation}} </td>
-                  <td mat-footer-cell *matFooterCellDef> Total</td>
-                </ng-container>
-                <ng-container matColumnDef="desgth">
-                    <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2"></th>
-                    </ng-container>
-                <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef class="hide"> Name </th>
-                    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-                    <td mat-footer-cell *matFooterCellDef> </td>
-                  </ng-container>
-             
-                <ng-container matColumnDef="nameth">
-                    <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2"></th>
-                    </ng-container>
-                   
-                    <ng-container matColumnDef="contract_rate">
-                      <th mat-header-cell *matHeaderCellDef > Rate </th>
-                      <td mat-cell *matCellDef="let row"> {{row.rate | formatAmount}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>       
-                    <ng-container matColumnDef="const">
-                      <th mat-header-cell *matHeaderCellDef > Const </th>
-                      <td mat-cell *matCellDef="let row"> {{row.constructionperiod}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>
-                    <ng-container matColumnDef="main">
-                      <th mat-header-cell *matHeaderCellDef > O&M </th>
-                      <td mat-cell *matCellDef="let row"> {{row.oandmperiod}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>
-                    <ng-container matColumnDef="totalconstmain">
-                      <th mat-header-cell *matHeaderCellDef > Const+O&M</th>
-                      <td mat-cell *matCellDef="let row"> {{row.totalmonths}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container> 
-      
-                    <ng-container matColumnDef="cont_amt">
-                      <th mat-header-cell *matHeaderCellDef > Total </th>
-                      <td mat-cell *matCellDef="let row"> {{row.contractamount | formatAmount}} </td>
-                      <td mat-footer-cell *matFooterCellDef>{{amount?.kp.total | formatCurrency}} </td>
-                    </ng-container> 
-      
-                    <ng-container matColumnDef="prev_month">
-                      <th mat-header-cell *matHeaderCellDef > Month </th>
-                      <td mat-cell *matCellDef="let row"> {{row.previousbillmonths}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>                         
-      
-                    <ng-container matColumnDef="prev_amt">
-                      <th mat-header-cell *matHeaderCellDef > Amount </th>
-                      <td mat-cell *matCellDef="let row"> {{row.previousbill}} </td>
-                      <td mat-footer-cell *matFooterCellDef> {{amount?.kp.previous | formatCurrency}} </td>
-                    </ng-container>
-      
-                    <ng-container matColumnDef="curr_month">
-                      <th mat-header-cell *matHeaderCellDef > Month </th>
-                      <td mat-cell *matCellDef="let row"> {{row.currentbillmonths}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>                         
-      
-                    <ng-container matColumnDef="curr_amt">
-                      <th mat-header-cell *matHeaderCellDef > Amount </th>
-                      <td mat-cell *matCellDef="let row"> {{row.currentbill | formatAmount}} </td>
-                      <td mat-footer-cell *matFooterCellDef>{{amount?.kp.current | formatCurrency}}  </td>
-                    </ng-container>
-                    <ng-container matColumnDef="comlt_month">
-                      <th mat-header-cell *matHeaderCellDef > Month </th>
-                      <td mat-cell *matCellDef="let row"> {{row.commulativemonth | number:'1.3-3'}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>                         
-      
-                    <ng-container matColumnDef="comlt_amt">
-                      <th mat-header-cell *matHeaderCellDef > Amount </th>
-                      <td mat-cell *matCellDef="let row"> {{row.commulativeAmount | formatAmount}} </td>
-                      <td mat-footer-cell *matFooterCellDef>{{amount?.kp.commulative | formatCurrency}} </td>
-                    </ng-container>
-      
-                    <ng-container matColumnDef="rem_month">
-                      <th mat-header-cell *matHeaderCellDef > Month </th>
-                      <td mat-cell *matCellDef="let row"> {{row.remainingmonth}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>                         
-      
-                    <ng-container matColumnDef="rem_amt">
-                      <th mat-header-cell *matHeaderCellDef > Amount </th>
-                      <td mat-cell *matCellDef="let row"> {{row.remainingamount | formatAmount}} </td>
-                      <td mat-footer-cell *matFooterCellDef> {{amount?.kp.remaining | formatCurrency}}</td>
-                    </ng-container>
-      
-                    <ng-container matColumnDef="action" >
-                      <th mat-header-cell class="no-print" *matHeaderCellDef class="hide"> Action </th>
-                      <td mat-cell class="action-col no-print" *matCellDef="let row"> 
-                        <div class="button-row">                  
-                        <app-edit-btn [state]="row" [routerLink]="['con-staff-edit',row.id]" ></app-edit-btn>                              
-                        <app-delete-btn [state]="row" [routerLink]="['con-staff-delete',row.id]"></app-delete-btn>
-                        </div>
-                       </td>
-                      <td mat-footer-cell class="no-print" *matFooterCellDef> 
-                       
-                     
-                      </td>
-                    </ng-container>
-                    <ng-container matColumnDef="actionth" >
-                      <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
-                    </ng-container>
-      
-      
-      
-                    <ng-container matColumnDef="ctrtamt">
-                      <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="5"> Contract Value </th>
-                    </ng-container>
-                    <ng-container matColumnDef="previousinvc">
-                      <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Upto Previous Bill </th>
-                    </ng-container>
-                    <ng-container matColumnDef="currentinvc">
-                      <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> This Bill </th>
-                    </ng-container>
-                    <ng-container matColumnDef="cumulativeinvc">
-                      <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Cummulative Bill</th>
-                    </ng-container>
-                    <ng-container matColumnDef="reminvc">
-                      <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2">Remaining </th>
-                    </ng-container>
-      
-                    <tr mat-header-row *matHeaderRowDef="['no','desgth','nameth','ctrtamt','previousinvc','currentinvc','cumulativeinvc','reminvc','actionth']"></tr>
-                  <tr mat-header-row *matHeaderRowDef="dataColumn;"></tr>
-                  <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>   
-                  <tr mat-footer-row *matFooterRowDef="dataColumn"></tr>                  
-                </table>
-            </section>
-            </div>
-        </mat-card-content>
-    </mat-card> 
-    </div>
-    <div class="container hscroll-container">
-    <mat-card>
-      <mat-card-title>
-          <h6>B. Sub Professional Staff</h6>
-      </mat-card-title>
-      <mat-card-content>
+  <mat-card>
+    <mat-card-title>
+      <h6>Appendix C-3:Breakdown of Costs
+        <button *ngIf="pagePermissions.canCreate" class="title-btn float-end no-print " routerLink="staff-create" type="button" mat-mini-fab
+          color="primary">
+          <mat-icon>add box</mat-icon> Staff
+        </button>
+
+      </h6>
+    </mat-card-title>
+    <mat-card-content>
+      <div class="load-wrap" *ngIf="isLoading">
+        <app-loader [IsLoading]="isLoading"></app-loader>
+      </div>
+      <div class="wrapper" *ngIf="!isLoading">
+
+        <h6>I-Renumeration for Local Professional Staff</h6>
+        <h6>A. Key Personal</h6>
         <section class="inv-container mat-elevation-z8" tabindex="0">
-        <table mat-table [dataSource]="spsdataSource" >
-        
+          <table mat-table [dataSource]="dataSource">
+
             <ng-container matColumnDef="serial">
               <th mat-header-cell *matHeaderCellDef class="hide">Sr. No</th>
               <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
@@ -182,297 +27,446 @@
             </ng-container>
             <ng-container matColumnDef="no">
               <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Sr. No</th>
-            </ng-container>       
-         
+            </ng-container>
+
             <ng-container matColumnDef="desg">
               <th mat-header-cell *matHeaderCellDef class="hide"> Position </th>
               <td mat-cell *matCellDef="let element"> {{element.designation}} </td>
               <td mat-footer-cell *matFooterCellDef> Total</td>
             </ng-container>
             <ng-container matColumnDef="desgth">
-                <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2"></th>
-                </ng-container>
+              <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2"></th>
+            </ng-container>
             <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef class="hide"> Name </th>
-                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-                <td mat-footer-cell *matFooterCellDef></td>
-              </ng-container>
-         
+              <th mat-header-cell *matHeaderCellDef class="hide"> Name </th>
+              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
             <ng-container matColumnDef="nameth">
-                <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2"></th>
-                </ng-container>
-               
-                <ng-container matColumnDef="contract_rate">
-                  <th mat-header-cell *matHeaderCellDef > Rate </th>
-                  <td mat-cell *matCellDef="let row"> {{row.rate}} </td>
-                  <td mat-footer-cell *matFooterCellDef> </td>
-                </ng-container>       
-                <ng-container matColumnDef="const">
-                  <th mat-header-cell *matHeaderCellDef > Const </th>
-                  <td mat-cell *matCellDef="let row"> {{row.constructionperiod}} </td>
-                  <td mat-footer-cell *matFooterCellDef> </td>
-                </ng-container>
-                <ng-container matColumnDef="main">
-                  <th mat-header-cell *matHeaderCellDef > O&M </th>
-                  <td mat-cell *matCellDef="let row"> {{row.oandmperiod}} </td>
-                  <td mat-footer-cell *matFooterCellDef> </td>
-                </ng-container>
-                <ng-container matColumnDef="totalconstmain">
-                  <th mat-header-cell *matHeaderCellDef > Const+O&M </th>
-                  <td mat-cell *matCellDef="let row"> {{row.totalmonths}} </td>
-                  <td mat-footer-cell *matFooterCellDef> </td>
-                </ng-container> 
-  
-                <ng-container matColumnDef="cont_amt">
-                  <th mat-header-cell *matHeaderCellDef > Total </th>
-                  <td mat-cell *matCellDef="let row"> {{row.contractamount | formatAmount}} </td>
-                  <td mat-footer-cell *matFooterCellDef> {{amount?.sps.total | formatCurrency}}  </td>
-                </ng-container> 
-  
-                <ng-container matColumnDef="prev_month">
-                  <th mat-header-cell *matHeaderCellDef > Month </th>
-                  <td mat-cell *matCellDef="let row"> {{row.previousbillmonths}} </td>
-                  <td mat-footer-cell *matFooterCellDef> </td>
-                </ng-container>                         
-  
-                <ng-container matColumnDef="prev_amt">
-                  <th mat-header-cell *matHeaderCellDef > Amount </th>
-                  <td mat-cell *matCellDef="let row"> {{row.previousbill | formatAmount}} </td>
-                  <td mat-footer-cell *matFooterCellDef>  {{amount?.sps.previous | formatCurrency}}</td>
-                </ng-container>
-  
-                <ng-container matColumnDef="curr_month">
-                  <th mat-header-cell *matHeaderCellDef > Month </th>
-                  <td mat-cell *matCellDef="let row"> {{row.currentbillmonths}} </td>
-                  <td mat-footer-cell *matFooterCellDef> </td>
-                </ng-container>                         
-  
-                <ng-container matColumnDef="curr_amt">
-                  <th mat-header-cell *matHeaderCellDef > Amount </th>
-                  <td mat-cell *matCellDef="let row"> {{row.currentbill | formatAmount}} </td>
-                  <td mat-footer-cell *matFooterCellDef>  {{amount?.sps.current | formatCurrency}}</td>
-                </ng-container>
-                <ng-container matColumnDef="comlt_month">
-                  <th mat-header-cell *matHeaderCellDef > Month </th>
-                  <td mat-cell *matCellDef="let row"> {{row.commulativemonth | number:'1.3-3'}} </td>
-                  <td mat-footer-cell *matFooterCellDef> </td>
-                </ng-container>                         
-  
-                <ng-container matColumnDef="comlt_amt">
-                  <th mat-header-cell *matHeaderCellDef > Amount </th>
-                  <td mat-cell *matCellDef="let row"> {{row.commulativeAmount | formatAmount}} </td>
-                  <td mat-footer-cell *matFooterCellDef>  {{ (amount?.sps?.commulative ?? 0) | formatCurrency}}</td>
-                </ng-container>
-  
-                <ng-container matColumnDef="rem_month">
-                  <th mat-header-cell *matHeaderCellDef > Month </th>
-                  <td mat-cell *matCellDef="let row"> {{row.remainingmonth}} </td>
-                  <td mat-footer-cell *matFooterCellDef> </td>
-                </ng-container>                         
-  
-                <ng-container matColumnDef="rem_amt">
-                  <th mat-header-cell *matHeaderCellDef > Amount </th>
-                  <td mat-cell *matCellDef="let row"> {{row.remainingamount | formatAmount}} </td>
-                  <td mat-footer-cell *matFooterCellDef> {{amount?.sps.remaining | formatCurrency}} </td>
-                </ng-container>
-  
-                <ng-container matColumnDef="action" >
-                  <th mat-header-cell class="no-print"  *matHeaderCellDef class="hide"> Action </th>
-                  <td mat-cell class="action-col no-print" *matCellDef="let row"> 
-                    <div class="button-row">                  
-                    <app-edit-btn [state]="row" [routerLink]="['con-staff-edit',row.id]" ></app-edit-btn>                              
-                    <app-delete-btn [state]="row" [routerLink]="['con-staff-delete',row.id]"></app-delete-btn>
-                    </div>
-                   </td>
-                  <td mat-footer-cell class="no-print"  *matFooterCellDef> 
-                   
-                 
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="actionth" >
-                  <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
-                </ng-container>
-  
-  
-  
-                <ng-container matColumnDef="ctrtamt">
-                  <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="5"> Contract Value </th>
-                </ng-container>
-                <ng-container matColumnDef="previousinvc">
-                  <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Upto Previous Bill </th>
-                </ng-container>
-                <ng-container matColumnDef="currentinvc">
-                  <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> This Bill </th>
-                </ng-container>
-                <ng-container matColumnDef="cumulativeinvc">
-                  <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Cumulative Bill</th>
-                </ng-container>
-                <ng-container matColumnDef="reminvc">
-                  <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2">Remaining </th>
-                </ng-container>
-  
-                <tr mat-header-row *matHeaderRowDef="['no','desgth','nameth','ctrtamt','previousinvc','currentinvc','cumulativeinvc','reminvc','actionth']"></tr>
-              <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>
-              <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>   
-              <tr mat-footer-row *matFooterRowDef="dataColumn"></tr>                  
-            </table>
-            </section>
-      </mat-card-content>
-    </mat-card>
-    </div>
-    <div class="container hscroll-container">
-      <mat-card>
-          <mat-card-title>
-              <h6>II-Support Staff</h6>
-          </mat-card-title>
-          <mat-card-content>
-            <section class="inv-container mat-elevation-z8" tabindex="0">
-              <table mat-table [dataSource]="ssdataSource" >
-        
-                <ng-container matColumnDef="serial">
-                  <th mat-header-cell *matHeaderCellDef class="hide">Sr. No</th>
-                  <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
-                  <td mat-footer-cell *matFooterCellDef> </td>
-                </ng-container>
-                <ng-container matColumnDef="no">
-                  <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Sr. No</th>
-                </ng-container>       
-             
-                <ng-container matColumnDef="desg">
-                  <th mat-header-cell *matHeaderCellDef class="hide"> Position </th>
-                  <td mat-cell *matCellDef="let element"> {{element.designation}} </td>
-                  <td mat-footer-cell *matFooterCellDef> Total</td>
-                </ng-container>
-                <ng-container matColumnDef="desgth">
-                    <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Position</th>
-                    </ng-container>
-                <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef class="hide"> Name </th>
-                    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-                    <td mat-footer-cell *matFooterCellDef> </td>
-                  </ng-container>
-             
-                <ng-container matColumnDef="nameth">
-                    <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Name</th>
-                    </ng-container>
-                   
-                    <ng-container matColumnDef="contract_rate">
-                      <th mat-header-cell *matHeaderCellDef > Rate </th>
-                      <td mat-cell *matCellDef="let row"> {{row.rate}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>       
-                    <ng-container matColumnDef="const">
-                      <th mat-header-cell *matHeaderCellDef > Const </th>
-                      <td mat-cell *matCellDef="let row"> {{row.constructionperiod}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>
-                    <ng-container matColumnDef="main">
-                      <th mat-header-cell *matHeaderCellDef > O&M </th>
-                      <td mat-cell *matCellDef="let row"> {{row.oandmperiod}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>
-                    <ng-container matColumnDef="totalconstmain">
-                      <th mat-header-cell *matHeaderCellDef > Const+O&M </th>
-                      <td mat-cell *matCellDef="let row"> {{row.totalmonths}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container> 
-      
-                    <ng-container matColumnDef="cont_amt">
-                      <th mat-header-cell *matHeaderCellDef > Total </th>
-                      <td mat-cell *matCellDef="let row"> {{row.contractamount | formatAmount}} </td>
-                      <td mat-footer-cell *matFooterCellDef> {{amount?.ss.total | formatCurrency}} </td>
-                    </ng-container> 
-      
-                    <ng-container matColumnDef="prev_month">
-                      <th mat-header-cell *matHeaderCellDef > Month </th>
-                      <td mat-cell *matCellDef="let row"> {{row.previousbillmonths}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>                         
-      
-                    <ng-container matColumnDef="prev_amt">
-                      <th mat-header-cell *matHeaderCellDef > Amount </th>
-                      <td mat-cell *matCellDef="let row"> {{row.previousbill | formatAmount}} </td>
-                      <td mat-footer-cell *matFooterCellDef> {{amount?.ss.previous | formatCurrency}} </td>
-                    </ng-container>
-      
-                    <ng-container matColumnDef="curr_month">
-                      <th mat-header-cell *matHeaderCellDef > Month </th>
-                      <td mat-cell *matCellDef="let row"> {{row.currentbillmonths}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>                         
-      
-                    <ng-container matColumnDef="curr_amt">
-                      <th mat-header-cell *matHeaderCellDef > Amount </th>
-                      <td mat-cell *matCellDef="let row"> {{row.currentbill | formatAmount}} </td>
-                      <td mat-footer-cell *matFooterCellDef> {{amount?.ss.current | formatCurrency}} </td>
-                    </ng-container>
-                    <ng-container matColumnDef="comlt_month">
-                      <th mat-header-cell *matHeaderCellDef > Month </th>
-                      <td mat-cell *matCellDef="let row"> {{row.commulativemonth | number:'1.3-3'}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>                         
-      
-                    <ng-container matColumnDef="comlt_amt">
-                      <th mat-header-cell *matHeaderCellDef > Amount </th>
-                      <td mat-cell *matCellDef="let row"> {{row.commulativeAmount | formatAmount}} </td>
-                      <td mat-footer-cell *matFooterCellDef> {{amount?.ss.commulative | formatCurrency}} </td>
-                    </ng-container>
-      
-                    <ng-container matColumnDef="rem_month">
-                      <th mat-header-cell *matHeaderCellDef > Month </th>
-                      <td mat-cell *matCellDef="let row"> {{row.remainingmonth}} </td>
-                      <td mat-footer-cell *matFooterCellDef> </td>
-                    </ng-container>                         
-      
-                    <ng-container matColumnDef="rem_amt">
-                      <th mat-header-cell *matHeaderCellDef > Amount </th>
-                      <td mat-cell *matCellDef="let row"> {{row.remainingamount | formatAmount}} </td>
-                      <td mat-footer-cell *matFooterCellDef> {{amount?.ss.remaining | formatCurrency}} </td>
-                    </ng-container>
-      
-                    <ng-container matColumnDef="action" >
-                      <th mat-header-cell class="no-print" *matHeaderCellDef class="hide"> Action </th>
-                      <td mat-cell class="action-col no-print" *matCellDef="let row"> 
-                        <div class="button-row">                  
-                        <app-edit-btn [state]="row" [routerLink]="['con-staff-edit',row.id]" ></app-edit-btn>                              
-                        <app-delete-btn [state]="row" [routerLink]="['con-staff-delete',row.id]"></app-delete-btn>
-                        </div>
-                       </td>
-                      <td mat-footer-cell class="no-print" *matFooterCellDef> 
-                       
-                     
-                      </td>
-                    </ng-container>
-                    <ng-container matColumnDef="actionth" >
-                      <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
-                    </ng-container>
-      
-      
-      
-                    <ng-container matColumnDef="ctrtamt">
-                      <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="5"> Contract Value </th>
-                    </ng-container>
-                    <ng-container matColumnDef="previousinvc">
-                      <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Upto Previous Bill </th>
-                    </ng-container>
-                    <ng-container matColumnDef="currentinvc">
-                      <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> This Bill </th>
-                    </ng-container>
-                    <ng-container matColumnDef="cumulativeinvc">
-                      <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Cumulative Bill</th>
-                    </ng-container>
-                    <ng-container matColumnDef="reminvc">
-                      <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2">Remaining </th>
-                    </ng-container>
-      
-                    <tr mat-header-row *matHeaderRowDef="['no','desgth','nameth','ctrtamt','previousinvc','currentinvc','cumulativeinvc','reminvc','actionth']"></tr>
-                  <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>
-                  <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>   
-                  <tr mat-footer-row *matFooterRowDef="dataColumn"></tr>                  
-              </table>
-            </section>
-          </mat-card-content>
-      </mat-card>
-    
-    </div>
-    
+              <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2"></th>
+            </ng-container>
+
+            <ng-container matColumnDef="contract_rate">
+              <th mat-header-cell *matHeaderCellDef> Rate </th>
+              <td mat-cell *matCellDef="let row"> {{row.rate | formatAmount}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="const">
+              <th mat-header-cell *matHeaderCellDef> Const </th>
+              <td mat-cell *matCellDef="let row"> {{row.constructionperiod}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="main">
+              <th mat-header-cell *matHeaderCellDef> O&M </th>
+              <td mat-cell *matCellDef="let row"> {{row.oandmperiod}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="totalconstmain">
+              <th mat-header-cell *matHeaderCellDef> Const+O&M</th>
+              <td mat-cell *matCellDef="let row"> {{row.totalmonths}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="cont_amt">
+              <th mat-header-cell *matHeaderCellDef> Total </th>
+              <td mat-cell *matCellDef="let row"> {{row.contractamount | formatAmount}} </td>
+              <td mat-footer-cell *matFooterCellDef>{{amount?.kp.total | formatCurrency}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="prev_month">
+              <th mat-header-cell *matHeaderCellDef> Month </th>
+              <td mat-cell *matCellDef="let row"> {{row.previousbillmonths}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="prev_amt">
+              <th mat-header-cell *matHeaderCellDef> Amount </th>
+              <td mat-cell *matCellDef="let row"> {{row.previousbill}} </td>
+              <td mat-footer-cell *matFooterCellDef> {{amount?.kp.previous | formatCurrency}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="curr_month">
+              <th mat-header-cell *matHeaderCellDef> Month </th>
+              <td mat-cell *matCellDef="let row"> {{row.currentbillmonths}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="curr_amt">
+              <th mat-header-cell *matHeaderCellDef> Amount </th>
+              <td mat-cell *matCellDef="let row"> {{row.currentbill | formatAmount}} </td>
+              <td mat-footer-cell *matFooterCellDef>{{amount?.kp.current | formatCurrency}} </td>
+            </ng-container>
+            <ng-container matColumnDef="comlt_month">
+              <th mat-header-cell *matHeaderCellDef> Month </th>
+              <td mat-cell *matCellDef="let row"> {{row.commulativemonth | number:'1.3-3'}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="comlt_amt">
+              <th mat-header-cell *matHeaderCellDef> Amount </th>
+              <td mat-cell *matCellDef="let row"> {{row.commulativeAmount | formatAmount}} </td>
+              <td mat-footer-cell *matFooterCellDef>{{amount?.kp.commulative | formatCurrency}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="rem_month">
+              <th mat-header-cell *matHeaderCellDef> Month </th>
+              <td mat-cell *matCellDef="let row"> {{row.remainingmonth}} </td>
+              <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="rem_amt">
+              <th mat-header-cell *matHeaderCellDef> Amount </th>
+              <td mat-cell *matCellDef="let row"> {{row.remainingamount | formatAmount}} </td>
+              <td mat-footer-cell *matFooterCellDef> {{amount?.kp.remaining | formatCurrency}}</td>
+            </ng-container>
+
+            <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="action">
+              <th mat-header-cell class="no-print" *matHeaderCellDef class="hide"> Action </th>
+              <td mat-cell class="no-print action-col" *matCellDef="let row">
+                <div class="button-row">
+                  <app-edit-btn *ngIf="pagePermissions?.canUpdate" [state]="row"
+                    [routerLink]="['con-staff-edit',row.id]"></app-edit-btn>
+
+                  <app-delete-btn *ngIf="pagePermissions?.canDelete" [state]="row"
+                    [routerLink]="['con-staff-delete',row.id]"></app-delete-btn>
+                </div>
+              </td>
+              <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="actionth">
+              <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
+            </ng-container>
+            <ng-container matColumnDef="ctrtamt">
+              <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="5"> Contract Value </th>
+            </ng-container>
+            <ng-container matColumnDef="previousinvc">
+              <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Upto Previous Bill </th>
+            </ng-container>
+            <ng-container matColumnDef="currentinvc">
+              <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> This Bill </th>
+            </ng-container>
+            <ng-container matColumnDef="cumulativeinvc">
+              <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Cummulative Bill</th>
+            </ng-container>
+            <ng-container matColumnDef="reminvc">
+              <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2">Remaining </th>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="headerColumn">
+            </tr>
+            <tr mat-header-row *matHeaderRowDef="dataColumn;"></tr>
+            <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>
+            <tr mat-footer-row *matFooterRowDef="dataColumn"></tr>
+          </table>
+        </section>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+<div class="container hscroll-container">
+  <mat-card>
+    <mat-card-title>
+      <h6>B. Sub Professional Staff</h6>
+    </mat-card-title>
+    <mat-card-content>
+      <section class="inv-container mat-elevation-z8" tabindex="0">
+        <table mat-table [dataSource]="spsdataSource">
+
+          <ng-container matColumnDef="serial">
+            <th mat-header-cell *matHeaderCellDef class="hide">Sr. No</th>
+            <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+          <ng-container matColumnDef="no">
+            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Sr. No</th>
+          </ng-container>
+
+          <ng-container matColumnDef="desg">
+            <th mat-header-cell *matHeaderCellDef class="hide"> Position </th>
+            <td mat-cell *matCellDef="let element"> {{element.designation}} </td>
+            <td mat-footer-cell *matFooterCellDef> Total</td>
+          </ng-container>
+          <ng-container matColumnDef="desgth">
+            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2"></th>
+          </ng-container>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef class="hide"> Name </th>
+            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+
+          <ng-container matColumnDef="nameth">
+            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2"></th>
+          </ng-container>
+
+          <ng-container matColumnDef="contract_rate">
+            <th mat-header-cell *matHeaderCellDef> Rate </th>
+            <td mat-cell *matCellDef="let row"> {{row.rate}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+          <ng-container matColumnDef="const">
+            <th mat-header-cell *matHeaderCellDef> Const </th>
+            <td mat-cell *matCellDef="let row"> {{row.constructionperiod}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+          <ng-container matColumnDef="main">
+            <th mat-header-cell *matHeaderCellDef> O&M </th>
+            <td mat-cell *matCellDef="let row"> {{row.oandmperiod}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+          <ng-container matColumnDef="totalconstmain">
+            <th mat-header-cell *matHeaderCellDef> Const+O&M </th>
+            <td mat-cell *matCellDef="let row"> {{row.totalmonths}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+
+          <ng-container matColumnDef="cont_amt">
+            <th mat-header-cell *matHeaderCellDef> Total </th>
+            <td mat-cell *matCellDef="let row"> {{row.contractamount | formatAmount}} </td>
+            <td mat-footer-cell *matFooterCellDef> {{amount?.sps.total | formatCurrency}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="prev_month">
+            <th mat-header-cell *matHeaderCellDef> Month </th>
+            <td mat-cell *matCellDef="let row"> {{row.previousbillmonths}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+
+          <ng-container matColumnDef="prev_amt">
+            <th mat-header-cell *matHeaderCellDef> Amount </th>
+            <td mat-cell *matCellDef="let row"> {{row.previousbill | formatAmount}} </td>
+            <td mat-footer-cell *matFooterCellDef> {{amount?.sps.previous | formatCurrency}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="curr_month">
+            <th mat-header-cell *matHeaderCellDef> Month </th>
+            <td mat-cell *matCellDef="let row"> {{row.currentbillmonths}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+
+          <ng-container matColumnDef="curr_amt">
+            <th mat-header-cell *matHeaderCellDef> Amount </th>
+            <td mat-cell *matCellDef="let row"> {{row.currentbill | formatAmount}} </td>
+            <td mat-footer-cell *matFooterCellDef> {{amount?.sps.current | formatCurrency}}</td>
+          </ng-container>
+          <ng-container matColumnDef="comlt_month">
+            <th mat-header-cell *matHeaderCellDef> Month </th>
+            <td mat-cell *matCellDef="let row"> {{row.commulativemonth | number:'1.3-3'}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+
+          <ng-container matColumnDef="comlt_amt">
+            <th mat-header-cell *matHeaderCellDef> Amount </th>
+            <td mat-cell *matCellDef="let row"> {{row.commulativeAmount | formatAmount}} </td>
+            <td mat-footer-cell *matFooterCellDef> {{ (amount?.sps?.commulative ?? 0) | formatCurrency}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="rem_month">
+            <th mat-header-cell *matHeaderCellDef> Month </th>
+            <td mat-cell *matCellDef="let row"> {{row.remainingmonth}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+
+          <ng-container matColumnDef="rem_amt">
+            <th mat-header-cell *matHeaderCellDef> Amount </th>
+            <td mat-cell *matCellDef="let row"> {{row.remainingamount | formatAmount}} </td>
+            <td mat-footer-cell *matFooterCellDef> {{amount?.sps.remaining | formatCurrency}} </td>
+          </ng-container>
+
+          <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="action">
+            <th mat-header-cell class="no-print" *matHeaderCellDef class="hide"> Action </th>
+            <td mat-cell class="no-print action-col" *matCellDef="let row">
+              <div class="button-row">
+                <app-edit-btn *ngIf="pagePermissions?.canUpdate" [state]="row"
+                  [routerLink]="['con-staff-edit',row.id]"></app-edit-btn>
+
+                <app-delete-btn *ngIf="pagePermissions?.canDelete" [state]="row"
+                  [routerLink]="['con-staff-delete',row.id]"></app-delete-btn>
+              </div>
+            </td>
+            <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
+          </ng-container>
+          <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="actionth">
+            <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
+          </ng-container>
+
+
+          <ng-container matColumnDef="ctrtamt">
+            <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="5"> Contract Value </th>
+          </ng-container>
+          <ng-container matColumnDef="previousinvc">
+            <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Upto Previous Bill </th>
+          </ng-container>
+          <ng-container matColumnDef="currentinvc">
+            <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> This Bill </th>
+          </ng-container>
+          <ng-container matColumnDef="cumulativeinvc">
+            <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Cumulative Bill</th>
+          </ng-container>
+          <ng-container matColumnDef="reminvc">
+            <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2">Remaining </th>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="headerColumn">
+          </tr>
+          <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>
+          <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>
+          <tr mat-footer-row *matFooterRowDef="dataColumn"></tr>
+        </table>
+      </section>
+    </mat-card-content>
+  </mat-card>
+</div>
+<div class="container hscroll-container">
+  <mat-card>
+    <mat-card-title>
+      <h6>II-Support Staff</h6>
+    </mat-card-title>
+    <mat-card-content>
+      <section class="inv-container mat-elevation-z8" tabindex="0">
+        <table mat-table [dataSource]="ssdataSource">
+
+          <ng-container matColumnDef="serial">
+            <th mat-header-cell *matHeaderCellDef class="hide">Sr. No</th>
+            <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+          <ng-container matColumnDef="no">
+            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Sr. No</th>
+          </ng-container>
+
+          <ng-container matColumnDef="desg">
+            <th mat-header-cell *matHeaderCellDef class="hide"> Position </th>
+            <td mat-cell *matCellDef="let element"> {{element.designation}} </td>
+            <td mat-footer-cell *matFooterCellDef> Total</td>
+          </ng-container>
+          <ng-container matColumnDef="desgth">
+            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Position</th>
+          </ng-container>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef class="hide"> Name </th>
+            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+
+          <ng-container matColumnDef="nameth">
+            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Name</th>
+          </ng-container>
+
+          <ng-container matColumnDef="contract_rate">
+            <th mat-header-cell *matHeaderCellDef> Rate </th>
+            <td mat-cell *matCellDef="let row"> {{row.rate}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+          <ng-container matColumnDef="const">
+            <th mat-header-cell *matHeaderCellDef> Const </th>
+            <td mat-cell *matCellDef="let row"> {{row.constructionperiod}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+          <ng-container matColumnDef="main">
+            <th mat-header-cell *matHeaderCellDef> O&M </th>
+            <td mat-cell *matCellDef="let row"> {{row.oandmperiod}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+          <ng-container matColumnDef="totalconstmain">
+            <th mat-header-cell *matHeaderCellDef> Const+O&M </th>
+            <td mat-cell *matCellDef="let row"> {{row.totalmonths}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+
+          <ng-container matColumnDef="cont_amt">
+            <th mat-header-cell *matHeaderCellDef> Total </th>
+            <td mat-cell *matCellDef="let row"> {{row.contractamount | formatAmount}} </td>
+            <td mat-footer-cell *matFooterCellDef> {{amount?.ss.total | formatCurrency}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="prev_month">
+            <th mat-header-cell *matHeaderCellDef> Month </th>
+            <td mat-cell *matCellDef="let row"> {{row.previousbillmonths}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+
+          <ng-container matColumnDef="prev_amt">
+            <th mat-header-cell *matHeaderCellDef> Amount </th>
+            <td mat-cell *matCellDef="let row"> {{row.previousbill | formatAmount}} </td>
+            <td mat-footer-cell *matFooterCellDef> {{amount?.ss.previous | formatCurrency}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="curr_month">
+            <th mat-header-cell *matHeaderCellDef> Month </th>
+            <td mat-cell *matCellDef="let row"> {{row.currentbillmonths}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+
+          <ng-container matColumnDef="curr_amt">
+            <th mat-header-cell *matHeaderCellDef> Amount </th>
+            <td mat-cell *matCellDef="let row"> {{row.currentbill | formatAmount}} </td>
+            <td mat-footer-cell *matFooterCellDef> {{amount?.ss.current | formatCurrency}} </td>
+          </ng-container>
+          <ng-container matColumnDef="comlt_month">
+            <th mat-header-cell *matHeaderCellDef> Month </th>
+            <td mat-cell *matCellDef="let row"> {{row.commulativemonth | number:'1.3-3'}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+
+          <ng-container matColumnDef="comlt_amt">
+            <th mat-header-cell *matHeaderCellDef> Amount </th>
+            <td mat-cell *matCellDef="let row"> {{row.commulativeAmount | formatAmount}} </td>
+            <td mat-footer-cell *matFooterCellDef> {{amount?.ss.commulative | formatCurrency}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="rem_month">
+            <th mat-header-cell *matHeaderCellDef> Month </th>
+            <td mat-cell *matCellDef="let row"> {{row.remainingmonth}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+          </ng-container>
+
+          <ng-container matColumnDef="rem_amt">
+            <th mat-header-cell *matHeaderCellDef> Amount </th>
+            <td mat-cell *matCellDef="let row"> {{row.remainingamount | formatAmount}} </td>
+            <td mat-footer-cell *matFooterCellDef> {{amount?.ss.remaining | formatCurrency}} </td>
+          </ng-container>
+          <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="action">
+            <th mat-header-cell class="no-print" *matHeaderCellDef class="hide"> Action </th>
+            <td mat-cell class="no-print action-col" *matCellDef="let row">
+              <div class="button-row">
+                <app-edit-btn *ngIf="pagePermissions?.canUpdate" [state]="row"
+                  [routerLink]="['con-staff-edit',row.id]"></app-edit-btn>
+
+                <app-delete-btn *ngIf="pagePermissions?.canDelete" [state]="row"
+                  [routerLink]="['con-staff-delete',row.id]"></app-delete-btn>
+              </div>
+            </td>
+            <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
+          </ng-container>
+          <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="actionth">
+            <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
+          </ng-container>
+          <ng-container matColumnDef="ctrtamt">
+            <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="5"> Contract Value </th>
+          </ng-container>
+          <ng-container matColumnDef="previousinvc">
+            <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Upto Previous Bill </th>
+          </ng-container>
+          <ng-container matColumnDef="currentinvc">
+            <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> This Bill </th>
+          </ng-container>
+          <ng-container matColumnDef="cumulativeinvc">
+            <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Cumulative Bill</th>
+          </ng-container>
+          <ng-container matColumnDef="reminvc">
+            <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2">Remaining </th>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="headerColumn">
+          </tr>
+          <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>
+          <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>
+          <tr mat-footer-row *matFooterRowDef="dataColumn"></tr>
+        </table>
+      </section>
+    </mat-card-content>
+  </mat-card>
+
+</div>

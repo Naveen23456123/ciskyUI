@@ -122,6 +122,17 @@ export class ProjectInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
+  getProjectIncomeDetailedSummary(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'Consultant/IncomeDetailed',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   updateProject(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'Consultant',
@@ -282,7 +293,7 @@ export class ProjectInterfaceService {
   }
   getProjectScopeDurationById(params: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
-      url: 'Consultant/ScopeDuration/'+params.id,
+      url: 'Consultant/ScopeDuration/'+params.id+'/'+params.invid,
       params: {},
       headers: true,
       guid: '',

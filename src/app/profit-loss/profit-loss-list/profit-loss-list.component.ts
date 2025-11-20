@@ -1,4 +1,4 @@
-import { Component, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -15,6 +15,8 @@ import { StateDataService } from '@app/shared/services/state-data.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { delay, finalize, forkJoin, of, Subscription, switchMap, take } from 'rxjs';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
+import { PdfViewerComponent } from '@app/shared/components/pdf-viewer/pdf-viewer.component';
+import { GeneratePdfService } from '@app/shared/services/generate-pdf.service';
 
 export type Row = { type: 'group'; label: string } | {
   id?: string;
@@ -37,6 +39,7 @@ export type Row = { type: 'group'; label: string } | {
 export class ProfitLossListComponent {
   itemsList: any[] = [];
   isLoading = true;
+  isPdfGenerating = false;
   pwdisplayedColumns: string[] = ['serial', 'projectid', 'name', 'monthly', 'commulative'];
   dataSource!: MatTableDataSource<any[]>;
   @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
@@ -48,7 +51,7 @@ export class ProfitLossListComponent {
   resultsLength!: number;
   detailsObj: any = { today: new Date() };
   scopes: any[] = [];
-
+  @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
   private defaultdialogoptions: MatDialogConfig = {
     disableClose: false,
     data: {},
@@ -56,7 +59,8 @@ export class ProfitLossListComponent {
   footerRow: string = 'totalfooter';
   constructor(private profitLossService: ProfitLossInterfaceService, private sessionService: SessionService,
     private commonService: CommonService, private paymentService: PaymentService, private helperService: HelperService,
-    private stateDataService: StateDataService, private notifyBarService: NotifyBarService) {
+    private stateDataService: StateDataService, private notifyBarService: NotifyBarService,
+  private pdfService:GeneratePdfService) {
     this.dataSource = new MatTableDataSource(this.itemsList);
   }
   ngOnInit() {
@@ -87,6 +91,7 @@ export class ProfitLossListComponent {
     };
     this.dialog.open(ProfitLossInvListComponent, config);
   }
+
   viewCommulative(data: any) {
     const config = this.defaultdialogoptions;
     config.minWidth = '80vw';
@@ -105,11 +110,6 @@ export class ProfitLossListComponent {
   private subscription: Subscription = new Subscription();
 
   readonly dialog = inject(MatDialog);
-
-
-
-
-
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
@@ -260,7 +260,7 @@ export class ProfitLossListComponent {
     this.keyToGroup.forEach((groupName, index) => {
       const sectionNumber = this.commonService.toRoman(index + 1);
       const sectionNumberLabel = `${sectionNumber} - `;
-      const groupHeader:any = {
+      const groupHeader: any = {
         type: 'group',
         label: `${sectionNumberLabel}${groupName.Name}`
       };
@@ -288,7 +288,7 @@ export class ProfitLossListComponent {
 
         beforeOverheadRow['total'] = '(-)' + this.commonService.roundValue(totalSum);
 
-        result.push({ type: 'spacer', name: ''});
+        result.push({ type: 'spacer', name: '' });
         result.push(beforeOverheadRow);
 
         // Reset accumulators
@@ -429,5 +429,20 @@ export class ProfitLossListComponent {
     this.detailsObj.totalexpense = this.commonService.roundValue(expenseRowTotal);
     return result;
   }
-
+  download() {
+    this.isPdfGenerating = true;
+    this.pdfService.generateAndGetPDF(this.pdfContent, 'Profit_Loss.pdf').then((pdf) => {
+      if (pdf) {
+        const config = this.defaultdialogoptions;
+        config.minWidth = '80vw';
+        config.data = {
+          url: false,
+          element: pdf
+        };
+        this.dialog.open(PdfViewerComponent, config);
+      }
+    }).finally(() => {
+      this.isPdfGenerating = false; 
+    });
+  }
 }

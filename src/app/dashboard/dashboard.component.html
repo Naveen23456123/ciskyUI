@@ -1,35 +1,13 @@
-<!-- 
-<div class="container mt-4">
-    <div class="row" >
-        <div class="col-md-4 d-flex flex-column justify-content-between bg-primary text-white p-3">
-            Rowspan Div (Takes full height)
-          </div>
-        <div class="col-md-8">
-            <div class="row">
-              <div class="col-12 bg-success text-white p-3 mb-2">
-                Row 1
-              </div>
-              <div class="col-12 bg-warning text-dark p-3">
-                Row 2
-              </div>
-            </div>
-          </div>
-    </div>
-  </div> -->
-
-
 <div class="container ">
-  <!-- Row 1: 3 columns -->
   <div class="row mb-3 ">
     <div class="col-md-4 wrapper pr-0">
-      <mat-card class="ht-100">
+      <mat-card class="ht-100 hover-border p-3">
         <mat-dialog-content class="mat-typography">
           <mat-card-content class="pad-0">
             <div class="load-wrap" *ngIf="isProjectCountLoading">
               <app-loader [IsLoading]="isProjectCountLoading"></app-loader>
             </div>
             <div class="wrapper">
-
               <div echarts [options]="projectCountOption" (chartClick)="onProjectCountClick($event)" class="demo-chart">
               </div>
             </div>
@@ -38,7 +16,7 @@
       </mat-card>
     </div>
     <div class="col-md-2 wrapper pr-0">
-      <mat-card class=" ht-100">
+      <mat-card class=" ht-100 hover-border p-3">
         <mat-dialog-content class="mat-typography">
           <mat-card-content class="pad-0">
             <div class="load-wrap" *ngIf="isOurRoleLoading">
@@ -52,86 +30,14 @@
       </mat-card>
     </div>
     <div class="col-md-6 wrapper">
-      <mat-card class=" ht-100">
+      <mat-card class=" ht-100 hover-border p-3">
         <mat-dialog-content class="mat-typography">
           <mat-card-content class="" style="padding-left:4%;">
             <div class="load-wrap" *ngIf="isfinanceLoading">
               <app-loader [IsLoading]="isfinanceLoading"></app-loader>
             </div>
             <div class="row">
-              <!-- <div class="col-md-3 d-flex flex-column justify-content-between pr-0">
-                            <div echarts class="demo-chart" [options]="incomeoptions" (chartClick)="onChartClick($event)" ></div>
-                          </div>
-                        <div class="col-md-9">
-                            <div class="row">
-                              <div class="col-12 ">
-                                <div class="col-md-12">
-                                   
-                                    <span class="cost-txt ">Total Project(s) Cost </span>
-                                </div>
-                                <div class="col-md-12">
-                                    <span class="total-cost-val">{{finance?.totalcost ??0 | formatCurrency}} </span>
-                                </div>
-                              </div>
-                            
-                            </div><hr>
-                            <div class="row">
-                                <div class="col-6 ">
-                                    <div class="col-md-12">
-                                      
-                                        <span class="cost-txt ">Total Income </span>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <span class="cost-val">{{finance?.totalincome ??0 | formatCurrency}} </span>
-                                    </div>
-                                    
-                                </div>                                                              
-                                <div class="col-6 ">
-                                    <div class="col-md-12">
-                                        
-                                        <span class="cost-txt ">Total Expense </span>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <span class="cost-val">{{finance?.expenseTotal ??0 | formatCurrency}} </span>
-                                    </div>
-                                  </div>
-                              </div>
-                              <hr>
-                              <div class="row">
-                                <div class="col-6  pr-0">
-                                    <div class="col-md-12">  
-                                        <span class="cost-txt ">{{finance?.inc_latestMonth}} Income </span><br>                                     
-                                        <span class="cm-val uppercase">{{finance?.inc_latestTotal ??0 | formatCurrency}} </span>
-                                        <span class="{{ getPercentageChange(finance?.inc_latestTotal, finance.inc_lastTotal).status}}">{{ getPercentageChange(finance?.inc_latestTotal, finance.inc_lastTotal).percent +'%'}}
-                                            <mat-icon>
-                                              {{ getPercentageChange(finance?.inc_latestTotal, finance.inc_lastTotal).status=='up'?'arrow_drop_up':'arrow_drop_down'}}
-                                            </mat-icon>
-                                        </span>
-                                    </div>
-                                    <hr >
-                                    <div class="col-md-12 ">
-                                        <span class="cm-val pb-0 pt-0">{{finance?.inc_lastTotal ??0 | formatCurrency}} </span>
-                                        <span class="lm-val">({{finance?.inc_lastMonth}})</span>
-                                    </div>                                    
-                                </div>                                                              
-                                <div class="col-6  ">
-                                    <div class="col-md-12">
-                                        <span class="cost-txt ">{{finance?.exp_latestMonth}} Expense </span><br>
-                                        <span class="cm-val uppercase">{{finance.exp_latestTotal ??0 | formatCurrency}} </span>
-                                        <span  class="{{ getPercentageChange(finance?.exp_latestTotal, finance.exp_lastTotal).status}}">{{ getPercentageChange(finance?.exp_latestTotal, finance.exp_lastTotal).percent +'%'}}
-                                          <mat-icon>
-                                            {{ getPercentageChange(finance?.exp_latestTotal, finance.exp_lastTotal).status=='up'?'arrow_drop_up':'arrow_drop_down'}}
-                                          </mat-icon>
-                                        </span>
-                                    </div>
-                                    <hr >
-                                    <div class="col-md-12">
-                                        <span class="cm-val pb-0 pt-0">{{finance.exp_lastTotal ??0 | formatCurrency}} </span>
-                                        <span class="lm-val">({{finance?.exp_lastMonth}})</span>
-                                    </div>
-                                  </div>
-                              </div>
-                          </div> -->
+
               <div class="">
                 <div class="row g-4 align-items-center">
 
@@ -140,13 +46,14 @@
                   </div>
 
                   <div class="col-md-9">
-                    <!-- <div class="finance-title">Finances</div> -->
-
                     <div class="d-flex justify-content-between">
                       <div>
                         <div class="sub-label">Total Project(s) Cost</div>
                         <div class="amount">{{finance?.totalcost ??0 | formatCurrency}}</div>
                       </div>
+                      <button color="primary me-3" (click)="incomeDetails()" mat-icon-button>
+                        <mat-icon class="wd-auto">visibility</mat-icon>
+                      </button>
                     </div>
 
                     <div class="divider"></div>
@@ -165,17 +72,18 @@
                     <div class="divider"></div>
 
                     <div class="row text-center">
-                      <div class="col-6">
+                      <div class="col-6 border-end">
                         <div class="sub-label">{{finance?.inc_latestMonth}} Income</div>
-                        <div class="amount">{{finance?.inc_latestTotal ??0 | formatCurrency}} <span
-                            class="highlight">0%</span></div>
+                        <div class="amount">{{finance?.inc_latestTotal ??0 | formatCurrency}} <span class="up"> </span>
+                        </div>
                         <div class="sub-label mt-1">{{finance?.inc_lastTotal ??0 | formatCurrency}}
                           ({{finance?.inc_lastMonth}})</div>
+
                       </div>
                       <div class="col-6">
                         <div class="sub-label">{{finance?.exp_latestMonth}} Expense</div>
-                        <div class="amount">{{finance.exp_latestTotal ??0 | formatCurrency}} <span
-                            class="down">100%</span></div>
+                        <div class="amount">{{finance.exp_latestTotal ??0 | formatCurrency}} <span class="down"></span>
+                        </div>
                         <div class="sub-label mt-1">{{finance.exp_lastTotal ??0 | formatCurrency}}
                           ({{finance?.exp_lastMonth}})</div>
                       </div>
@@ -192,7 +100,7 @@
   </div>
   <div class="row mb-3">
     <div class="col-md-9 wrapper pr-0">
-      <mat-card>
+      <mat-card class="hover-border p-3">
         <mat-dialog-content class="mat-typography">
           <mat-card-content class="pad-0">
             <div class="load-wrap" *ngIf="isexpenseLoading">
@@ -201,11 +109,10 @@
             <div class="">
               <div class="d-flex align-items-center justify-content-between">
                 <h4 class="text-center flex-grow-1 mb-0 gph-head">Expense(s)</h4>
-                <!-- <button class="btn btn-primary ms-3">Add Expense</button> -->
                 <button color="primary me-3" (click)="expenseDetails()" mat-icon-button>
                   <mat-icon class="wd-auto">visibility</mat-icon>
                 </button>
-              
+
               </div>
 
               <div echarts #chartRef class="expense-chart" [options]="expenseoption"
@@ -218,7 +125,7 @@
     </div>
 
     <div class="col-md-3 wrapper">
-      <mat-card class=" ht-100">
+      <mat-card class=" ht-100 hover-border p-3">
         <mat-dialog-content class="mat-typography">
           <mat-card-content class="pad-0">
             <div class="load-wrap" *ngIf="isletterStatusLoading">
@@ -232,11 +139,44 @@
       </mat-card>
     </div>
   </div>
+  <div class="row mb-3">
+    <div class="col-md-12 wrapper ">
+      <mat-card class="hover-border p-3">
+        <mat-dialog-content class="">
+          <mat-card-content class="pad-0">
+            <div class="load-wrap" *ngIf="inIncExpLoading">
+              <app-loader [IsLoading]="inIncExpLoading"></app-loader>
+            </div>
+            <div class="wrapper">
+              <div class="row ">
+                <div class="d-flex align-items-center justify-content-between">
+                  <!-- Center using absolute positioning wrapper -->
+                  <div class="position-relative w-100 text-center">
+                    <h5 class="gph-head">Income ({{totalIncome | formatCurrency}}) vs Expense ({{totalexpense |
+                      formatCurrency}})</h5>
+                  </div>
+                  <app-financial-date-filters class="me-4" [initialEmit]="false" [showFinancial]="true"
+                    [showQuarterly]="false" [isSearchBtn]="false" [emitOnFinanceChange]="true" [showCustom]="false"
+                    (onValueChange)="dateChange($event)">
+                  </app-financial-date-filters>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div echarts class="letter-chart" [options]="incomeExpenseOption"></div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-dialog-content>
+      </mat-card>
+    </div>
 
+  </div>
 
   <div class="row mb-3">
     <div class="col-md-12 wrapper ">
-      <mat-card>
+      <mat-card class="hover-border p-3">
         <mat-dialog-content class="">
           <mat-card-content class="pad-0">
             <div class="load-wrap" *ngIf="isLetterCountLoading">
@@ -254,11 +194,9 @@
     </div>
 
   </div>
-
-  <!-- Row 3: 1 full-width column -->
   <div class="row mb-3">
     <div class="col-md-3 wrapper pr-0">
-      <mat-card class="ht-100">
+      <mat-card class="ht-100 hover-border p-3">
         <mat-dialog-content class="mat-typography">
           <mat-card-content class="pad-0">
             <div class="load-wrap" *ngIf="isEotLoading">
@@ -285,7 +223,7 @@
       </mat-card>
     </div>
     <div class="col-md-3 wrapper pr-0">
-      <mat-card class=" ht-100">
+      <mat-card class=" ht-100 hover-border p-3">
         <mat-dialog-content class="mat-typography">
           <mat-card-content class="pad-0">
             <div class="load-wrap" *ngIf="isCosLoading">
@@ -310,7 +248,7 @@
       </mat-card>
     </div>
     <div class="col-md-3 wrapper pr-0">
-      <mat-card class=" ht-100">
+      <mat-card class=" ht-100 hover-border p-3">
         <mat-dialog-content class="mat-typography">
           <mat-card-content class="pad-0">
             <div class="load-wrap" *ngIf="isEmpTypeLoading">
@@ -335,7 +273,7 @@
       </mat-card>
     </div>
     <div class="col-md-3 wrapper ">
-      <mat-card class=" h-100 scrollable-div">
+      <mat-card class=" h-100 scrollable-div hover-border p-3">
 
         <mat-card-content class="pad-0">
           <div class="load-wrap" *ngIf="isVehicleDataLoading">
@@ -380,10 +318,9 @@
     </div>
   </div>
 
-  <!-- Row 4: 2 columns, 6 + 6 -->
   <div class="row mb-3">
     <div class="col-md-3 wrapper pr-0 ">
-      <mat-card class=" ht-100 scrollable-div">
+      <mat-card class=" ht-100 scrollable-div hover-border p-3">
         <mat-dialog-content class="mat-typography">
           <mat-card-content class="pad-0">
             <div class="load-wrap" *ngIf="isProjectDataLoading">
@@ -426,7 +363,7 @@
       </mat-card>
     </div>
     <div class="col-md-6 ">
-      <mat-card class=" ht-100">
+      <mat-card class=" ht-100 hover-border p-3">
         <mat-dialog-content class="mat-typography">
           <mat-card-content class="pad-0">
             <div class="load-wrap" *ngIf="isLoading">
@@ -439,6 +376,6 @@
         </mat-dialog-content>
       </mat-card>
     </div>
-   
+
   </div>
 </div>

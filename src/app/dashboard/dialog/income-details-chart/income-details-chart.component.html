@@ -1,0 +1,49 @@
+<div class="dialog">
+    <mat-card>
+        <h3 mat-dialog-title class="justify-content-between align-items-center"> Income(s) Summary
+            <button class="popup-close-btn float-end" mat-icon-button mat-dialog-close>
+                <mat-icon>close</mat-icon>
+            </button>
+        </h3>
+        <mat-dialog-content class="mat-typography">
+            <mat-card-content class="pad-0">
+                <div class="load-wrap" *ngIf="isexpenseLoading">
+                    <app-loader [IsLoading]="isexpenseLoading"></app-loader>
+                </div>
+                <div class="wrapper">
+                    <div class="mb-0 row d-flex justify-content-between align-items-center sticky-bar">
+
+                        <div class="col-md-4">
+                            <h4 class="sub-heading">Total Income : {{totalactual | formatCurrency}}</h4>
+                        </div>
+
+                        <div class="col-md-8 d-flex justify-content-end gap-3">
+                            <div class="col-md-4">
+                                <app-financial-date-filters [isSearchBtn]="false" [initialEmit]="true"
+                                    [showFinancial]="true" [showQuarterly]="false" [showCustom]="false"
+                                    [emitOnFinanceChange]="true" (onValueChange)="dateChange($event)">
+                                </app-financial-date-filters>
+                            </div>
+                            <div class="col-md-6">
+                                <app-project-control [isAllLabel]="true" [required]="false"
+                                    (onValueChange)="projectChange($event)" [defaultValue]="data.element.pid">
+                                </app-project-control>
+                            </div>
+                        </div>
+
+                    </div>
+                    <hr class="mt-1 ">
+                    <div *ngIf="!isEmpty; else emptyChart">
+                        <div echarts #chartRef class="expense-chart" [options]="incomeoption"
+                            (chartClick)="onChartClick($event)"></div>
+                    </div>
+
+                    <ng-template #emptyChart>
+                        <div echarts [options]="emptyChartOptions" class="chart"></div>
+                    </ng-template>
+
+                </div>
+            </mat-card-content>
+        </mat-dialog-content>
+    </mat-card>
+</div>

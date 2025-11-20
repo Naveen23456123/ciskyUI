@@ -10,7 +10,7 @@
                       <mat-icon>print</mat-icon>
                       Print
                     </button>
-                    <button class="title-btn  no-print" type="button" [matMenuTriggerFor]="menu"  mat-mini-fab color="primary">
+                    <button *ngIf="pagePermissions?.canCreate"  class="title-btn  no-print" type="button" [matMenuTriggerFor]="menu"  mat-mini-fab color="primary">
                       <mat-icon>add box</mat-icon> Add
                      </button>     
                    
@@ -105,15 +105,15 @@
                     </mat-card-content>
                 </mat-card> 
                 <div class="page-break"></div>
-                <app-boq-staff-list (onAmountChange)="staff_amount($event)" ></app-boq-staff-list>
-                <app-boq-transportation-list (onAmountChange)="tp_amount($event)" ></app-boq-transportation-list>
-                <app-boq-duty-travel-list (onAmountChange)="dt_amount($event)"></app-boq-duty-travel-list>
-                <app-boq-office-rent-list (onAmountChange)="or_amount($event)"></app-boq-office-rent-list>
-                <app-boq-office-supply-list (onAmountChange)="os_amount($event)"></app-boq-office-supply-list>
-                <app-boq-office-furniture-list (onAmountChange)="of_amount($event)"></app-boq-office-furniture-list>
-                <app-boq-report-doc-list (onAmountChange)="rd_amount($event)"></app-boq-report-doc-list>               
-                <app-boq-road-survey-list (onAmountChange)="rs_amount($event)"> </app-boq-road-survey-list>
-                <app-boq-contingency-list (onAmountChange)="cont_amount($event)"></app-boq-contingency-list>
+                <app-boq-staff-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="staff_amount($event)" ></app-boq-staff-list>
+                <app-boq-transportation-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="tp_amount($event)" ></app-boq-transportation-list>
+                <app-boq-duty-travel-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="dt_amount($event)"></app-boq-duty-travel-list>
+                <app-boq-office-rent-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="or_amount($event)"></app-boq-office-rent-list>
+                <app-boq-office-supply-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="os_amount($event)"></app-boq-office-supply-list>
+                <app-boq-office-furniture-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="of_amount($event)"></app-boq-office-furniture-list>
+                <app-boq-report-doc-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="rd_amount($event)"></app-boq-report-doc-list>               
+                <app-boq-road-survey-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="rs_amount($event)"> </app-boq-road-survey-list>
+                <app-boq-contingency-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="cont_amount($event)"></app-boq-contingency-list>
         </div>
         </div>
 </div>

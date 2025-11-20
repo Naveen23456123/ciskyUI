@@ -116,6 +116,7 @@ isSearchLoading=true;
     this.projects = info;
     this.dataSource = new MatTableDataSource<any>(info);
     this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
+    this.pageSize= this.helperService.getPageSize();
     this.resultsLength= this.projects.length;   
   }
   applyFilter(event: Event) {

@@ -1,21 +1,23 @@
 <div class="container">
-<mat-card>
+  <mat-card>
     <mat-card-title>
-        <h6 class="justify-content-center">III - Transportation (Fixed rate on rental basis)          
-          <app-edit-icon-btn class="desc-btn no-print" toolTip="Add Description" (clickEvent)="add_desc()" ></app-edit-icon-btn>
-          <button  class="title-btn float-end no-print" type="button" routerLink="tp-create"  mat-mini-fab color="primary">
-            <mat-icon>add box</mat-icon> Transportation
+      <h6 class="justify-content-center">III - Transportation (Fixed rate on rental basis)
+        <app-edit-icon-btn *ngIf="pagePermissions?.canUpdate" class="desc-btn no-print" toolTip="Add Description"
+          (clickEvent)="add_desc()"></app-edit-icon-btn>
+        <button *ngIf="pagePermissions?.canCreate" class="title-btn float-end no-print" type="button"
+          routerLink="tp-create" mat-mini-fab color="primary">
+          <mat-icon>add box</mat-icon> Transportation
         </button>
-        </h6>
+      </h6>
     </mat-card-title>
     <mat-card-content>
       <div class="load-wrap" *ngIf="isLoading">
         <app-loader [IsLoading]="isLoading"></app-loader>
-    </div>
-    <div class="wrapper" *ngIf="!isLoading">
-      <span>{{description}}</span>
-        <table mat-table [dataSource]="dataSource" >
-        
+      </div>
+      <div class="wrapper" *ngIf="!isLoading">
+        <span>{{description}}</span>
+        <table mat-table [dataSource]="dataSource">
+
           <ng-container matColumnDef="serial">
             <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}">Sr. No</th>
             <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
@@ -23,89 +25,93 @@
           </ng-container>
           <ng-container matColumnDef="no">
             <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Sr. No</th>
-          </ng-container>       
-       
+          </ng-container>
+
           <ng-container matColumnDef="desc">
             <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Description </th>
             <td mat-cell *matCellDef="let element"> {{element.description}} </td>
           </ng-container>
           <ng-container matColumnDef="descth">
-          <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Description</th>
+            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Description</th>
           </ng-container>
 
-             
-              <ng-container matColumnDef="constperiod">
-                <th mat-header-cell *matHeaderCellDef > During Construction Period </th>
-                <td mat-cell *matCellDef="let row"> 
-                  <span class="content-center">{{row.constructionperiod}} </span>
-                </td>
-              </ng-container>       
-              <ng-container matColumnDef="dlpomperiod">
-                <th mat-header-cell *matHeaderCellDef > During DLP and O&M Period </th>
-                <td mat-cell *matCellDef="let row"> 
-                  <span class="content-center">{{row.dlpoandmperiod}} </span>
-                </td>
-              </ng-container> 
 
-              <ng-container matColumnDef="total">
-                <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Total </th>
-                <td mat-cell *matCellDef="let row"> 
-                  <span class="content-center">{{row.constructionperiod+row.dlpoandmperiod}} </span>
-                </td>
-              </ng-container> 
-              <ng-container matColumnDef="totalth">
-                <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Total</th>
-              </ng-container>
+          <ng-container matColumnDef="constperiod">
+            <th mat-header-cell *matHeaderCellDef> During Construction Period </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="content-center">{{row.constructionperiod}} </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="dlpomperiod">
+            <th mat-header-cell *matHeaderCellDef> During DLP and O&M Period </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="content-center">{{row.dlpoandmperiod}} </span>
+            </td>
+          </ng-container>
 
-              <ng-container matColumnDef="vehpermonthrate">
-                <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Rate / Vehicle - Month (INR) </th>
-                <td mat-cell *matCellDef="let row"> 
-                  <span class="content-center">{{row.rate  | formatAmount}} </span>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="vehpermonthth">
-                <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Rate / Vehicle - Month (INR)</th>
-              </ng-container>
+          <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Total </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="content-center">{{row.constructionperiod+row.dlpoandmperiod}} </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="totalth">
+            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Total</th>
+          </ng-container>
 
-              <ng-container matColumnDef="amount">
-                <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Amount (INR) </th>
-                <td mat-cell class="amt" *matCellDef="let row"> 
-                  <span class="content-center">{{row.totalamount  | formatAmount}} </span>
-                </td>
-                <td mat-footer-cell *matFooterCellDef> 
-                  <span class="content-center">{{getTotalAmount() | formatCurrency}}</span>
-                 </td>
-              </ng-container>
-              <ng-container matColumnDef="amountth">
-                <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Amount (INR)</th>
-              </ng-container>
+          <ng-container matColumnDef="vehpermonthrate">
+            <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Rate / Vehicle - Month (INR) </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="content-center">{{row.rate | formatAmount}} </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="vehpermonthth">
+            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Rate / Vehicle - Month (INR)</th>
+          </ng-container>
 
-              <ng-container matColumnDef="action" >
-                <th mat-header-cell class="no-print" *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Action </th>
-                <td mat-cell class="no-print action-col" *matCellDef="let row">                 
-                  <div class="button-row">                   
-                    <app-edit-btn [state]="row" [routerLink]="['tp-edit',row.id]" ></app-edit-btn>                              
-                    <app-delete-btn [state]="row" [routerLink]="['tp-delete',row.id]"></app-delete-btn>
-                  </div>              
-                </td>
-                <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
-              </ng-container>
-              <ng-container matColumnDef="actionth">
-                <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
-              </ng-container>
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Amount (INR) </th>
+            <td mat-cell class="amt" *matCellDef="let row">
+              <span class="content-center">{{row.totalamount | formatAmount}} </span>
+            </td>
+            <td mat-footer-cell *matFooterCellDef>
+              <span class="content-center">{{getTotalAmount() | formatCurrency}}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="amountth">
+            <th mat-header-cell *matHeaderCellDef [attr.rowspan]="2">Amount (INR)</th>
+          </ng-container>
+
+          <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="action">
+             <th mat-header-cell class="no-print" *matHeaderCellDef [ngStyle]="{'display': 'none'}"> Action </th>
+           <td mat-cell class="no-print action-col" *matCellDef="let row">
+              <div class="button-row">
+                <app-edit-btn *ngIf="pagePermissions?.canUpdate" [state]="row"
+                  [routerLink]="['tp-edit',row.id]"></app-edit-btn>
+
+                <app-delete-btn *ngIf="pagePermissions?.canDelete" [state]="row"
+                  [routerLink]="['tp-delete',row.id]"></app-delete-btn>
+              </div>
+            </td>
+            <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
+          </ng-container>
+          <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="actionth">
+            <th mat-header-cell class="no-print" *matHeaderCellDef [attr.rowspan]="2">Action</th>
+          </ng-container>
 
 
 
-              <ng-container matColumnDef="qty">
-                <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Qty. (No. of vehicle month) </th>
-              </ng-container>
+          <ng-container matColumnDef="qty">
+            <th mat-header-cell class="center" *matHeaderCellDef [attr.colspan]="2"> Qty. (No. of vehicle month) </th>
+          </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="['no','descth','qty','totalth','vehpermonthth','amountth','actionth']"></tr>
-            <tr mat-header-row *matHeaderRowDef="tpdataColumn"></tr>
-            <tr mat-row *matRowDef="let row; columns: tpdataColumn;"></tr> 
-            <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>                    
-          </table>
-    </div>
+          <tr mat-header-row *matHeaderRowDef="headerColumn">
+          </tr>
+          <tr mat-header-row *matHeaderRowDef="tpdataColumn"></tr>
+          <tr mat-row *matRowDef="let row; columns: tpdataColumn;"></tr>
+          <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>
+        </table>
+      </div>
     </mat-card-content>
-</mat-card> 
+  </mat-card>
 </div>

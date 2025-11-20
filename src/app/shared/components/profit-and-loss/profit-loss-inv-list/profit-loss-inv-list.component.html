@@ -37,9 +37,17 @@
                             </ng-container>
                                 
                           <ng-container matColumnDef="monthly">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> View </th>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Profit-loss </th>
                             <td mat-cell *matCellDef="let row"> 
-                                <app-view-btn (clickEvent)="viewClick(row)" ></app-view-btn>  
+                                <app-view-btn (clickEvent)="viewClick(row)" ></app-view-btn> 
+                               
+                             </td>
+                          </ng-container>
+                          <ng-container matColumnDef="expense">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Expense </th>
+                            <td mat-cell *matCellDef="let row"> 
+                              
+                                  <app-view-btn (clickEvent)="viewExpense(row)"></app-view-btn> 
                              </td>
                           </ng-container>
                          

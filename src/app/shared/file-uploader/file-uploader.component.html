@@ -1,7 +1,7 @@
 <div class="col-md-12" class=" form-group">
     <fieldset class="form-group">
         <label class="error mat-error" *ngIf="Error">{{Error}} </label>
-        <div class="col-md-12">
+        <div class="col-md-12" *ngIf="required">
             <span></span>
             <h5>{{title}} <span class="mat-mdc-form-field-required-marker" *ngIf="required">*</span></h5>
         </div>

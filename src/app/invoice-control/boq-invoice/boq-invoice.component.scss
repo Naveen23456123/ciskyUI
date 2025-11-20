@@ -86,8 +86,8 @@
   background-color:transparent;
 }
 
-::ng-deep .mat-mdc-footer-row > .mat-column-serial{
-  text-align: right;
+:host ::ng-deep .mat-mdc-footer-row > .mat-column-serial{
+  text-align: right !important;
   font-size: 16px;
 
 }

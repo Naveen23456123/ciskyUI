@@ -94,7 +94,7 @@ export class ExpenseChartViewComponent {
                     total >= 1000 ? (total / 1000).toFixed(2) + ' K' :
                       total.toFixed(0);
 
-              return `{name|${name}}\n{value|${total}}\n{line|────────────}`;
+              return `{name|${name}}\n{value|${total.toFixed(2)}}\n{line|────────────}`;
             },
             textStyle: {
               rich: {

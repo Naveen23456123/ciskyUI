@@ -9,7 +9,7 @@ export class GenerateCsvService {
 
   downloadFile(data: any,header:any, filename = 'data') {
     let csvData = this.ConvertToCSV(data,header);
-    
+    console.log(csvData);
     let blob = new Blob(['\ufeff' + csvData], {
       type: 'text/csv;charset=utf-8;'
     });

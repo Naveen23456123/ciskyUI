@@ -27,7 +27,7 @@ readonly dialog = inject(MatDialog);
   
   private defaultdialogoptions:  MatDialogConfig = {
     minWidth: '70vw',
-    disableClose: false,
+    disableClose: true,
     data: {},
   };
 

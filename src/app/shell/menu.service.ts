@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Logger } from '@app/core/logger.service';
+import { untilDestroyed } from '@app/core/until-destroyed';
 import { SessionService } from '@app/shared/services/session.service';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 const log = new Logger('Menu Service');
 @Injectable({
   providedIn: 'root'
 })
 export class MenuService {
-
+  private destroy$ = new Subject<void>();
   constructor(private sessionService: SessionService) { }
 
   public menuItems() {
@@ -30,7 +31,7 @@ export class MenuService {
         label: 'Dashboard',
         icon: 'bxs-dashboard',
         link: 'dashboard',
-        guid: '',
+        guid: '680dd1bd3682904bdd6e9aa1',
         roles: []
       },
       // {
@@ -40,61 +41,61 @@ export class MenuService {
       //   guid: '',
       //   roles: []
       // },
-       {
+      {
         label: 'Projects',
         icon: 'bxs-network-chart',
         link: '#',
         guid: '',
         roles: [],
         items: [
-        {
-          label: 'Transport Infra',
-          link: 'transport-list',
-          guid: '',
-          roles: []
-        },
-        // {
-        //   label: 'Smart Cities/Urban',
-        //   link: 'sub-company',
-        //   guid: '',
-        //   roles: []
-        // },
-        // {
-        //   label: 'Env & Social',
-        //   link: 'projects',
-        //   guid: '',
-        //   roles: []
-        // },
-        // {
-        //   label: 'Survey & Testing',
-        //   link: 'department',
-        //   guid: '',
-        //   roles: []
-        // },
-        // {
-        //   label: 'Finance & Advisory',
-        //   link: 'con-account',
-        //   guid: '',
-        //   roles: []
-        // },       
-        // {
-        //   label: 'Railway & Metros',
-        //   link: 'con-account',
-        //   guid: '',
-        //   roles: []
-        // },
-        // {
-        //   label: 'Water Resources',
-        //   link: 'con-account',
-        //   guid: '',
-        //   roles: []
-        // },
-        // {
-        // label: 'Tourism',
-        // link: 'con-account',
-        // guid: '',
-        // roles: []
-        // }
+          {
+            label: 'Transport Infra',
+            link: 'transport-list',
+            guid: '691ac28c49a626388723641e',
+            roles: []
+          },
+          // {
+          //   label: 'Smart Cities/Urban',
+          //   link: 'sub-company',
+          //   guid: '',
+          //   roles: []
+          // },
+          // {
+          //   label: 'Env & Social',
+          //   link: 'projects',
+          //   guid: '',
+          //   roles: []
+          // },
+          // {
+          //   label: 'Survey & Testing',
+          //   link: 'department',
+          //   guid: '',
+          //   roles: []
+          // },
+          // {
+          //   label: 'Finance & Advisory',
+          //   link: 'con-account',
+          //   guid: '',
+          //   roles: []
+          // },       
+          // {
+          //   label: 'Railway & Metros',
+          //   link: 'con-account',
+          //   guid: '',
+          //   roles: []
+          // },
+          // {
+          //   label: 'Water Resources',
+          //   link: 'con-account',
+          //   guid: '',
+          //   roles: []
+          // },
+          // {
+          // label: 'Tourism',
+          // link: 'con-account',
+          // guid: '',
+          // roles: []
+          // }
         ],
       },
       // {
@@ -108,7 +109,7 @@ export class MenuService {
         label: 'Glance',
         icon: 'bxs-network-chart',
         link: 'explore',
-        guid: '',
+        guid: '680dd1bd3682904bdd6e9aa2',
         roles: []
       },
       {
@@ -118,25 +119,25 @@ export class MenuService {
         items: [{
           label: 'Sub Company',
           link: 'sub-company',
-          guid: '',
+          guid: '680dd2733682904bdd6e9aa4',
           roles: []
         },
         {
           label: 'Designation',
           link: 'designation',
-          guid: '',
+          guid: '680dd2933682904bdd6e9aa5',
           roles: []
         },
         {
           label: 'Department',
           link: 'department',
-          guid: '',
+          guid: '680dd2933682904bdd6e9aa6',
           roles: []
         },
         {
           label: 'Consultant Account',
           link: 'con-account',
-          guid: '',
+          guid: '680dd2933682904bdd6e9aa7',
           roles: []
         }],
       },
@@ -147,22 +148,22 @@ export class MenuService {
         items: [{
           label: 'Employees',
           link: 'employees',
-          guid: '',
+          guid: '680dd2733682904bdd6e9aa9',
           roles: []
         },
         {
           label: 'BOQ Attendence',
           link: 'boq-attendence',
-          guid: '',
+          guid: '680dd2933682904bdd6e9ab1',
           roles: []
         }
-        // {
-        //   label: 'Actual Attendence',
-        //   link: 'global',
-        //   guid: '',
-        //   roles: []
-        // }
-      ],
+          // {
+          //   label: 'Actual Attendence',
+          //   link: 'global',
+          //   guid: '',
+          //   roles: []
+          // }
+        ],
       },
       {
         label: 'Inventory Control',
@@ -171,13 +172,13 @@ export class MenuService {
         items: [{
           label: 'Item(s)',
           link: 'items',
-          guid: '',
+          guid: '680dd2733682904bdd6e9ab4',
           roles: []
         },
         {
           label: 'Site Inventory',
           link: 'inventory',
-          guid: '',
+          guid: '680dd2933682904bdd6e9ab5',
           roles: []
         }],
       },
@@ -188,13 +189,13 @@ export class MenuService {
         items: [{
           label: 'Vehicle',
           link: 'vehicles',
-          guid: '',
+          guid: '680dd2733682904bdd6e9ab7',
           roles: []
         },
         {
           label: 'Log Details',
           link: 'vehicle-log',
-          guid: '',
+          guid: '680dd2933682904bdd6e9ab8',
           roles: []
         },
         {
@@ -204,13 +205,13 @@ export class MenuService {
           roles: []
         }],
       },
-      
-    
+
+
       {
         label: 'Letter Monitor',
         icon: 'bxs-file',
         link: 'letters',
-        guid: '',
+        guid: '680dd1bd3682904bdd6e9ac1',
         roles: []
       },
       {
@@ -220,13 +221,13 @@ export class MenuService {
         items: [{
           label: 'BOQ',
           link: 'boq-list',
-          guid: '',
+          guid: '680dd2733682904bdd6e9ac3',
           roles: []
         },
         {
           label: 'Invoice',
           link: 'invoice',
-          guid: '',
+          guid: '680dd2933682904bdd6e9ac4',
           roles: []
         }],
       },
@@ -248,16 +249,16 @@ export class MenuService {
         label: 'Circular',
         icon: 'bxs-envelope-open',
         link: 'circular',
-        guid: '',
+        guid: '680dd1bd3682904bdd6e9ac7',
         roles: []
-      },      
+      },
       {
         label: 'Profit & Loss',
         icon: 'bx-money',
         link: 'profit-loss',
-        guid: '',
+        guid: '680dd1bd3682904bdd6e9ac8',
         roles: []
-      }, 
+      },
       {
         label: 'SiteOps Fund',
         icon: 'bx-rupee',
@@ -265,22 +266,22 @@ export class MenuService {
         items: [{
           label: 'Imperest',
           link: 'imperest',
-          guid: '',
+          guid: '680dd2733682904bdd6e9afb',
           roles: []
           //Admin - Id, SuperAdmin -Id
         },
         {
           label: 'Expense',
           link: 'expense',
-          guid: '',
+          guid: '680dd2933682904bdd6e9afc',
           roles: []
         },
         {
           label: 'Office Rent',
           link: 'ofc-billing',
-          guid: '',
+          guid: '680dd2933682904bdd6e9afd',
           roles: []
-        }], 
+        }],
       },
       {
         label: 'Requests',
@@ -289,43 +290,43 @@ export class MenuService {
         items: [{
           label: 'Office(es)',
           link: 'ofc-billing-request',
-          guid: '',
+          guid: '680dd2733682904bdd6e9aac',
           roles: []
           //Admin - Id, SuperAdmin -Id
         },
         {
           label: 'Imperest(s)',
           link: 'imperest-billing-request',
-          guid: '',
+          guid: '680dd2733682904bdd6e9aaa',
           roles: []
         },
         {
           label: 'Expens(es)',
           link: 'exp-billing-request',
-          guid: '',
+          guid: '680dd2733682904bdd6e9aab',
           roles: []
         },
         {
           label: 'Vehicle(s)',
           link: 'veh-billing-request',
-          guid: '',
+          guid: '680dd2733682904bdd6e9aad',
           roles: []
-        }], 
+        }],
       },
       {
         label: 'Ticket',
         icon: 'bx-library',
         link: 'ticket',
-        guid: '',
+        guid: '680dd1bd3682904bdd6e9ad9',
         roles: []
       },
       {
         label: 'Miscellaneous',
         icon: 'bx-library',
         link: 'misc',
-        guid: '',
+        guid: '680dd1bd3682904bdd6e9ac9',
         roles: []
-      }, 
+      },
       {
         label: 'Settings',
         icon: 'bxs-cog',
@@ -333,7 +334,7 @@ export class MenuService {
         items: [{
           label: 'Approvals',
           link: 'approval',
-          guid: '',
+          guid: '680dd2733682904bdd6e9abb',
           roles: []
         }]
       },
@@ -350,15 +351,17 @@ export class MenuService {
         link: 'permission',
         guid: '',
         roles: []
-      }, 
-      
+      },
+
     ]
   }
 
   public displayItems() {
     return new Observable((sub) => {
       const displayeditems = this.menuItems();
-      this.sessionService.userPriviligesSubject$.subscribe((priviliges) => {
+      this.sessionService.userPriviligesSubject$.pipe(takeUntil(this.destroy$)).subscribe((priviliges) => {
+        console.log(priviliges);
+        console.log(displayeditems);
         if (priviliges) {
           //log.debug(priviliges);
           displayeditems.forEach((firstelement: any) => {
@@ -367,14 +370,14 @@ export class MenuService {
               firstelement.items.forEach((secondEle: any) => {
                 secondEle.hidden = true;
                 if (secondEle) {
-                  secondEle.hidden = !this.checkPriviligies(priviliges, secondEle);
-                  //  firstelement.hidden = secondEle.hidden ? firstelement.hidden : false;
+                  secondEle.hidden = !this.checkPriviligies(priviliges.Modules, secondEle);
+                  firstelement.hidden = secondEle.hidden ? firstelement.hidden : false;
                 }
               });
-              firstelement.hidden =this.anyItemVisible(firstelement.items);
+              firstelement.hidden = this.anyItemVisible(firstelement.items);
             }
             else {
-            //  firstelement.hidden =!this.checkPriviligies(priviliges, firstelement);
+              firstelement.hidden = !this.checkPriviligies(priviliges.Modules, firstelement);
             }
             //log.debug(element);
           });
@@ -387,10 +390,14 @@ export class MenuService {
       sub.complete();
     });
   }
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
   private checkPriviligies(priviliges: any, item: any): boolean {
-    // log.debug(priviliges, item);
-    const menuelement = priviliges.filter((ele:any) => {
-      return ele.module.toLowerCase() === item.label.toLowerCase();
+    console.log(priviliges, item);
+    const menuelement = priviliges?.filter((ele: any) => {
+      return ele.Name.toLowerCase() === item.label.toLowerCase();
     });
     //log.debug(menuelement);
     if (typeof (menuelement[0]) !== 'undefined' && menuelement[0] !== null)
@@ -398,8 +405,8 @@ export class MenuService {
     else
       return false;
   }
-  private anyItemVisible(items: any) :boolean{
-    const menuelement = items.filter((ele:any) => {
+  private anyItemVisible(items: any): boolean {
+    const menuelement = items.filter((ele: any) => {
       return ele.hidden == false;
     });
     //log.debug(menuelement);

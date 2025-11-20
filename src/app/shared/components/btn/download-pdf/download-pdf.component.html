@@ -1,4 +1,18 @@
-
-  <button mat-icon-button type="button" class="pdf-btn" (click)="clicked()" matTooltip="{{toolTip}}">
+<div class="pdf-container">
+  <button
+    mat-icon-button
+    type="button"
+    class="pdf-btn"
+    (click)="clicked()"
+    matTooltip="{{ toolTip }}"
+    [disabled]="loading"
+  >
     <mat-icon>picture_as_pdf</mat-icon>
-  </button> 
+  </button>
+
+  <mat-progress-bar
+    *ngIf="loading"
+    mode="indeterminate"
+    class="loader-below"
+  ></mat-progress-bar>
+</div>

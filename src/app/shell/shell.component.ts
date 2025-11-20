@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Renderer2 } from '@angular/core';
-import { Observable, fromEvent } from 'rxjs';
+import { Observable, Subject, Subscriber, fromEvent } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { CoreAPIService } from '@app/shared/services/external/coreapi.service';
 import { ServiceAttributeModel } from '@app/shared/models/http/ServiceAttributeModel';
@@ -7,7 +7,7 @@ import { Operation } from '@app/shared/models/http/ActionModel';
 import { MenuService } from './menu.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
 //import { ThrowStmt } from '@angular/compiler';
-import { map, debounceTime, startWith, take } from 'rxjs/operators';
+import { map, debounceTime, startWith, take, takeUntil } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 import { MatSidenav } from '@angular/material/sidenav';
 import { InactivityService } from '@app/shared/services/inactivity.service';
@@ -15,19 +15,19 @@ import { SessionService } from '@app/shared/services/session.service';
 import { FormControl } from '@angular/forms';
 
 @Component({
-  standalone:false,
+  standalone: false,
   selector: 'app-shell',
   templateUrl: './shell.component.html',
   styleUrls: ['./shell.component.scss']
 })
 export class ShellComponent implements OnInit, OnDestroy {
-
+  private destroy$ = new Subject<void>();
   @ViewChild('sidenav') sidenav: MatSidenav | undefined;
-  lastSignedOn: string ='';
-  userName: string='Sharwan Lal';
+  lastSignedOn: string = '';
+  userName: string = 'Sharwan Lal';
   sessionEnded: string = '/session-end';
   orgList: any[] = [];
-  selectedOrg: string='';
+  selectedOrg: string = '';
   location: FormControl = new FormControl('');
   selectedItem: any;
   constructor(private _httpClient: HttpClient, private _servicehelper: CoreAPIService,
@@ -36,9 +36,7 @@ export class ShellComponent implements OnInit, OnDestroy {
     private inactivityService: InactivityService,
     private sessionService: SessionService,
     private el: ElementRef, private renderer: Renderer2) { }
-  ngOnDestroy(): void {
 
-  }
 
   public sidebarConfig = {
     paddingAtStart: true,
@@ -54,23 +52,23 @@ export class ShellComponent implements OnInit, OnDestroy {
   };
   public sidebarLinks = [{
     label: 'Loading...',
-    link:'',
-    icon:'',
+    link: '',
+    icon: '',
     items: [{
-      label :'',
-      link:''
+      label: '',
+      link: ''
     }
     ]
   }];
   public expanded = true;
   public isSession = false;
   public showTabletSlidebar = false;
-  private isTablet$:any;
+  private isTablet$: any;
 
   ngOnInit(): void {
-    this.isSession = this.router.url === this.sessionEnded;    
+    this.isSession = this.router.url === this.sessionEnded;
     this.checkSessionEnd();
-    this._menuservice.displayItems().pipe(untilDestroyed(this)).subscribe((data:[] | any) => {
+    this._menuservice.displayItems().pipe(takeUntil(this.destroy$)).subscribe((data: [] | any) => {
       this.sidebarLinks = data;
     });
     this.sessionService.userSubject$.subscribe((user) => {
@@ -101,7 +99,10 @@ export class ShellComponent implements OnInit, OnDestroy {
     //   this.showTabletSlidebar = value;
     // });
   }
-
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
   locChange(event: any) {
     this.sessionService.setWorkingLocation(this.orgList.find(x => x.orgId == event.value));
   }
@@ -130,32 +131,32 @@ export class ShellComponent implements OnInit, OnDestroy {
   }
   ngAfterViewInit(): void {
     const elements = this.el.nativeElement.querySelectorAll('.div-arrow');
-    
+
     elements.forEach((element: HTMLElement) => {
-      element.addEventListener("click", (e)=>{
-       let arrowParent = element.parentElement;
-       this.el.nativeElement.querySelectorAll('.nav-links >li').forEach((element: HTMLElement) => {
-        if(element!=arrowParent)
-         element?.classList.remove("showMenu");
-        }); 
-      console.log(arrowParent);    
-       if(arrowParent?.classList.contains("showMenu")){
-         arrowParent?.classList.remove("showMenu");
-       }
-       else
-        arrowParent?.classList.add("showMenu");
+      element.addEventListener("click", (e) => {
+        let arrowParent = element.parentElement;
+        this.el.nativeElement.querySelectorAll('.nav-links >li').forEach((element: HTMLElement) => {
+          if (element != arrowParent)
+            element?.classList.remove("showMenu");
+        });
+        console.log(arrowParent);
+        if (arrowParent?.classList.contains("showMenu")) {
+          arrowParent?.classList.remove("showMenu");
+        }
+        else
+          arrowParent?.classList.add("showMenu");
       });
     });
   }
-  toggle(){
-    let sidebar =this.el.nativeElement.querySelector('.sidebar'); 
-    this.expanded= sidebar?.classList.contains("close");
-      if(sidebar?.classList.contains("close")){
-        sidebar?.classList.remove("close");
-      }
-      else
+  toggle() {
+    let sidebar = this.el.nativeElement.querySelector('.sidebar');
+    this.expanded = sidebar?.classList.contains("close");
+    if (sidebar?.classList.contains("close")) {
+      sidebar?.classList.remove("close");
+    }
+    else
       sidebar?.classList.add("close");
-  } 
+  }
 
   selectItem(item: any) {
     this.selectedItem = item;

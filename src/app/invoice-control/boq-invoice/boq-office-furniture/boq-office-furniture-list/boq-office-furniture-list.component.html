@@ -1,71 +1,78 @@
 <div class="container">
-<mat-card>
+  <mat-card>
     <mat-card-title>
-        <h6>VII-Office Furniture and Equipment (Rental)
-          <app-edit-icon-btn class="desc-btn no-print" toolTip="Add Description" (clickEvent)="add_desc()" ></app-edit-icon-btn>
-            <button  class="title-btn float-end no-print" routerLink="of-create"    type="button"  mat-mini-fab color="primary">
-                <mat-icon>add box</mat-icon> Office Furniture
-            </button>
+      <h6>VII-Office Furniture and Equipment (Rental)
+        <app-edit-icon-btn *ngIf="pagePermissions?.canUpdate" class="desc-btn no-print" toolTip="Add Description"
+          (clickEvent)="add_desc()"></app-edit-icon-btn>
+        <button *ngIf="pagePermissions.canCreate" class="title-btn float-end no-print" routerLink="of-create"
+          type="button" mat-mini-fab color="primary">
+          <mat-icon>add box</mat-icon> Office Furniture
+        </button>
 
-          </h6>
+      </h6>
     </mat-card-title>
     <mat-card-content>
       <div class="load-wrap" *ngIf="isLoading">
         <app-loader [IsLoading]="isLoading"></app-loader>
-    </div>
-    <div class="wrapper" *ngIf="!isLoading"> 
-      <span>{{description}}</span>
-        <table mat-table [dataSource]="dataSource" >
+      </div>
+      <div class="wrapper" *ngIf="!isLoading">
+        <span>{{description}}</span>
+        <table mat-table [dataSource]="dataSource">
+
+          <ng-container matColumnDef="serial">
+            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+            <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
+            <td mat-footer-cell *matFooterCellDef colspan="4"> Total </td>
+          </ng-container>
+          <ng-container matColumnDef="desc">
+            <th mat-header-cell *matHeaderCellDef>Description</th>
+            <td mat-cell *matCellDef="let row"> {{row.description}} </td>
+          </ng-container>
+          <ng-container matColumnDef="month">
+            <th mat-header-cell *matHeaderCellDef>No. of Months </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="content-center">{{row.numberofmonths}}</span>
+            </td>
+          </ng-container>
+
+          <!-- contractName Column -->
+          <ng-container matColumnDef="ratemonth">
+            <th mat-header-cell *matHeaderCellDef> Rate / Month (INR) </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="content-center">{{row.ratepermonth | formatAmount}}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef> Amount(INR) </th>
+            <td mat-cell class="amt" *matCellDef="let row">
+              <span class="content-center">{{row.totalamount | formatAmount}}</span>
+            </td>
+            <td mat-footer-cell *matFooterCellDef>
+              <span class="content-center">{{getTotalAmount() | formatCurrency}}</span>
+            </td>
+          </ng-container>
           
-            <ng-container matColumnDef="serial">
-              <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-              <td mat-cell *matCellDef="let element; let i = index"> {{i+1}} </td>
-              <td mat-footer-cell *matFooterCellDef colspan="4"> Total </td>
-            </ng-container> 
-            <ng-container matColumnDef="desc">
-              <th mat-header-cell *matHeaderCellDef>Description</th>
-              <td mat-cell *matCellDef="let row"> {{row.description}} </td>
-            </ng-container>
-            <ng-container matColumnDef="month">
-                <th mat-header-cell *matHeaderCellDef>No. of Months </th>
-                <td mat-cell *matCellDef="let row"> 
-                  <span class="content-center">{{row.numberofmonths}}</span> 
-                </td>
-              </ng-container>
-          
-              <!-- contractName Column -->
-              <ng-container matColumnDef="ratemonth">
-                <th mat-header-cell *matHeaderCellDef > Rate / Month (INR) </th>
-                <td mat-cell *matCellDef="let row"> 
-                  <span class="content-center">{{row.ratepermonth  | formatAmount}}</span> 
-                </td>
-              </ng-container>       
-             
-              <ng-container matColumnDef="amount">
-                <th mat-header-cell *matHeaderCellDef > Amount(INR) </th>
-                <td mat-cell class="amt" *matCellDef="let row"> 
-                  <span class="content-center">{{row.totalamount  | formatAmount}}</span> 
-                </td>
-                <td mat-footer-cell *matFooterCellDef> 
-                  <span class="content-center">{{getTotalAmount() | formatCurrency}}</span>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="action">
-                <th mat-header-cell class="no-print"  *matHeaderCellDef > Action </th>
-                <td mat-cell class="no-print action-col"  *matCellDef="let row"> 
-                  <div class="button-row">                   
-                    <app-edit-btn [state]="row" [routerLink]="['of-edit',row.id]" ></app-edit-btn>                              
-                    <app-delete-btn [state]="row" [routerLink]="['of-delete',row.id]"></app-delete-btn>
-                  </div> 
-                </td>
-              <td mat-footer-cell class="no-print"  *matFooterCellDef> </td>
-              </ng-container>
-            <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>
-            <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>    
-            <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>                       
-          </table>
-    </div>
+          <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="action">
+
+            <th mat-header-cell class="no-print" *matHeaderCellDef> Action </th>
+
+            <td mat-cell class="no-print action-col" *matCellDef="let row">
+              <div class="button-row">
+                <app-edit-btn *ngIf="pagePermissions?.canUpdate" [state]="row"
+                  [routerLink]="['of-edit',row.id]"></app-edit-btn>
+
+                <app-delete-btn *ngIf="pagePermissions?.canDelete" [state]="row"
+                  [routerLink]="['of-delete',row.id]"></app-delete-btn>
+              </div>
+            </td>
+            <td mat-footer-cell class="no-print" *matFooterCellDef> </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="dataColumn"></tr>
+          <tr mat-row *matRowDef="let row; columns: dataColumn;"></tr>
+          <tr mat-footer-row *matFooterRowDef="footerColumns"></tr>
+        </table>
+      </div>
     </mat-card-content>
-</mat-card>
+  </mat-card>
 </div>
- 

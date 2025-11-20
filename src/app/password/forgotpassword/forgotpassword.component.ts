@@ -32,7 +32,6 @@ passform:any;
     });
   }
   submit(){
-    console.log('submit');
     this.isBtnClicked=true;
     
     this.authService.forgotPassword(this.passform.value, '')
@@ -40,8 +39,9 @@ passform:any;
     .subscribe({
       next: (response: any) => {
         if (response && response.success) {
-         
-          //this.router.navigate(['/dashboard']);
+         this.notifyBarService.showsnackbar(
+            "A password reset email has been sent, if the provided email is registered with us."
+          );
         } else {
           this.notifyBarService.showsnackbar(
             "Something went wrong, Please try again !!.",true

@@ -10,7 +10,7 @@
                         <mat-icon>print</mat-icon>
                         Print
                       </button>
-                      <button class="title-btn float-end no-print" type="button" [matMenuTriggerFor]="menu"  mat-mini-fab color="primary">
+                      <button *ngIf="pagePermissions?.canCreate" class="title-btn float-end no-print" type="button" [matMenuTriggerFor]="menu"  mat-mini-fab color="primary">
                         <mat-icon>add box</mat-icon> Add
                        </button>
                        <mat-menu #menu="matMenu">
@@ -104,15 +104,15 @@
                           </table>
                     </mat-card-content>
                 </mat-card> 
-              <app-con-staff-list (onAmountChange)="stf_amt($event)"></app-con-staff-list> 
-              <app-con-transportation-list (onAmountChange)="tp_amt($event)"></app-con-transportation-list>
-              <app-con-duty-travel-list (onAmountChange)="dt_amt($event)"></app-con-duty-travel-list>
-              <app-con-ofc-rent-list (onAmountChange)="or_amt($event)"></app-con-ofc-rent-list>
-              <app-con-ofc-supply-list (onAmountChange)="os_amt($event)"></app-con-ofc-supply-list>
-              <app-con-ofc-furniture-list (onAmountChange)="of_amt($event)"></app-con-ofc-furniture-list>
-              <app-con-report-doc-list (onAmountChange)="rd_amt($event)"></app-con-report-doc-list>
-              <app-con-road-survey-list (onAmountChange)="rs_amt($event)"></app-con-road-survey-list>
-               <app-con-contingency-list (onAmountChange)="cont_amt($event)"></app-con-contingency-list>
+              <app-con-staff-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="stf_amt($event)"></app-con-staff-list> 
+              <app-con-transportation-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="tp_amt($event)"></app-con-transportation-list>
+              <app-con-duty-travel-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="dt_amt($event)"></app-con-duty-travel-list>
+              <app-con-ofc-rent-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="or_amt($event)"></app-con-ofc-rent-list>
+              <app-con-ofc-supply-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="os_amt($event)"></app-con-ofc-supply-list>
+              <app-con-ofc-furniture-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="of_amt($event)"></app-con-ofc-furniture-list>
+              <app-con-report-doc-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="rd_amt($event)"></app-con-report-doc-list>
+              <app-con-road-survey-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="rs_amt($event)"></app-con-road-survey-list>
+               <app-con-contingency-list [pagePermissions]="pagePermissions" *ngIf="!isLoading" (onAmountChange)="cont_amt($event)"></app-con-contingency-list>
             </div>
         </div>
 </div>

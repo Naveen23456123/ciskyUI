@@ -87,6 +87,17 @@ export class ProfitLossInterfaceService {
     }
     return this.coreApi.standardService(standardAttribute);
   }
+  getProfitLossMarginFinancial(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ProfitLoss/Margin',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
   updateProfitLossById(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'ProfitLoss',
@@ -112,6 +123,17 @@ export class ProfitLossInterfaceService {
   createProfitLoss(request: any, guid: string) {
     const standardAttribute: ServiceAttributeModel = {
       url: 'ProfitLoss',
+      params: {},
+      headers: true,
+      guid: '',
+      request: request,
+      action: Operation.CREATE
+    }
+    return this.coreApi.standardService(standardAttribute);
+  }
+  getIncomeExpenseByFinancialYear(request: any, guid: string) {
+    const standardAttribute: ServiceAttributeModel = {
+      url: 'ProfitLoss/IncomeExpense',
       params: {},
       headers: true,
       guid: '',

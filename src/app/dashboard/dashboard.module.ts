@@ -13,12 +13,14 @@ import * as echarts from 'echarts/core';
 import { BarChart, LineChart, PieChart } from 'echarts/charts';
 import { GraphicComponent, GridComponent, LegendComponent, TitleComponent, ToolboxComponent, TooltipComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
+import { IncomeDetailsChartComponent } from './dialog/income-details-chart/income-details-chart.component';
 echarts.use([BarChart,LineChart,TooltipComponent,TitleComponent,ToolboxComponent, GraphicComponent, LegendComponent,PieChart, GridComponent, CanvasRenderer]);
 
 
 @NgModule({
   declarations: [
-    DashboardComponent
+    DashboardComponent,
+    IncomeDetailsChartComponent
   ],
   imports: [
     CommonModule,

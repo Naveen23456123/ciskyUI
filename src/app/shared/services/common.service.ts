@@ -47,6 +47,33 @@ export class CommonService {
 
     return result;
   }
+  getMonthlyDates(startDateStr: string, endDateStr: string): Date[] {
+    const dates: Date[] = [];
+
+    let current = new Date(startDateStr);
+    const end = new Date(endDateStr);
+
+    // Normalize to first day of month (avoid date rollover issues)
+    current = new Date(current.getFullYear(), current.getMonth(), 1);
+
+    while (current <= end) {
+      dates.push(new Date(current));
+      // Move to next month safely
+      current = new Date(current.getFullYear(), current.getMonth() + 1, 1);
+    }
+
+    return dates;
+  }
+  indexToAlphabetName(index: number): string {
+    let result = '';
+    let n = index + 1; // make it 1-based
+    while (n > 0) {
+      const rem = (n - 1) % 26;
+      result = String.fromCharCode(65 + rem) + result;
+      n = Math.floor((n - 1) / 26);
+    }
+    return result;
+  }
   getAllFinancialYearMonths(startYear: number): string[] {
     const months: string[] = [];
     for (let i = 0; i < 12; i++) {

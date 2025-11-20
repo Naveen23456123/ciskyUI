@@ -9,18 +9,18 @@ import { NgxExtendedPdfViewerService } from 'ngx-extended-pdf-viewer';
   styleUrl: './pdf-viewer.component.scss'
 })
 export class PdfViewerComponent {
-  pdfFile:any;
-  data:any;
-  url=true;
-  @Input() isLoading=false;
+  pdfFile: any;
+  data: any;
+  url = true;
+  @Input() isLoading = false;
 
-  constructor(@Inject(MAT_DIALOG_DATA) data: any,private pdfService: NgxExtendedPdfViewerService) {    
+  constructor(@Inject(MAT_DIALOG_DATA) data: any, private pdfService: NgxExtendedPdfViewerService) {
     this.data = data || {};
   }
-  ngOnInit(){
-    if(this.data.element){
-      this.url= this.data.element?.url ?? true;
-      if(!this.url){
+  ngOnInit() {
+    if (this.data.element) {
+      this.url = this.data.element?.url ?? true;
+      if (!this.url) {
         this.data.element.arrayBuffer().then((buffer: ArrayBuffer) => {
           this.pdfFile = new Uint8Array(buffer);
         });
@@ -29,8 +29,13 @@ export class PdfViewerComponent {
         this.pdfFile = this.data.element;
     }
   }
-  onPdfLoading(state: boolean) {
-    console.log(this.isLoading);
-    this.isLoading = state;
+
+  onPdfLoading(isLoading: boolean) {
+    console.log(isLoading);
+    this.isLoading = isLoading;
+  }
+
+  onPagesLoaded() {
+    this.isLoading = false;
   }
 }

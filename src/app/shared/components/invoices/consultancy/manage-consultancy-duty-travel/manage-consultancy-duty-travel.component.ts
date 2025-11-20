@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angu
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { BOQ_INVOICE } from '@app/shared/models/constant.config';
+import { InvoiceInterfaceService } from '@app/shared/services/external/invoice-interface.service';
 import { InvDutyTravelInterfaceService } from '@app/shared/services/external/invoice/inv-duty-travel-interface.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { finalize, take } from 'rxjs';
@@ -34,7 +35,8 @@ public data: any;
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
     @Optional() private dialogRef: MatDialogRef<ManageConsultancyDutyTravelComponent>, private formbuilder: FormBuilder,
     private sessionService: SessionService, private router: Router,private route: ActivatedRoute,
-    private boqService:InvDutyTravelInterfaceService, private dutyTravelService:InvDutyTravelInterfaceService){
+    private boqService:InvDutyTravelInterfaceService, private dutyTravelService:InvDutyTravelInterfaceService,
+    private invoiceService:InvoiceInterfaceService){
       this.data = data || {};
   }
   
@@ -145,7 +147,7 @@ public data: any;
       if(response && response.invoiceId){
         this.dtForm.patchValue({invoiceid:response.invoiceId});
         if (this.isEdit) {
-          this.dutyTravelService.updateConsultantDutyTravel(this.dtForm.get('controls')?.value[0], '')
+          this.invoiceService.upsertDutyTravelInvoiceScope(this.dtForm.get('controls')?.value, '')
             .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next: (response:any) => {
               if(response && response.success){
@@ -158,16 +160,17 @@ public data: any;
             });
         } else {
           this.dtForm.value.id=null;
-          this.dutyTravelService.createConsultantDutyTravel(this.dtForm.get('controls')?.value, '')
+          this.invoiceService.upsertDutyTravelInvoiceScope(this.dtForm.get('controls')?.value, '')
             .pipe(finalize(() => { this.isLoading = false;this.isBtnClicked=false })).subscribe({
               next:(response: any) => {
               if (response && response.success) {
                 let responseData:any[]=[];
                 response.data.forEach((element:any) => {
                   responseData.push({
-                    id:element.boqid,
+                    id:element.id,
+                    boqid: element.boqid,
                     currentbilltrips:element.currentbilltrips,
-                    invoiceid:element.id,
+                    invoiceid:element.invoiceid,
                     description:this.boqList.find((x:any)=>x.id==element.boqid)?.description,
                     rate:this.boqList.find((x:any)=>x.id==element.boqid)?.ratepertrip,
                     trips:this.boqList.find((x:any)=>x.id==element.boqid)?.numberofminimumtrips,
@@ -189,11 +192,11 @@ public data: any;
   }
 
   delete() {
-      this.dutyTravelService.deleteConsultantDutyTravel({id:this.dtForm.value.id}, '')
+      this.invoiceService.deleteInvoiceDutyTravelScope(this.data.element, '')
        .pipe(finalize(() => { this.isLoading = false; })).subscribe({
         next:(response: any) => {
           if (response && response.success) 
-           this.dialogRef.close({ value: this.dtForm.value, valid: true });
+           this.dialogRef.close({ value: this.data.element, valid: true });
       },
       error: (err: any) => {
           this.dialogRef.close(err);
