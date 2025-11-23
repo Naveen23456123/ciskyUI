@@ -17,64 +17,66 @@ import { finalize } from 'rxjs';
 })
 export class ViewVehicleLogComponent {
   isLoading = true;
-  vehicleId:any='';
-  todayDate= new Date();
-  vehicle:any;
-  logData:any[]=[];
+  vehicleId: any = '';
+  todayDate = new Date();
+  vehicle: any;
+  logData: any[] = [];
+  isPdfGenerating = false;
   @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
-  displayedColumns: string[] = ['emps','useddate', 'initialreading','endreading','totalkm', 'fromtime', 'totime', 'purpose'];
-  footerColumns: string[] = ['total', 'km','time','action'];
-  dataSource!: MatTableDataSource<any[]>;
-  monthandyear:any='';
-  readonly dialog = inject(MatDialog);
-  private defaultdialogoptions:  MatDialogConfig = {       
-      disableClose: false,
-      data: {},
-    };
-  constructor(private vehicleService:VehicleService, private route:ActivatedRoute,
-    private pdfService:GeneratePdfService
-  ){     
-      this.vehicleId = route.snapshot.paramMap.get('vehlogId');
-      this.vehicle= window.history.state;
-  }
-  ngOnInit(){
-   this.monthandyear=moment(new Date()).toISOString();
-   this.getlogs();
-    
-  }
-  ngOnDestroy(){}
 
-  dateChange(data:any){
-    this.isLoading=true;
-    this.monthandyear=data.format();
+  monthandyear: any = '';
+  readonly dialog = inject(MatDialog);
+  private defaultdialogoptions: MatDialogConfig = {
+    disableClose: false,
+    data: {},
+  };
+  constructor(private vehicleService: VehicleService, private route: ActivatedRoute,
+    private pdfService: GeneratePdfService
+  ) {
+    this.vehicleId = route.snapshot.paramMap.get('vehlogId');
+    this.vehicle = window.history.state;
+  }
+  ngOnInit() {
+    this.monthandyear = moment(new Date()).toISOString();
+    this.getlogs();
+
+  }
+  ngOnDestroy() { }
+
+  dateChange(data: any) {
+    this.isLoading = true;
+    this.monthandyear = data.format();
     this.getlogs();
   }
 
-  getlogs(){
-    this.vehicleService.getVehicleViewLogDetails({dateTime:this.monthandyear,vehicleId:this.vehicleId},'')
-    .pipe(untilDestroyed(this), finalize(()=> this.isLoading=false))
-    .subscribe((response:any)=>{
-      if(response && response.success){
-        this.logData= response.data;
-        this.dataSource = new MatTableDataSource(response.data);
-      }
-    })
+  getlogs() {
+    this.vehicleService.getVehicleViewLogDetails({ dateTime: this.monthandyear, vehicleId: this.vehicleId }, '')
+      .pipe(untilDestroyed(this), finalize(() => this.isLoading = false))
+      .subscribe((response: any) => {
+        if (response && response.success) {
+          this.logData = response.data;
+        }
+      })
   }
   getTotalKm() {
-    let total= this.logData.map((t:any) => (t.endreading-t.initialreading)).reduce((acc, value) => acc + value, 0);    
+    let total = this.logData.map((t: any) => (t.endreading - t.initialreading)).reduce((acc, value) => acc + value, 0);
     return total;
   }
-  printPdf(){
+  printPdf() {
+    this.isPdfGenerating = true;
     this.pdfService.generateAndGetPDF(this.pdfContent, 'Vehicle_Log.pdf').then((pdf) => {
       if (pdf) {
         const config = this.defaultdialogoptions;
-        config.minWidth='80vw';
+        config.minWidth = '80vw';
         config.data = {
-          url:false,
-          element:pdf
+          url: false,
+          element: pdf
         };
-        this.dialog.open(PdfViewerComponent,config);
+        this.dialog.open(PdfViewerComponent, config);
       }
+    }).finally(() => {
+      this.isPdfGenerating = false;
     });
   }
+
 }

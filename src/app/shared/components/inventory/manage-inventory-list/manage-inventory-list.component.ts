@@ -1,6 +1,6 @@
-import { Component,Input,ViewChild,inject} from '@angular/core';
+import { Component, Input, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatPaginator} from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
@@ -12,12 +12,13 @@ import { finalize, Subscription } from 'rxjs';
 import { UploadFileComponent } from '../../upload-file/upload-file.component';
 import { ManageInsuranceComponent } from '../../insurance/manage-insurance/manage-insurance.component';
 import { ManageSiteInventoryComponent } from '../manage-site-inventory/manage-site-inventory.component';
-import { DialogOperation } from '@app/shared/models/constant.config';
+import { DialogOperation, PermissionGuids } from '@app/shared/models/constant.config';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { SessionService } from '@app/shared/services/session.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { ManageUploadInventoryComponent } from '../manage-upload-inventory/manage-upload-inventory.component';
 import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
+import { CommonService } from '@app/shared/services/common.service';
 
 @Component({
   selector: 'app-manage-inventory-list',
@@ -26,72 +27,85 @@ import { GenerateCsvService } from '@app/shared/services/generate-csv.service';
   styleUrl: './manage-inventory-list.component.scss'
 })
 export class ManageInventoryListComponent {
-  @Input() showFilters=true;
-inventories:any[]= [];
+  @Input() showFilters = true;
+  inventories: any[] = [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','projectshortname', 'name', 'employeename','description','quantity','rateperitem','purchasedate','action'];
+  displayedColumns: string[] = ['serial', 'projectshortname', 'name', 'employeename', 'description', 'quantity', 'rateperitem', 'purchasedate'];
   dataSource!: MatTableDataSource<any[]>;
-  activeOrgId='123';
- @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+  pagePermissions: any = {};
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
     this.dataSource.paginator = paginator;
   }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-  resultsLength!:number;
-  isProject=false;
-  isSearching=false;
+  resultsLength!: number;
+  isProject = false;
+  isSearching = false;
   private subscription: Subscription = new Subscription();
 
   readonly dialog = inject(MatDialog);
-  
-  private defaultdialogoptions:  MatDialogConfig = {
+
+  private defaultdialogoptions: MatDialogConfig = {
     disableClose: false,
     data: {},
   };
 
- constructor(private inventoryService:InventoryControlService,private helperService:HelperService,
-  private route: ActivatedRoute, private notifyBarService:NotifyBarService,
-  private sessionService:SessionService,private csvService:GenerateCsvService
- ){
-  this.dataSource = new MatTableDataSource(this.inventories);
- }
+  constructor(private inventoryService: InventoryControlService, private helperService: HelperService,
+    private route: ActivatedRoute, private notifyBarService: NotifyBarService,
+    private sessionService: SessionService, private csvService: GenerateCsvService,
+    private commonService: CommonService
+  ) {
+    this.dataSource = new MatTableDataSource(this.inventories);
+  }
 
- ngOnInit()  {
-    this.subscription = this.sessionService.projectEntitySubject$.pipe(untilDestroyed(this)).subscribe((response:any)=>{
-      let invobj={};     
-      if(response && response.projectId) {
-        invobj= { pid: response.projectId };
-        this.isProject=true;
-      }
-      this.getInventoryData(invobj);
-    })
+  ngOnInit() {
+    if (PermissionGuids.inventory) {
+      this.commonService.getPermissionsForCurrentPage(PermissionGuids.inventory).then((permissions: any) => {
+        if (permissions) {
+          this.pagePermissions = permissions;
+          if (this.pagePermissions && this.pagePermissions.canRead) {
+            if (this.pagePermissions.canUpdate || this.pagePermissions.canDelete)
+              this.displayedColumns.push('action');
+            this.subscription = this.sessionService.projectEntitySubject$.pipe(untilDestroyed(this)).subscribe((response: any) => {
+              let invobj = {};
+              if (response && response.projectId) {
+                invobj = { pid: response.projectId };
+                this.isProject = true;
+              }
+              this.getInventoryData(invobj);
+            })
+          }
+        }
+      });
+    }
+
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
-  
+
   ngAfterViewInit() {
-    if(this.isProject){
-      this.displayedColumns=this.displayedColumns.filter(x => x !== "projectshortname")
+    if (this.isProject) {
+      this.displayedColumns = this.displayedColumns.filter(x => x !== "projectshortname")
     }
     this.dataSource.sort = this.sort;
   }
 
-  projectChnage(data:any){
-   let invObj={};
-   invObj= data.value==''? '': {pid:data.value};
-   this.getInventoryData(invObj);
+  projectChnage(data: any) {
+    let invObj = {};
+    invObj = data.value == '' ? '' : { pid: data.value };
+    this.getInventoryData(invObj);
   }
-  clear(){
+  clear() {
     this.getInventoryData({});
   }
-  filterChange(data:any){
-    if(data && data.value){ 
+  filterChange(data: any) {
+    if (data && data.value) {
       this.dataSource.filter = data.value.trim().toLowerCase()
     }
-    else{
+    else {
       this.dataSource.filter = '';
     }
     if (this.dataSource.paginator) {
@@ -101,38 +115,38 @@ inventories:any[]= [];
   private updateTable(info: any) {
     this.inventories = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
-    this.resultsLength= this.inventories.length;   
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);
+    this.resultsLength = this.inventories.length;
   }
 
-  import(){
+  import() {
     const config = this.defaultdialogoptions;
-      config.minWidth='75vw';
-      config.data = {
-        pageGuid: this.route.snapshot.data['pageGuid'],
-        type: this.route.snapshot.data['type'], 
-        template_type: TemplateType.INVENTORY   
-      };
-      const dialogRef = this.dialog.open(ManageUploadInventoryComponent,config);
-    dialogRef.afterClosed().subscribe((data) => { 
+    config.minWidth = '75vw';
+    config.data = {
+      pageGuid: this.route.snapshot.data['pageGuid'],
+      type: this.route.snapshot.data['type'],
+      template_type: TemplateType.INVENTORY
+    };
+    const dialogRef = this.dialog.open(ManageUploadInventoryComponent, config);
+    dialogRef.afterClosed().subscribe((data) => {
       if (data && data.valid) {
         this.addBulkInventory(data.value);
         this.notifyBarService.showsnackbar('The Inventory created successfully.');
       }
     });
   }
-  addBulkInventory(data:any){
-    data.forEach((element:any) => {
+  addBulkInventory(data: any) {
+    data.forEach((element: any) => {
       this.addRowData(element);
     });
   }
- export(){
-    if(this.inventories && this.inventories.length>0)
-      this.csvService.downloadFile(this.inventories,this.inventoryService.getCSVTemplateColumnList(),'Inventory');
-  } 
-  getInventoryData(obj:any){
-    this.isSearching=true;
-    this.inventoryService.getSiteInventoryListByOrgId(obj, '').pipe(finalize(() => {this.isLoading = false; this.isSearching=false;}))
+  export() {
+    if (this.inventories && this.inventories.length > 0)
+      this.csvService.downloadFile(this.inventories, this.inventoryService.getCSVTemplateColumnList(), 'Inventory');
+  }
+  getInventoryData(obj: any) {
+    this.isSearching = true;
+    this.inventoryService.getSiteInventoryListByOrgId(obj, '').pipe(finalize(() => { this.isLoading = false; this.isSearching = false; }))
       .subscribe((response: any) => {
         if (response && response.success) {
           this.inventories = response.data;
@@ -140,13 +154,13 @@ inventories:any[]= [];
         }
       });
   }
-  add_inv(){
+  add_inv() {
     const config = this.defaultdialogoptions;
-      config.data = {
-        pageGuid: this.route.snapshot.data['pageGuid'],
-        type: DialogOperation.ADD
-      };
-      config.minWidth='65vw';
+    config.data = {
+      pageGuid: this.route.snapshot.data['pageGuid'],
+      type: DialogOperation.ADD
+    };
+    config.minWidth = '65vw';
     const dialogRef = this.dialog.open(ManageSiteInventoryComponent, config);
     dialogRef.afterClosed().subscribe((data) => {
       if (data && data.valid) {
@@ -157,14 +171,14 @@ inventories:any[]= [];
       }
     });
   }
-    
-  edit_inv(row:any){
+
+  edit_inv(row: any) {
     this.defaultdialogoptions.data = {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: DialogOperation.EDIT,
       element: row
     };
-    this.defaultdialogoptions.minWidth='65vw';
+    this.defaultdialogoptions.minWidth = '65vw';
     const dialogRef = this.dialog.open(ManageSiteInventoryComponent, this.defaultdialogoptions);
     dialogRef.afterClosed().subscribe((data) => {
       if (data.valid) {
@@ -175,13 +189,13 @@ inventories:any[]= [];
       }
     });
   }
-  delete_inv(row:any){
+  delete_inv(row: any) {
     this.defaultdialogoptions.data = {
       pageGuid: this.route.snapshot.data['pageGuid'],
       type: DialogOperation.DELETE,
       element: row
     };
-    this.defaultdialogoptions.minWidth='45vw';
+    this.defaultdialogoptions.minWidth = '45vw';
     const dialogRef = this.dialog.open(ManageSiteInventoryComponent, this.defaultdialogoptions);
     dialogRef.afterClosed().subscribe((data) => {
       if (data.valid) {
@@ -193,41 +207,41 @@ inventories:any[]= [];
     });
   }
   updateRowData(data: any) {
-    const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
-    if(element){
-    element.id = data.id;
-    element.projectid= data.projectid,
-    element.itemid=data.itemid,
-    element.employeeid =data.employeeid,
-    element.description=data.description,
-    element.quantity=data.quantity,
-    element.costperitem=data.costperitem,
-    element.purchasedate=data.purchasedate,
-    element.project=data.project,
-    element.item=data.item,
-    element.employee=data.employee
-    this.dataSource._updateChangeSubscription();
+    const element: any = this.dataSource.data.find((x: any) => x.id == data.id);
+    if (element) {
+      element.id = data.id;
+      element.projectid = data.projectid,
+        element.itemid = data.itemid,
+        element.employeeid = data.employeeid,
+        element.description = data.description,
+        element.quantity = data.quantity,
+        element.costperitem = data.costperitem,
+        element.purchasedate = data.purchasedate,
+        element.project = data.project,
+        element.item = data.item,
+        element.employee = data.employee
+      this.dataSource._updateChangeSubscription();
     }
   }
   addRowData(data: any) {
-    const data1:any = {
-      id:data.id, 
+    const data1: any = {
+      id: data.id,
       projectid: data.projectid,
-      itemid:data.itemid,
-      employeeid :data.employeeid,
-      description:data.description,
-      quantity:data.quantity,
-      costperitem:data.costperitem,
-      purchasedate:data.purchasedate,
-      project:data.project,
-      item:data.item,
-      employee:data.employee
-    }     
+      itemid: data.itemid,
+      employeeid: data.employeeid,
+      description: data.description,
+      quantity: data.quantity,
+      costperitem: data.costperitem,
+      purchasedate: data.purchasedate,
+      project: data.project,
+      item: data.item,
+      employee: data.employee
+    }
     this.inventories.unshift(data1);
-    this.updateTable(this.inventories);  
+    this.updateTable(this.inventories);
   }
   deleteRow(data: any) {
-    const index = this.dataSource.data.findIndex((x:any) => x.id == data.id);
+    const index = this.dataSource.data.findIndex((x: any) => x.id == data.id);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }

@@ -1,10 +1,11 @@
-import { Component,ViewChild,inject} from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatPaginator} from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { ViewReadingImageComponent } from '@app/shared/components/vehicle/view-reading-image/view-reading-image.component';
+import { CommonService } from '@app/shared/services/common.service';
 import { HelperService } from '@app/shared/services/helper.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
 import { StateDataService } from '@app/shared/services/state-data.service';
@@ -18,116 +19,126 @@ import { finalize } from 'rxjs';
   styleUrl: './vehicle-log-list.component.scss'
 })
 export class VehicleLogListComponent {
-  vehicleLogs:any[]= [];
+  vehicleLogs: any[] = [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','vehiclename', 'date','starttime','endtime','commencementoftrip','misc','purposeandplace','images', 'action'];
+  displayedColumns: string[] = ['serial', 'vehiclename', 'date', 'starttime', 'endtime', 'commencementoftrip', 'misc', 'purposeandplace', 'images'];
   dataSource!: MatTableDataSource<any[]>;
-  activeOrgId='123';
- @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+  activeOrgId = '123';
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
     this.dataSource.paginator = paginator;
   }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-  resultsLength!:number;
-  isSearchLoading=false;
-
+  resultsLength!: number;
+  isSearchLoading = false;
+  pagePermissions: any = {};
   readonly dialog = inject(MatDialog);
-  
-  private defaultdialogoptions:  MatDialogConfig = {
-    minWidth: '900px', 
+
+  private defaultdialogoptions: MatDialogConfig = {
+    minWidth: '900px',
     disableClose: false,
     data: {},
   };
 
- constructor(private vehicleService:VehicleService,private helperService:HelperService,
-  private stateDataService:StateDataService, private notifyBarService:NotifyBarService,
-  private route:ActivatedRoute
- ){
-  this.dataSource = new MatTableDataSource(this.vehicleLogs);
- }
+  constructor(private vehicleService: VehicleService, private helperService: HelperService,
+    private stateDataService: StateDataService, private notifyBarService: NotifyBarService,
+    private route: ActivatedRoute, private commonService:CommonService
+  ) {
+    this.dataSource = new MatTableDataSource(this.vehicleLogs);
+  }
 
- ngOnInit()  {
-  this.stateDataService.stateDataSubject.subscribe((data:any) => {   
-    if (data.event == 'logedit'  && data.valid && data.value) {      
-      this.updateRowData(data.value);
-      this.notifyBarService.showsnackbar(data.msg);
-      this.stateDataService.stateDataSubject.next({});
-    } else if (data.event == 'logadd' && data.valid && data.value) {
-      this.addRowData(data.value);
-      this.notifyBarService.showsnackbar(data.msg);
-      this.stateDataService.stateDataSubject.next({});
-    } else if(data.event == 'logdelete' && data.valid && data.value){
-      this.deleteRow(data.value.id);
-      this.notifyBarService.showsnackbar(data.msg);
-      this.stateDataService.stateDataSubject.next({});
-    }
-  });
-    this.vehicleService.getVehicleLogDetailsByOrgId({}, '')
-      .pipe(finalize(() => this.isLoading = false))
-      .subscribe((response: any) => {
-      if (response && response.success) {
-        this.vehicleLogs = response.data;
-        this.updateTable(this.vehicleLogs);
+  ngOnInit() {
+    this.stateDataService.stateDataSubject.subscribe((data: any) => {
+      if (data.event == 'logedit' && data.valid && data.value) {
+        this.updateRowData(data.value);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      } else if (data.event == 'logadd' && data.valid && data.value) {
+        this.addRowData(data.value);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      } else if (data.event == 'logdelete' && data.valid && data.value) {
+        this.deleteRow(data.value.id);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
       }
     });
+    let pageGuid = this.route.snapshot.data['pageGuid'];
+    this.commonService.getPermissionsForCurrentPage(pageGuid).then((permissions: any) => {
+      this.pagePermissions = permissions;
+      if (this.pagePermissions?.canUpdate || this.pagePermissions?.canDelete) {
+        this.displayedColumns.push('action');
+      }
+      if (this.pagePermissions?.canRead) {
+        this.vehicleService.getVehicleLogDetailsByOrgId({}, '')
+          .pipe(finalize(() => this.isLoading = false))
+          .subscribe((response: any) => {
+            if (response && response.success) {
+              this.vehicleLogs = response.data;
+              this.updateTable(this.vehicleLogs);
+            }
+          });
+      }
+    });
+
   }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
-  searchObj:any={};
-  projectChange(data:any){ 
-    this.searchObj.projectid= data.value ?? '';
-    this.filterVehicleLogs();
-   }
-   compChange(data:any){
-     this.searchObj.companyid= data.value ?? '';
-     this.searchObj.projectid= data.projectid ?? '';
-     this.filterVehicleLogs();
-   }
-   
-   dateRangeChange(data:any){
-    if(data){
-      this.searchObj.startdate= data.start ?? '';
-      this.searchObj.enddate= data.end ?? '';
-    }
-    this.filterVehicleLogs();
-  } 
-  vehicleChange(data:any){ 
-    this.searchObj.vehicleid= data.value ?? '';
-    this.filterVehicleLogs();
-   }
-
-   anyChange(data:any){
-     if(data && data.value){ 
-       this.dataSource.filter = data.value.trim().toLowerCase()
-     }
-     else{
-       this.dataSource.filter = '';
-     }
-   }
-  clear(){
-    this.searchObj.projectid= '';
-    this.searchObj.companyid= '';
-    this.searchObj.starttime= '';
-    this.searchObj.endtime= '';
-    this.searchObj.startdate= null;
-    this.searchObj.enddate= null;
-    this.searchObj.vehicleid= '';
+  searchObj: any = {};
+  projectChange(data: any) {
+    this.searchObj.projectid = data.value ?? '';
     this.filterVehicleLogs();
   }
-   filterVehicleLogs(){
-    this.isSearchLoading=true;
+  compChange(data: any) {
+    this.searchObj.companyid = data.value ?? '';
+    this.searchObj.projectid = data.projectid ?? '';
+    this.filterVehicleLogs();
+  }
+
+  dateRangeChange(data: any) {
+    if (data) {
+      this.searchObj.startdate = data.start ?? '';
+      this.searchObj.enddate = data.end ?? '';
+    }
+    this.filterVehicleLogs();
+  }
+  vehicleChange(data: any) {
+    this.searchObj.vehicleid = data.value ?? '';
+    this.filterVehicleLogs();
+  }
+
+  anyChange(data: any) {
+    if (data && data.value) {
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else {
+      this.dataSource.filter = '';
+    }
+  }
+  clear() {
+    this.searchObj.projectid = '';
+    this.searchObj.companyid = '';
+    this.searchObj.starttime = '';
+    this.searchObj.endtime = '';
+    this.searchObj.startdate = null;
+    this.searchObj.enddate = null;
+    this.searchObj.vehicleid = '';
+    this.filterVehicleLogs();
+  }
+  filterVehicleLogs() {
+    this.isSearchLoading = true;
     this.vehicleService.getVehicleLogDetailsByOrgId(this.searchObj, '')
-      .pipe(finalize(() => {this.isLoading = false; this.isSearchLoading=false}))
+      .pipe(finalize(() => { this.isLoading = false; this.isSearchLoading = false }))
       .subscribe((response: any) => {
-      if (response && response.success) {
-        this.vehicleLogs = response.data;
-        this.updateTable(this.vehicleLogs);
-      }
-    });
-   }
+        if (response && response.success) {
+          this.vehicleLogs = response.data;
+          this.updateTable(this.vehicleLogs);
+        }
+      });
+  }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -141,70 +152,70 @@ export class VehicleLogListComponent {
   private updateTable(info: any) {
     this.vehicleLogs = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length); 
-    this.pageSize= this.helperService.getPageSize();   
-    this.resultsLength= this.vehicleLogs.length;   
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);
+    this.pageSize = this.helperService.getPageSize();
+    this.resultsLength = this.vehicleLogs.length;
   }
   updateRowData(data: any) {
     console.log(data);
-    const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
-      if(element) {
-        element.id=data.id,
-        element.projectid =data.projectid,
-        element.vehicleid=data.vehicleid,
-        element.employeeids=data.employeeids,
-        element.useddate=data.useddate,
-        element.fromtime=data.fromtime,
-        element.totime=data.totime,
-        element.issunday=data.issunday,
-        element.isnight=data.isnight,
-        element.extrahours=data.extrahours,
-        element.initialreading=data.initialreading,
-        element.initialimageaddress=data.initialimageaddress,
-        element.endreading=data.endreading,
-        element.vehiclename= data.vehiclename,
-        element.vehiclenumber=data.vehiclenumber,
-        element.endimageaddress=data.endimageaddress,
-        element.purposeandplace=data.purposeandplace
-        this.dataSource._updateChangeSubscription();
-      }
+    const element: any = this.dataSource.data.find((x: any) => x.id == data.id);
+    if (element) {
+      element.id = data.id,
+        element.projectid = data.projectid,
+        element.vehicleid = data.vehicleid,
+        element.employeeids = data.employeeids,
+        element.useddate = data.useddate,
+        element.fromtime = data.fromtime,
+        element.totime = data.totime,
+        element.issunday = data.issunday,
+        element.isnight = data.isnight,
+        element.extrahours = data.extrahours,
+        element.initialreading = data.initialreading,
+        element.initialimageaddress = data.initialimageaddress,
+        element.endreading = data.endreading,
+        element.vehiclename = data.vehiclename,
+        element.vehiclenumber = data.vehiclenumber,
+        element.endimageaddress = data.endimageaddress,
+        element.purposeandplace = data.purposeandplace
+      this.dataSource._updateChangeSubscription();
+    }
   }
-  addRowData(data: any) {    
-    const data1:any = {
+  addRowData(data: any) {
+    const data1: any = {
       id: data.id,
-      projectid :data.projectid,
-      vehicleid:data.vehicleid,
-      employeeids:data.employeeids,
-      useddate:data.useddate,
-      fromtime:data.fromtime,
-      totime:data.totime,
-      issunday:data.issunday,
-      isnight:data.isnight,
-      extrahours:data.extrahours,
-      initialreading:data.initialreading,
-      initialimageaddress:data.initialimageaddress,
-      endreading:data.endreading,
-      endimageaddress:data.endimageaddress,
-      purposeandplace:data.purposeandplace,
-      vehiclename:data.vehiclename,
-      vehiclenumber:data.vehiclenumber
-    }  
+      projectid: data.projectid,
+      vehicleid: data.vehicleid,
+      employeeids: data.employeeids,
+      useddate: data.useddate,
+      fromtime: data.fromtime,
+      totime: data.totime,
+      issunday: data.issunday,
+      isnight: data.isnight,
+      extrahours: data.extrahours,
+      initialreading: data.initialreading,
+      initialimageaddress: data.initialimageaddress,
+      endreading: data.endreading,
+      endimageaddress: data.endimageaddress,
+      purposeandplace: data.purposeandplace,
+      vehiclename: data.vehiclename,
+      vehiclenumber: data.vehiclenumber
+    }
     this.vehicleLogs.unshift(data1);
-    this.updateTable(this.vehicleLogs); 
+    this.updateTable(this.vehicleLogs);
   }
 
   deleteRow(data: any) {
-    const index = this.dataSource.data.findIndex((x:any) => x.id == data);
+    const index = this.dataSource.data.findIndex((x: any) => x.id == data);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }
-  viewImages(data:any){
+  viewImages(data: any) {
     this.defaultdialogoptions.data = {
-         pageGuid: this.route.snapshot.data['pageGuid'],
-         element:data
-       };
-       this.defaultdialogoptions.minWidth='75vw';
-       this.dialog.open(ViewReadingImageComponent, this.defaultdialogoptions); 
+      pageGuid: this.route.snapshot.data['pageGuid'],
+      element: data
+    };
+    this.defaultdialogoptions.minWidth = '75vw';
+    this.dialog.open(ViewReadingImageComponent, this.defaultdialogoptions);
   }
 }
 

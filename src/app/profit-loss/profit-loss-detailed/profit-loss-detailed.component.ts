@@ -2,7 +2,7 @@ import { group } from '@angular/animations';
 import { Component, ElementRef, inject, Inject, Optional, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { DialogOperation } from '@app/shared/models/constant.config';
+import { DialogOperation, PermissionGuids } from '@app/shared/models/constant.config';
 import { CommonService } from '@app/shared/services/common.service';
 import { ProfitLossInterfaceService } from '@app/shared/services/external/profit-loss-interface.service';
 import { GeneratePdfService } from '@app/shared/services/generate-pdf.service';
@@ -37,8 +37,10 @@ export type Row = { type: 'group'; label: string, id: string, key: string } | {
 export class ProfitLossDetailedComponent {
   readonly dialog = inject(MatDialog);
   public data: any;
-  isPdfGenerating = false; 
-  displayedColumns: string[] = ['name', 'actualamount', 'action'];
+  isPdfGenerating = false;
+  displayedColumns: string[] = ['name', 'actualamount'];
+  groupTotal:string[]=['totalHeader','totalcurrent'];
+  groupFooter:string[]=['totalfooter','totalfootercurrent'];
   isLoading = true;
   scopes: any[] = [];
   dataRecords: any[] = [];
@@ -48,6 +50,7 @@ export class ProfitLossDetailedComponent {
   previousTotalIncome = 0;
   previousTotalExpense = 0;
   dataSource: Row[] = [];
+  pagePermissions: any = {};
   profitLossData: any;
   footerRow: string = 'totalfooter';
   isClicked = false;
@@ -67,36 +70,51 @@ export class ProfitLossDetailedComponent {
 
   }
   ngOnInit() {
-    const state = history.state;
-    if (state.value) {
-      this.dataObj.project = state.value.project;
-      this.dataObj.generatedate = state.value.createdate;
-      let apiCalls: any = {}
-      forkJoin({
-        scopeAPI: this.profitLossService.getProfitLossScopes({}, ''),
-        byId: this.profitLossService.getProfitLossListById({ id: state.value.id }, ''),
-      }).pipe(finalize(() => this.isLoading = false))
-        .subscribe({
-          next: (response: any) => {
-            if (response.scopeAPI && response.scopeAPI.success) {
-              this.scopes = response.scopeAPI.data;
-              this.sessionService.setProfileLossScope(response.scopeAPI.data);
-              this.scopeLoaded = true;
-              if (response.byId && response.byId.success) {
-                this.profitLossData = response.byId.data;
-                this.addDatatoSheet({ type: DialogOperation.ADD, value: this.profitLossData.scopes });
-                this.dataObj.percentage = this.commonService.netPercentage(
-                  this.dataObj.totalincome,
-                  this.dataObj.totalexpense,
-                  this.dataObj.totalincome - this.dataObj.totalexpense);
-              }
+    if (PermissionGuids.profitloss) {
+      this.commonService.getPermissionsForCurrentPage(PermissionGuids.profitloss).then((permissions: any) => {
+        if (permissions) {
+          this.pagePermissions = permissions;
+          if (this.pagePermissions && this.pagePermissions.canRead) {
+            if (this.pagePermissions.canDelete || this.pagePermissions.canUpdate){
+              this.displayedColumns.push('action');
+              this.groupTotal.push('totalempty');
+              this.groupFooter.push('totalempty')
+            }
+            const state = history.state;
+            console.log(state);
+            if (state.value) {
+              this.dataObj.project = state.value.project;
+              this.dataObj.generatedate = state.value.createdate;
+              forkJoin({
+                scopeAPI: this.profitLossService.getProfitLossScopes({}, ''),
+                byId: this.profitLossService.getProfitLossListById({ id: state.value.id }, ''),
+              }).pipe(finalize(() => this.isLoading = false))
+                .subscribe({
+                  next: (response: any) => {
+                    if (response.scopeAPI && response.scopeAPI.success) {
+                      this.scopes = response.scopeAPI.data;
+                      this.sessionService.setProfileLossScope(response.scopeAPI.data);
+                      this.scopeLoaded = true;
+                      if (response.byId && response.byId.success) {
+                        this.profitLossData = response.byId.data;
+                        this.addDatatoSheet({ type: DialogOperation.ADD, value: this.profitLossData.scopes });
+                        this.dataObj.percentage = this.commonService.netPercentage(
+                          this.dataObj.totalincome,
+                          this.dataObj.totalexpense,
+                          this.dataObj.totalincome - this.dataObj.totalexpense);
+                      }
+                    }
+                  }
+                });
             }
           }
-        });
+        }
+      });
+
     }
   }
   download() {
-    this.isPdfGenerating = true; 
+    this.isPdfGenerating = true;
     this.pdfService.generateAndGetPDF(this.pdfContent, 'Profit_Loss.pdf').then((pdf) => {
       if (pdf) {
         const config = this.defaultdialogoptions;
@@ -108,7 +126,7 @@ export class ProfitLossDetailedComponent {
         this.dialog.open(PdfViewerComponent, config);
       }
     }).finally(() => {
-      this.isPdfGenerating = false; 
+      this.isPdfGenerating = false;
     });
   }
 

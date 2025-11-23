@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Logger } from '@app/core/logger.service';
 import { untilDestroyed } from '@app/core/until-destroyed';
 import { SessionService } from '@app/shared/services/session.service';
+import { TokenService } from '@app/shared/services/token.service';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 const log = new Logger('Menu Service');
@@ -10,7 +11,7 @@ const log = new Logger('Menu Service');
 })
 export class MenuService {
   private destroy$ = new Subject<void>();
-  constructor(private sessionService: SessionService) { }
+  constructor(private sessionService: SessionService,private tokenService:TokenService) { }
 
   public menuItems() {
     return [
@@ -197,12 +198,6 @@ export class MenuService {
           link: 'vehicle-log',
           guid: '680dd2933682904bdd6e9ab8',
           roles: []
-        },
-        {
-          label: 'Billing Details',
-          link: 'vehicle-billing',
-          guid: '',
-          roles: []
         }],
       },
 
@@ -264,7 +259,7 @@ export class MenuService {
         icon: 'bx-rupee',
         link: '#',
         items: [{
-          label: 'Imperest',
+          label: 'Imprest',
           link: 'imperest',
           guid: '680dd2733682904bdd6e9afb',
           roles: []
@@ -281,6 +276,12 @@ export class MenuService {
           link: 'ofc-billing',
           guid: '680dd2933682904bdd6e9afd',
           roles: []
+        },
+        {
+          label: 'Vehicle',
+          link: 'vehicle-billing',
+          guid: '680dd2933682904bdd6e9afe',
+          roles: []
         }],
       },
       {
@@ -288,26 +289,26 @@ export class MenuService {
         icon: 'bx-rupee',
         link: '#',
         items: [{
-          label: 'Office(es)',
+          label: 'Office',
           link: 'ofc-billing-request',
           guid: '680dd2733682904bdd6e9aac',
           roles: []
           //Admin - Id, SuperAdmin -Id
         },
         {
-          label: 'Imperest(s)',
+          label: 'Imprest',
           link: 'imperest-billing-request',
           guid: '680dd2733682904bdd6e9aaa',
           roles: []
         },
         {
-          label: 'Expens(es)',
+          label: 'Expense',
           link: 'exp-billing-request',
           guid: '680dd2733682904bdd6e9aab',
           roles: []
         },
         {
-          label: 'Vehicle(s)',
+          label: 'Vehicle',
           link: 'veh-billing-request',
           guid: '680dd2733682904bdd6e9aad',
           roles: []
@@ -356,7 +357,7 @@ export class MenuService {
     ]
   }
 
-  public displayItems() {
+  public displayItems1() {
     return new Observable((sub) => {
       const displayeditems = this.menuItems();
       this.sessionService.userPriviligesSubject$.pipe(takeUntil(this.destroy$)).subscribe((priviliges) => {
@@ -377,7 +378,7 @@ export class MenuService {
               firstelement.hidden = this.anyItemVisible(firstelement.items);
             }
             else {
-              firstelement.hidden = !this.checkPriviligies(priviliges.Modules, firstelement);
+              //firstelement.hidden = !this.checkPriviligies(priviliges.Modules, firstelement);
             }
             //log.debug(element);
           });
@@ -395,15 +396,71 @@ export class MenuService {
     this.destroy$.complete();
   }
   private checkPriviligies(priviliges: any, item: any): boolean {
-    console.log(priviliges, item);
+
     const menuelement = priviliges?.filter((ele: any) => {
+      console.log(ele.Name.toLowerCase(), item.label.toLowerCase());
       return ele.Name.toLowerCase() === item.label.toLowerCase();
     });
-    //log.debug(menuelement);
+    console.log(priviliges, item, typeof (menuelement[0]) !== 'undefined' && menuelement[0] !== null);
     if (typeof (menuelement[0]) !== 'undefined' && menuelement[0] !== null)
       return true;
     else
       return false;
+
+  }
+  public displayItems() {
+    return new Observable((sub) => {
+      const displayeditems = this.menuItems();
+      this.sessionService.setUserPriviliges(JSON.parse(this.tokenService.getClaim("response"))?.Modules);
+      this.sessionService.userPriviligesSubject$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((privs) => {
+          if (!privs || !privs.Modules) return;
+
+          displayeditems.forEach((root: any) => {
+
+            // STEP 1: check root
+            const matchedRoot = this.matchRoot(privs.Modules, root);
+
+            if (!matchedRoot) {
+              // root is not allowed → hide everything under it
+              root.hidden = true;
+              if (root.items) {
+                root.items.forEach((child: any) => child.hidden = true);
+              }
+              return;
+            }
+
+            // root matched → visible
+            root.hidden = false;
+            
+            // STEP 2: check children under matching root only
+            if (root.items && matchedRoot?.ModuleList) {
+              root.items.forEach((child: any) => {
+                child.hidden = !this.matchChild(matchedRoot.ModuleList, child);
+              });
+
+              // if all children hidden → hide root too
+              root.hidden = !root.items.some((c: any) => !c.hidden);
+            }
+          });
+          console.log(displayeditems);
+        });
+
+      sub.next(displayeditems);
+      sub.complete();
+    });
+  }
+  private matchRoot(modules: any[], root: any): any {
+    return modules.find(m =>
+      m.Name?.toLowerCase() === root.label.toLowerCase()
+    );
+  }
+  private matchChild(modulelist: any[], child: any): boolean {
+    const found = modulelist.find(m =>
+      m.Name?.toLowerCase() === child.label.toLowerCase()
+    );
+    return !!found;
   }
   private anyItemVisible(items: any): boolean {
     const menuelement = items.filter((ele: any) => {

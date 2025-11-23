@@ -1,8 +1,10 @@
-import { Component,Type,ViewChild,inject} from '@angular/core';
+import { Component, Type, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatPaginator} from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
+import { CommonService } from '@app/shared/services/common.service';
 import { HelperService } from '@app/shared/services/helper.service';
 import { VehicleService } from '@app/vehicle-control/vehicle.service';
 import { finalize } from 'rxjs';
@@ -13,12 +15,11 @@ import { finalize } from 'rxjs';
   templateUrl: './vehicle-list.component.html',
   styleUrl: './vehicle-list.component.scss'
 })
-export class VehicleListComponent {
- 
- constructor(private vehicleService:VehicleService){
- }
+export class VehicleListComponent { 
+  constructor(private route: ActivatedRoute) {
+  }
 
- ngOnInit()  {     
+  ngOnInit() {
   }
 }
 

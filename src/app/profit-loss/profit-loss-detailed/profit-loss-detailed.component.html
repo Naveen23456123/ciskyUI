@@ -7,8 +7,9 @@
             <div *ngIf="!isLoading">
                 <div class="no-print content-center control-div container">
                     <div class="button-row ">
-                       
-                        <app-download-pdf [loading]="isPdfGenerating" (clickEvent)="download()"></app-download-pdf>
+
+                        <app-download-pdf *ngIf="pagePermissions.canRead" [loading]="isPdfGenerating"
+                            (clickEvent)="download()"></app-download-pdf>
 
                     </div>
                 </div>
@@ -52,8 +53,8 @@
                                     [attr.colspan]="displayedColumns.length">
                                     <div class="item-center">
                                         <strong>{{ row.label }}</strong>
-                                        <button class="hide-in-pdf" *ngIf="!row.label?.includes('Revenue')"
-                                            mat-icon-button type="button"
+                                        <button *ngIf="pagePermissions.canUpdate && !row.label?.includes('Revenue')"
+                                            class="hide-in-pdf" mat-icon-button type="button"
                                             (click)="addControls(row,dataSource.indexOf(row))">
                                             <mat-icon>add_circle</mat-icon>
                                         </button>
@@ -75,7 +76,8 @@
                                 </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="totalempty">
+                            <ng-container *ngIf="pagePermissions.canUpdate || pagePermissions.canDelete"
+                                matColumnDef="totalempty">
                                 <td mat-cell class="hide-in-pdf" *matCellDef="let row">
                                 </td>
                             </ng-container>
@@ -113,14 +115,15 @@
                                 </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="action">
+                            <ng-container *ngIf="pagePermissions.canUpdate || pagePermissions.canDelete"
+                                matColumnDef="action">
                                 <th class="w-10" mat-header-cell *matHeaderCellDef class="hide-in-pdf"> Action </th>
                                 <td class="w-10" mat-cell class="hide-in-pdf pl-btn" *matCellDef="let row;">
                                     <ng-container *ngIf="!row.isNew && !row.isEditing">
 
-                                        <app-edit-btn
+                                        <app-edit-btn *ngIf="pagePermissions.canUpdate "
                                             (clickEvent)="editRow(row,dataSource.indexOf(row))"></app-edit-btn>
-                                        <app-delete-btn *ngIf="row.isremovable"
+                                        <app-delete-btn *ngIf="pagePermissions.canDelete && row.isremovable"
                                             (clickEvent)="removeRow(row,dataSource.indexOf(row))"></app-delete-btn>
 
                                     </ng-container>
@@ -136,7 +139,7 @@
                                     </ng-container>
                                 </td>
                             </ng-container>
-
+                          
                             <ng-container matColumnDef="totalfooter">
                                 <td mat-cell class="pd-4" *matCellDef="let row" [attr.colspan]="1">
                                     <strong>{{ row.name }}</strong>
@@ -155,11 +158,9 @@
                             <!-- Group Row -->
                             <tr mat-row *matRowDef="let row; columns: ['groupHeader']; when: isGroup"
                                 class="group-header-row"></tr>
-                            <tr mat-row
-                                *matRowDef="let row; columns: ['totalHeader','totalcurrent','totalempty']; when: isTotalInfo"
+                            <tr mat-row *matRowDef="let row; columns: groupTotal; when: isTotalInfo"
                                 class="group-total-row"></tr>
-                            <tr mat-row
-                                *matRowDef="let row; columns: ['totalfooter','totalfootercurrent','totalempty']; when: isFooterInfo"
+                            <tr mat-row *matRowDef="let row; columns: groupFooter; when: isFooterInfo"
                                 class="group-total-row"></tr>
                             <!-- Data Row -->
                             <tr mat-row *matRowDef="let row; columns: displayedColumns ; when: isData"></tr>
@@ -167,10 +168,11 @@
 
 
                     </div>
-                </div>               
+                </div>
                 <div class="row control-div">
                     <div class=" button-row" align="right">
                         <app-submit-load-btn (clickEvent)="submit()" [isValid]="true" [isClicked]="isClicked"
+                            *ngIf="pagePermissions.canUpdate || pagePermissions.canDelete"
                             text="Save"></app-submit-load-btn>
                     </div>
                 </div>

@@ -1,8 +1,9 @@
-import { Component,ViewChild,inject} from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatPaginator} from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 import { InventoryControlService } from '@app/inventory-control/inventory-control.service';
 import { ApprovalStatus } from '@app/shared/models/constant.config';
 import { CommonService } from '@app/shared/services/common.service';
@@ -21,73 +22,84 @@ import { finalize } from 'rxjs';
   styleUrl: './expense-list.component.scss'
 })
 export class ExpenseListComponent {
-  expenseList:any[]= [];
-    isLoading = true;
-    displayedColumns: string[] = ['serial','project','office','name','gamount','apramount', 'view','action'];
-    dataSource!: MatTableDataSource<any[]>;
-    activeOrgId='123';
+  expenseList: any[] = [];
+  isLoading = true;
+  displayedColumns: string[] = ['serial', 'project', 'office', 'name', 'gamount', 'apramount', 'view'];
+  dataSource!: MatTableDataSource<any[]>;
+  activeOrgId = '123';
   @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
     this.dataSource.paginator = paginator;
   }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-  resultsLength!:number;
-    isSearching=false;
-    statusList:any[]=[];
-    userObj:any={};
-    billingSummary:any;
-    readonly dialog = inject(MatDialog);
-    
-    private defaultdialogoptions:  MatDialogConfig = {
-      minWidth: '900px', 
-      disableClose: false,
-      data: {},
-    };
-  
-   constructor(private siteOpsService:SiteopsService,private helperService:HelperService,
-    private stateDataService:StateDataService, private notifyBarService:NotifyBarService,
-    private sessionService:SessionService, private commonService:CommonService
-   ){
+  resultsLength!: number;
+  isSearching = false;
+  statusList: any[] = [];
+  userObj: any = {};
+  billingSummary: any;
+  pagePermissions: any = {};
+  readonly dialog = inject(MatDialog);
+
+  private defaultdialogoptions: MatDialogConfig = {
+    minWidth: '900px',
+    disableClose: false,
+    data: {},
+  };
+
+  constructor(private siteOpsService: SiteopsService, private helperService: HelperService,
+    private stateDataService: StateDataService, private notifyBarService: NotifyBarService,
+    private sessionService: SessionService, private commonService: CommonService, private route: ActivatedRoute
+  ) {
     this.dataSource = new MatTableDataSource(this.expenseList);
-   }
-  
-  ngOnInit()  {
-    this.stateDataService.stateDataSubject.subscribe((data) => {   
-      if (data.event == 'expedit'  && data.valid && data.value) {      
+  }
+
+  ngOnInit() {
+    this.stateDataService.stateDataSubject.subscribe((data) => {
+      if (data.event == 'expedit' && data.valid && data.value) {
         this.updateRowData(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
-      } else if(data.event == 'expdelete' && data.valid && data.value){
+      } else if (data.event == 'expdelete' && data.valid && data.value) {
         this.deleteRow(data.value.id);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
-      } else if (data.event == 'expadd'  && data.valid && data.value) {      
+      } else if (data.event == 'expadd' && data.valid && data.value) {
         this.addRowData(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
-      }else if (data.event == 'expclose'  && data.valid && data.value) {      
+      } else if (data.event == 'expclose' && data.valid && data.value) {
         this.updateRecord(data.value);
-      } else if (data.event == 'expclaim' && data.valid && data.value) { 
+      } else if (data.event == 'expclaim' && data.valid && data.value) {
         this.addClaimedDetails(data.value);
         this.addApprovedDetails(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       }
     });
-    this.sessionService.approvalStatusSubject$.subscribe((statusresponse:any)=>{
-      if(statusresponse){
-       this.statusList= statusresponse;
+    let pageGuid = this.route.snapshot.data['pageGuid'];
+    this.commonService.getPermissionsForCurrentPage(pageGuid).then((permissions: any) => {
+      this.pagePermissions = permissions;
+      if (this.pagePermissions?.canUpdate || this.pagePermissions?.canDelete) {
+        this.displayedColumns.push('action');
       }
-    })
-    this.sessionService.userSubject$.subscribe((response:any)=>{
-      if(response){
-       this.userObj= response;
+      if (this.pagePermissions?.canRead) {
+        this.sessionService.approvalStatusSubject$.subscribe((statusresponse: any) => {
+          if (statusresponse) {
+            this.statusList = statusresponse;
+            this.sessionService.userSubject$.subscribe((response: any) => {
+              if (response) {
+                this.userObj = response;
+                this.filterExpense();
+              }
+            })
+          }
+        })
       }
-    })
-    this.filterExpense();
+    });
+   
   }
-  
+
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
@@ -103,144 +115,146 @@ export class ExpenseListComponent {
   private updateTable(info: any) {
     this.expenseList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
-    this.pageSize= this.helperService.getPageSize();
-    this.resultsLength= this.expenseList.length;   
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);
+    this.pageSize = this.helperService.getPageSize();
+    this.resultsLength = this.expenseList.length;
   }
   addRowData(newdata: any) {
-    const data1:any = {
-      id:newdata.id,
-      imperestid:newdata.imperestid,
-      companyid:newdata.companyid,
-      projectid:newdata.projectid,
-      officeid:newdata.officeid,
-      project:newdata.project,
-      officename:newdata.officename,
-      expensename:newdata.expensename,
-      officelocation:newdata.officelocation,
-      claimed:newdata.claimed,
-      remarks:newdata.remarks, 
-      approved:newdata.approved,
-      ...this.setLevelConfig(newdata.levels) 
+    const data1: any = {
+      id: newdata.id,
+      imperestid: newdata.imperestid,
+      companyid: newdata.companyid,
+      projectid: newdata.projectid,
+      officeid: newdata.officeid,
+      project: newdata.project,
+      officename: newdata.officename,
+      expensename: newdata.expensename,
+      officelocation: newdata.officelocation,
+      claimed: newdata.claimed,
+      remarks: newdata.remarks,
+      approved: newdata.approved,
+      ...this.setLevelConfig(newdata.levels)
     }
     this.expenseList.unshift(data1);
-    this.updateTable(this.expenseList); 
+    this.updateTable(this.expenseList);
   }
-addClaimedDetails(data: any) {
-  if (data) {
-    const element: any = this.dataSource.data.find((x: any) => x.id == data.id);
-    if (element) {
-      element.claimed = this.mergeCategoryTotals(element.claimed || [], data.claimeddetails);
-      this.dataSource._updateChangeSubscription();
-      this.updateTable(this.expenseList);
+  addClaimedDetails(data: any) {
+    if (data) {
+      const element: any = this.dataSource.data.find((x: any) => x.id == data.id);
+      if (element) {
+        element.claimed = this.mergeCategoryTotals(element.claimed || [], data.claimeddetails);
+        this.dataSource._updateChangeSubscription();
+        this.updateTable(this.expenseList);
+      }
     }
   }
-}
-addApprovedDetails(data: any) {
-  if (data) {
-    const element: any = this.dataSource.data.find((x: any) => x.id == data.id);
-    if (element) {
-      element.approved = this.mergeCategoryTotals(element.approved || [], data.approved);
-      this.dataSource._updateChangeSubscription();
-      this.updateTable(this.expenseList);
+  addApprovedDetails(data: any) {
+    if (data) {
+      const element: any = this.dataSource.data.find((x: any) => x.id == data.id);
+      if (element) {
+        element.approved = this.mergeCategoryTotals(element.approved || [], data.approved);
+        this.dataSource._updateChangeSubscription();
+        this.updateTable(this.expenseList);
+      }
     }
   }
-}
- mergeCategoryTotals(targetArray: any[], sourceDetails: any[]) {
-  if (!targetArray) {
-    targetArray = [];
-  }
+  mergeCategoryTotals(targetArray: any[], sourceDetails: any[]) {
+    if (!targetArray) {
+      targetArray = [];
+    }
 
-  sourceDetails.forEach((detail: any) => {
-    const existing = targetArray.find((c: any) => c.categoryid === detail.categoryid);
-    if (existing) {
-      existing.amount += detail.amount;
-    } else {
-      targetArray.push({
-        categoryid: detail.categoryid,
-        categoryname: detail.categoryname || detail.item,
-        amount: detail.amount
-      });
-    }
-  });
+    sourceDetails.forEach((detail: any) => {
+      const existing = targetArray.find((c: any) => c.categoryid === detail.categoryid);
+      if (existing) {
+        existing.amount += detail.amount;
+      } else {
+        targetArray.push({
+          categoryid: detail.categoryid,
+          categoryname: detail.categoryname || detail.item,
+          amount: detail.amount
+        });
+      }
+    });
 
-  return targetArray;
-}
+    return targetArray;
+  }
   updateRowData(data: any) {
-    const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
-    if(element){
+    const element: any = this.dataSource.data.find((x: any) => x.id == data.id);
+    if (element) {
       element.date = data.date;
       element.expensename = data.name;
       this.dataSource._updateChangeSubscription();
     }
   }
-  setLevel(items:any) {
-    if(items){ 
-      return  items.map((level:any) => ({
-          ...level,
-          status: this.statusList.find((x:any)=>x.id==level.statusid)?.name 
-        }))
-      }
+  setLevel(items: any) {
+    if (items) {
+      return items.map((level: any) => ({
+        ...level,
+        status: this.statusList.find((x: any) => x.id == level.statusid)?.name
+      }))
     }
+  }
   deleteRow(data: any) {
-    const index = this.dataSource.data.findIndex((x:any) => x.id == data);
+    const index = this.dataSource.data.findIndex((x: any) => x.id == data);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }
-  searchObj:any={
-    projectid:'',   
-    companyid:''
+  searchObj: any = {
+    projectid: '',
+    companyid: ''
   };
-  projectChange(data:any){ 
-    this.searchObj.projectid= data.value ?? '';
+  projectChange(data: any) {
+    this.searchObj.projectid = data.value ?? '';
     this.filterExpense();
   }
-  compChange(data:any){
-    this.searchObj.companyid= data.value ?? '';
-    this.searchObj.projectid= data.projectid ?? '';
+  compChange(data: any) {
+    this.searchObj.companyid = data.value ?? '';
+    this.searchObj.projectid = data.projectid ?? '';
     this.filterExpense();
   }
-  anyChange(data:any){
-    if(data && data.value){ 
+  anyChange(data: any) {
+    if (data && data.value) {
       this.dataSource.filter = data.value.trim().toLowerCase()
     }
-    else{
+    else {
       this.dataSource.filter = '';
     }
   }
   clear() {
-    this.searchObj={
-      projectid:'',
-      companyid:'',
+    this.searchObj = {
+      projectid: '',
+      companyid: '',
     };
     this.filterExpense();
   }
-  filterExpense(){
-  this.isSearching=true;
-    this.siteOpsService.searchExpenseListByOrgId({...this.searchObj,employeeid:this.userObj.employeeid}, '')
-      .pipe(finalize(() => {this.isLoading = false;this.isSearching=false}))
-      .subscribe({next : (response: any) => {
-        if (response && response.success) {
-          this.expenseList = response.data.map((item:any) => ({
-            ...item,
-            ...this.setLevelConfig(item.levels)
-          }));
-          this.updateTable(this.expenseList);
+  filterExpense() {
+    this.isSearching = true;
+    this.siteOpsService.searchExpenseListByOrgId({ ...this.searchObj, employeeid: this.userObj.employeeid }, '')
+      .pipe(finalize(() => { this.isLoading = false; this.isSearching = false }))
+      .subscribe({
+        next: (response: any) => {
+          if (response && response.success) {
+            this.expenseList = response.data.map((item: any) => ({
+              ...item,
+              ...this.setLevelConfig(item.levels)
+            }));
+            this.updateTable(this.expenseList);
+          }
         }
-    }});
+      });
   }
-  setLevelConfig(levels:any){
-    const overallstatus=this.commonService.getOverallStatus(levels);
+  setLevelConfig(levels: any) {
+    const overallstatus = this.commonService.getOverallStatus(levels);
     return {
-      levels:overallstatus==ApprovalStatus.REJECTED ? levels?.filter((x:any)=>x.status.toLowerCase()==ApprovalStatus.REJECTED.toLocaleLowerCase()):levels,
-      hasRejected:overallstatus==ApprovalStatus.REJECTED,
-      status:overallstatus, 
-      isedit:overallstatus==ApprovalStatus.PENDING
+      levels: overallstatus == ApprovalStatus.REJECTED ? levels?.filter((x: any) => x.status.toLowerCase() == ApprovalStatus.REJECTED.toLocaleLowerCase()) : levels,
+      hasRejected: overallstatus == ApprovalStatus.REJECTED,
+      status: overallstatus,
+      isedit: overallstatus == ApprovalStatus.PENDING
     }
   }
-  updateRecord(data:any){
-    const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
-    if(element && data.expenses){
+  updateRecord(data: any) {
+    const element: any = this.dataSource.data.find((x: any) => x.id == data.id);
+    if (element && data.expenses) {
       console.log(data.expenses);
       const claimedMap = new Map<string, { categoryid: string, categoryname: string, amount: number }>();
       const approvedMap = new Map<string, { categoryid: string, categoryname: string, amount: number }>();
@@ -277,13 +291,12 @@ addApprovedDetails(data: any) {
           }
         }
       }
-      element.claimed=Array.from(claimedMap.values());
-      element.approved= Array.from(approvedMap.values());
+      element.claimed = Array.from(claimedMap.values());
+      element.approved = Array.from(approvedMap.values());
       this.dataSource._updateChangeSubscription();
-    }    
+    }
   }
 }
-  
-  
-  
-  
+
+
+

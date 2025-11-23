@@ -2,11 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { VehicleLogListComponent } from './vehicle-log-list.component';
 import { extractTitle } from '@app/core/i18n.service';
-import { AddVehicleBillingComponent } from '@app/vehicle-control/vehicle-billing/add-vehicle-billing/add-vehicle-billing.component';
-import { EditVehicleBillingComponent } from '@app/vehicle-control/vehicle-billing/edit-vehicle-billing/edit-vehicle-billing.component';
 import { AddVehicleLogComponent } from '../add-vehicle-log/add-vehicle-log.component';
 import { EditVehicleLogComponent } from '../edit-vehicle-log/edit-vehicle-log.component';
-import { DeleteVehicleComponent } from '@app/vehicle-control/vehicle/delete-vehicle/delete-vehicle.component';
 import { DeleteVehicleLogComponent } from '../delete-vehicle-log/delete-vehicle-log.component';
 import { ViewVehicleLogComponent } from '../view-vehicle-log/view-vehicle-log.component';
 

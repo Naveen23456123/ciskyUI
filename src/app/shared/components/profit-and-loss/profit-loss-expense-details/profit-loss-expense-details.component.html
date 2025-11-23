@@ -9,17 +9,28 @@
                 <div *ngIf="!isLoading" class="mt-2 row d-flex justify-content-between  stick-bar">
 
                     <div class="col-md-12 d-flex justify-content-end">
-                        <app-download-pdf [loading]="isPdfGenerating" class="me-2" (clickEvent)="printScopePage()"></app-download-pdf>
-                        <app-download-csv *ngIf="isInvoice" class="me-2" toolTip="Download Template"
-                            (clickEvent)="downloadTemplate()"></app-download-csv>
+                        <app-download-pdf *ngIf="pagePermissions?.canRead" [loading]="isPdfGenerating" class="me-2"
+                            (clickEvent)="printScopePage()"></app-download-pdf>
+                        <app-download-csv *ngIf="pagePermissions?.canCreate && isInvoice" class="me-2"
+                            toolTip="Download Template" (clickEvent)="downloadTemplate()"></app-download-csv>
 
-                        <app-file-uploader *ngIf="showUpload" UploadType="csv" (onfileUpload)="fileuploaded($event)">
+                        <app-file-uploader *ngIf="pagePermissions?.canCreate && showUpload" UploadType="csv"
+                            (onfileUpload)="fileuploaded($event)">
                         </app-file-uploader>
-                        <app-submit-load-btn *ngIf="showUpload" class="me-2" [isClicked]="isBtnClicked"
-                            (clickEvent)="submit()" [isValid]="!isBtnClicked" text="Submit">
+                        <app-edit-btn class="me-4" *ngIf="pagePermissions?.canUpdate && !showUpload && !isEditMode"
+                            (clickEvent)="manageDetailedRelease()"></app-edit-btn>
+
+                        <app-submit-load-btn
+                            *ngIf="(pagePermissions?.canCreate ||pagePermissions?.canUpdate) && (isEditMode || showUpload)"
+                            class="me-2" [isClicked]="isBtnClicked" (clickEvent)="submit()" [isValid]="!isBtnClicked"
+                            text="Submit">
                         </app-submit-load-btn>
+                        <button class="cancel-btn me-4" *ngIf="(isEditMode || showUpload)"
+                            (click)="manageDetailedRelease()" mat-stroked-button color="default">
+                            Cancel
+                        </button>
                         <app-alert-badge class="me-3" *ngIf="!isInvoice" [isError]="true"
-                            [message]="'Invoice not found for the month of : ' + (invoiceData.invoice.monthandyear | date:'MMM-yyyy') +'!!.'">
+                            [message]="'Expense can only be added once an invoice has been generated for the month of : ' + (invoiceData.invoice.monthandyear | date:'MMM-yyyy') +' !!.'">
                         </app-alert-badge>
                     </div>
 
@@ -91,9 +102,15 @@
                                             <td *ngFor="let mk of monthKeys" class="border px-2 py-1">
                                                 <span class="no-print" *ngIf="row.type === 'total'"> {{ row[mk] ?? 0 |
                                                     formatAmount}}</span>
-                                                <span *ngIf="row.type !== 'total'" class="print-value">{{ row[mk] ?? 0 |
-                                                    formatAmount }}</span>
-                                                <input *ngIf="row.type !== 'total'"
+                                                <!-- <span *ngIf="row.type !== 'total'" class="print-value">{{ row[mk] ?? 0 |
+                                                    formatAmount }}</span> -->
+                                                <!-- <input *ngIf="row.type !== 'total'"
+                                                    (ngModelChange)="onCellChange(row, mk, $event)" matInput
+                                                    type="number" [(ngModel)]="row[mk]" /> -->
+                                                <span *ngIf="row.type !== 'total' && !isEditMode">{{ row[mk] ?? 0 |
+                                                    formatAmount
+                                                    }}</span>
+                                                <input *ngIf="row.type !== 'total' && isEditMode"
                                                     (ngModelChange)="onCellChange(row, mk, $event)" matInput
                                                     type="number" [(ngModel)]="row[mk]" />
                                             </td>

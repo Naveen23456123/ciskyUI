@@ -25,7 +25,8 @@
                   <hr>
                   <div class="control-div pd-1">
                     <span class="report-heading">Invoice No. : {{invDetails.number}} </span>
-                    <span class="report-heading float-end"> Invoice's Month : {{invDetails.monthandyear | date: 'MMMM - yyyy'}}</span>
+                    <span class="report-heading float-end"> Invoice's Month : {{invDetails.monthandyear | date: 'MMMM -
+                      yyyy'}}</span>
                   </div>
                   <div class="control-div pd-1">
                     <span class="report-heading">Project : {{invDetails.projectname}} </span>
@@ -111,23 +112,27 @@
                   <div class="col-md-12 d-flex justify-content-end align-items-center">
                     <app-download-pdf [loading]="isPdfGenerating" class="me-2"
                       (clickEvent)="printScopePage()"></app-download-pdf>
-                    <app-download-csv *ngIf="pagePermissions?.canCreate && !isEditMode" class="me-4" toolTip="Download Template"
-                      (clickEvent)="downloadTemplate()"></app-download-csv>
+                    <app-download-csv *ngIf="pagePermissions?.canCreate && !isEditMode" class="me-4"
+                      toolTip="Download Template" (clickEvent)="downloadTemplate()"></app-download-csv>
 
                     <app-file-uploader *ngIf="pagePermissions?.canCreate && showUpload " UploadType="csv"
                       (onfileUpload)="fileuploaded($event)">
                     </app-file-uploader>
-                    
-                    <app-edit-btn class="me-4" *ngIf="pagePermissions?.canUpdate && !showUpload && !isEditMode" (clickEvent)="manageDetailedRelease()"></app-edit-btn>
-              
-                    <app-submit-load-btn *ngIf="(pagePermissions?.canCreate ||pagePermissions?.canUpdate) && (isEditMode || showUpload)" class="me-2" [isClicked]="isBtnClicked"
-                      (clickEvent)="submit()" [isValid]="!isBtnClicked" text="Submit">
+
+                    <app-edit-btn class="me-4" *ngIf="pagePermissions?.canUpdate && !showUpload && !isEditMode"
+                      (clickEvent)="manageDetailedRelease()"></app-edit-btn>
+
+                    <app-submit-load-btn
+                      *ngIf="(pagePermissions?.canCreate ||pagePermissions?.canUpdate) && (isEditMode || showUpload)"
+                      class="me-2" [isClicked]="isBtnClicked" (clickEvent)="submit()" [isValid]="!isBtnClicked"
+                      text="Submit">
                     </app-submit-load-btn>
-                    
-                    <button class="cancel-btn me-4" *ngIf="(isEditMode || showUpload)" (click)="manageDetailedRelease()" mat-stroked-button color="default">
+
+                    <button class="cancel-btn me-4" *ngIf="(isEditMode || showUpload)" (click)="manageDetailedRelease()"
+                      mat-stroked-button color="default">
                       Cancel
                     </button>
-                       </div>
+                  </div>
 
                 </div>
                 <div #scopePdfContent id="scopePdfContent">
@@ -136,7 +141,8 @@
                     <hr>
                     <div class="control-div pd-1">
                       <span class="report-heading">Invoice No. : {{invDetails.number}} </span>
-                      <span class="report-heading float-end"> Invoice's Month : {{invDetails.monthandyear | date: 'MMMM - yyyy'}}</span>
+                      <span class="report-heading float-end"> Invoice's Month : {{invDetails.monthandyear | date: 'MMMM
+                        - yyyy'}}</span>
                     </div>
                     <div class="control-div pd-1">
                       <span class="report-heading">Project : {{invDetails.projectname}} </span>

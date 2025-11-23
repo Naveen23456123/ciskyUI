@@ -66,6 +66,8 @@ public data: any;
   }
 
   ngOnInit(){
+    this.projectInit=false;
+    this.isLoading=true;
     this.checkMode(this.data.type);
     this.getTitle(this.data.type);
     this.vehicleForm = this.formbuilder.group({ 
@@ -110,7 +112,7 @@ public data: any;
                 this.setCompanyForm(response.data);
                 this.projectInit=true;
                 this.projectName= this.data.element.project;
-                this.projectChange();
+                this.projectChange(response.data.projectid);
               }
             })
           }
@@ -165,7 +167,6 @@ public data: any;
   }
   
   projectChange(data:any=null){
-    console.log(data);
     if(data && data.value){
       this.vehicleForm.patchValue({
         projectid:data.value.id,

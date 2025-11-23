@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component,ViewChild,inject} from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatPaginator} from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RequestService } from '@app/requests/request.service';
 import { CommonService } from '@app/shared/services/common.service';
 import { HelperService } from '@app/shared/services/helper.service';
@@ -21,66 +21,77 @@ import { finalize } from 'rxjs';
   styleUrl: './veh-billing-req-list.component.scss'
 })
 export class VehBillingReqListComponent {
- vehicleBilings:any[]= [];
+  vehicleBilings: any[] = [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','monthyear','vehicle', 'fixeddetails', 'totaldetails','aaproved','status', 'action'];
+  displayedColumns: string[] = ['serial', 'monthyear', 'vehicle', 'fixeddetails', 'totaldetails', 'aaproved', 'status'];
   dataSource!: MatTableDataSource<any[]>;
-  activeOrgId='123';
- @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+  activeOrgId = '123';
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
     this.dataSource.paginator = paginator;
   }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-  resultsLength!:number;
-  isSearchLoading=false;
-  statusList:any[]=[];
-  userObj:any={};
+  resultsLength!: number;
+  isSearchLoading = false;
+  statusList: any[] = [];
+  userObj: any = {};
   readonly dialog = inject(MatDialog);
-  billingSummary:any;
-  private defaultdialogoptions:  MatDialogConfig = {
-    minWidth: '900px', 
+  billingSummary: any;
+  pagePermissions:any={};
+  private defaultdialogoptions: MatDialogConfig = {
+    minWidth: '900px',
     disableClose: false,
     data: {},
   };
 
- constructor(private requestService:RequestService,private helperService:HelperService,private router:Router,
-  private stateDataService:StateDataService, private notifyBarService:NotifyBarService,
-  private cdr : ChangeDetectorRef, private sessionService:SessionService, private commonService:CommonService
- ){
-  this.dataSource = new MatTableDataSource(this.vehicleBilings);
- }
-
- ngOnInit()  {
-
-  this.stateDataService.stateDataSubject.subscribe((data:any) => {   
-    if (data.event == 'vehaprv'  && data.valid && data.value) {      
-      this.updateRowData(data.value);
-      this.notifyBarService.showsnackbar(data.msg);
-      this.stateDataService.stateDataSubject.next({});
-    } else if(data.event == 'vehreqdelete' && data.valid && data.value){
-      this.deleteRow(data.value);
-      this.notifyBarService.showsnackbar(data.msg);
-      this.stateDataService.stateDataSubject.next({});
-    }
-  });
-  this.sessionService.approvalStatusSubject$.subscribe((statusresponse:any)=>{
-    if(statusresponse){
-     this.statusList= statusresponse;
-    }
-  })
-  this.sessionService.userSubject$.subscribe((response:any)=>{
-    if(response){
-     this.userObj= response;
-    }
-  })
-  this.filterVehicleBilling();
+  constructor(private requestService: RequestService, private helperService: HelperService, private router: Router,
+    private stateDataService: StateDataService, private notifyBarService: NotifyBarService,
+    private cdr: ChangeDetectorRef, private sessionService: SessionService, private commonService: CommonService,
+    private route:ActivatedRoute
+  ) {
+    this.dataSource = new MatTableDataSource(this.vehicleBilings);
   }
-  setLevel(items:any) {
-    if(items){ 
-    return  items.map((level:any) => ({
+
+  ngOnInit() {
+
+    this.stateDataService.stateDataSubject.subscribe((data: any) => {
+      if (data.event == 'vehaprv' && data.valid && data.value) {
+        this.updateRowData(data.value);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      } else if (data.event == 'vehreqdelete' && data.valid && data.value) {
+        this.deleteRow(data.value);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      }
+    });
+    let pageGuid = this.route.snapshot.data['pageGuid'];
+    this.commonService.getPermissionsForCurrentPage(pageGuid).then((permissions: any) => {
+      this.pagePermissions = permissions;
+      if (this.pagePermissions?.canUpdate || this.pagePermissions?.canDelete) {
+        this.displayedColumns.push('action');
+      }
+      if (this.pagePermissions?.canRead) {
+        this.sessionService.approvalStatusSubject$.subscribe((statusresponse: any) => {
+          if (statusresponse) {
+            this.statusList = statusresponse;
+            this.sessionService.userSubject$.subscribe((response: any) => {
+              if (response) {
+                this.userObj = response;
+                this.filterVehicleBilling();
+              }
+            })
+          }
+        })
+      }
+    });
+  }
+  setLevel(items: any) {
+    if (items) {
+      return items.map((level: any) => ({
         ...level,
-        status: this.statusList.find((x:any)=>x.id==level.statusid)?.name 
+        status: this.statusList.find((x: any) => x.id == level.statusid)?.name
       }))
     }
   }
@@ -101,86 +112,86 @@ export class VehBillingReqListComponent {
   private updateTable(info: any) {
     this.vehicleBilings = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
-    this.pageSize= this.helperService.getPageSize();
-    this.resultsLength= this.vehicleBilings.length;   
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);
+    this.pageSize = this.helperService.getPageSize();
+    this.resultsLength = this.vehicleBilings.length;
   }
   updateRowData(data: any) {
-    const element:any = this.dataSource.data.find((x:any) => x.id == data.billingid);    
-      if(element) {
-        let level = element.levels.find((x:any) => x.id == data.id);       
-        if(level){
-          level.totalamount=data.amount,
-          level.actedamount=data.approved,
-          level.statusid=data.statusid,
-          level.status= this.statusList.find((x:any)=>x.id==level.statusid)?.name;          
-        }
-        element.approved= data.approved;
-        this.dataSource._updateChangeSubscription();
-        this.billingSummary= [...data.summary];
+    const element: any = this.dataSource.data.find((x: any) => x.id == data.billingid);
+    if (element) {
+      let level = element.levels.find((x: any) => x.id == data.id);
+      if (level) {
+        level.totalamount = data.amount,
+          level.actedamount = data.approved,
+          level.statusid = data.statusid,
+          level.status = this.statusList.find((x: any) => x.id == level.statusid)?.name;
       }
+      element.approved = data.approved;
+      this.dataSource._updateChangeSubscription();
+      this.billingSummary = [...data.summary];
+    }
   }
 
   deleteRow(data: any) {
-    const index = this.dataSource.data.findIndex((x:any) => x.id == data.id);
+    const index = this.dataSource.data.findIndex((x: any) => x.id == data.id);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
-    this.billingSummary= [...data.summary];
+    this.billingSummary = [...data.summary];
   }
-  searchObj:any={};
-  projectChange(data:any){ 
-    this.searchObj.projectid= data.value ?? '';
+  searchObj: any = {};
+  projectChange(data: any) {
+    this.searchObj.projectid = data.value ?? '';
     this.filterVehicleBilling();
-   }
-   compChange(data:any){
-     this.searchObj.companyid= data.value ?? '';
-     this.searchObj.projectid= data.projectid ?? '';
-     this.filterVehicleBilling();
-   }
-   anyChange(data:any){
-     if(data && data.value){ 
-       this.dataSource.filter = data.value.trim().toLowerCase()
-     }
-     else{
-       this.dataSource.filter = '';
-     }
-   }
-   monthYearChange(data:any){
-    this.searchObj.monthandyear= data.value ?? '';
+  }
+  compChange(data: any) {
+    this.searchObj.companyid = data.value ?? '';
+    this.searchObj.projectid = data.projectid ?? '';
     this.filterVehicleBilling();
-   }
-  clear(){
-    this.searchObj={
-      projectid:'',
-      companyid:'',
-      monthandyear:null
+  }
+  anyChange(data: any) {
+    if (data && data.value) {
+      this.dataSource.filter = data.value.trim().toLowerCase()
+    }
+    else {
+      this.dataSource.filter = '';
+    }
+  }
+  monthYearChange(data: any) {
+    this.searchObj.monthandyear = data.value ?? '';
+    this.filterVehicleBilling();
+  }
+  clear() {
+    this.searchObj = {
+      projectid: '',
+      companyid: '',
+      monthandyear: null
     };
     this.filterVehicleBilling();
   }
-   filterVehicleBilling(){
-    this.isSearchLoading=true;
-    this.requestService.searchVehicleBillingRequests({...this.searchObj,employeeid:this.userObj.employeeid}, '')
-    .pipe(finalize(() => {this.isLoading = false; this.isSearchLoading=false}))
-    .subscribe((response: any) => {
-      if (response && response.success) {
-      this.billingSummary= response.data.summary;
-      this.vehicleBilings = response.data.billings.map((item:any) => ({
-        ...item,
-        levels: this.setLevel(item.levels) 
-      }));
-      this.updateTable(this.vehicleBilings);
-      }
-      this.cdr.detectChanges();
-  });
-   }
-   getVehicleBilling(data:any){
+  filterVehicleBilling() {
+    this.isSearchLoading = true;
+    this.requestService.searchVehicleBillingRequests({ ...this.searchObj, employeeid: this.userObj.employeeid }, '')
+      .pipe(finalize(() => { this.isLoading = false; this.isSearchLoading = false }))
+      .subscribe((response: any) => {
+        if (response && response.success) {
+          this.billingSummary = response.data.summary;
+          this.vehicleBilings = response.data.billings.map((item: any) => ({
+            ...item,
+            levels: this.setLevel(item.levels)
+          }));
+          this.updateTable(this.vehicleBilings);
+        }
+        this.cdr.detectChanges();
+      });
+  }
+  getVehicleBilling(data: any) {
     return this.commonService.getVehicleBillingInfo(data);
   }
-  edit(data:any){
-     this.router.navigate(['/veh-billing-request', 'edit', data.id], {state:{value :data,searchObj:this.searchObj}});
+  edit(data: any) {
+    this.router.navigate(['/veh-billing-request', 'edit', data.id], { state: { value: data, searchObj: this.searchObj } });
   }
-  delete_row(data:any){
-     this.router.navigate(['/veh-billing-request', 'delete', data.id], {state:{value :data,searchObj:this.searchObj}});
+  delete_row(data: any) {
+    this.router.navigate(['/veh-billing-request', 'delete', data.id], { state: { value: data, searchObj: this.searchObj } });
   }
 }
 

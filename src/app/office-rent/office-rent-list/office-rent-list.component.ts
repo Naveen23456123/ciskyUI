@@ -1,6 +1,6 @@
-import { Component,ViewChild,inject} from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatPaginator} from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { EmployeeService } from '@app/employee-control/employee.service';
@@ -21,65 +21,71 @@ import { CommonService } from '@app/shared/services/common.service';
   styleUrl: './office-rent-list.component.scss'
 })
 export class OfficeRentListComponent {
-  rents:any[]= [];
+  rents: any[] = [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','project','office','basicamount', 'agrdate', 'ownername','mobileno','docs','action'];
+  displayedColumns: string[] = ['serial', 'project', 'office', 'basicamount', 'agrdate', 'ownername', 'mobileno', 'docs'];
   dataSource!: MatTableDataSource<any[]>;
-  activeOrgId='123';
- @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+  activeOrgId = '123';
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
     this.dataSource.paginator = paginator;
   }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-  resultsLength!:number;
-  isSearchLoading=false;
-  pagePermissions:any;
+  resultsLength!: number;
+  isSearchLoading = false;
+  pagePermissions: any;
   readonly dialog = inject(MatDialog);
-  
-  private defaultdialogoptions:  MatDialogConfig = {
-    minWidth: '900px', 
+
+  private defaultdialogoptions: MatDialogConfig = {
+    minWidth: '900px',
     disableClose: false,
     data: {},
   };
 
- constructor(private officeService:OfficeService,private helperService:HelperService,
-  private stateDataService :StateDataService, private notifyBarService:NotifyBarService,
-  private route :ActivatedRoute,private commonService:CommonService
- ){
-  this.dataSource = new MatTableDataSource(this.rents);
- }
+  constructor(private officeService: OfficeService, private helperService: HelperService,
+    private stateDataService: StateDataService, private notifyBarService: NotifyBarService,
+    private route: ActivatedRoute, private commonService: CommonService
+  ) {
+    this.dataSource = new MatTableDataSource(this.rents);
+  }
 
- ngOnInit()  {
-  this.stateDataService.stateDataSubject.subscribe((data:any) => {
-      
-    if (data.event == 'rentedit'  && data.valid && data.value) {      
-      this.updateRowData(data.value);
-      this.notifyBarService.showsnackbar(data.msg);
-      this.stateDataService.stateDataSubject.next({});
-    } else if (data.event == 'rentadd' && data.valid && data.value) {
-      this.addRowData(data.value);
-      this.notifyBarService.showsnackbar(data.msg);
-      this.stateDataService.stateDataSubject.next({});
-    } else if(data.event == 'rentdelete' && data.valid && data.value){
-      this.deleteRow(data.value.id);
-      this.notifyBarService.showsnackbar(data.msg);
-      this.stateDataService.stateDataSubject.next({});
-    }
-  });
-  let pageGuid= this.route.snapshot.data['pageGuid'];  
-    this.commonService.getPermissionsForCurrentPage(pageGuid).then((permissions) => {
+  ngOnInit() {
+    this.stateDataService.stateDataSubject.subscribe((data: any) => {
+
+      if (data.event == 'rentedit' && data.valid && data.value) {
+        this.updateRowData(data.value);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      } else if (data.event == 'rentadd' && data.valid && data.value) {
+        this.addRowData(data.value);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      } else if (data.event == 'rentdelete' && data.valid && data.value) {
+        this.deleteRow(data.value.id);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      }
+    });
+    let pageGuid = this.route.snapshot.data['pageGuid'];
+    this.commonService.getPermissionsForCurrentPage(pageGuid).then((permissions: any) => {
       this.pagePermissions = permissions;
-  });
+      if (this.pagePermissions?.canUpdate || this.pagePermissions?.canDelete) {
+        this.displayedColumns.push('action');
+      }
+      if (this.pagePermissions?.canRead) {
+        this.officeService.searchOfficeRent({}, '')
+          .pipe(finalize(() => { this.isLoading = false; this.isSearchLoading = false; }))
+          .subscribe((response: any) => {
+            if (response && response.success) {
+              this.rents = response.data;
+              this.updateTable(this.rents);
+            }
+          });
+      }
+    });
 
-  this.officeService.searchOfficeRent({}, '')
-  .pipe(finalize(() =>{ this.isLoading = false; this.isSearchLoading=false;}))
-  .subscribe((response: any) => {
-    if (response && response.success) {
-      this.rents = response.data;
-      this.updateTable(this.rents); 
-    }
-  }); 
+
   }
 
   ngAfterViewInit() {
@@ -98,118 +104,118 @@ export class OfficeRentListComponent {
   private updateTable(info: any) {
     this.rents = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);   
-    this.resultsLength= this.rents.length;   
-    this.pageSize= this.helperService.getPageSize();
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);
+    this.resultsLength = this.rents.length;
+    this.pageSize = this.helperService.getPageSize();
   }
   updateRowData(data: any) {
-    const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
-      if(element){
-        element.id=data.id,
-        element.projectid =data.projectid,
-        element.totalamount =data.totalamount,
-        element.name=data.officename,
-        element.location=data.officelocation,
-        element.basicamount=data.basicamount,
-        element.agreementduration=data.agreementduration,
-        element.agreementstartdate=data.agreementstartdate,
-        element.agreementenddate=data.agreementenddate,
-        element.ownername=data.ownername,
-        element.projectname=data.projectname,
-        element.phoneno=data.phoneno,
+    const element: any = this.dataSource.data.find((x: any) => x.id == data.id);
+    if (element) {
+      element.id = data.id,
+        element.projectid = data.projectid,
+        element.totalamount = data.totalamount,
+        element.name = data.officename,
+        element.location = data.officelocation,
+        element.basicamount = data.basicamount,
+        element.agreementduration = data.agreementduration,
+        element.agreementstartdate = data.agreementstartdate,
+        element.agreementenddate = data.agreementenddate,
+        element.ownername = data.ownername,
+        element.projectname = data.projectname,
+        element.phoneno = data.phoneno,
         this.dataSource._updateChangeSubscription();
-      }
+    }
   }
-  addRowData(data: any) {    
-    const data1:any = {
+  addRowData(data: any) {
+    const data1: any = {
       id: data.id,
-      projectid :data.projectid,
-      name:data.officename,
-      location:data.officelocation,
-      totalamount:data.totalamount,
-      basicamount:data.basicamount,
-      agreementduration:data.agreementduration,
-      agreementstartdate:data.agreementstartdate,
-      agreementenddate:data.agreementenddate,
-      ownername:data.ownername,
-      projectname:data.projectname,
-      phoneno:data.phoneno,
-    }      
+      projectid: data.projectid,
+      name: data.officename,
+      location: data.officelocation,
+      totalamount: data.totalamount,
+      basicamount: data.basicamount,
+      agreementduration: data.agreementduration,
+      agreementstartdate: data.agreementstartdate,
+      agreementenddate: data.agreementenddate,
+      ownername: data.ownername,
+      projectname: data.projectname,
+      phoneno: data.phoneno,
+    }
     this.rents.unshift(data1);
     this.updateTable(this.rents);
   }
 
   deleteRow(data: any) {
-    const index = this.dataSource.data.findIndex((x:any) => x.id == data);
+    const index = this.dataSource.data.findIndex((x: any) => x.id == data);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }
-  viewdocs(data:any){
+  viewdocs(data: any) {
     this.defaultdialogoptions.data = {
-      pageGuid: this.route.snapshot.data['pageGuid'],      
-      element:{id:data}
+      pageGuid: this.route.snapshot.data['pageGuid'],
+      element: { id: data }
     };
-    this.defaultdialogoptions.minWidth='75vw';
+    this.defaultdialogoptions.minWidth = '75vw';
     const dialogRef = this.dialog.open(ManageOfficeDocComponent, this.defaultdialogoptions);
     dialogRef.afterClosed().subscribe((data) => {
       if (data.valid) {
-       
+
       }
       else {
       }
     });
   }
-  searchObj:any={
-    projectid:'',
-    companyid:'',
-    startdate:'',
-    enddate:''
+  searchObj: any = {
+    projectid: '',
+    companyid: '',
+    startdate: '',
+    enddate: ''
   };
-  clear(){
-    this.searchObj={
-    projectid:'',
-    companyid:'',
-    startdate:null,
-    enddate:null
-  };
+  clear() {
+    this.searchObj = {
+      projectid: '',
+      companyid: '',
+      startdate: null,
+      enddate: null
+    };
     this.filterRent();
   }
-  projectChange(data:any){ 
-    this.searchObj.projectid= data.value ?? '';
+  projectChange(data: any) {
+    this.searchObj.projectid = data.value ?? '';
     this.filterRent();
-  } 
-  compChange(data:any){
-    this.searchObj.companyid= data.value ?? '';
-    this.searchObj.projectid= data.projectid ?? '';
+  }
+  compChange(data: any) {
+    this.searchObj.companyid = data.value ?? '';
+    this.searchObj.projectid = data.projectid ?? '';
     this.filterRent();
-  } 
-  anyChange(data:any){
-    if(data && data.value){ 
+  }
+  anyChange(data: any) {
+    if (data && data.value) {
       this.dataSource.filter = data.value.trim().toLowerCase()
     }
-    else{
+    else {
       this.dataSource.filter = '';
     }
-  } 
-  dateRangeChange(data:any){
-    if(data){
-      this.searchObj.startdate= data.start ?? '';
-      this.searchObj.enddate= data.end ?? '';
+  }
+  dateRangeChange(data: any) {
+    if (data) {
+      this.searchObj.startdate = data.start ?? '';
+      this.searchObj.enddate = data.end ?? '';
     }
     this.filterRent();
   }
 
-  filterRent(){
-    this.isSearchLoading=true;
+  filterRent() {
+    this.isSearchLoading = true;
     this.officeService.searchOfficeRent(this.searchObj, '')
-    .pipe(finalize(() =>{ this.isLoading = false; this.isSearchLoading=false;}))
-    .subscribe((response: any) => {
-      if (response && response.success) {
-        this.rents = response.data;
-        this.dataSource = new MatTableDataSource(this.rents);
-        this.pageSize= this.helperService.getPageSize();  
-      }
-    }); 
+      .pipe(finalize(() => { this.isLoading = false; this.isSearchLoading = false; }))
+      .subscribe((response: any) => {
+        if (response && response.success) {
+          this.rents = response.data;
+          this.dataSource = new MatTableDataSource(this.rents);
+          this.pageSize = this.helperService.getPageSize();
+        }
+      });
   }
 }
 

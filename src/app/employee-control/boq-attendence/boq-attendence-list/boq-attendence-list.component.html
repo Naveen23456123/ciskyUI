@@ -1,107 +1,103 @@
 <div class="container">
   <mat-card>
     <mat-card-content>
-        <div class="load-wrap" *ngIf="isLoading">
-            <app-loader [IsLoading]="isLoading"></app-loader>
-        </div>
-        <div  *ngIf="!isLoading">   
-            <div class="mat-elevation-z8">   
-              <div class="table-title-row">
-                <div class="row col-md-12   content-center">
-                  <div class="col-md-11 ">
-                    <div>
-                      <app-search-bar-controls [isMonthAndYear]="true"
-                      [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Employee Name"
-                      (OnProjectChange)="projectChange($event)"  
-                      (OnClear)="clear()"
-                       (OnAnyChange)="anyChange($event)"  (OnMonthYearChange)="monthYearChange($event)"
-                      ></app-search-bar-controls>
-                    </div>  
-                </div>       
-                <div class="col-md-1 button-row main-btn-row d-flex justify-content-end">
-                  <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
-                    <mat-icon>add box</mat-icon> Attendence
-                </button>   
+      <div class="load-wrap" *ngIf="isLoading">
+        <app-loader [IsLoading]="isLoading"></app-loader>
+      </div>
+      <div *ngIf="!isLoading">
+        <div class="mat-elevation-z8">
+          <div class="table-title-row">
+            <div class="row col-md-12   content-center">
+              <div class="col-md-11 ">
+                <div>
+                  <app-search-bar-controls [isMonthAndYear]="true" [isProjects]="true" [isAny]="true"
+                    searchByAnyPlaceholder="Employee Name" (OnProjectChange)="projectChange($event)" (OnClear)="clear()"
+                    (OnAnyChange)="anyChange($event)"
+                    (OnMonthYearChange)="monthYearChange($event)"></app-search-bar-controls>
                 </div>
               </div>
-            </div> 
+              <div class="col-md-1 button-row main-btn-row d-flex justify-content-end">
+                <button *ngIf="pagePermissions?.canCreate" class="title-btn" type="button" routerLink="create" mat-mini-fab color="primary">
+                  <mat-icon>add box</mat-icon> Attendence
+                </button>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </mat-card-content>
   </mat-card>
   <div class="wrapper">
     <mat-card>
-        <mat-card-content>
-           <ng-container *ngIf="isLoading ||isSearching; else checkNoData">
-              <app-empty-table-skltn></app-empty-table-skltn>
-            </ng-container>
-            <ng-template #checkNoData>
-              <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
-                <app-no-data message="No BOQ Attendence found at this moment !!"></app-no-data>
+      <mat-card-content>
+        <ng-container *ngIf="isLoading ||isSearching; else checkNoData">
+          <app-empty-table-skltn></app-empty-table-skltn>
+        </ng-container>
+        <ng-template #checkNoData>
+          <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+            <app-no-data message="No BOQ Attendence found at this moment !!"></app-no-data>
+          </ng-container>
+        </ng-template>
+        <ng-template #showTable>
+
+          <div class="mat-elevation-z8 table-container">
+            <table *ngIf="pagePermissions?.canRead" mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+
+              <ng-container matColumnDef="serial">
+                <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
               </ng-container>
-            </ng-template>
-             <ng-template #showTable>
-           
-                <div class="mat-elevation-z8 table-container">        
-                <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
-              
-                  <ng-container matColumnDef="serial">
-                    <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                    <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
-                  </ng-container> 
-                  
-                    <ng-container matColumnDef="employeename">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Employee Name </th>
-                      <td mat-cell *matCellDef="let row"> {{row.employee}} </td>
-                    </ng-container>
-              
-                  <!-- contractName Column -->
-                  <ng-container matColumnDef="projectshortname">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Name </th>
-                    <td mat-cell *matCellDef="let row"> {{row.projectname}} </td>
-                  </ng-container>
-              
-                  <!-- Name Column -->
-                  <ng-container matColumnDef="month">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Month </th>
-                    <td mat-cell *matCellDef="let row"> {{getMonthandYear(row.monthandyear).month}} </td>
-                  </ng-container>
-              
-                  <!-- con_personName Column -->
-                  <ng-container matColumnDef="year">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Year </th>
-                    <td mat-cell *matCellDef="let row"> {{getMonthandYear(row.monthandyear).year}} </td>
-                  </ng-container>
-                  <!-- con_personName Column -->
-                  <ng-container matColumnDef="totaldays">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Days </th>
-                    <td mat-cell *matCellDef="let row"> {{row.totaldays}} </td>
-                  </ng-container>
-                  <!-- con_personName Column -->
-                  <ng-container matColumnDef="action">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                    <td class="action-col" mat-cell *matCellDef="let row"> 
-                      <div class="button-row">                              
-                        <app-edit-btn [routerLink]="['/boq-attendence/edit',row.id]" [state]="row" ></app-edit-btn>                              
-                        <app-delete-btn [state]="row" [routerLink]="['/boq-attendence/delete',row.id]" ></app-delete-btn>
+
+              <ng-container matColumnDef="employeename">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Employee Name </th>
+                <td mat-cell *matCellDef="let row"> {{row.employee}} </td>
+              </ng-container>
+
+              <!-- contractName Column -->
+              <ng-container matColumnDef="projectshortname">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Name </th>
+                <td mat-cell *matCellDef="let row"> {{row.projectname}} </td>
+              </ng-container>
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="month">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Month </th>
+                <td mat-cell *matCellDef="let row"> {{getMonthandYear(row.monthandyear).month}} </td>
+              </ng-container>
+
+              <!-- con_personName Column -->
+              <ng-container matColumnDef="year">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Year </th>
+                <td mat-cell *matCellDef="let row"> {{getMonthandYear(row.monthandyear).year}} </td>
+              </ng-container>
+              <!-- con_personName Column -->
+              <ng-container matColumnDef="totaldays">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Days </th>
+                <td mat-cell *matCellDef="let row"> {{row.totaldays}} </td>
+              </ng-container>
+              <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                <td mat-cell class="action-col-3" *matCellDef="let row">
+                  <div class="button-row">
+                    <app-edit-btn *ngIf="pagePermissions?.canUpdate" [routerLink]="['/boq-attendence/edit',row.id]" [state]="row"></app-edit-btn>
+                    <app-delete-btn *ngIf="pagePermissions?.canDelete" [state]="row" [routerLink]="['/boq-attendence/delete',row.id]"></app-delete-btn>
                   </div>
-                    </td>
-                  </ng-container>
-                
-                  <tr mat-header-row *matHeaderRowDef="displayedColumns"  class="sticky-header"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
-                  <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
-                      No BOQ Attendence(s) found at this moment.</td>
-                  </tr>
-                </table>
-                <mat-paginator [length]="resultsLength" [pageSize]="pageSize" 
-                  [pageSizeOptions]="pagination" showFirstLastButtons></mat-paginator>
-              </div>                    
-                   
-             </ng-template>
-            
-        </mat-card-content>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky-header"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell no-data-cell" attr.colspan="{{ displayedColumns.length }}">
+                  No BOQ Attendence(s) found at this moment.</td>
+              </tr>
+            </table>
+            <mat-paginator [length]="resultsLength" [pageSize]="pageSize" [pageSizeOptions]="pagination"
+              showFirstLastButtons></mat-paginator>
+          </div>
+
+        </ng-template>
+
+      </mat-card-content>
     </mat-card>
   </div>
 </div>

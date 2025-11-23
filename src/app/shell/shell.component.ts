@@ -54,11 +54,12 @@ export class ShellComponent implements OnInit, OnDestroy {
     label: 'Loading...',
     link: '',
     icon: '',
+    hidden: true,
     items: [{
       label: '',
-      link: ''
-    }
-    ]
+      link: '',
+      hidden: true
+    }]
   }];
   public expanded = true;
   public isSession = false;

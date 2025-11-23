@@ -69,6 +69,7 @@ export class ManageExpenseComponent {
       this.selectedImperest = this.data.element.imperestid;
       details$ = this.imperestService.getImperestDetailById({ id: this.selectedImperest }, '');
     }
+    
     forkJoin({ partial: partial$, details: details$ })
     .pipe(finalize(() => (this.isLoading = false)))
     .subscribe(({ partial, details }: any) => {

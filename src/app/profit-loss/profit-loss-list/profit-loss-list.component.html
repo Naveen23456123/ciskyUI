@@ -30,7 +30,7 @@
                           </mat-form-field>
                         </div>
                         <div class="col-md-8 button-row main-btn-row d-flex justify-content-end">
-                          <button class="title-btn" type="button" routerLink="create" mat-mini-fab color="primary">
+                          <button *ngIf="pagePermissions.canCreate" class="title-btn" type="button" routerLink="create" mat-mini-fab color="primary">
                             <mat-icon>add box</mat-icon> Generate
                           </button>
                         </div>
@@ -105,11 +105,11 @@
 
                 </div>
                 <div  class="col-md-4 justify-content-between">
-                  <app-download-pdf [loading]="isPdfGenerating" class="float-end me-2" (clickEvent)="download()"></app-download-pdf>
+                  <app-download-pdf *ngIf="pagePermissions.canRead" [loading]="isPdfGenerating" class="float-end me-2" (clickEvent)="download()"></app-download-pdf>
                 </div>
               </div>
               
-              <div #pdfContent id="pdfContent">
+              <div  *ngIf="pagePermissions.canRead" #pdfContent id="pdfContent">
                 <div class="row heading">
                   <div class="report-head">
                     <h5 class="sub-heading content-center">Profit & Loss</h5>
@@ -223,7 +223,7 @@
           </ng-template>
           <ng-template matTabContent>
             <div class="mat-elevation-z8 wrapper">
-              <app-profit-loss-margin></app-profit-loss-margin>
+              <app-profit-loss-margin  *ngIf="pagePermissions.canRead"></app-profit-loss-margin>
             </div>
           </ng-template>
         </mat-tab>

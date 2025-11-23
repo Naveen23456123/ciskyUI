@@ -73,7 +73,6 @@ public data: any;
   ngOnInit(){
     this.checkMode(this.data.type);
     this.getTitle(this.data.type);
-    console.log(this.data.element);
     if(!this.deleteRequest){
       this.sessionservice.approvalStatusSubject$.subscribe((response:any)=>{
         if(response){
@@ -86,7 +85,6 @@ public data: any;
         }
       })
       this.sdetails = this.data.element.value.claimeddetails;
-      console.log(this.sdetails);
       this.actedLevel = this.data.element.value.levels?.find((l:any) => l.employeeid==this.userObj.employeeid);
         if(this.actedLevel){
         const actedDetail = this.actedLevel?.acteddetails;

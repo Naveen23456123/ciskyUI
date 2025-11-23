@@ -16,25 +16,25 @@ const routes: Routes = [
       {
         path: 'create',
         component: AddVehicleBillingComponent,
-        loadChildren:()=>import('app/vehicle-control/vehicle-billing/add-vehicle-billing/add-vehicle-billing.module').then(x=>x.AddVehicleBillingModule),
+        loadChildren:()=>import('app/siteops-fund/vehicle-billing/add-vehicle-billing/add-vehicle-billing.module').then(x=>x.AddVehicleBillingModule),
         data:{pageGuid:'680dd2933682904bdd6e9ab9',type:'add'}
       },
       {
         path: 'edit/:vehbilId',
         component: EditVehicleBillingComponent,
-        loadChildren:()=>import('app/vehicle-control/vehicle-billing/edit-vehicle-billing/edit-vehicle-billing.module').then(x=>x.EditVehicleBillingModule),
+        loadChildren:()=>import('app/siteops-fund/vehicle-billing/edit-vehicle-billing/edit-vehicle-billing.module').then(x=>x.EditVehicleBillingModule),
         data:{pageGuid:'',type:'edit'}
       },
       {
         path: 'delete/:vehbilId',
         component: DeleteVehicleBillingComponent,
-        loadChildren:()=>import('app/vehicle-control/vehicle-billing/delete-vehicle-billing/delete-vehicle-billing.module').then(x=>x.DeleteVehicleBillingModule),
+        loadChildren:()=>import('app/siteops-fund/vehicle-billing/delete-vehicle-billing/delete-vehicle-billing.module').then(x=>x.DeleteVehicleBillingModule),
         data:{pageGuid:'',type:'delete'}
       },
       {
         path: 'view/:vehbilId',
         component: ViewVehicleBillingComponent,
-        loadChildren:()=>import('app/vehicle-control/vehicle-billing/view-vehicle-billing/view-vehicle-billing.module').then(x=>x.ViewVehicleBillingModule),
+        loadChildren:()=>import('app/siteops-fund/vehicle-billing/view-vehicle-billing/view-vehicle-billing.module').then(x=>x.ViewVehicleBillingModule),
         data:{pageGuid:'',type:'delete'}
       }
     ]

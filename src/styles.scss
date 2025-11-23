@@ -553,6 +553,7 @@ mat-card {
   display: inline !important;
 }
 
+
 .card-title>mat-icon {
     margin-right: 10px;
     width: 26px;
@@ -736,6 +737,7 @@ th.mat-mdc-header-cell,
 }
 .invoice-table > thead {
     border: 1px solid #b9b9b9;
+    vertical-align: middle !important;
 }
 table.invoice-table tr>td {
     background-color: white;

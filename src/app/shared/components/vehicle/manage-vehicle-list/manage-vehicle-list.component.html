@@ -12,11 +12,11 @@
             </app-search-bar-controls>
           </div>         
           <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">         
-            <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
-            <button class="title-btn" type="button" (click)="add_vehicle()"  mat-mini-fab color="primary">
+            <app-upload-btn *ngIf="pagePermissions?.canCreate" (clickEvent)="import()" ></app-upload-btn>
+            <button *ngIf="pagePermissions?.canCreate"  class="title-btn" type="button" (click)="add_vehicle()"  mat-mini-fab color="primary">
                 <mat-icon>add box</mat-icon> Vehicle
             </button> 
-            <app-download-csv (clickEvent)="export()" ></app-download-csv>            
+            <app-download-csv *ngIf="pagePermissions?.canRead" (clickEvent)="export()" ></app-download-csv>            
           </div>
         </div>
       
@@ -33,11 +33,11 @@
                   </app-search-bar-controls>
                 </div>         
                 <div class="col-md-3 button-row main-btn-row d-flex justify-content-end">         
-                  <app-upload-btn (clickEvent)="import()" ></app-upload-btn>
-                  <button class="title-btn" type="button" (click)="add_vehicle()"  mat-mini-fab color="primary">
+                  <app-upload-btn *ngIf="pagePermissions?.canCreate" (clickEvent)="import()" ></app-upload-btn>
+                  <button *ngIf="pagePermissions?.canCreate" class="title-btn" type="button" (click)="add_vehicle()"  mat-mini-fab color="primary">
                       <mat-icon>add box</mat-icon> Vehicle
                   </button> 
-                  <app-download-csv (clickEvent)="export()" ></app-download-csv>            
+                  <app-download-csv *ngIf="pagePermissions?.canRead" (clickEvent)="export()" ></app-download-csv>            
                 </div>
               </div>
             </div>
@@ -52,7 +52,7 @@
             <ng-template #showTable> 
            
               <div  class="mat-elevation-z8 table-container">                       
-                <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>                     
+                <table *ngIf="pagePermissions?.canRead" mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>                     
                 
                   <ng-container matColumnDef="serial">
                     <th mat-header-cell *matHeaderCellDef> Sr. No </th>
@@ -103,19 +103,17 @@
                     </button>
                     </td>
                   </ng-container>    
-                  <!-- con_personName Column -->
-                  <ng-container  matColumnDef="action">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                    <td mat-cell class="action-col" *matCellDef="let row"> 
-                      <div class="button-row">         
-                        <app-view-btn (clickEvent)="viewVehicle(row)" ></app-view-btn>                      
-                        <app-edit-btn (clickEvent)="edit_vehicle(row)" ></app-edit-btn>                              
-                        <app-delete-btn (clickEvent)="delete_vehicle(row)"></app-delete-btn>
-                        
-                      </div>
-                    </td>
-                  </ng-container>
-                
+                 
+                <ng-container *ngIf="pagePermissions?.canRead || pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="action">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                  <td mat-cell class="action-col" *matCellDef="let row">
+                    <div class="button-row">
+                      <app-view-btn *ngIf="pagePermissions?.canRead" (clickEvent)="viewVehicle(row)" ></app-view-btn>     
+                      <app-edit-btn *ngIf="pagePermissions?.canUpdate" (clickEvent)="edit_vehicle(row)" ></app-edit-btn>
+                      <app-delete-btn *ngIf="pagePermissions?.canDelete" (clickEvent)="delete_vehicle(row)"></app-delete-btn>
+                    </div>
+                  </td>
+                </ng-container>
                   <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky-header"></tr>
                   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
                   <tr class="mat-row" *matNoDataRow>

@@ -1,99 +1,103 @@
-<div class="dialog" >
-    <mat-card >
-        <h3 mat-dialog-title class="justify-content-between align-items-center"> Expense(s)
-            <button class="popup-close-btn float-end" mat-icon-button (click)="onCloseClick()">
-            <mat-icon>close</mat-icon>
-          </button> 
-        </h3>
-       
-        <mat-card-content>
-            <div class="load-wrap" *ngIf="isLoading || isSearching">
-                <app-loader [IsLoading]="isLoading || isSearching"></app-loader>
-            </div>
-            <div *ngIf="!isLoading"> 
-                <div class="mat-elevation-z8">                     
-                      
-                    <app-no-data *ngIf="dataSource?.data?.length==0 && !isSearching" message="No Expens(es) found at this moment !!" ></app-no-data>
-                    <div *ngIf="dataSource?.data?.length!=0 && !isSearching"  class="mat-elevation-z8"> 
-                       <app-billing-info-summary [summary]="billingSummary" ></app-billing-info-summary>
-                        <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
-                      
-                          <ng-container matColumnDef="serial">
-                            <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                            <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
-                          </ng-container>
-                         
-                          <ng-container matColumnDef="date">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Expense Date </th>
-                            <td mat-cell class="w-10" *matCellDef="let row"> {{row.date | formatDate}} </td>
-                          </ng-container>                       
-                          
-                          <ng-container matColumnDef="gamount">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Submitted Amount </th>
-                            <td mat-cell *matCellDef="let row"> 
-                              <table class="child-table align-center">
-                                 <tr *ngFor="let item of row.claimeddetails">
-                                  <td>{{item.itemname}}</td>
-                                  <td>:</td>
-                                  <td>{{item.amount | formatCurrency}}</td>
-                                  <td><app-file-icon [link]="!!item.documentkey" (clickEvent)="viewPdf(item.documentkey)"></app-file-icon></td>
-                                 </tr>
-                              </table>
-                            </td>
-                          </ng-container>  
-                          <ng-container matColumnDef="apramount">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Approved Amount </th>
-                            <td mat-cell *matCellDef="let row"> 
-                              <table *ngIf="row.approveddetails && row.approveddetails.length>0" class="child-table align-center">
-                                <tr  *ngFor="let item of row.approveddetails">
-                                 <td>{{item.itemname}}</td>
-                                 <td>:</td>
-                                 <td>{{item.amount | formatCurrency}}</td>
-                                </tr>
-                             </table>  
-                             <span *ngIf="row.approveddetails==0">-</span>  
-                            </td>
-                          </ng-container>  
-                          <!-- con_personName Column -->
-                          <ng-container matColumnDef="status">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-                            <td mat-cell *matCellDef="let row"> 
-                              <table class="status-child-table align-center" >
-                                <tr *ngFor="let level of row.levels">
-                                   <td>
-                                    <span  [matTooltip]="'Level : ' + level.name + '\nApproval Name : ' + level.employeename"
-                                    matTooltipClass="multiline-tooltip">
-                                    {{ level.rolename }} 
-                                    </span>
-                                  </td>
-                                  <td *ngIf="level.name">:</td>
-                                   <td>
-                                    <app-status-badge  [value]="level.status" [label]="level.status"></app-status-badge> 
-                                   </td>
-                                </tr>
-                              </table>
-                            </td>
-                          </ng-container>
-                          <ng-container matColumnDef="action">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                            <td mat-cell class="action-col" *matCellDef="let row"> 
-                              <div class="button-row">                              
-                                <app-edit-btn *ngIf="row.isedit" (clickEvent)="edit(row)" ></app-edit-btn>                              
-                                <app-delete-btn (clickEvent)="delete(row)" ></app-delete-btn>
-                          </div>
-                            </td>
-                          </ng-container>
-                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
-                          <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
-                              No Expens(es) Details found at this moment.</td>
-                          </tr>
-                        </table>                       
-                      </div>                    
-                      
-                </div>
-            </div>
-        </mat-card-content>
-    </mat-card>
-  </div>
+<div class="dialog">
+  <mat-card>
+    <h3 mat-dialog-title class="justify-content-between align-items-center"> Expense(s)
+      <button class="popup-close-btn float-end" mat-icon-button (click)="onCloseClick()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </h3>
+
+    <mat-card-content>
+      <div class="load-wrap" *ngIf="isLoading || isSearching">
+        <app-loader [IsLoading]="isLoading || isSearching"></app-loader>
+      </div>
+      <div *ngIf="!isLoading">
+        <div class="mat-elevation-z8">
+
+          <app-no-data *ngIf="dataSource?.data?.length==0 && !isSearching"
+            message="No Expens(es) found at this moment !!"></app-no-data>
+          <div *ngIf="dataSource?.data?.length!=0 && !isSearching" class="mat-elevation-z8">
+            <app-billing-info-summary *ngIf="pagePermissions?.canRead" [summary]="billingSummary"></app-billing-info-summary>
+            <table *ngIf="pagePermissions?.canRead" mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+
+              <ng-container matColumnDef="serial">
+                <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Expense Date </th>
+                <td mat-cell class="w-10" *matCellDef="let row"> {{row.date | formatDate}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="gamount">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Submitted Amount </th>
+                <td mat-cell *matCellDef="let row">
+                  <table class="child-table align-center">
+                    <tr *ngFor="let item of row.claimeddetails">
+                      <td>{{item.itemname}}</td>
+                      <td>:</td>
+                      <td>{{item.amount | formatCurrency}}</td>
+                      <td><app-file-icon [link]="!!item.documentkey"
+                          (clickEvent)="viewPdf(item.documentkey)"></app-file-icon></td>
+                    </tr>
+                  </table>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="apramount">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Approved Amount </th>
+                <td mat-cell *matCellDef="let row">
+                  <table *ngIf="row.approveddetails && row.approveddetails.length>0" class="child-table align-center">
+                    <tr *ngFor="let item of row.approveddetails">
+                      <td>{{item.itemname}}</td>
+                      <td>:</td>
+                      <td>{{item.amount | formatCurrency}}</td>
+                    </tr>
+                  </table>
+                  <span *ngIf="row.approveddetails==0">-</span>
+                </td>
+              </ng-container>
+              <!-- con_personName Column -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+                <td mat-cell *matCellDef="let row">
+                  <table class="status-child-table align-center">
+                    <tr *ngFor="let level of row.levels">
+                      <td>
+                        <span [matTooltip]="'Level : ' + level.name + '\nApproval Name : ' + level.employeename"
+                          matTooltipClass="multiline-tooltip">
+                          {{ level.rolename }}
+                        </span>
+                      </td>
+                      <td *ngIf="level.name">:</td>
+                      <td>
+                        <app-status-badge [value]="level.status" [label]="level.status"></app-status-badge>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </ng-container>
+              
+              <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete"
+                matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                <td mat-cell class="action-col" *matCellDef="let row">
+                  <div class="button-row">                   
+                    <app-edit-btn *ngIf="pagePermissions?.canUpdate" (clickEvent)="edit(row)"></app-edit-btn>
+                    <app-delete-btn *ngIf="pagePermissions?.canDelete" (clickEvent)="delete(row)"></app-delete-btn>
+                  </div>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell no-data-cell" attr.colspan="{{ displayedColumns.length }}">
+                  No Expens(es) Details found at this moment.</td>
+              </tr>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,10 +1,12 @@
-import { Component,ViewChild,inject} from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatPaginator} from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 import { InventoryControlService } from '@app/inventory-control/inventory-control.service';
 import { PdfViewerComponent } from '@app/shared/components/pdf-viewer/pdf-viewer.component';
+import { CommonService } from '@app/shared/services/common.service';
 import { CircularInterfaceService } from '@app/shared/services/external/circular-interface.service';
 import { HelperService } from '@app/shared/services/helper.service';
 import { NotifyBarService } from '@app/shared/services/notify-bar.service';
@@ -18,37 +20,38 @@ import { finalize, Subscription } from 'rxjs';
   styleUrl: './circular-list.component.scss'
 })
 export class CircularListComponent {
-  circularList:any[]= [];
+  circularList: any[] = [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','title','publishdate','description','file','action'];
+  displayedColumns: string[] = ['serial', 'title', 'publishdate', 'description', 'file'];
   dataSource!: MatTableDataSource<any[]>;
-  activeOrgId='123';
- @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+  activeOrgId = '123';
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
     this.dataSource.paginator = paginator;
   }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-  resultsLength!:number;
-  subscription:Subscription = new Subscription();
+  resultsLength!: number;
+  subscription: Subscription = new Subscription();
   readonly dialog = inject(MatDialog);
-  
-  private defaultdialogoptions:  MatDialogConfig = {
-    minWidth: '900px', 
+  pagePermissions: any = {};
+  private defaultdialogoptions: MatDialogConfig = {
+    minWidth: '900px',
     disableClose: false,
     data: {},
   };
 
- constructor(private circularService:CircularInterfaceService,private helperService:HelperService,
-  private notifyBarService:NotifyBarService, private stateDataService:StateDataService
- ){
-  this.dataSource = new MatTableDataSource(this.circularList);
- }
+  constructor(private circularService: CircularInterfaceService, private helperService: HelperService,
+    private notifyBarService: NotifyBarService, private stateDataService: StateDataService,
+    private route: ActivatedRoute, private commonService: CommonService
+  ) {
+    this.dataSource = new MatTableDataSource(this.circularList);
+  }
 
- ngOnInit()  {
-  this.isLoading=true;
-  this.subscription= this.stateDataService.stateDataSubject.subscribe((data:any) => {   
-      if (data.event == 'circedit'  && data.valid && data.value) {      
+  ngOnInit() {
+    this.isLoading = true;
+    this.subscription = this.stateDataService.stateDataSubject.subscribe((data: any) => {
+      if (data.event == 'circedit' && data.valid && data.value) {
         this.updateRowData(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
@@ -56,20 +59,30 @@ export class CircularListComponent {
         this.addRowData(data.value);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
-      } else if(data.event == 'circdelete' && data.valid && data.value){
+      } else if (data.event == 'circdelete' && data.valid && data.value) {
         this.deleteRow(data.value.id);
         this.notifyBarService.showsnackbar(data.msg);
         this.stateDataService.stateDataSubject.next({});
       }
     });
-    this.circularService.getCircularListByOrgId({ organizationId: this.activeOrgId }, '')
-      .pipe(finalize(() => this.isLoading = false))
-      .subscribe((response: any) => {
-        if (response && response.success) {
-        this.circularList =response.data;
-        this.updateTable(this.circularList);
-        }
-      });
+    let pageGuid = this.route.snapshot.data['pageGuid'];
+    this.commonService.getPermissionsForCurrentPage(pageGuid).then((permissions: any) => {
+      this.pagePermissions = permissions;
+      if (this.pagePermissions?.canUpdate || this.pagePermissions?.canDelete) {
+        this.displayedColumns.push('action');
+      }
+      if (this.pagePermissions?.canRead) {
+        this.circularService.getCircularListByOrgId({ organizationId: this.activeOrgId }, '')
+          .pipe(finalize(() => this.isLoading = false))
+          .subscribe((response: any) => {
+            if (response && response.success) {
+              this.circularList = response.data;
+              this.updateTable(this.circularList);
+            }
+          });
+      }
+    });
+
   }
 
   ngAfterViewInit() {
@@ -79,61 +92,61 @@ export class CircularListComponent {
   private updateTable(info: any) {
     this.circularList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length); 
-    this.pageSize= this.helperService.getPageSize();  
-    this.resultsLength= this.circularList.length;   
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);
+    this.pageSize = this.helperService.getPageSize();
+    this.resultsLength = this.circularList.length;
   }
 
   updateRowData(data: any) {
-    const element:any = this.dataSource.data.find((x:any) => x.id == data.id);
-      if(element){
-        element.id=data.id;
-        element.title=data.title;
-        element.type= data.type;
-        element.date= data.date;
-        element.description=data.description;
-        if(data.attachmentaddress){
-          console.log(data.attachmentaddress);
-          element.attachmentaddress=data.attachmentaddress
-        }
-        this.dataSource._updateChangeSubscription();
+    const element: any = this.dataSource.data.find((x: any) => x.id == data.id);
+    if (element) {
+      element.id = data.id;
+      element.title = data.title;
+      element.type = data.type;
+      element.date = data.date;
+      element.description = data.description;
+      if (data.attachmentaddress) {
+        console.log(data.attachmentaddress);
+        element.attachmentaddress = data.attachmentaddress
       }
+      this.dataSource._updateChangeSubscription();
+    }
   }
   addRowData(data: any) {
-    const data1:any = {
-      id:data.id,
-      title:data.title,
-      type:data.type,
-       date:data.date,
+    const data1: any = {
+      id: data.id,
+      title: data.title,
+      type: data.type,
+      date: data.date,
       attachmentaddress: data.attachmentaddress,
-      description:data.description,
-    }      
+      description: data.description,
+    }
     this.circularList.unshift(data1);
     this.updateTable(this.circularList);
   }
 
   deleteRow(data: any) {
-    const index = this.dataSource.data.findIndex((x:any) => x.id == data);
+    const index = this.dataSource.data.findIndex((x: any) => x.id == data);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }
-  clear(){
+  clear() {
     this.filterChange('');
   }
-  filterChange(data:any){
-    if(data && data.value){ 
+  filterChange(data: any) {
+    if (data && data.value) {
       this.dataSource.filter = data.value.trim().toLowerCase()
     }
-    else{
+    else {
       this.dataSource.filter = '';
     }
   }
-  viewPdf(data:any){
+  viewPdf(data: any) {
     const config = this.defaultdialogoptions;
-    config.minWidth='80vw';
+    config.minWidth = '80vw';
     config.data = {
-      element:data
+      element: data
     };
-    this.dialog.open(PdfViewerComponent,config);
+    this.dialog.open(PdfViewerComponent, config);
   }
 }

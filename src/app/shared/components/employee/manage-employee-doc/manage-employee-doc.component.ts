@@ -1,4 +1,4 @@
-import { Component,ElementRef,Inject, Optional, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, Optional, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,6 +11,8 @@ import { finalize } from 'rxjs';
 import { DeleteEmployeeDocComponent } from '../delete-employee-doc/delete-employee-doc.component';
 import { EmployeeInterfaceService } from '@app/shared/services/external/employee-interface.service';
 import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
+import { CommonService } from '@app/shared/services/common.service';
+import { PermissionGuids } from '@app/shared/models/constant.config';
 
 @Component({
   selector: 'app-manage-employee-doc',
@@ -19,36 +21,50 @@ import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
   styleUrl: './manage-employee-doc.component.scss'
 })
 export class ManageEmployeeDocComponent {
-public data:any;
-  isLoading=true;
-  isBtnClicked=false;
+  public data: any;
+  isLoading = true;
+  isBtnClicked = false;
   docForm: FormGroup = new FormGroup({});
   dataSource!: MatTableDataSource<any[]>;
-  deleteEmpDoc=false;
-  displayedColumns: string[] = ['serial','name', 'doc', 'action'];
+  deleteEmpDoc = false;
+  pagePermissions:any={};
+  displayedColumns: string[] = ['serial', 'name', 'doc'];
   defaultdialogOptionConfig: MatDialogConfig = {
     minWidth: '45vw',
     disableClose: true,
     data: {}
   }
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
-   private formbuilder : FormBuilder, private employeeService:EmployeeInterfaceService,
-  private notifyBarService:NotifyBarService, private dialogService:DialogService,private dialog: MatDialog){
-    this.data= data || {};
+    private formbuilder: FormBuilder, private employeeService: EmployeeInterfaceService,
+    private commonService: CommonService,
+    private notifyBarService: NotifyBarService,private dialog: MatDialog) {
+    this.data = data || {};
   }
-  ngOnInit(){
-    this.docForm= this.formbuilder.group({
-      files: this.formbuilder.array([])
-    });
-    this.employeeService.getEmployeeDocumentsById({id:this.data.element.id},'').pipe(untilDestroyed(this),finalize(()=> this.isLoading=false))
-    .subscribe((response:any)=>{
-      if(response && response.success){
-        this.dataSource= new MatTableDataSource(response.data);
-      }
-    });
-    this.addDocControls();
+  ngOnInit() {
+    if (this.data.element) {
+      this.commonService.getPermissionsForCurrentPage(PermissionGuids.siteEmployee).then((permissions: any) => {
+        if (permissions) {
+          this.pagePermissions = permissions;
+          if (this.pagePermissions && this.pagePermissions.canRead) {
+            if (this.pagePermissions.canDelete)
+              this.displayedColumns.push('action');
+            this.docForm = this.formbuilder.group({
+              files: this.formbuilder.array([])
+            });
+            this.employeeService.getEmployeeDocumentsById({ id: this.data.element.id }, '').pipe(untilDestroyed(this), finalize(() => this.isLoading = false))
+              .subscribe((response: any) => {
+                if (response && response.success) {
+                  this.dataSource = new MatTableDataSource(response.data);
+                }
+              });
+            this.addDocControls();
+          }
+        }
+      })
+    }
+
   }
-  ngOnDestroy(){}
+  ngOnDestroy() { }
 
   get files() {
     return this.docForm.get('files') as FormArray;
@@ -56,39 +72,39 @@ public data:any;
 
   addDocControls() {
     const group = this.formbuilder.group({
-      id:[],
-      name: ['',Validators.required], 
-      file: ['',Validators.required]
+      id: [],
+      name: ['', Validators.required],
+      file: ['', Validators.required]
     });
     this.files.push(group);
   }
 
-  onDocNameUpdate(value:string, index:number){
+  onDocNameUpdate(value: string, index: number) {
     (this.docForm.controls['files'] as FormArray).at(index).patchValue({
-      name:value
+      name: value
     });
   }
 
-  fileUploded(file:any,index:number){      
+  fileUploded(file: any, index: number) {
     (this.docForm.get('files') as FormArray).at(index).patchValue({
-      file:file
+      file: file
     });
   }
 
   removeDocControl(index: number) {
     this.files.removeAt(index);
   }
-  submit(){
-    this.isBtnClicked=true;  
-    let formData = new FormData(); 
+  submit() {
+    this.isBtnClicked = true;
+    let formData = new FormData();
     formData.append('id', this.data.element.id);
-      this.docForm.controls['files']?.value?.forEach((item:any, index:any) => {                
-        formData.append(`files[${index}].name`, item.name);
-        formData.append(`files[${index}].file`, item.file);
-      });
-      this.employeeService.createEmployeeDocumentsById(formData, '')
-        .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked=false })).subscribe({
-          next:(response: any) => {
+    this.docForm.controls['files']?.value?.forEach((item: any, index: any) => {
+      formData.append(`files[${index}].name`, item.name);
+      formData.append(`files[${index}].file`, item.file);
+    });
+    this.employeeService.createEmployeeDocumentsById(formData, '')
+      .pipe(finalize(() => { this.isLoading = false; this.isBtnClicked = false })).subscribe({
+        next: (response: any) => {
           if (response && response.success) {
             this.notifyBarService.showsnackbar('Employee documents saved successfully');
             this.addDocRows(response.data);
@@ -99,46 +115,47 @@ public data:any;
             //this.dialogRef.close({ value: null, valid: false });
           }
         },
-         error: (err: any) => {
-            //this.dialogRef.close(err);
-          }
+        error: (err: any) => {
+          //this.dialogRef.close(err);
+        }
       });
   }
-  addDocRows(data:any){
-    this.dataSource.data.unshift(...data);  
+  addDocRows(data: any) {
+    this.dataSource.data.unshift(...data);
     this.dataSource._updateChangeSubscription();
   }
-  deleteDocRow(id:any){
-    const index = this.dataSource.data.findIndex((x:any) => x.id == id);
+  deleteDocRow(id: any) {
+    const index = this.dataSource.data.findIndex((x: any) => x.id == id);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
   }
-  deleteDoc(row:any){
-    this.defaultdialogOptionConfig.data = {     
-      element: {vehid:this.data.element.id,
-        documentid:row.id,
+  deleteDoc(row: any) {
+    this.defaultdialogOptionConfig.data = {
+      element: {
+        vehid: this.data.element.id,
+        documentid: row.id,
         name: row.name
       }
     };
 
-    const dialogRef = this.dialog.open(DeleteEmployeeDocComponent,this.defaultdialogOptionConfig);
+    const dialogRef = this.dialog.open(DeleteEmployeeDocComponent, this.defaultdialogOptionConfig);
     dialogRef.afterClosed().subscribe((data) => {
       if (data && data.valid) {
-          this.notifyBarService.showsnackbar('Employee document removed successfully');
-          this.deleteDocRow(data.value.documentid);
+        this.notifyBarService.showsnackbar('Employee document removed successfully');
+        this.deleteDocRow(data.value.documentid);
       }
       else {
-            
+
       }
-    });   
+    });
   }
-  viewPdf(data:any){
+  viewPdf(data: any) {
     const config = this.defaultdialogOptionConfig;
-    config.minWidth='80vw';
+    config.minWidth = '80vw';
     config.data = {
-      element:data
+      element: data
     };
-    this.dialog.open(PdfViewerComponent,config);
+    this.dialog.open(PdfViewerComponent, config);
   }
 }
 

@@ -74,22 +74,17 @@ const baseroutes: Routes = [
     {
       path: 'vehicles',
       loadChildren:()=>import('app/vehicle-control/vehicle/vehicle-list/vehicle-list.module').then(x=>x.VehicleListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2733682904bdd6e9ab7',type:'view'}
     },
     {
       path: 'vehicle-log',
       loadChildren:()=>import('app/vehicle-control/vehicle-log/vehicle-log-list/vehicle-log-list.module').then(x=>x.VehicleLogListModule),
-      data:{pageGuid:'',type:'view'}
-    },
-    {
-      path: 'vehicle-billing',
-      loadChildren:()=>import('app/vehicle-control/vehicle-billing/vehicle-billing-list/vehicle-billing-list.module').then(x=>x.VehicleBillingListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2933682904bdd6e9ab8',type:'view'}
     },
     {
       path: 'boq-attendence',
       loadChildren:()=>import('app/employee-control/boq-attendence/boq-attendence-list/boq-attendence-list.module').then(x=>x.BoqAttendenceListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2933682904bdd6e9ab1',type:'view'}
     },
     {
       path: 'letters',
@@ -99,7 +94,7 @@ const baseroutes: Routes = [
     {
       path: 'circular',
       loadChildren:()=>import('app/circular/circular-list/circular-list.module').then(x=>x.CircularListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd1bd3682904bdd6e9ac7',type:'view'}
     },
     {
       path: 'invoice',
@@ -129,7 +124,7 @@ const baseroutes: Routes = [
     {
       path: 'ofc-rent',
       loadChildren:()=>import('app/office-rent/office-rent-list/office-rent-list.module').then(x=>x.OfficeRentListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd1bd3682904bdd6e9ac5',type:'view'}
     },
     {
       path: 'profit-loss',
@@ -149,47 +144,52 @@ const baseroutes: Routes = [
     {
       path: 'ticket',
       loadChildren:()=>import('app/ticket-control/ticket-list/ticket-list.module').then(x=>x.TicketListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd1bd3682904bdd6e9ad9',type:'view'}
     },
     {
       path: 'imperest',
       loadChildren:()=>import('app/siteops-fund/imperest/imperest-list/imperest-list.module').then(x=>x.ImperestListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2733682904bdd6e9afb',type:'view'}
     },
     {
       path: 'expense',
       loadChildren:()=>import('app/siteops-fund/expense/expense-list/expense-list.module').then(x=>x.ExpenseListModule),
-      data:{pageGuid:'',type:'view'}
-    },
-    {
-      path: 'approval',
-      loadChildren:()=>import('app/settings/approval/approval-list/approval-list.module').then(x=>x.ApprovalListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2933682904bdd6e9afc',type:'view'}
     },
     {
       path: 'ofc-billing',
       loadChildren:()=>import('app/siteops-fund/ofc-rent-billing/ofc-rent-billing-list/ofc-rent-billing-list.module').then(x=>x.OfcRentBillingListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2933682904bdd6e9afd',type:'view'}
+    },
+    {
+      path: 'vehicle-billing',
+      loadChildren:()=>import('app/siteops-fund/vehicle-billing/vehicle-billing-list/vehicle-billing-list.module').then(x=>x.VehicleBillingListModule),
+      data:{pageGuid:'680dd2933682904bdd6e9afe',type:'view'}
+    },
+    {
+      path: 'approval',
+      loadChildren:()=>import('app/settings/approval/approval-list/approval-list.module').then(x=>x.ApprovalListModule),
+      data:{pageGuid:'680dd2733682904bdd6e9abb',type:'view'}
     },
     {
       path: 'ofc-billing-request',
       loadChildren:()=>import('app/requests/office-billing/office-billing-list/office-billing-list.module').then(x=>x.OfficeBillingListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2733682904bdd6e9aac',type:'view'}
     },
     {
       path: 'imperest-billing-request',
       loadChildren:()=>import('app/requests/imperest-billing/imperest-billing-list/imperest-billing-list.module').then(x=>x.ImperestBillingListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2733682904bdd6e9aaa',type:'view'}
     },
     {
       path: 'veh-billing-request',
       loadChildren:()=>import('app/requests/veh-billing-req/veh-billing-req-list/veh-billing-req-list.module').then(x=>x.VehBillingReqListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2733682904bdd6e9aad',type:'view'}
     },
      {
       path: 'exp-billing-request',
       loadChildren:()=>import('app/requests/exp-billing-req/exp-req-billing-list/exp-req-billing-list.module').then(x=>x.ExpReqBillingListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd2733682904bdd6e9aab',type:'view'}
     },
     {
       path: 'user-project',
@@ -199,7 +199,7 @@ const baseroutes: Routes = [
     {
       path: 'misc',
       loadChildren:()=>import('app/misc/misc-list/misc-list.module').then(x=>x.MiscListModule),
-      data:{pageGuid:'',type:'view'}
+      data:{pageGuid:'680dd1bd3682904bdd6e9ac9',type:'view'}
     },
     {
       path: 'transport-list',

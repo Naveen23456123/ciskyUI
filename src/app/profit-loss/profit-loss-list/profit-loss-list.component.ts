@@ -7,7 +7,7 @@ import { untilDestroyed } from '@app/core/until-destroyed';
 import { PaymentService } from '@app/payments/payment.service';
 import { ProfitLossCommulativeComponent } from '@app/shared/components/profit-and-loss/profit-loss-commulative/profit-loss-commulative.component';
 import { ProfitLossInvListComponent } from '@app/shared/components/profit-and-loss/profit-loss-inv-list/profit-loss-inv-list.component';
-import { DialogOperation, TOTAL_PROFIT_LOSS_HEADING } from '@app/shared/models/constant.config';
+import { DialogOperation, PermissionGuids, TOTAL_PROFIT_LOSS_HEADING } from '@app/shared/models/constant.config';
 import { CommonService } from '@app/shared/services/common.service';
 import { ProfitLossInterfaceService } from '@app/shared/services/external/profit-loss-interface.service';
 import { HelperService } from '@app/shared/services/helper.service';
@@ -51,6 +51,7 @@ export class ProfitLossListComponent {
   resultsLength!: number;
   detailsObj: any = { today: new Date() };
   scopes: any[] = [];
+  pagePermissions: any = {};
   @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef;
   private defaultdialogoptions: MatDialogConfig = {
     disableClose: false,
@@ -60,7 +61,7 @@ export class ProfitLossListComponent {
   constructor(private profitLossService: ProfitLossInterfaceService, private sessionService: SessionService,
     private commonService: CommonService, private paymentService: PaymentService, private helperService: HelperService,
     private stateDataService: StateDataService, private notifyBarService: NotifyBarService,
-  private pdfService:GeneratePdfService) {
+    private pdfService: GeneratePdfService) {
     this.dataSource = new MatTableDataSource(this.itemsList);
   }
   ngOnInit() {
@@ -71,16 +72,23 @@ export class ProfitLossListComponent {
       }
     });
 
-    //this.isLoading=true;
-    this.subscription = this.paymentService.getAllProjectPartialDetailsByOrdIg({}, '')
-      .pipe(untilDestroyed(this), finalize(() => this.isLoading = false))
-      .subscribe((response: any) => {
-        if (response && response.success) {
-          this.itemsList = response.data;
-          this.updateTable(this.itemsList);
+    if (PermissionGuids.profitloss) {
+      this.commonService.getPermissionsForCurrentPage(PermissionGuids.profitloss).then((permissions: any) => {
+        if (permissions) {
+          this.pagePermissions = permissions;
+          if (permissions) {
+            this.subscription = this.paymentService.getAllProjectPartialDetailsByOrdIg({}, '')
+              .pipe(untilDestroyed(this), finalize(() => this.isLoading = false))
+              .subscribe((response: any) => {
+                if (response && response.success) {
+                  this.itemsList = response.data;
+                  this.updateTable(this.itemsList);
+                }
+              });
+          }
         }
       });
-
+    }
   }
   viewClick(data: any) {
     const config = this.defaultdialogoptions;
@@ -442,7 +450,7 @@ export class ProfitLossListComponent {
         this.dialog.open(PdfViewerComponent, config);
       }
     }).finally(() => {
-      this.isPdfGenerating = false; 
+      this.isPdfGenerating = false;
     });
   }
 }

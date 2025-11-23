@@ -1,62 +1,62 @@
 <!-- Desktop -->
 <div *ngIf="!isSession && !showTabletSlidebar" class="left-right-wrap">
-    <div class="large-left" [ngClass]="{'collapsed':!expanded,'expanded':expanded}">
-        <!-- <ng-container *ngIf="expanded">
+  <div class="large-left" [ngClass]="{'collapsed':!expanded,'expanded':expanded}">
+    <!-- <ng-container *ngIf="expanded">
             <ng-template [ngTemplateOutlet]="upperSideNav"></ng-template>
         </ng-container>
        
         <div class="collapse">
             <mat-icon class="collapse-icon " (click)="toggleSlidebar()">arrow_back</mat-icon>
         </div> -->
-        <ng-container>
-          <ng-template [ngTemplateOutlet]="upperSideNav"></ng-template>
-      </ng-container>
-     
-      <div class="collapse">
-          <mat-icon class="collapse-icon " (click)="toggleSlidebar()">arrow_back</mat-icon>
-      </div>
+    <ng-container>
+      <ng-template [ngTemplateOutlet]="upperSideNav"></ng-template>
+    </ng-container>
+
+    <div class="collapse">
+      <mat-icon class="collapse-icon " (click)="toggleSlidebar()">arrow_back</mat-icon>
     </div>
-    
-    <div class="large-right" [ngClass]="{'collapsed':!expanded,'expanded':expanded}">      
-        <ng-template [ngTemplateOutlet]="maincontent"></ng-template>
-    </div>
+  </div>
+
+  <div class="large-right" [ngClass]="{'collapsed':!expanded,'expanded':expanded}">
+    <ng-template [ngTemplateOutlet]="maincontent"></ng-template>
+  </div>
 </div>
 <!-- End Desktop -->
 
 <!-- Tablet -->
 <div class="d-flex flex-column main-container" *ngIf="showTabletSlidebar && !isSession">
-    <mat-sidenav-container>
-        <mat-sidenav #sidenav mode="push" ngClass.gt-sm="has-border">
-            <nav>
-                <ng-template [ngTemplateOutlet]="upperSideNav"></ng-template>
-            </nav>
-        </mat-sidenav>
-        <mat-sidenav-content>
-            <app-header [sidenav]="sidenav"></app-header>
-            <ng-template [ngTemplateOutlet]="maincontent"></ng-template>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
+  <mat-sidenav-container>
+    <mat-sidenav #sidenav mode="push" ngClass.gt-sm="has-border">
+      <nav>
+        <ng-template [ngTemplateOutlet]="upperSideNav"></ng-template>
+      </nav>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <app-header [sidenav]="sidenav"></app-header>
+      <ng-template [ngTemplateOutlet]="maincontent"></ng-template>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>
 <!-- End Tablet -->
 
 <!-- Main content of the page here -->
 <ng-template #maincontent>
-    <div id="notify-scroll"></div>
-    <app-info-bar class="no-print" ></app-info-bar>
-    <app-notify-bar></app-notify-bar>
+  <div id="notify-scroll"></div>
+  <app-info-bar class="no-print"></app-info-bar>
+  <app-notify-bar></app-notify-bar>
 
-    <router-outlet></router-outlet>
+  <router-outlet></router-outlet>
 </ng-template>
 
 <!-- session-ended -->
 <div *ngIf="isSession">
-    <router-outlet></router-outlet>
+  <router-outlet></router-outlet>
 </div>
 
 
 <!-- Top sidenav in both tablet and desktop -->
 <ng-template #upperSideNav>
-    <!-- <div class="upper-sidebar">
+  <!-- <div class="upper-sidebar">
           <div class="branding">
             <div class="viztro-logo"></div>            
         </div>
@@ -78,49 +78,52 @@
             <button mat-stroked-button (click)="logout()" color="sidebar">Logout</button>
         </div>
     </div> -->
-    <div   class="sidebar-menu">
-         
-          <div class="sidebar open" >
-            <div class="logo-details">
-              <!-- <i class='bx bxl-c-plus-plus'></i> -->
-              <button class="collapse-btn bx-menu" mat-icon-button (click)="toggle()" >
-                <mat-icon>menu</mat-icon>
-              </button>  
-              <span class="logo_name">
-                <img src="assets/images/internal/company_logo.png" height="30" width="100" />
-              </span>
-              
-            </div>
-           
-            <ul class="nav-links">
-              <li *ngFor="let item of sidebarLinks" [class.active]="selectedItem === item" (click)="selectItem(item)">
-                <a *ngIf="!item.link && !item.items" href="javascript:void(0)">               
-                  <i class='bx ' [ngClass]="item.icon" ></i>
-                  <span class="link_name">{{item.label}}</span>
-                </a>
-                <a *ngIf="item.link && !item.items" [routerLink]="item.link">                 
-               
-                  <i class='bx ' [ngClass]="item.icon" ></i>
-                  <span class="link_name">{{item.label}}</span>
-                </a>                
-                <div *ngIf="item.items" class="iocn-link div-arrow">
-                  <a href="javascript:void(0)">
-                    <i class='bx ' [ngClass]="item.icon"  ></i>
-                    <span class="link_name">{{item.label}}</span>
-                  </a>
-                  <i class='bx bxs-chevron-down arrow' ></i>
-                </div>
-                <ul *ngIf="!item.items" class="sub-menu blank">
-                  <li><a class="link_name" [routerLink]="item.link">{{item.label}}</a></li>
-                </ul>
-                <ul *ngIf="item.items" class="sub-menu">
-                  <li *ngFor="let subitem of item.items"  > 
-                    <a [routerLink]="subitem.link" (click)="selectItem(subitem)" [class.active]="selectedItem === subitem" >{{subitem.label}}</a>
-                  </li>
-                 
-                </ul>
+  <div class="sidebar-menu">
 
-             <!-- </li>
+    <div class="sidebar open">
+      <div class="logo-details">
+        <!-- <i class='bx bxl-c-plus-plus'></i> -->
+        <button class="collapse-btn bx-menu" mat-icon-button (click)="toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <span class="logo_name">
+          <img src="assets/images/internal/company_logo.png" height="30" width="100" />
+        </span>
+
+      </div>
+
+      <ul class="nav-links">
+        <ng-container *ngFor="let item of sidebarLinks">
+          <li *ngIf="!item.hidden" [class.active]="selectedItem === item" (click)="selectItem(item)">
+            <a *ngIf="!item.link && !item.items" href="javascript:void(0)">
+              <i class='bx ' [ngClass]="item.icon"></i>
+              <span class="link_name">{{item.label}}</span>
+            </a>
+            <a *ngIf="item.link && !item.items" [routerLink]="item.link">
+
+              <i class='bx ' [ngClass]="item.icon"></i>
+              <span class="link_name">{{item.label}}</span>
+            </a>
+            <div *ngIf="item.items" class="iocn-link div-arrow">
+              <a href="javascript:void(0)">
+                <i class='bx ' [ngClass]="item.icon"></i>
+                <span class="link_name">{{item.label}}</span>
+              </a>
+              <i class='bx bxs-chevron-down arrow'></i>
+            </div>
+            <ul *ngIf="!item.items" class="sub-menu blank">
+              <li><a class="link_name" [routerLink]="item.link">{{item.label}}</a></li>
+            </ul>
+            <ul *ngIf="item.items" class="sub-menu">
+              <ng-container *ngFor="let subitem of item.items">
+                <li *ngIf="!subitem.hidden">
+                  <a [routerLink]="subitem.link" (click)="selectItem(subitem)"
+                    [class.active]="selectedItem === subitem">{{subitem.label}}</a>
+                </li>
+              </ng-container>
+            </ul>
+
+            <!-- </li>
               <li>
                 <a href="#">
                
@@ -222,7 +225,7 @@
                 </ul>
               </li> 
               <li> -->
-                
+
             <!-- <div class="profile-details">
               <div class="profile-content">
                 <img src="image/profile.jpg" alt="profileImg">
@@ -235,16 +238,17 @@
               <i class='bx bx-log-out' ></i>
             </div> -->
           </li>
-        </ul>
-          </div>
-          <!-- <section class="home-section">
+        </ng-container>
+      </ul>
+    </div>
+    <!-- <section class="home-section">
             <div class="home-content">
               <i class='bx bx-menu' ></i>
               <span class="text">Drop Down Sidebar</span>
             </div>
           </section> -->
-        <!-- <ng-material-multilevel-menu [configuration]='sidebarConfig' [items]='sidebarLinks'
+    <!-- <ng-material-multilevel-menu [configuration]='sidebarConfig' [items]='sidebarLinks'
             (selectedItem)="selectedItem($event)">
         </ng-material-multilevel-menu> -->
-    </div>
+  </div>
 </ng-template>

@@ -10,6 +10,7 @@ import { SessionService } from '@app/shared/services/session.service';
 import { finalize, Subscription, take } from 'rxjs';
 import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { PermissionGuids } from '@app/shared/models/constant.config';
 
 @Component({
   selector: 'app-profit-loss-expense-details',
@@ -23,9 +24,11 @@ export class ProfitLossExpenseDetailsComponent {
   invDetails: any = {};
   today = new Date();
   scopeData!: any;
+  pagePermissions: any = {};
   downloadingTemplate = false;
   showUpload: boolean = false;
   showSave: boolean = false;
+  isEditMode = false;
   months: string[] = [];          // display labels: 'Apr 24'
   monthKeys: any[] = [];
   quarter = 1;
@@ -72,11 +75,6 @@ export class ProfitLossExpenseDetailsComponent {
   ) {
   }
 
-  downloadTemplate() {
-    this.csvService.downloadFile(this.tableRows, this.tableheaders, 'Release Template');
-    this.showUpload = true;
-    this.showSave = true;
-  }
   fileuploaded(data: any) {
     this.csvRecords = (data.slice(1));
     this.csvHeaders = data[0];
@@ -84,7 +82,12 @@ export class ProfitLossExpenseDetailsComponent {
   }
   ngOnInit() {
     this.invoiceData = window.history.state.value;
-    this.getReleaseInvoiceDetails();
+    this.commonService.getPermissionsForCurrentPage(PermissionGuids.profitloss).then((permissions: any) => {
+      this.pagePermissions = permissions;
+      if (this.pagePermissions?.canRead) {
+        this.getReleaseInvoiceDetails();
+      }
+    });
   }
   getReleaseInvoiceDetails() {
     this.tableRows = [];
@@ -296,7 +299,7 @@ export class ProfitLossExpenseDetailsComponent {
         this.dialog.open(PdfViewerComponent, config);
       }
     }).finally(() => {
-      this.isPdfGenerating = false; 
+      this.isPdfGenerating = false;
     });
   }
 
@@ -374,6 +377,20 @@ export class ProfitLossExpenseDetailsComponent {
   }
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+  manageDetailedRelease() {
+    this.isEditMode = !this.isEditMode;
+    if (!this.isEditMode) {
+      this.showUpload = false;
+      this.showSave = false;
+    }
+  }
+
+  downloadTemplate() {
+    this.csvService.downloadFile(this.tableRows, this.tableheaders, 'Release Template');
+    this.showUpload = true;
+    this.showSave = true;
+    this.isEditMode = true;
   }
 }
 

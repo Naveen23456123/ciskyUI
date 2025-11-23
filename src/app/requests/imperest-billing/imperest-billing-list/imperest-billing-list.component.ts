@@ -1,9 +1,9 @@
-import { Component,ViewChild,inject} from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatPaginator} from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { InventoryControlService } from '@app/inventory-control/inventory-control.service';
 import { RequestService } from '@app/requests/request.service';
 import { ApprovalStatus } from '@app/shared/models/constant.config';
@@ -23,60 +23,71 @@ import { finalize } from 'rxjs';
   styleUrl: './imperest-billing-list.component.scss'
 })
 export class ImperestBillingListComponent {
-  imperestList:any[]= [];
+  imperestList: any[] = [];
   isLoading = true;
-  displayedColumns: string[] = ['serial','project','office','name','gamount','apramount', 'view','action'];
+  displayedColumns: string[] = ['serial', 'project', 'office', 'name', 'gamount', 'apramount', 'view'];
   dataSource!: MatTableDataSource<any[]>;
-  activeOrgId='123';
- @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+  activeOrgId = '123';
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
     this.dataSource.paginator = paginator;
   }
   @ViewChild(MatSort) sort!: MatSort;
   pagination: any;
   pageSize!: number;
-  resultsLength!:number;
-  isSearching=false;
-  statusList:any[]=[];
-  userObj:any={};
-  billingSummary:any;
+  resultsLength!: number;
+  isSearching = false;
+  statusList: any[] = [];
+  userObj: any = {};
+  billingSummary: any;
   readonly dialog = inject(MatDialog);
-  
-  private defaultdialogoptions:  MatDialogConfig = {
-    minWidth: '900px', 
+  pagePermissions: any = {};
+  private defaultdialogoptions: MatDialogConfig = {
+    minWidth: '900px',
     disableClose: false,
     data: {},
   };
 
- constructor(private requestService:RequestService,private helperService:HelperService,
-  private stateDataService:StateDataService, private notifyBarService:NotifyBarService,
-  private sessionService:SessionService, private commonService:CommonService,private router:Router,
- ){
-  this.dataSource = new MatTableDataSource(this.imperestList);
- }
+  constructor(private requestService: RequestService, private helperService: HelperService,
+    private stateDataService: StateDataService, private notifyBarService: NotifyBarService,
+    private sessionService: SessionService, private commonService: CommonService, private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.dataSource = new MatTableDataSource(this.imperestList);
+  }
 
- ngOnInit()  {
-  this.stateDataService.stateDataSubject.subscribe((data) => {   
-    if (data.event == 'impaprv'  && data.valid && data.value) {      
-      this.updateRowData(data.value);
-      this.notifyBarService.showsnackbar(data.msg);
-      this.stateDataService.stateDataSubject.next({});
-    } else if(data.event == 'impdelete' && data.valid && data.value){
-      this.deleteRow(data.value);
-      this.notifyBarService.showsnackbar(data.msg);
-      this.stateDataService.stateDataSubject.next({});
-    }
-  });
-  this.sessionService.approvalStatusSubject$.subscribe((statusresponse:any)=>{
-    if(statusresponse){
-     this.statusList= statusresponse;
-    }
-  })
-  this.sessionService.userSubject$.subscribe((response:any)=>{
-    if(response){
-     this.userObj= response;
-    }
-  })
-  this.filterImprest();
+  ngOnInit() {
+    this.stateDataService.stateDataSubject.subscribe((data) => {
+      if (data.event == 'impaprv' && data.valid && data.value) {
+        this.updateRowData(data.value);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      } else if (data.event == 'impdelete' && data.valid && data.value) {
+        this.deleteRow(data.value);
+        this.notifyBarService.showsnackbar(data.msg);
+        this.stateDataService.stateDataSubject.next({});
+      }
+    });
+    let pageGuid = this.route.snapshot.data['pageGuid'];
+    this.commonService.getPermissionsForCurrentPage(pageGuid).then((permissions: any) => {
+      this.pagePermissions = permissions;
+      if (this.pagePermissions?.canUpdate || this.pagePermissions?.canDelete) {
+        this.displayedColumns.push('action');
+      }
+      if (this.pagePermissions?.canRead) {
+        this.sessionService.approvalStatusSubject$.subscribe((statusresponse: any) => {
+          if (statusresponse) {
+            this.statusList = statusresponse;
+            this.sessionService.userSubject$.subscribe((response: any) => {
+              if (response) {
+                this.userObj = response;
+                this.filterImprest();
+              }
+            })
+          }
+        })
+      }
+    });
+
   }
 
   ngAfterViewInit() {
@@ -95,14 +106,14 @@ export class ImperestBillingListComponent {
   private updateTable(info: any) {
     this.imperestList = info;
     this.dataSource = new MatTableDataSource<any>(info);
-    this.pagination = this.helperService.paginationOptionGeneration(info, info.length); 
-    this.pageSize= this.helperService.getPageSize();  
-    this.resultsLength= this.imperestList.length;   
+    this.pagination = this.helperService.paginationOptionGeneration(info, info.length);
+    this.pageSize = this.helperService.getPageSize();
+    this.resultsLength = this.imperestList.length;
   }
 
   updateRowData(updatedata: any) {
-    let data= updatedata.acted;
-    const index:any = this.dataSource.data.findIndex((x:any) => x.id == data.id); 
+    let data = updatedata.acted;
+    const index: any = this.dataSource.data.findIndex((x: any) => x.id == data.id);
     // const element:any = this.dataSource.data.find((x:any) => x.id == data.id);  
     // if(element) {
     //     let level = element.levels.find((x:any) => x.id == data.levelid); 
@@ -120,83 +131,85 @@ export class ImperestBillingListComponent {
       const updatedRow = {
         ...data,
         levels: this.setLevel(data.levels)
-      };  
-      this.dataSource.data[index] = updatedRow;          
+      };
+      this.dataSource.data[index] = updatedRow;
     }
     this.dataSource._updateChangeSubscription();
-    this.billingSummary= [...updatedata.summary];
+    this.billingSummary = [...updatedata.summary];
   }
-  setLevel(items:any) {
-    if(items){ 
-      return  items.map((level:any) => ({
-          ...level,
-          status: this.statusList.find((x:any)=>x.id==level.statusid)?.name 
-        }))
-      }
-   }
+  setLevel(items: any) {
+    if (items) {
+      return items.map((level: any) => ({
+        ...level,
+        status: this.statusList.find((x: any) => x.id == level.statusid)?.name
+      }))
+    }
+  }
   deleteRow(data: any) {
-    const index = this.dataSource.data.findIndex((x:any) => x.id == data.id);    
+    const index = this.dataSource.data.findIndex((x: any) => x.id == data.id);
     this.dataSource.data.splice(index, 1);
     this.dataSource._updateChangeSubscription();
-    this.billingSummary= [...data.summary];
+    this.billingSummary = [...data.summary];
   }
-  searchObj:any={
-    projectid:'',   
-    companyid:''
+  searchObj: any = {
+    projectid: '',
+    companyid: ''
   };
-  projectChange(data:any){ 
-   this.searchObj.projectid= data.value ?? '';
-   this.filterImprest();
-  }
-  compChange(data:any){
-    this.searchObj.companyid= data.value ?? '';
-    this.searchObj.projectid= data.projectid ?? '';
+  projectChange(data: any) {
+    this.searchObj.projectid = data.value ?? '';
     this.filterImprest();
   }
-  anyChange(data:any){
-    if(data && data.value){ 
+  compChange(data: any) {
+    this.searchObj.companyid = data.value ?? '';
+    this.searchObj.projectid = data.projectid ?? '';
+    this.filterImprest();
+  }
+  anyChange(data: any) {
+    if (data && data.value) {
       this.dataSource.filter = data.value.trim().toLowerCase()
     }
-    else{
+    else {
       this.dataSource.filter = '';
     }
   }
-  clear(){
-    this.searchObj={
-      projectid:'',
-      companyid:''
+  clear() {
+    this.searchObj = {
+      projectid: '',
+      companyid: ''
     };
     this.filterImprest();
   }
-  filterImprest(){
-  this.isSearching=true;
-    this.requestService.searchImperestBillingRequests({...this.searchObj,employeeid:this.userObj.employeeid}, '')
-      .pipe(finalize(() => {this.isLoading = false;this.isSearching=false}))
-      .subscribe({next : (response: any) => {
-        if (response && response.success) {
-          this.billingSummary= response.data.summary;
-          this.imperestList = response.data.billings.map((item:any) => ({
-            ...item,
-            levels: this.setLevel(item.levels)
-          }));
-          this.updateTable(this.imperestList);
+  filterImprest() {
+    this.isSearching = true;
+    this.requestService.searchImperestBillingRequests({ ...this.searchObj, employeeid: this.userObj.employeeid }, '')
+      .pipe(finalize(() => { this.isLoading = false; this.isSearching = false }))
+      .subscribe({
+        next: (response: any) => {
+          if (response && response.success) {
+            this.billingSummary = response.data.summary;
+            this.imperestList = response.data.billings.map((item: any) => ({
+              ...item,
+              levels: this.setLevel(item.levels)
+            }));
+            this.updateTable(this.imperestList);
+          }
         }
-    }});
+      });
   }
-  setLevelConfig(levels:any){
-    const overallstatus=this.commonService.getOverallStatus(levels);
+  setLevelConfig(levels: any) {
+    const overallstatus = this.commonService.getOverallStatus(levels);
     return {
-      levels:overallstatus==ApprovalStatus.REJECTED ? levels?.filter((x:any)=>x.status.toLowerCase()==ApprovalStatus.REJECTED.toLocaleLowerCase()):levels,
-      hasRejected:overallstatus==ApprovalStatus.REJECTED,
-      status:overallstatus, 
-      isedit:overallstatus==ApprovalStatus.PENDING
+      levels: overallstatus == ApprovalStatus.REJECTED ? levels?.filter((x: any) => x.status.toLowerCase() == ApprovalStatus.REJECTED.toLocaleLowerCase()) : levels,
+      hasRejected: overallstatus == ApprovalStatus.REJECTED,
+      status: overallstatus,
+      isedit: overallstatus == ApprovalStatus.PENDING
     }
   }
-  edit(data:any){
-     this.router.navigate(['/imperest-billing-request', 'edit', data.id], {state:{value :data,searchObj:this.searchObj}});
+  edit(data: any) {
+    this.router.navigate(['/imperest-billing-request', 'edit', data.id], { state: { value: data, searchObj: this.searchObj } });
   }
-  delete_row(data:any){
-     this.router.navigate(['/imperest-billing-request', 'delete', data.id], {state:{value :data,searchObj:this.searchObj}});
+  delete_row(data: any) {
+    this.router.navigate(['/imperest-billing-request', 'delete', data.id], { state: { value: data, searchObj: this.searchObj } });
   }
 }
 

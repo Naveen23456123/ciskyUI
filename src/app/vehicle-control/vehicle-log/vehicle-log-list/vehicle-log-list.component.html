@@ -1,154 +1,153 @@
 <div class="container">
   <mat-card>
-    <mat-card-content class="pb-0">
-        <div class="load-wrap" *ngIf="isLoading">
-            <app-loader [IsLoading]="isLoading"></app-loader>
-        </div>
-        <div *ngIf="!isLoading">               
-              <div class="table-title-row">
-                <div class="row col-md-12   content-center">
-                  <div class="col-md-11 ">
-                    <div>
-                      <app-search-bar-controls [isSubCompany]="true" [isDateRange]="true" [isVehicle]="true"
-                      [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Vehicle Name / Number / Purpose"
-                      (OnProjectChange)="projectChange($event)" (OnSubCompanyChange)="compChange($event)" 
-                       (OnAnyChange)="anyChange($event)"  (OnDateRangeChange)="dateRangeChange($event)"
-                       (OnVehicleChange)="vehicleChange($event)"
-                       (OnClear)="clear()"
-                      ></app-search-bar-controls>
-                    </div>  
-                </div>       
-                <div class="col-md-1 button-row main-btn-row d-flex justify-content-end">
-                  <button class="title-btn" type="button" routerLink="create"  mat-mini-fab color="primary">
-                    <mat-icon>add box</mat-icon> Vehicle Log
-                </button>  
-                </div>
+    <mat-card-content class="pb-0 pr-0">
+      <div class="load-wrap" *ngIf="isLoading">
+        <app-loader [IsLoading]="isLoading"></app-loader>
+      </div>
+      <div *ngIf="!isLoading">
+        <div class="table-title-row">
+          <div class="row col-md-12   content-center">
+            <div class="col-md-11 ">
+              <div>
+                <app-search-bar-controls [isSubCompany]="true" [isDateRange]="true" [isVehicle]="true"
+                  [isProjects]="true" [isAny]="true" searchByAnyPlaceholder="Vehicle Name / Number / Purpose"
+                  (OnProjectChange)="projectChange($event)" (OnSubCompanyChange)="compChange($event)"
+                  (OnAnyChange)="anyChange($event)" (OnDateRangeChange)="dateRangeChange($event)"
+                  (OnVehicleChange)="vehicleChange($event)" (OnClear)="clear()"></app-search-bar-controls>
               </div>
             </div>
-        </div>
-    </mat-card-content>
-</mat-card>
-<div  class="wrapper">
-    <mat-card>
-        <mat-card-content>
-           <ng-container *ngIf=" isLoading || isSearchLoading; else checkNoData">
-            <app-empty-table-skltn></app-empty-table-skltn>
-            </ng-container>
-            <ng-template #checkNoData>
-              <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
-                <app-no-data message="No Vehicle Log(s) found at this moment !!"></app-no-data>
-              </ng-container>
-            </ng-template>
-            <ng-template #showTable> 
-            <div class="wrapper" *ngIf="!isSearchLoading">  
-                <div class="mat-elevation-z8 table-container">  
-                    
-                  <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>                     
-                  
-                    <ng-container matColumnDef="serial">
-                      <th mat-header-cell *matHeaderCellDef> Sr. No </th>
-                      <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
-                    </ng-container>                 
-                    <!-- contractName Column -->
-                    <ng-container matColumnDef="vehiclename">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Vehicle Name </th>
-                      <td mat-cell *matCellDef="let row"> {{row.vehiclenumber}}<br> {{row.vehiclename}} </td>
-                    </ng-container>
-                    <ng-container matColumnDef="date">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Used Date </th>
-                        <td mat-cell *matCellDef="let row"> 
-                          {{row.useddate | formatDate}}
-                        </td>
-                      </ng-container>  
-                    <ng-container matColumnDef="starttime">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Start </th>
-                      <td mat-cell *matCellDef="let row">
-                        <table class="child-table">
-                          <tr>
-                            <td>Time</td>
-                            <td class="pad-right-1 pad-left-1">:</td>
-                            <td>{{row.fromtime}}</td>
-                          </tr>
-                          <tr>
-                            <td>Reading</td>
-                            <td class="pad-right-1 pad-left-1">:</td>
-                            <td>{{row.initialreading }}</td>
-                          </tr>
-                        </table>
-                      </td>
-                    </ng-container>
-                    <ng-container matColumnDef="endtime">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> End </th>
-                      <td mat-cell *matCellDef="let row"> 
-                        <table class="child-table">
-                          <tr>
-                            <td>Time</td>
-                            <td class="pad-right-1 pad-left-1">:</td>
-                            <td>{{row.totime }}</td>
-                          </tr>
-                          <tr>
-                            <td>Reading</td>
-                            <td class="pad-right-1 pad-left-1">:</td>
-                            <td>{{row.endreading }}</td>
-                          </tr>
-                        </table>                             
-                      </td>
-                    </ng-container>                                      
-                    <!-- Name Column -->
-                    <ng-container matColumnDef="commencementoftrip">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Conclusion (Km)</th>
-                      <td mat-cell class="w-9" *matCellDef="let row">                              
-                        {{(row.endreading-row.initialreading)}}
-                      </td>
-                    </ng-container>    
-                   <ng-container matColumnDef="misc">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Add Ons</th>
-                      <td mat-cell class="add-on" *matCellDef="let row">                              
-                       <p class="mb-1 "><span class="sun " *ngIf="row.issunday">Sunday</span> <span class="nt" *ngIf="row.isnight">Night</span></p> 
-                       <span *ngIf="row.extrahours">Extra Hours : {{row.extrahours}}</span>
-                      </td>
-                    </ng-container> 
-                    <!-- Name Column -->
-                    <ng-container matColumnDef="purposeandplace">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Purpose and Place </th>
-                      <td mat-cell *matCellDef="let row"> {{row.purposeandplace}} </td>
-                    </ng-container> 
-                  
-                    <ng-container  matColumnDef="images">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Images </th>
-                      <td mat-cell class="w-1" *matCellDef="let row"> 
-                        <div class="button-row">
-                          <div *ngIf="row.initialimageaddress || row.endimageaddress">
-                            <app-view-btn (clickEvent)="viewImages(row)" ></app-view-btn>
-                          </div>                             
-                          
-                    </div>
-                      </td>
-                    </ng-container>
-                    <ng-container  matColumnDef="action">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                      <td mat-cell class="action-col" *matCellDef="let row"> 
-                        <div class="button-row">                              
-                          <app-edit-btn [routerLink]="['/vehicle-log/edit',row.id]" [state]="row" ></app-edit-btn>                              
-                          <app-delete-btn [state]="row" [routerLink]="['/vehicle-log/delete',row.id]" ></app-delete-btn>
-                    </div>
-                      </td>
-                    </ng-container>
-                  
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky-header"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
-                    <tr class="mat-row" *matNoDataRow>
-                      <td class="mat-cell no-data-cell"  attr.colspan="{{ displayedColumns.length }}">
-                        No Vehilce Log(s) found at this moment.</td>
-                    </tr>
-                  </table>
-                  <mat-paginator [length]="resultsLength" [pageSize]="pageSize" 
-                [pageSizeOptions]="pagination" showFirstLastButtons></mat-paginator>
-                     
-                </div>
+            <div class="col-md-1 button-row main-btn-row d-flex justify-content-end">
+              <button *ngIf="pagePermissions?.canCreate" class="title-btn" type="button" routerLink="create" mat-mini-fab color="primary">
+                <mat-icon>add box</mat-icon> Vehicle Log
+              </button>
             </div>
-            </ng-template>
-        </mat-card-content>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <div class="wrapper">
+    <mat-card>
+      <mat-card-content>
+        <ng-container *ngIf=" isLoading || isSearchLoading; else checkNoData">
+          <app-empty-table-skltn></app-empty-table-skltn>
+        </ng-container>
+        <ng-template #checkNoData>
+          <ng-container *ngIf="dataSource?.data?.length === 0; else showTable">
+            <app-no-data message="No Vehicle Log(s) found at this moment !!"></app-no-data>
+          </ng-container>
+        </ng-template>
+        <ng-template #showTable>
+          <div class="wrapper" *ngIf="!isSearchLoading">
+            <div class="mat-elevation-z8 table-container">
+
+              <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+
+                <ng-container matColumnDef="serial">
+                  <th mat-header-cell *matHeaderCellDef> Sr. No </th>
+                  <td mat-cell *matCellDef="let index = renderIndex"> {{index+1}} </td>
+                </ng-container>
+                <!-- contractName Column -->
+                <ng-container matColumnDef="vehiclename">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Vehicle Name </th>
+                  <td mat-cell *matCellDef="let row"> {{row.vehiclenumber}}<br> {{row.vehiclename}} </td>
+                </ng-container>
+                <ng-container matColumnDef="date">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Used Date </th>
+                  <td mat-cell *matCellDef="let row">
+                    {{row.useddate | formatDate}}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="starttime">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Start </th>
+                  <td mat-cell *matCellDef="let row">
+                    <table class="child-table">
+                      <tr>
+                        <td>Time</td>
+                        <td class="pad-right-1 pad-left-1">:</td>
+                        <td>{{row.fromtime}}</td>
+                      </tr>
+                      <tr>
+                        <td>Reading</td>
+                        <td class="pad-right-1 pad-left-1">:</td>
+                        <td>{{row.initialreading }}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="endtime">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> End </th>
+                  <td mat-cell *matCellDef="let row">
+                    <table class="child-table">
+                      <tr>
+                        <td>Time</td>
+                        <td class="pad-right-1 pad-left-1">:</td>
+                        <td>{{row.totime }}</td>
+                      </tr>
+                      <tr>
+                        <td>Reading</td>
+                        <td class="pad-right-1 pad-left-1">:</td>
+                        <td>{{row.endreading }}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </ng-container>
+                <!-- Name Column -->
+                <ng-container matColumnDef="commencementoftrip">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Conclusion (Km)</th>
+                  <td mat-cell class="w-9" *matCellDef="let row">
+                    {{(row.endreading-row.initialreading)}}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="misc">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Add Ons</th>
+                  <td mat-cell class="add-on" *matCellDef="let row">
+                    <p class="mb-1 "><span class="sun " *ngIf="row.issunday">Sunday</span> <span class="nt"
+                        *ngIf="row.isnight">Night</span></p>
+                    <span *ngIf="row.extrahours">Extra Hours : {{row.extrahours}}</span>
+                  </td>
+                </ng-container>
+                <!-- Name Column -->
+                <ng-container matColumnDef="purposeandplace">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Purpose and Place </th>
+                  <td mat-cell *matCellDef="let row"> {{row.purposeandplace}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="images">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Images </th>
+                  <td mat-cell class="w-1" *matCellDef="let row">
+                    <div class="button-row">
+                      <div *ngIf="row.initialimageaddress || row.endimageaddress">
+                        <app-view-btn (clickEvent)="viewImages(row)"></app-view-btn>
+                      </div>
+
+                    </div>
+                  </td>
+                </ng-container>
+                
+                <ng-container *ngIf="pagePermissions?.canUpdate || pagePermissions?.canDelete" matColumnDef="action">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+                  <td mat-cell class="action-col" *matCellDef="let row">
+                    <div class="button-row">
+                      <app-edit-btn *ngIf="pagePermissions?.canUpdate" [routerLink]="['/vehicle-log/edit',row.id]" [state]="row"></app-edit-btn>
+                      <app-delete-btn *ngIf="pagePermissions?.canDelete" [state]="row" [routerLink]="['/vehicle-log/delete',row.id]"></app-delete-btn>
+                    </div>
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky-header"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                <tr class="mat-row" *matNoDataRow>
+                  <td class="mat-cell no-data-cell" attr.colspan="{{ displayedColumns.length }}">
+                    No Vehilce Log(s) found at this moment.</td>
+                </tr>
+              </table>
+              <mat-paginator [length]="resultsLength" [pageSize]="pageSize" [pageSizeOptions]="pagination"
+                showFirstLastButtons></mat-paginator>
+
+            </div>
+          </div>
+        </ng-template>
+      </mat-card-content>
     </mat-card>
   </div>
 </div>
